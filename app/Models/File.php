@@ -17,8 +17,13 @@ class File extends Model
         'department_id',
         'task_id',
         'user_id',
+        'files'
     ];
 
+    protected $casts = [
+        'deadline' => 'datetime',
+        'completed_at' => 'datetime',
+    ];
     // === СВЯЗИ ===
 
     /**
@@ -88,5 +93,29 @@ class File extends Model
             'application/msword',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         ]);
+    }
+
+    /**
+     * Получает имена файлов как массив
+     */
+    public function getFilesArrayAttribute()
+    {
+        if (!$this->files) {
+            return [];
+        }
+
+        return array_map('trim', explode(',', $this->files));
+    }
+
+    /**
+     * Получает количество файлов из поля files
+     */
+    public function getFilesCountAttribute()
+    {
+        if (!$this->files) {
+            return 0;
+        }
+
+        return count($this->getFilesArrayAttribute());
     }
 }

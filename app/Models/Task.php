@@ -3,15 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Task extends Model
 {
-
-
+    use SoftDeletes;
+    const STATUS_ASSIGNED = 'назначена';
     const STATUS_NOT_ASSIGNED = 'не назначена';
     const STATUS_IN_PROGRESS = 'в работе';
     const STATUS_OVERDUE = 'просрочена';
@@ -21,6 +20,7 @@ class Task extends Model
     public static function getStatuses(): array
     {
         return [
+            self::STATUS_ASSIGNED,
             self::STATUS_NOT_ASSIGNED,
             self::STATUS_IN_PROGRESS,
             self::STATUS_OVERDUE,
@@ -28,6 +28,7 @@ class Task extends Model
             self::STATUS_COMPLETED,
         ];
     }
+
     protected $fillable = [
         'name',
         'author_id',
@@ -41,7 +42,7 @@ class Task extends Model
         'deadline',
         'completed_at',
         'estimated_hours',
-        'actual_hours'
+        'actual_hours',
     ];
 
     protected $casts = [
@@ -52,8 +53,7 @@ class Task extends Model
     // === СВЯЗИ ===
 
     /**
-     * Автор задачи (пользователь, который создал задачу)
-     * @return BelongsTo - возвращает пользователя-автора задачи
+     * Автор задачи
      */
     public function author(): BelongsTo
     {
@@ -61,8 +61,7 @@ class Task extends Model
     }
 
     /**
-     * Исполнитель задачи (пользователь, которому назначена задача)
-     * @return BelongsTo - возвращает пользователя-исполнителя задачи
+     * Исполнитель задачи
      */
     public function user(): BelongsTo
     {
@@ -70,8 +69,15 @@ class Task extends Model
     }
 
     /**
-     * Отдел, к которому принадлежит задача
-     * @return BelongsTo - возвращает отдел задачи
+     * Компания задачи
+     */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    /**
+     * Отдел задачи
      */
     public function department(): BelongsTo
     {
@@ -80,7 +86,6 @@ class Task extends Model
 
     /**
      * Категория задачи
-     * @return BelongsTo - возвращает категорию задачи
      */
     public function category(): BelongsTo
     {
@@ -89,7 +94,6 @@ class Task extends Model
 
     /**
      * Файлы, прикрепленные к задаче
-     * @return HasMany - возвращает коллекцию файлов задачи
      */
     public function files(): HasMany
     {
@@ -97,8 +101,7 @@ class Task extends Model
     }
 
     /**
-     * Подзадачи (дочерние задачи)
-     * @return HasMany - возвращает коллекцию подзадач
+     * Подзадачи
      */
     public function subtasks(): HasMany
     {
@@ -106,8 +109,7 @@ class Task extends Model
     }
 
     /**
-     * Родительская задача (для подзадач)
-     * @return BelongsTo - возвращает родительскую задачу
+     * Родительская задача
      */
     public function parent(): BelongsTo
     {
@@ -118,7 +120,6 @@ class Task extends Model
 
     /**
      * Проверяет, просрочена ли задача
-     * @return bool - true если задача просрочена и не выполнена
      */
     public function isOverdue(): bool
     {
@@ -127,7 +128,6 @@ class Task extends Model
 
     /**
      * Отмечает задачу как выполненную
-     * @return bool - true если операция успешна
      */
     public function markAsCompleted(): bool
     {
@@ -139,8 +139,6 @@ class Task extends Model
 
     /**
      * Назначает задачу пользователю
-     * @param User $user - пользователь для назначения
-     * @return bool - true если операция успешна
      */
     public function assignTo(User $user): bool
     {
@@ -152,8 +150,6 @@ class Task extends Model
 
     /**
      * Изменяет статус задачи
-     * @param string $status - новый статус задачи
-     * @return bool - true если операция успешна
      */
     public function changeStatus(string $status): bool
     {
@@ -165,7 +161,6 @@ class Task extends Model
 
         $data = ['status' => $status];
 
-        // Если задача выполнена, добавляем время завершения
         if ($status === 'выполнена') {
             $data['completed_at'] = now();
         }
@@ -175,7 +170,6 @@ class Task extends Model
 
     /**
      * Получает прогресс выполнения задачи в процентах
-     * @return int - прогресс выполнения от 0 до 100
      */
     public function getProgress(): int
     {
@@ -190,7 +184,6 @@ class Task extends Model
             return (int) (($completedSubtasks / $totalSubtasks) * 100);
         }
 
-        // Базовый прогресс по статусу
         return match($this->status) {
             'не назначена' => 0,
             'в работе' => 50,
@@ -201,7 +194,6 @@ class Task extends Model
 
     /**
      * Проверяет, можно ли удалить задачу
-     * @return bool - true если задачу можно удалить
      */
     public function canBeDeleted(): bool
     {
@@ -210,7 +202,6 @@ class Task extends Model
 
     /**
      * Получает оставшееся время до дедлайна
-     * @return string - оставшееся время в читаемом формате
      */
     public function getTimeRemaining(): string
     {
@@ -223,5 +214,75 @@ class Task extends Model
         }
 
         return 'Осталось: ' . $this->deadline->diffForHumans();
+    }
+
+    /**
+     * Получает файлы задачи с информацией о пользователе
+     */
+    public function getFilesWithUsers()
+    {
+        return $this->files()->with('user')->get();
+    }
+
+    /**
+     * Получает количество файлов в задаче
+     */
+    public function getFilesCount(): int
+    {
+        return $this->files()->count();
+    }
+
+    /**
+     * Получает цвет статуса для отображения
+     */
+    public function getStatusColor(): string
+    {
+        return match($this->status) {
+            'не назначена' => 'yellow',
+            'в работе' => 'blue',
+            'на проверке' => 'orange',
+            'просрочена' => 'red',
+            'выполнена' => 'green',
+            default => 'gray'
+        };
+    }
+
+    /**
+     * Получает иконку статуса
+     */
+    public function getStatusIcon(): string
+    {
+        return match($this->status) {
+            'не назначена' => '⏳',
+            'в работе' => '🔄',
+            'на проверке' => '👀',
+            'просрочена' => '⚠️',
+            'выполнена' => '✅',
+            default => '📝'
+        };
+    }
+
+    /**
+     * Отказы от задачи
+     */
+    public function rejections(): HasMany
+    {
+        return $this->hasMany(TaskRejection::class);
+    }
+
+    /**
+     * Получить последний отказ
+     */
+    public function getLastRejection()
+    {
+        return $this->rejections()->latest()->first();
+    }
+
+    /**
+     * Получить количество отказов
+     */
+    public function getRejectionsCount(): int
+    {
+        return $this->rejections()->count();
     }
 }
