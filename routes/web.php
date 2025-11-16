@@ -60,7 +60,7 @@ Route::post('/category/create', [App\Http\Controllers\Frontend\CategoryControlle
 Route::get('/category/{id}/edit', [App\Http\Controllers\Frontend\CategoryController::class, 'edit'])->name('category.edit');
 Route::patch('/category/update', [App\Http\Controllers\Frontend\CategoryController::class, 'update'])->name('category.update');
 
-Route::group(['prefix' => 'departments', 'middleware' => ['auth', 'verified']], function () {
+Route::group(['prefix' => 'departments', 'middleware' => ['auth', 'verified', 'isManager']], function () {
     Route::get('/', [App\Http\Controllers\Frontend\DepartmentController::class, 'index'])->name('departments.index');
     Route::post('/store', [App\Http\Controllers\Frontend\DepartmentController::class, 'store'])->name('departments.store');
     Route::get('/{id}/edit', [App\Http\Controllers\Frontend\DepartmentController::class, 'edit'])->name('departments.edit');

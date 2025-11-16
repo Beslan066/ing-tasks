@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskFlow - Современный таск-менеджер</title>
+    <title>МенеджерПлюс - Современная система управления задачами</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -77,19 +77,18 @@
 </head>
 <body class="bg-gray-50 font-sans">
 <!-- Навигация -->
-<nav class="bg-white shadow-md py-4 px-6 flex justify-between items-center">
+<nav class="bg-white shadow-md py-4 px-4 flex justify-between items-center">
     <a href="{{route('welcome')}}">
-        <div class="flex items-center space-x-2">
-            <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <i class="fas fa-tasks text-white"></i>
-            </div>
-            <span class="text-xl font-bold text-dark">TaskFlow</span>
+        <div class="flex items-center space-x-2" style="border: 1px solid #16a34a; padding: 10px; border-radius: 5px">
+            <h1 class="text-2xl font-bold text-dark">Менеджер<span class="text-green-600">Плюс</span></h1>
         </div>
     </a>
 
     <div class="hidden md:flex space-x-6">
         <a href="{{route('welcome')}}" class="nav-link active-nav" data-page="welcome">Главная</a>
-        <a href="{{route('departments.index')}}" class="nav-link" data-page="boards">Отделы</a>
+        @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
+            <a href="{{route('departments.index')}}" class="nav-link" data-page="boards">Отделы</a>
+        @endif
         <a href="{{route('team.index')}}" class="nav-link" data-page="team">Команда</a>
         <a href="{{route('photobank')}}" class="nav-link" data-page="team">Фотобанк</a>
     </div>
@@ -131,14 +130,16 @@
                             class="group flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 cursor-pointer workspace-item"
                             data-workspace="alpha">
                             <span>{{ $department->name }}</span>
-                            <button onclick="openEditDepartmentModal({{ $department->id }})"
-                                    class="text-gray-400 hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                                     stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                </svg>
-                            </button>
+                            @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
+                                <button onclick="openEditDepartmentModal({{ $department->id }})"
+                                        class="text-gray-400 hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                </button>
+                            @endif
                         </div>
                     @endforeach
                 </div>
@@ -169,7 +170,8 @@
                                 <div class="w-4 h-4 rounded" style="background-color: {{ $category->color }}"></div>
                                 <span>{{ $category->name }}</span>
                             </div>
-                            <button onclick="openEditCategoryModal({{ $category->id }})"
+                            @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
+                                <button onclick="openEditCategoryModal({{ $category->id }})"
                                     class="text-gray-400 hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                                      stroke="currentColor">
@@ -177,6 +179,7 @@
                                           d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
                             </button>
+                            @endif
                         </div>
                     @endforeach
                 </div>
@@ -451,7 +454,7 @@
         <div class="bg-white rounded-lg w-full max-w-md p-6">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold">Профиль пользователя</h3>
-                <button id="closeUserModal" class="text-gray-500 hover:text-gray-700">
+                <button id="closeUserModal" class="text-gray-500 hover:text-gray-700" onclick="closeUserProfileModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -882,7 +885,12 @@
     }
 
     function closeUserModal() {
-        document.getElementById('createUserModal').classList.add('hidden');
+        document.getElementById('newUserModal').classList.add('hidden');
+        document.getElementById('userForm').reset();
+    }
+
+    function closeUserProfileModal() {
+        document.getElementById('userProfileModal').classList.add('hidden');
         document.getElementById('userForm').reset();
     }
 
