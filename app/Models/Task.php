@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Task extends Model
 {
     use SoftDeletes;
+
     const STATUS_ASSIGNED = 'назначена';
     const STATUS_NOT_ASSIGNED = 'не назначена';
     const STATUS_IN_PROGRESS = 'в работе';
@@ -43,6 +44,7 @@ class Task extends Model
         'completed_at',
         'estimated_hours',
         'actual_hours',
+        'deleted_by', // Добавляем поле для отслеживания кто удалил
     ];
 
     protected $casts = [
@@ -58,6 +60,14 @@ class Task extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
+     * Пользователь, который удалил задачу
+     */
+    public function deletedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
     }
 
     /**
@@ -117,6 +127,15 @@ class Task extends Model
     }
 
     // === МЕТОДЫ ===
+
+    /**
+     * Проверяет, может ли пользователь удалить задачу
+     */
+    public function canBeDeletedBy(User $user): bool
+    {
+        // Только автор задачи может её удалить
+        return $this->author_id === $user->id;
+    }
 
     /**
      * Проверяет, просрочена ли задача

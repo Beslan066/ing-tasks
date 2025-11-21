@@ -13,6 +13,10 @@ Route::middleware(['auth', 'checkUserRole', 'verified'])->group(function () {
     Route::get('/admin/tasks', [\App\Http\Controllers\Frontend\HomeController::class, 'indexAdmin'])->name('tasks.admin');
 });
 
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/mail', [\App\Http\Controllers\Frontend\MailController::class, 'index'])->name('mail.index');
+});
+
 Route::get('/create-company', [\App\Http\Controllers\Frontend\HomeController::class, 'noCompanies'])->middleware(['auth', 'verified'])->name('no.companies');
 
 // Публичные маршруты для приглашений (доступны без авторизации)
@@ -26,20 +30,22 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified']], functi
     Route::get('/create', [App\Http\Controllers\Frontend\TaskController::class, 'create'])->name('tasks.create');
     Route::post('/store', [App\Http\Controllers\Frontend\TaskController::class, 'store'])->name('tasks.store');
 
-    // Маршрут для просмотра задачи (ДОБАВЬТЕ ЭТОТ)
+    // Маршрут для просмотра задачи
     Route::get('/{task}/view', [App\Http\Controllers\Frontend\TaskController::class, 'view'])->name('tasks.view');
+
+    // Маршруты для редактирования задачи (ОСТАВЛЯЕМ ТОЛЬКО ЭТИ)
+    Route::get('/{task}/get', [App\Http\Controllers\Frontend\TaskController::class, 'getTask'])->name('tasks.get');
+    Route::post('/{task}/update', [App\Http\Controllers\Frontend\TaskController::class, 'update'])->name('tasks.update');
 
     // МАРШРУТЫ ДЛЯ УПРАВЛЕНИЯ ЗАДАЧАМИ СОТРУДНИКАМИ
     Route::post('/{task}/take', [App\Http\Controllers\Frontend\TaskController::class, 'takeTask'])->name('tasks.take');
-    Route::put('/{task}/status', [App\Http\Controllers\Frontend\TaskController::class, 'updateTaskStatus'])->name('tasks.status');
+    Route::patch('/{task}/status', [App\Http\Controllers\Frontend\TaskController::class, 'updateTaskStatus'])->name('tasks.status');
     Route::post('/{task}/reject', [App\Http\Controllers\Frontend\TaskController::class, 'rejectTask'])->name('tasks.reject');
     Route::post('/{task}/attach-file', [App\Http\Controllers\Frontend\TaskController::class, 'attachFile'])->name('tasks.attach-file');
 
-    // МАРШРУТЫ ДЛЯ АДМИНИСТРАТОРОВ (ПЕРЕНЕСЕМ ИЗ HomeController)
-    Route::get('/{task}/get', [App\Http\Controllers\Frontend\TaskController::class, 'getTask'])->name('admin.tasks.get');
-    Route::post('/{task}/update', [App\Http\Controllers\Frontend\TaskController::class, 'updateTask'])->name('admin.tasks.update');
+    // МАРШРУТЫ ДЛЯ АДМИНИСТРАТОРОВ
     Route::post('/{task}/return-to-work', [App\Http\Controllers\Frontend\TaskController::class, 'returnToWork'])->name('admin.tasks.return-to-work');
-    Route::post('/{task}/delete', [App\Http\Controllers\Frontend\TaskController::class, 'deleteTask'])->name('admin.tasks.delete');
+    Route::delete('/{task}/delete', [App\Http\Controllers\Frontend\TaskController::class, 'destroy'])->name('admin.tasks.delete');
     Route::post('/{task}/add-files', [App\Http\Controllers\Frontend\TaskController::class, 'addFiles'])->name('tasks.add-files');
 });
 

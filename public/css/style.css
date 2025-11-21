@@ -1,0 +1,201 @@
+.file-upload-area {
+    transition: all 0.3s ease;
+}
+
+.file-upload-area.dragover {
+    border-color: #16a34a;
+    background-color: #f0fdf4;
+}
+
+.subtask-item {
+    transition: all 0.2s ease;
+}
+
+/* Стилизация select */
+select {
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* УБИРАЕМ ВСЕ СТИЛИ ДЛЯ OPTION - они не работают корректно в большинстве браузеров */
+
+/* Стилизация input */
+input[type="text"],
+input[type="number"],
+input[type="datetime-local"],
+textarea {
+    transition: all 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="datetime-local"]:focus,
+textarea:focus,
+select:focus {
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+    border-color: #16a34a;
+}
+
+/* Кастомный стиль для datetime-local */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.5);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+    background: #f3f4f6;
+}
+
+/* Стилизация placeholder */
+::placeholder {
+    color: #9ca3af;
+    opacity: 1;
+}
+
+:-ms-input-placeholder {
+    color: #9ca3af;
+}
+
+::-ms-input-placeholder {
+    color: #9ca3af;
+}
+
+/* Стилизация скроллбара */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.gradient-bg {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+}
+
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.sidebar {
+    transition: all 0.3s ease;
+}
+
+.task-card {
+    transition: all 0.2s ease;
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+}
+
+.board-column {
+    min-height: 500px;
+}
+
+.page {
+    display: none;
+}
+
+.active-page {
+    display: block;
+}
+
+.active-nav {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+.before\:bg-\[url\(\'https\:\/\/preline\.co\/assets\/svg\/examples\/polygon-bg-element\.svg\'\)\]::before {
+    background-image: unset !important;
+}
+
+.sidebar {
+    min-height: 100vh !important;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 12px;
+    color: white;
+}
+
+.online-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #10B981;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border: 2px solid white;
+}
+
+.avatar-container {
+    position: relative;
+    display: inline-block;
+}
+
+.email-badge {
+    background-color: #fef3c7;
+    color: #92400e;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 4px;
+}
+
+.modal-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid #e5e7eb;
+}
+
+.file-upload-area {
+    transition: all 0.3s ease;
+}
+
+.file-upload-area.dragover {
+    border-color: #16a34a;
+    background-color: #f0fdf4;
+}
+
+.subtask-item {
+    transition: all 0.2s ease;
+}
+
+.priority-low { border-left: 4px solid #10B981; }
+.priority-medium { border-left: 4px solid #f59e0b; }
+.priority-high { border-left: 4px solid #ef4444; }
+.priority-critical { border-left: 4px solid #7c3aed; }

@@ -180,40 +180,61 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                         @forelse($tasks as $task)
-                            <tr class="hover:bg-gray-50 transition">
+                            <tr class="hover:bg-gray-50 transition
+                    @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">{{ $task->name }}</div>
+                                            <div class="text-sm font-medium text-gray-900 flex items-center">
+                                                {{ $task->name }}
+                                                @if($task->trashed())
+                                                    <span class="ml-2 px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                                            <i class="fas fa-trash mr-1"></i>Удалена
+                                        </span>
+                                                @endif
+                                            </div>
                                             <div class="text-sm text-gray-500 truncate max-w-xs">{{ $task->description }}</div>
                                             <div class="flex space-x-2 mt-1">
                                                 @if($task->category)
                                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                        {{ $task->category->name }}
-                                                    </span>
+                                            {{ $task->category->name }}
+                                        </span>
                                                 @endif
                                                 @if($task->rejections_count > 0)
                                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
                                                           title="Количество отказов: {{ $task->rejections_count }}">
-                                                        <i class="fas fa-user-slash mr-1"></i>
-                                                        {{ $task->rejections_count }}
-                                                    </span>
+                                            <i class="fas fa-user-slash mr-1"></i>
+                                            {{ $task->rejections_count }}
+                                        </span>
+                                                @endif
+                                                @if($task->trashed() && $task->deletedBy)
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                                          title="Удалил: {{ $task->deletedBy->name }}">
+                                            <i class="fas fa-user-times mr-1"></i>
+                                            Удалил: {{ $task->deletedBy->name }}
+                                        </span>
                                                 @endif
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                    {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
-                                    {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
-                                    {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                    {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                    {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
-                                    {{ $task->status }}
-                                </span>
-                                    @if($task->isOverdue())
-                                        <span class="ml-1 text-xs text-red-600">⚠️ Просрочена</span>
+                                    @if($task->trashed())
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                Удалена
+                            </span>
+                                    @else
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
+                                {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
+                                {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
+                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
+                                {{ $task->status }}
+                            </span>
+                                        @if($task->isOverdue())
+                                            <span class="ml-1 text-xs text-red-600">⚠️ Просрочена</span>
+                                        @endif
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -243,12 +264,16 @@
                                             'критический' => 'bg-red-100 text-red-800'
                                         ];
                                     @endphp
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $priorityColors[$task->priority] ?? 'bg-gray-100 text-gray-800' }}">
-                                    {{ $task->priority }}
-                                </span>
+                                    @if(!$task->trashed())
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $priorityColors[$task->priority] ?? 'bg-gray-100 text-gray-800' }}">
+                                {{ $task->priority }}
+                            </span>
+                                    @else
+                                        <span class="text-sm text-gray-400">—</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    @if($task->deadline)
+                                    @if($task->deadline && !$task->trashed())
                                         <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }}">
                                             {{ $task->deadline->format('d.m.Y H:i') }}
                                         </div>
@@ -260,18 +285,28 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex space-x-2">
-                                        <button onclick="openEditModal({{ $task->id }})"
-                                                class="text-blue-600 hover:text-blue-900"><i class="fa-solid fa-file-pen" style="color: #854d0e;"></i></button>
+                                    @if($task->trashed())
+                                        <span class="text-gray-400">Действия недоступны</span>
+                                    @else
+                                        <div class="flex space-x-2">
+                                            <button onclick="openEditModal({{ $task->id }})"
+                                                    class="text-blue-600 hover:text-blue-900"><i class="fa-solid fa-file-pen" style="color: #854d0e;"></i></button>
 
-                                        @if($task->status === 'на проверке')
-                                            <button onclick="returnToWork({{ $task->id }})"
-                                                    class="text-orange-600 hover:text-orange-900">Вернуть</button>
-                                        @endif
+                                            @if($task->status === 'на проверке')
+                                                <button onclick="returnToWork({{ $task->id }})"
+                                                        class="text-orange-600 hover:text-orange-900">Вернуть</button>
+                                            @endif
 
-                                        <button onclick="openDeleteModal({{ $task->id }})"
-                                                class="text-red-600 hover:text-red-900"><i class="fa-solid fa-trash" style="color: #dc2626;"></i></button>
-                                    </div>
+                                            @if($task->author_id === Auth::id())
+                                                <button onclick="openDeleteModal({{ $task->id }})"
+                                                        class="text-red-600 hover:text-red-900"><i class="fa-solid fa-trash" style="color: #dc2626;"></i></button>
+                                            @else
+                                                <button class="text-gray-400 cursor-not-allowed" title="Можно удалять только свои задачи">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            @endif
+                                        </div>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
@@ -474,12 +509,10 @@
     <div id="deleteTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-4">Удаление задачи</h3>
-            <p class="text-gray-600 mb-4">Укажите причину удаления:</p>
-            <textarea id="deleteReason" placeholder="Причина удаления..."
-                      class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 h-24 resize-none"></textarea>
+            <p class="text-gray-600 mb-4">Вы уверены, что хотите удалить эту задачу? Это действие нельзя отменить.</p>
             <div class="flex space-x-3">
                 <button onclick="confirmDeleteTask()" class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">
-                    Удалить задачу
+                    Да, удалить
                 </button>
                 <button onclick="closeDeleteModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
                     Отмена
@@ -727,7 +760,7 @@
             }
         }
 
-        // Открыть модальное окно удаления
+        // Обновленная функция для модального окна удаления
         function openDeleteModal(taskId) {
             currentTaskId = taskId;
             document.getElementById('deleteTaskModal').classList.remove('hidden');
@@ -736,27 +769,22 @@
         // Закрыть модальное окно удаления
         function closeDeleteModal() {
             document.getElementById('deleteTaskModal').classList.add('hidden');
-            document.getElementById('deleteReason').value = '';
             currentTaskId = null;
         }
 
         // Подтвердить удаление задачи
         async function confirmDeleteTask() {
-            const reason = document.getElementById('deleteReason').value.trim();
-
-            if (!reason) {
-                alert('Пожалуйста, укажите причину удаления');
+            if (!confirm('Вы уверены, что хотите удалить эту задачу?')) {
                 return;
             }
 
             try {
                 const response = await fetch(`/tasks/${currentTaskId}/delete`, {
-                    method: 'POST',
+                    method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ reason })
+                    }
                 });
 
                 const data = await response.json();

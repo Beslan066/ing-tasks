@@ -524,7 +524,7 @@ ${task.rejections && task.rejections.length > 0 ? `
         async function startTask(taskId) {
             try {
                 const response = await fetch(`/tasks/${taskId}/status`, {
-                    method: 'PUT',
+                    method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -563,7 +563,7 @@ ${task.rejections && task.rejections.length > 0 ? `
 
             try {
                 const response = await fetch(`/tasks/${currentTaskId}/status`, {
-                    method: 'PUT',
+                    method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'

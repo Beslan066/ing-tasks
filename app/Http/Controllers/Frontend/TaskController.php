@@ -392,6 +392,8 @@ class TaskController extends Controller
         }
     }
 
+
+
     /**
      * Reject task (for employees)
      */
@@ -525,20 +527,34 @@ class TaskController extends Controller
         $user = Auth::user();
 
         if (!$user->canViewAllCompanyTasks()) {
-            abort(403, 'У вас нет прав для редактирования задач');
+            return response()->json([
+                'success' => false,
+                'message' => 'У вас нет прав для редактирования задач'
+            ], 403);
         }
 
         if ($task->company_id !== $user->company_id) {
-            abort(403, 'Задача не принадлежит вашей компании');
+            return response()->json([
+                'success' => false,
+                'message' => 'Задача не принадлежит вашей компании'
+            ], 403);
         }
 
-        $departments = Department::where('company_id', $user->company_id)->get();
-        $categories = Category::where('company_id', $user->company_id)->get();
-        $users = User::where('company_id', $user->company_id)->get();
+        // Загружаем все необходимые отношения
+        $task->load(['author', 'user', 'department', 'category', 'files', 'subtasks']);
 
-        return view('frontend.tasks.edit', compact('task', 'departments', 'categories', 'users'));
+        return response()->json([
+            'success' => true,
+            'task' => $task,
+            'departments' => Department::where('company_id', $user->company_id)->get(),
+            'categories' => Category::where('company_id', $user->company_id)->get(),
+            'users' => User::where('company_id', $user->company_id)->get()
+        ]);
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
     /**
      * Update the specified resource in storage.
      */
@@ -560,7 +576,8 @@ class TaskController extends Controller
             ], 403);
         }
 
-        $request->validate([
+        // Валидация
+        $validator = \Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'department_id' => 'required|exists:departments,id',
@@ -572,6 +589,15 @@ class TaskController extends Controller
             'estimated_hours' => 'nullable|numeric|min:0',
             'actual_hours' => 'nullable|numeric|min:0',
         ]);
+
+        if ($validator->fails()) {
+            \Log::error('Validation failed:', $validator->errors()->toArray());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибки валидации',
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
         try {
             // Проверяем, что отдел принадлежит компании
@@ -598,7 +624,7 @@ class TaskController extends Controller
             }
 
             // Обновляем задачу
-            $task->update([
+            $updateData = [
                 'name' => $request->name,
                 'description' => $request->description,
                 'department_id' => $request->department_id,
@@ -609,12 +635,31 @@ class TaskController extends Controller
                 'deadline' => $request->deadline,
                 'estimated_hours' => $request->estimated_hours,
                 'actual_hours' => $request->actual_hours,
-            ]);
+            ];
+
+            // Если задача завершена, устанавливаем время завершения
+            if ($request->status === 'выполнена' && $task->status !== 'выполнена') {
+                $updateData['completed_at'] = now();
+            }
+
+            // Если задача больше не выполнена, сбрасываем время завершения
+            if ($request->status !== 'выполнена' && $task->status === 'выполнена') {
+                $updateData['completed_at'] = null;
+            }
+
+            $task->update($updateData);
 
             // Отправляем уведомление, если изменился исполнитель
             if ($newAssignedUser && $oldUserId !== $newAssignedUser->id) {
-                $newAssignedUser->notify(new TaskAssignedNotification($task));
+                try {
+                    $newAssignedUser->notify(new TaskAssignedNotification($task));
+                    \Log::info('Notification sent to new assigned user');
+                } catch (\Exception $e) {
+                    \Log::error('Notification error: ' . $e->getMessage());
+                }
             }
+
+            \Log::info('Task updated successfully', ['task_id' => $task->id, 'updated_fields' => array_keys($updateData)]);
 
             return response()->json([
                 'success' => true,
@@ -624,6 +669,7 @@ class TaskController extends Controller
 
         } catch (\Exception $e) {
             \Log::error('Ошибка при обновлении задачи: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
                 'message' => 'Ошибка при обновлении задачи: ' . $e->getMessage()
@@ -634,25 +680,20 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task)
+    public function destroy(Request $request, Task $task)
     {
         $user = Auth::user();
 
-        if (!$user->canViewAllCompanyTasks()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'У вас нет прав для удаления задач'
-            ], 403);
-        }
-
-        if ($task->company_id !== $user->company_id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Задача не принадлежит вашей компании'
-            ], 403);
-        }
-
         try {
+            // Проверяем, что пользователь является автором задачи
+            if (!$task->canBeDeletedBy($user)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Вы можете удалять только свои задачи'
+                ], 403);
+            }
+
+            // Проверяем, можно ли удалить задачу
             if (!$task->canBeDeleted()) {
                 return response()->json([
                     'success' => false,
@@ -660,6 +701,8 @@ class TaskController extends Controller
                 ], 422);
             }
 
+            // Выполняем мягкое удаление с сохранением информации о том, кто удалил
+            $task->update(['deleted_by' => $user->id]);
             $task->delete();
 
             return response()->json([
