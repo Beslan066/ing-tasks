@@ -67,20 +67,18 @@
 <div class="flex">
     <!-- Боковая панель -->
     <div class="sidebar w-64 bg-white border-r border-gray-200 py-6 px-4">
-        <div class="mb-8">
-            <div class="bg-gray-50 rounded-lg p-3">
-                <div class="flex items-center space-x-3">
-                    <div>
-                        <p class="font-medium " style="color: #16a34a; font-weight: 600 ">{{auth()->user()->company->name}}</p>
-                        <p class="text-xs text-gray-800">Участников: <span style="color: #16a34a; font-weight: 8">{{auth()->user()->company->users()->count()}}</span></p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="mb-8">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-gray-700">Мои задачи</h2>
+            <div class="mb-4">
+                <a href="{{route('tasks.admin')}}">
+                    <h2 class="text-lg font-semibold text-gray-700">Моя организация</h2>
+                </a>
+            </div>
+
+            <div class="mb-4">
+                <a href="{{route('welcome')}}">
+                    <h2 class="text-lg font-semibold text-gray-700">Мои задачи</h2>
+                </a>
             </div>
         </div>
 
@@ -326,7 +324,7 @@
         document.getElementById('taskForm').reset();
         document.getElementById('fileList').innerHTML = '';
         const subtasksContainer = document.getElementById('subtasksContainer');
-        subtasksContainer.innerHTML = '<div class="flex space-x-2 mb-2"><input type="text" name="subtasks[]" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Название подзадачи"><button type="button" onclick="removeSubtask(this)" class="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"><i class="fas fa-times"></i></button></div>';
+        subtasksContainer.innerHTML = '<div class="flex space-x-2 mb-2"><input type="text" name="subtasks[]" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Название подзадачи"><button type="button" onclick="removeSubtask(this)" class="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"><i class="fas fa-times"></i></button></div>';
 
         // Установить заголовок для создания
         document.querySelector('#taskModal h3').textContent = 'Новая задача';
@@ -347,7 +345,7 @@
         const div = document.createElement('div');
         div.className = 'flex space-x-2 mb-2';
         div.innerHTML = `
-            <input type="text" name="subtasks[]" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Название подзадачи" value="${value}">
+            <input type="text" name="subtasks[]" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Название подзадачи" value="${value}">
             <button type="button" onclick="removeSubtask(this)" class="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
                 <i class="fas fa-times"></i>
             </button>

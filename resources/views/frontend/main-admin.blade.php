@@ -7,12 +7,12 @@
             <div class="mx-auto px-4">
                 <div class="flex justify-between items-center py-6">
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900">Панель управления задачами</h1>
+                        <h1 class="text-3xl font-bold " style="color: #16a34a;">{{auth()->user()->company->name}}</h1>
                         <p class="text-gray-500 mt-1">Обзор всех задач компании</p>
                     </div>
                     <div class="flex space-x-4">
                         <button id="newTaskBtn"
-                                class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700 transition">
+                                class=" text-white px-4 py-2 rounded-lg flex items-center space-x-2  transition" style="background-color: #16a34a;">
                             <i class="fas fa-plus"></i>
                             <span>Новая задача</span>
                         </button>
@@ -65,14 +65,14 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
                         <input type="text" name="search" value="{{ request('search') }}"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-600"
                                placeholder="Название или описание...">
                     </div>
 
                     <!-- Статус -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                        <select name="status" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <select name="status" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-600">
                             <option value="">Все статусы</option>
                             @foreach($filterData['statuses'] as $status)
                                 <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
@@ -85,7 +85,7 @@
                     <!-- Исполнитель -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Исполнитель</label>
-                        <select name="user_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <select name="user_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-600">
                             <option value="">Все исполнители</option>
                             @foreach($filterData['users'] as $user)
                                 <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
@@ -98,7 +98,7 @@
                     <!-- Отдел -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
-                        <select name="department_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <select name="department_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-500">
                             <option value="">Все отделы</option>
                             @foreach($filterData['departments'] as $department)
                                 <option value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
@@ -111,7 +111,7 @@
                     <!-- Приоритет -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
-                        <select name="priority" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <select name="priority" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-600">
                             <option value="">Все приоритеты</option>
                             @foreach($filterData['priorities'] as $priority)
                                 <option value="{{ $priority }}" {{ request('priority') == $priority ? 'selected' : '' }}>
@@ -124,7 +124,7 @@
                     <!-- Категория -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
-                        <select name="category_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <select name="category_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-600">
                             <option value="">Все категории</option>
                             @foreach($filterData['categories'] as $category)
                                 <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -155,7 +155,7 @@
                     Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
                 </div>
                 <div class="flex items-center space-x-4">
-                    <select id="sortSelect" class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select id="sortSelect" class="border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600">
                         <option value="created_at_desc">Новые сначала</option>
                         <option value="created_at_asc">Старые сначала</option>
                         <option value="deadline_asc">Ближайший дедлайн</option>
@@ -350,7 +350,7 @@
                     <div class="md:col-span-2">
                         <label class="block text-gray-700 text-sm font-medium mb-2">Название задачи *</label>
                         <input type="text" name="name" id="editTaskName"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600"
                                required>
                     </div>
 
@@ -358,14 +358,14 @@
                     <div class="md:col-span-2">
                         <label class="block text-gray-700 text-sm font-medium mb-2">Описание</label>
                         <textarea name="description" id="editTaskDescription" rows="3"
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600"></textarea>
                     </div>
 
                     <!-- Отдел -->
                     <div>
                         <label class="block text-gray-700 text-sm font-medium mb-2">Отдел *</label>
                         <select name="department_id" id="editTaskDepartment"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600" required>
                             <option value="">Выберите отдел</option>
                         </select>
                     </div>
@@ -374,7 +374,7 @@
                     <div>
                         <label class="block text-gray-700 text-sm font-medium mb-2">Категория</label>
                         <select name="category_id" id="editTaskCategory"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600">
                             <option value="">Без категории</option>
                         </select>
                     </div>
@@ -383,7 +383,7 @@
                     <div>
                         <label class="block text-gray-700 text-sm font-medium mb-2">Исполнитель</label>
                         <select name="user_id" id="editTaskUser"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600">
                             <option value="">Не назначен</option>
                         </select>
                     </div>
@@ -392,7 +392,7 @@
                     <div>
                         <label class="block text-gray-700 text-sm font-medium mb-2">Приоритет *</label>
                         <select name="priority" id="editTaskPriority"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600" required>
                             <option value="низкий">Низкий</option>
                             <option value="средний">Средний</option>
                             <option value="высокий">Высокий</option>
@@ -404,7 +404,7 @@
                     <div>
                         <label class="block text-gray-700 text-sm font-medium mb-2">Статус *</label>
                         <select name="status" id="editTaskStatus"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600" required>
                             <option value="не назначена">Не назначена</option>
                             <option value="назначена">Назначена</option>
                             <option value="в работе">В работе</option>
@@ -418,21 +418,21 @@
                     <div>
                         <label class="block text-gray-700 text-sm font-medium mb-2">Дедлайн</label>
                         <input type="datetime-local" name="deadline" id="editTaskDeadline"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600">
                     </div>
 
                     <!-- Планируемое время -->
                     <div>
                         <label class="block text-gray-700 text-sm font-medium mb-2">Планируемое время (часы)</label>
                         <input type="number" name="estimated_hours" id="editTaskEstimatedHours" step="0.5" min="0"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600">
                     </div>
 
                     <!-- Фактическое время -->
                     <div>
                         <label class="block text-gray-700 text-sm font-medium mb-2">Фактическое время (часы)</label>
                         <input type="number" name="actual_hours" id="editTaskActualHours" step="0.5" min="0"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600">
                     </div>
 
                     <!-- 🔥 НОВЫЙ БЛОК: История отказов -->
@@ -461,7 +461,7 @@
                         <div class="border border-dashed border-gray-300 rounded-lg p-4">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Добавить новые файлы</label>
                             <input type="file" id="newFilesInput" multiple
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600"
                                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.txt">
                             <div id="newFilesList" class="mt-2 space-y-1">
                                 <!-- Список выбранных файлов будет здесь -->
