@@ -3,7 +3,14 @@
 use App\Http\Controllers\Frontend\TeamController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+
+
+Route::get('/check-overdue-tasks', function() {
+    Artisan::call('tasks:check-overdue');
+    return response()->json(['message' => 'Checked overdue tasks']);
+});
 
 // Домашняя страница
 Route::middleware(['auth', 'checkUserRole', 'verified'])->group(function () {

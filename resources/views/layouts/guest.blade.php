@@ -13,16 +13,28 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <style>
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover,
+            input:-webkit-autofill:focus {
+                -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset;
+                -webkit-text-fill-color: #111827;
+                transition: background-color 5000s ease-in-out 0s;
+            }
+
+            .dark input:-webkit-autofill,
+            .dark input:-webkit-autofill:hover,
+            .dark input:-webkit-autofill:focus {
+                -webkit-box-shadow: 0 0 0px 1000px #374151 inset;
+                -webkit-text-fill-color: white;
+            }
+        </style>
     </head>
     <body class="font-sans text-gray-900 antialiased">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg " style="border: 1px solid #16a34a">
                 {{ $slot }}
             </div>
         </div>

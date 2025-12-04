@@ -304,4 +304,20 @@ class Task extends Model
     {
         return $this->rejections()->count();
     }
+
+    /**
+     * Автоматически обновляет статус на "просрочена" если дедлайн прошел
+     */
+    public function updateOverdueStatus(): bool
+    {
+        if ($this->deadline &&
+            $this->deadline->isPast() &&
+            !in_array($this->status, [self::STATUS_COMPLETED, self::STATUS_OVERDUE])) {
+            return $this->update([
+                'status' => self::STATUS_OVERDUE
+            ]);
+        }
+
+        return false;
+    }
 }

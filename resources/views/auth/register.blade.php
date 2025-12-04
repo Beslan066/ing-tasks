@@ -1,4 +1,8 @@
 <x-guest-layout>
+
+    <div class=" mb-2 flex items-center w-100">
+        <h1 class="text-2xl font-bold text-dark">Менеджер<span class="text-green-600">Плюс</span></h1>
+    </div>
     <form method="POST" action="{{ route('register') }}">
         @csrf
 

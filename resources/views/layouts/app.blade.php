@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="shortcut icon" href="{{asset('img/favicon.ico')}}" type="image/x-icon">
 
     <script>
         tailwind.config = {
@@ -80,32 +81,6 @@
         <div class="mb-8">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold text-gray-700">Мои задачи</h2>
-                <button class="text-primary hover:text-secondary">
-                    <i class="fas fa-plus"></i>
-                </button>
-            </div>
-            <div class="space-y-2">
-                <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-2 h-2 rounded-full bg-primary"></div>
-                        <span class="text-gray-700">В работе</span>
-                    </div>
-                    <span class="bg-primary text-white text-xs rounded-full px-2 py-1">5</span>
-                </div>
-                <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
-                        <span class="text-gray-700">На проверке</span>
-                    </div>
-                    <span class="bg-yellow-500 text-white text-xs rounded-full px-2 py-1">3</span>
-                </div>
-                <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                        <span class="text-gray-700">Завершённые</span>
-                    </div>
-                    <span class="bg-green-500 text-white text-xs rounded-full px-2 py-1">12</span>
-                </div>
             </div>
         </div>
 

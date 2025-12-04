@@ -34,6 +34,12 @@
                         <div class="text-2xl font-bold text-yellow-700">{{ $stats['assigned'] }}</div>
                         <div class="text-yellow-600 text-sm">Назначены</div>
                     </div>
+
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-green-700">{{ $stats['completed'] }}</div>
+                        <div class="text-green-600 text-sm">Выполнено</div>
+                    </div>
+
                     <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
                         <div class="text-2xl font-bold text-blue-700">{{ $stats['in_progress'] }}</div>
                         <div class="text-blue-600 text-sm">В работе</div>
@@ -46,10 +52,7 @@
                         <div class="text-2xl font-bold text-red-700">{{ $stats['overdue'] }}</div>
                         <div class="text-red-600 text-sm">Просрочено</div>
                     </div>
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                        <div class="text-2xl font-bold text-green-700">{{ $stats['completed'] }}</div>
-                        <div class="text-green-600 text-sm">Выполнено</div>
-                    </div>
+
                 </div>
             </div>
         </div>
