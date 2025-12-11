@@ -22,18 +22,22 @@ class CheckUserRole
             return redirect('/login');
         }
 
-        // Проверяем, является ли пользователь руководителем
-        if ($user->isManager()) {
-            // Если это главная страница, перенаправляем на админскую версию
-            if ($request->route()->getName() === 'welcome' || $request->is('/')) {
-                return redirect()->route('tasks.admin');
-            }
-        } else {
-            // Если сотрудник пытается зайти на админскую страницу - ЗАПРЕЩАЕМ доступ
-            if ($request->route()->getName() === 'tasks.admin' || $request->is('admin/tasks')) {
-                abort(403, 'У вас нет прав для доступа к панели руководителя');
-            }
+        // Предзагружаем роль для оптимизации
+        if (!$user->relationLoaded('role')) {
+            $user->load('role');
         }
+
+        // Проверяем, является ли пользователь руководителем или менеджером
+        $isManagerOrLeader = $user->isManager();
+
+        // Если обычный сотрудник пытается зайти на админскую страницу - запрещаем
+        if (!$isManagerOrLeader &&
+            ($request->route()->getName() === 'tasks.admin' || $request->is('admin/tasks'))) {
+            abort(403, 'У вас нет прав для доступа к панели руководителя');
+        }
+
+        // УБИРАЕМ автоматический редирект на админку для менеджеров
+        // Руководители и менеджеры могут выбирать куда переходить
 
         return $next($request);
     }

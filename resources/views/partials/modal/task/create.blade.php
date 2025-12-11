@@ -138,21 +138,6 @@
                 </div>
             </div>
 
-            <!-- Подзадачи -->
-            <div class="space-y-2">
-                <div class="flex items-center justify-between">
-                    <label class="block text-gray-700 text-sm font-semibold">Подзадачи</label>
-                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full" id="subtaskCount">0 подзадач</span>
-                </div>
-                <div id="subtasksContainer" class="space-y-2 max-h-32 overflow-y-auto p-1">
-                    <!-- Подзадачи будут добавляться здесь -->
-                </div>
-                <button type="button" onclick="addSubtask()"
-                        class="w-full px-4 py-2.5 border-2 border-dashed border-gray-300 text-gray-600 rounded-lg hover:border-primary hover:text-primary transition-all font-medium bg-white hover:bg-gray-50">
-                    <i class="fas fa-plus mr-2"></i>Добавить подзадачу
-                </button>
-            </div>
-
             <!-- Кнопки действий -->
             <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
                 <button type="button" onclick="closeTaskModal()"

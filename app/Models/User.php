@@ -156,18 +156,25 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isLeader(): bool
     {
-        return $this->isCompanyOwner() ||
-            $this->isSupervisor() ||
-            $this->hasRole('руководитель') ||
-            $this->hasRole('администратор');
-    }
+        // Проверяем стандартные признаки руководителя
+        if ($this->isCompanyOwner() || $this->isSupervisor()) {
+            return true;
+        }
 
+        // Проверяем по роли - используем точное название
+        if (!$this->role) {
+            return false;
+        }
+
+        $roleName = trim($this->role->name);
+        return $roleName === 'Руководитель' || $roleName === 'Администратор';
+    }
     /**
      * Обновленный метод - руководитель любого уровня
      */
     public function isManager(): bool
     {
-        return $this->isLeader();
+        return $this->isLeader() || $this->isManagerRole();
     }
 
     // === НОВЫЕ СВЯЗИ ===
@@ -276,12 +283,39 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function hasRole(string $roleName): bool
     {
+        if (!$this->relationLoaded('role')) {
+            $this->load('role');
+        }
+
         if (!$this->role) {
             return false;
         }
 
-        // Предполагаем, что у модели Role есть поле 'name'
-        return $this->role->name === $roleName;
+        // Упрощаем: сравниваем как есть, без приведения к нижнему регистру
+        return trim($this->role->name) === trim($roleName);
+    }
+
+
+    /**
+     * Проверяет, имеет ли пользователь одну из указанных ролей
+     */
+    public function hasAnyRole(array $roleNames): bool
+    {
+        if (!$this->relationLoaded('role')) {
+            $this->load('role');
+        }
+
+        if (!$this->role) {
+            return false;
+        }
+
+        foreach ($roleNames as $roleName) {
+            if (strtolower(trim($this->role->name)) === strtolower(trim($roleName))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -429,5 +463,106 @@ class User extends Authenticatable implements MustVerifyEmail
             'completed' => $completed,
             'completion_rate' => $completionRate
         ];
+    }
+
+    /**
+     * Проверяет, является ли пользователь менеджером (имеет роль менеджера)
+     */
+    public function isManagerRole(): bool
+    {
+        if (!$this->role) {
+            return false;
+        }
+
+        return trim($this->role->name) === 'Менеджер';
+    }
+
+    /**
+     * Проверяет, может ли пользователь создавать задачи для других
+     */
+    public function canCreateTasksForOthers(): bool
+    {
+        return $this->isManager() || $this->isManagerRole();
+    }
+
+    /**
+     * Получает отделы, которыми может управлять пользователь
+     */
+    public function getManageableDepartments()
+    {
+        if ($this->isManager()) {
+            // Руководитель управляет всеми отделами компании
+            return Department::where('company_id', $this->company_id)->get();
+        }
+
+        if ($this->isManagerRole()) {
+            // Менеджер управляет своим отделом и подчиненными отделами
+            $departmentIds = [$this->department_id];
+
+            // Если менеджер руководит какими-то отделами
+            if ($this->supervisedDepartments()->exists()) {
+                $departmentIds = array_merge(
+                    $departmentIds,
+                    $this->supervisedDepartments()->pluck('id')->toArray()
+                );
+            }
+
+            return Department::whereIn('id', $departmentIds)->get();
+        }
+
+        return collect();
+    }
+
+    /**
+     * Получает пользователей, которым можно назначать задачи
+     */
+    public function getAssignableUsers()
+    {
+        if ($this->isLeader()) {
+            // РУКОВОДИТЕЛЬ: все активные пользователи компании
+            return User::where('company_id', $this->company_id)
+                ->where('is_active', true)
+                ->get();
+        }
+
+        if ($this->isManagerRole()) {
+            // МЕНЕДЖЕР: только пользователи из доступных отделов
+            $departmentIds = $this->getManageableDepartments()->pluck('id')->toArray();
+
+            return User::where('company_id', $this->company_id)
+                ->whereIn('department_id', $departmentIds)
+                ->where('is_active', true)
+                ->get();
+        }
+
+        return collect();
+    }
+
+    /**
+     * Получает всех пользователей компании (для руководителя)
+     */
+    public function getAllCompanyUsers()
+    {
+        if (!$this->company_id) {
+            return collect();
+        }
+
+        return User::where('company_id', $this->company_id)
+            ->where('is_active', true)
+            ->get();
+    }
+
+    /**
+     * Получает пользователей для назначения задач в зависимости от роли
+     */
+    public function getUsersForTaskAssignment()
+    {
+        if ($this->isLeader()) {
+            // Руководитель видит всех пользователей компании
+            return $this->getAllCompanyUsers();
+        }
+
+        // Менеджер видит только пользователей из своих отделов
+        return $this->getAssignableUsers();
     }
 }

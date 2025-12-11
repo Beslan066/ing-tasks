@@ -24,6 +24,12 @@ class HomeController extends Controller
             return $this->noCompanies();
         }
 
+        // Перенаправляем руководителей и менеджеров на админскую панель
+        if ($user->isLeader()) {
+            return redirect()->route('tasks.admin');
+        }
+
+
         // Получаем задачи пользователя по статусам
         $tasksByStatus = [
             'new' => Task::with(['author', 'department', 'category', 'files'])
@@ -74,6 +80,31 @@ class HomeController extends Controller
     public function indexAdmin(Request $request)
     {
         $user = Auth::user();
+
+        // Проверяем права доступа к админской панели
+        if (!$user->isManager()) {
+            abort(403, 'У вас нет прав для доступа к панели руководителя');
+        }
+
+        // Оптимизируем запросы
+        $user->load(['company', 'role']);
+
+        // Определяем видимость задач в зависимости от роли
+        if ($user->isManagerRole() && !$user->isLeader()) {
+            // Менеджер видит только задачи своего отдела и где он автор
+            $tasksQuery = Task::with(['author', 'user', 'department', 'category'])
+                ->withCount('rejections')
+                ->where('company_id', $user->company_id)
+                ->where(function($query) use ($user) {
+                    $query->where('department_id', $user->department_id)
+                        ->orWhere('author_id', $user->id);
+                });
+        } else {
+            // Руководитель видит все задачи компании
+            $tasksQuery = Task::with(['author', 'user', 'department', 'category'])
+                ->withCount('rejections')
+                ->where('company_id', $user->company_id);
+        }
 
         // Базовый запрос - ВСЕ задачи компании пользователя
         $tasksQuery = Task::with(['author', 'user', 'department', 'category'])

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Task;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -91,6 +92,43 @@ class CategoryController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Ошибка при обновлении категории: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'category_id' => 'required|exists:categories,id',
+        ]);
+
+        try {
+            $user = auth()->user();
+
+            // Находим категорию, принадлежащую компании пользователя
+            $category = Category::where('company_id', $user->company_id)
+                ->findOrFail($request->category_id);
+
+            // Проверяем, нет ли связанных задач
+            $hasTasks = Task::where('category_id', $category->id)->exists();
+
+            if ($hasTasks) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Нельзя удалить категорию, так как есть задачи, связанные с ней'
+                ], 422);
+            }
+
+            $category->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Категория успешно удалена'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при удалении категории: ' . $e->getMessage()
             ], 500);
         }
     }

@@ -14,9 +14,9 @@ Route::get('/check-overdue-tasks', function() {
 
 // Домашняя страница
 Route::middleware(['auth', 'checkUserRole', 'verified'])->group(function () {
-    // Главная страница для сотрудников
     Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('welcome');
-    // Админская страница для руководителей
+
+    // Админская страница для руководителей и менеджеров
     Route::get('/admin/tasks', [\App\Http\Controllers\Frontend\HomeController::class, 'indexAdmin'])->name('tasks.admin');
 });
 
@@ -67,11 +67,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/photobank/photos', [\App\Http\Controllers\Frontend\PhotobankController::class, 'storePhoto'])->name('photobank.photos.store');
     Route::get('/photobank/categories', [\App\Http\Controllers\Frontend\PhotobankController::class, 'getCategories'])->name('photobank.categories.index');
     Route::get('/photobank/tags', [\App\Http\Controllers\Frontend\PhotobankController::class, 'getTags'])->name('photobank.tags.index');
+
+    Route::post('/category/create', [App\Http\Controllers\Frontend\CategoryController::class, 'store'])->name('category.store');
+    Route::get('/category/{id}/edit', [App\Http\Controllers\Frontend\CategoryController::class, 'edit'])->name('category.edit');
+    Route::patch('/category/update', [App\Http\Controllers\Frontend\CategoryController::class, 'update'])->name('category.update');
+    Route::delete('/category/delete', [App\Http\Controllers\Frontend\CategoryController::class, 'destroy'])->name('category.destroy');
 });
 
-Route::post('/category/create', [App\Http\Controllers\Frontend\CategoryController::class, 'store'])->name('category.store');
-Route::get('/category/{id}/edit', [App\Http\Controllers\Frontend\CategoryController::class, 'edit'])->name('category.edit');
-Route::patch('/category/update', [App\Http\Controllers\Frontend\CategoryController::class, 'update'])->name('category.update');
+
 
 Route::group(['prefix' => 'departments', 'middleware' => ['auth', 'verified', 'isManager']], function () {
     Route::get('/', [App\Http\Controllers\Frontend\DepartmentController::class, 'index'])->name('departments.index');

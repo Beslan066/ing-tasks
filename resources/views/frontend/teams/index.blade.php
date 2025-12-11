@@ -400,12 +400,22 @@
             </div>
         </div>
     </div>
-
-
 @endsection
 
 @push('scripts')
     <script>
+        // Глобальные переменные для модального окна приглашения
+        let selectedUsersData = new Map(); // email -> {email, name}
+        let searchTimeout = null;
+
+        // Функция для безопасной вставки данных в HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById('userModal');
             const modalContent = document.getElementById('modalContent');
@@ -443,10 +453,10 @@
                 filtersSection.style.opacity = '1';
                 filterArrow.className = 'fas fa-chevron-up text-xs ml-1';
                 toggleFiltersBtn.innerHTML = `
-            <i class="fas fa-filter"></i>
-            <span>Скрыть фильтры</span>
-            <i class="fas fa-chevron-up text-xs ml-1" id="filterArrow"></i>
-        `;
+                    <i class="fas fa-filter"></i>
+                    <span>Скрыть фильтры</span>
+                    <i class="fas fa-chevron-up text-xs ml-1" id="filterArrow"></i>
+                `;
                 filtersVisible = true;
                 localStorage.setItem('teamFiltersVisible', 'true');
             }
@@ -456,10 +466,10 @@
                 filtersSection.style.opacity = '0';
                 filterArrow.className = 'fas fa-chevron-down text-xs ml-1';
                 toggleFiltersBtn.innerHTML = `
-            <i class="fas fa-filter"></i>
-            <span>Показать фильтры</span>
-            <i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>
-        `;
+                    <i class="fas fa-filter"></i>
+                    <span>Показать фильтры</span>
+                    <i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>
+                `;
                 filtersVisible = false;
                 localStorage.setItem('teamFiltersVisible', 'false');
 
@@ -473,10 +483,10 @@
                 advancedFilters.classList.remove('hidden');
                 advancedArrow.className = 'fas fa-chevron-up text-xs ml-1';
                 toggleAdvancedFiltersBtn.innerHTML = `
-            <i class="fas fa-cog"></i>
-            <span>Скрыть расширенные</span>
-            <i class="fas fa-chevron-up text-xs ml-1" id="advancedArrow"></i>
-        `;
+                    <i class="fas fa-cog"></i>
+                    <span>Скрыть расширенные</span>
+                    <i class="fas fa-chevron-up text-xs ml-1" id="advancedArrow"></i>
+                `;
                 advancedFiltersVisible = true;
                 localStorage.setItem('teamAdvancedFiltersVisible', 'true');
 
@@ -492,10 +502,10 @@
                 advancedFilters.classList.add('hidden');
                 advancedArrow.className = 'fas fa-chevron-down text-xs ml-1';
                 toggleAdvancedFiltersBtn.innerHTML = `
-            <i class="fas fa-cog"></i>
-            <span>Расширенные</span>
-            <i class="fas fa-chevron-down text-xs ml-1" id="advancedArrow"></i>
-        `;
+                    <i class="fas fa-cog"></i>
+                    <span>Расширенные</span>
+                    <i class="fas fa-chevron-down text-xs ml-1" id="advancedArrow"></i>
+                `;
                 advancedFiltersVisible = false;
                 localStorage.setItem('teamAdvancedFiltersVisible', 'false');
 
@@ -552,11 +562,11 @@
 
             function loadUserDetails(userId) {
                 modalContent.innerHTML = `
-            <div class="flex justify-center items-center py-8">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                <span class="ml-3 text-gray-600">Загрузка данных...</span>
-            </div>
-        `;
+                    <div class="flex justify-center items-center py-8">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                        <span class="ml-3 text-gray-600">Загрузка данных...</span>
+                    </div>
+                `;
 
                 modal.classList.remove('hidden');
 
@@ -577,17 +587,17 @@
                     .catch(error => {
                         console.error('Error loading user details:', error);
                         modalContent.innerHTML = `
-                    <div class="text-center py-8">
-                        <div class="text-red-600 text-xl mb-4">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <p class="text-red-600 font-semibold">Ошибка загрузки данных</p>
-                        <p class="text-gray-600 mt-2">${error.message}</p>
-                        <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition" onclick="loadUserDetails(${userId})">
-                            Попробовать снова
-                        </button>
-                    </div>
-                `;
+                            <div class="text-center py-8">
+                                <div class="text-red-600 text-xl mb-4">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <p class="text-red-600 font-semibold">Ошибка загрузки данных</p>
+                                <p class="text-gray-600 mt-2">${error.message}</p>
+                                <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition" onclick="loadUserDetails(${userId})">
+                                    Попробовать снова
+                                </button>
+                            </div>
+                        `;
                     });
             }
 
@@ -596,137 +606,137 @@
                 const stats = data.stats;
 
                 modalContent.innerHTML = `
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Левая колонка - Информация о пользователе -->
-                <div class="lg:col-span-1">
-                    <div class="bg-gray-50 rounded-lg p-6">
-                        <div class="text-center mb-6">
-                            ${user.avatar ?
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Левая колонка - Информация о пользователе -->
+                        <div class="lg:col-span-1">
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <div class="text-center mb-6">
+                                    ${user.avatar ?
                     `<img src="/storage/public/${user.avatar}" alt="${user.name}" class="w-24 h-24 rounded-full mx-auto mb-4">` :
                     `<div class="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <span class="text-white text-2xl font-bold">${user.name.charAt(0)}</span>
-                                </div>`
+                                            <span class="text-white text-2xl font-bold">${user.name.charAt(0)}</span>
+                                        </div>`
                 }
-                            <h4 class="text-xl font-bold text-gray-900">${user.name}</h4>
-                            <p class="text-gray-600">${user.email}</p>
-                            <div class="mt-2">
-                                <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                                    ${user.role ? user.role.name : 'Роль не назначена'}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div>
-                                <label class="text-sm font-medium text-gray-600">Отдел:</label>
-                                <p class="text-gray-900">${user.department ? user.department.name : 'Не назначен'}</p>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-600">Статус:</label>
-                                <p>
-                                    <span class="px-2 py-1 ${user.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'} rounded-full text-xs">
-                                        ${user.is_active ? 'Активный' : 'Неактивный'}
-                                    </span>
-                                </p>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-600">Зарегистрирован:</label>
-                                <p class="text-gray-900">${new Date(user.created_at).toLocaleDateString('ru-RU')}</p>
-                            </div>
-                            ${user.last_login_at ? `
-                                <div>
-                                    <label class="text-sm font-medium text-gray-600">Последний вход:</label>
-                                    <p class="text-gray-900">${new Date(user.last_login_at).toLocaleString('ru-RU')}</p>
+                                    <h4 class="text-xl font-bold text-gray-900">${user.name}</h4>
+                                    <p class="text-gray-600">${user.email}</p>
+                                    <div class="mt-2">
+                                        <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                            ${user.role ? user.role.name : 'Роль не назначена'}
+                                        </span>
+                                    </div>
                                 </div>
-                            ` : ''}
+
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-600">Отдел:</label>
+                                        <p class="text-gray-900">${user.department ? user.department.name : 'Не назначен'}</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-600">Статус:</label>
+                                        <p>
+                                            <span class="px-2 py-1 ${user.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'} rounded-full text-xs">
+                                                ${user.is_active ? 'Активный' : 'Неактивный'}
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-600">Зарегистрирован:</label>
+                                        <p class="text-gray-900">${new Date(user.created_at).toLocaleDateString('ru-RU')}</p>
+                                    </div>
+                                    ${user.last_login_at ? `
+                                        <div>
+                                            <label class="text-sm font-medium text-gray-600">Последний вход:</label>
+                                            <p class="text-gray-900">${new Date(user.last_login_at).toLocaleString('ru-RU')}</p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Правая колонка - Статистика -->
+                        <div class="lg:col-span-2">
+                            <div class="mb-6">
+                                <h4 class="text-lg font-semibold mb-4">Статистика выполнения задач</h4>
+
+                                <!-- Фильтры периода -->
+                                <div class="flex space-x-2 mb-4">
+                                    <button class="period-filter-btn px-3 py-1 bg-blue-600 text-white rounded text-sm" data-period="week">Неделя</button>
+                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
+                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="year">Год</button>
+                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="all">Все время</button>
+                                </div>
+
+                                <!-- Карточки статистики -->
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                                        <div class="text-2xl font-bold text-blue-600">${stats.total_tasks}</div>
+                                        <div class="text-sm text-gray-600">Всего задач</div>
+                                    </div>
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                                        <div class="text-2xl font-bold text-green-600">${stats.completed_tasks}</div>
+                                        <div class="text-sm text-gray-600">Выполнено</div>
+                                    </div>
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                                        <div class="text-2xl font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</div>
+                                        <div class="text-sm text-gray-600">Средний % выполнения</div>
+                                    </div>
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                                        <div class="text-2xl font-bold ${stats.overdue_tasks > 0 ? 'text-red-600' : 'text-green-600'}">${stats.overdue_tasks}</div>
+                                        <div class="text-sm text-gray-600">Просрочено</div>
+                                    </div>
+                                </div>
+
+                                <!-- Прогресс бар -->
+                                <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="font-medium text-gray-700">Средний процент выполнения задач</span>
+                                        <span class="font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-3">
+                                        <div class="h-3 rounded-full transition-all duration-500 ${getCompletionRateColor(data.completion_rate).replace('text-', 'bg-')}"
+                                             style="width: ${Math.min(data.completion_rate, 100)}%"></div>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                        <span>0%</span>
+                                        <span>50%</span>
+                                        <span>100%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Кнопки экспорта и печати -->
+                            <div class="flex space-x-2 mb-6">
+                                <a href="/team/user/${user.id}/export?type=excel&period=all"
+                                   class="export-btn px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center space-x-2">
+                                    <i class="fas fa-file-excel"></i>
+                                    <span>Excel</span>
+                                </a>
+                                <a href="/team/user/${user.id}/export?type=pdf&period=all"
+                                   class="export-btn px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center space-x-2">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <span>PDF</span>
+                                </a>
+                                <a href="/team/user/${user.id}/print"
+                                   target="_blank"
+                                   class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center space-x-2">
+                                    <i class="fas fa-print"></i>
+                                    <span>Печать</span>
+                                </a>
+                            </div>
+
+                            <!-- Список задач -->
+                            <div>
+                                <h4 class="text-lg font-semibold mb-4">Задачи</h4>
+                                <div id="userTasksList">
+                                    <div class="flex justify-center items-center py-4">
+                                        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                                        <span class="ml-2 text-gray-600">Загрузка задач...</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Правая колонка - Статистика -->
-                <div class="lg:col-span-2">
-                    <div class="mb-6">
-                        <h4 class="text-lg font-semibold mb-4">Статистика выполнения задач</h4>
-
-                        <!-- Фильтры периода -->
-                        <div class="flex space-x-2 mb-4">
-                            <button class="period-filter-btn px-3 py-1 bg-blue-600 text-white rounded text-sm" data-period="week">Неделя</button>
-                            <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
-                            <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="year">Год</button>
-                            <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="all">Все время</button>
-                        </div>
-
-                        <!-- Карточки статистики -->
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                            <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
-                                <div class="text-2xl font-bold text-blue-600">${stats.total_tasks}</div>
-                                <div class="text-sm text-gray-600">Всего задач</div>
-                            </div>
-                            <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
-                                <div class="text-2xl font-bold text-green-600">${stats.completed_tasks}</div>
-                                <div class="text-sm text-gray-600">Выполнено</div>
-                            </div>
-                            <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
-                                <div class="text-2xl font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</div>
-                                <div class="text-sm text-gray-600">Средний % выполнения</div>
-                            </div>
-                            <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
-                                <div class="text-2xl font-bold ${stats.overdue_tasks > 0 ? 'text-red-600' : 'text-green-600'}">${stats.overdue_tasks}</div>
-                                <div class="text-sm text-gray-600">Просрочено</div>
-                            </div>
-                        </div>
-
-                        <!-- Прогресс бар -->
-                        <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="font-medium text-gray-700">Средний процент выполнения задач</span>
-                                <span class="font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-3">
-                                <div class="h-3 rounded-full transition-all duration-500 ${getCompletionRateColor(data.completion_rate).replace('text-', 'bg-')}"
-                                     style="width: ${Math.min(data.completion_rate, 100)}%"></div>
-                            </div>
-                            <div class="flex justify-between text-xs text-gray-500 mt-1">
-                                <span>0%</span>
-                                <span>50%</span>
-                                <span>100%</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Кнопки экспорта и печати -->
-                    <div class="flex space-x-2 mb-6">
-                        <a href="/team/user/${user.id}/export?type=excel&period=all"
-                           class="export-btn px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center space-x-2">
-                            <i class="fas fa-file-excel"></i>
-                            <span>Excel</span>
-                        </a>
-                        <a href="/team/user/${user.id}/export?type=pdf&period=all"
-                           class="export-btn px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center space-x-2">
-                            <i class="fas fa-file-pdf"></i>
-                            <span>PDF</span>
-                        </a>
-                        <a href="/team/user/${user.id}/print"
-                           target="_blank"
-                           class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center space-x-2">
-                            <i class="fas fa-print"></i>
-                            <span>Печать</span>
-                        </a>
-                    </div>
-
-                    <!-- Список задач -->
-                    <div>
-                        <h4 class="text-lg font-semibold mb-4">Задачи</h4>
-                        <div id="userTasksList">
-                            <div class="flex justify-center items-center py-4">
-                                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                                <span class="ml-2 text-gray-600">Загрузка задач...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
+                `;
 
                 loadUserTasks(user.id);
 
@@ -760,15 +770,15 @@
 
                             if (data.period_completion_rate !== undefined) {
                                 tasksHtml += `
-                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                                <div class="flex justify-between items-center">
-                                    <span class="font-medium text-blue-800">Статистика за период:</span>
-                                    <span class="font-bold ${getCompletionRateColor(data.period_completion_rate)}">
-                                        ${data.period_completion_rate}% выполнения
-                                    </span>
-                                </div>
-                            </div>
-                        `;
+                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                                        <div class="flex justify-between items-center">
+                                            <span class="font-medium text-blue-800">Статистика за период:</span>
+                                            <span class="font-bold ${getCompletionRateColor(data.period_completion_rate)}">
+                                                ${data.period_completion_rate}% выполнения
+                                            </span>
+                                        </div>
+                                    </div>
+                                `;
                             }
 
                             if (data.tasks.length === 0) {
@@ -784,22 +794,22 @@
                                     };
 
                                     tasksHtml += `
-                                <div class="bg-white border border-gray-200 rounded-lg p-4">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <h5 class="font-semibold text-gray-900">${task.name}</h5>
-                                        <span class="px-2 py-1 ${statusColors[task.status] || 'bg-gray-100'} rounded-full text-xs">
-                                            ${task.status}
-                                        </span>
-                                    </div>
-                                    <div class="text-sm text-gray-600 mb-2">
-                                        ${task.description ? task.description.substring(0, 100) + '...' : 'Описание отсутствует'}
-                                    </div>
-                                    <div class="flex justify-between text-xs text-gray-500">
-                                        <span>Создана: ${new Date(task.created_at).toLocaleDateString('ru-RU')}</span>
-                                        ${task.deadline ? `<span>Дедлайн: ${new Date(task.deadline).toLocaleDateString('ru-RU')}</span>` : ''}
-                                    </div>
-                                </div>
-                            `;
+                                        <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h5 class="font-semibold text-gray-900">${task.name}</h5>
+                                                <span class="px-2 py-1 ${statusColors[task.status] || 'bg-gray-100'} rounded-full text-xs">
+                                                    ${task.status}
+                                                </span>
+                                            </div>
+                                            <div class="text-sm text-gray-600 mb-2">
+                                                ${task.description ? task.description.substring(0, 100) + '...' : 'Описание отсутствует'}
+                                            </div>
+                                            <div class="flex justify-between text-xs text-gray-500">
+                                                <span>Создана: ${new Date(task.created_at).toLocaleDateString('ru-RU')}</span>
+                                                ${task.deadline ? `<span>Дедлайн: ${new Date(task.deadline).toLocaleDateString('ru-RU')}</span>` : ''}
+                                            </div>
+                                        </div>
+                                    `;
                                 });
                                 tasksHtml += '</div>';
                             }
@@ -812,11 +822,11 @@
                     .catch(error => {
                         console.error('Error loading tasks:', error);
                         tasksList.innerHTML = `
-                    <div class="text-center py-4">
-                        <p class="text-red-600">Ошибка загрузки задач</p>
-                        <p class="text-gray-600 text-sm mt-1">${error.message}</p>
-                    </div>
-                `;
+                            <div class="text-center py-4">
+                                <p class="text-red-600">Ошибка загрузки задач</p>
+                                <p class="text-gray-600 text-sm mt-1">${error.message}</p>
+                            </div>
+                        `;
                     });
             }
 
@@ -921,11 +931,152 @@
         const inviteForm = document.getElementById('inviteForm');
         const userSearch = document.getElementById('userSearch');
         const searchResults = document.getElementById('searchResults');
-        const selectedUsers = document.getElementById('selectedUsers');
+        const selectedUsersElement = document.getElementById('selectedUsers');
         const submitInvite = document.getElementById('submitInvite');
 
-        let selectedEmails = new Set();
-        let searchTimeout = null;
+        // Функция выбора пользователя
+        function selectUser(email, name) {
+            if (selectedUsersData.has(email)) {
+                return;
+            }
+
+            selectedUsersData.set(email, {
+                email: email,
+                name: name
+            });
+
+            updateSelectedUsers();
+            userSearch.value = '';
+            hideSearchResults();
+            updateSubmitButton();
+        }
+
+        // Функция удаления выбранного пользователя
+        function removeSelectedUser(email) {
+            selectedUsersData.delete(email);
+            updateSelectedUsers();
+            updateSubmitButton();
+        }
+
+        // Функция обновления списка выбранных пользователей
+        function updateSelectedUsers() {
+            if (selectedUsersData.size === 0) {
+                selectedUsersElement.innerHTML = '<div class="text-gray-500 text-sm italic">Пользователи не выбраны</div>';
+                return;
+            }
+
+            let html = '<div class="text-sm font-medium text-gray-700 mb-2">Выбранные пользователи:</div>';
+
+            selectedUsersData.forEach((user) => {
+                const displayName = user.name || user.email.split('@')[0];
+                const safeEmail = escapeHtml(user.email);
+                const safeName = escapeHtml(displayName);
+
+                html += `
+                    <div class="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 mb-2">
+                        <div class="flex-1 min-w-0">
+                            <div class="font-medium text-blue-900 truncate">${safeName}</div>
+                            <div class="text-sm text-blue-600 truncate">${safeEmail}</div>
+                        </div>
+                        <button type="button" onclick="removeSelectedUser('${safeEmail.replace(/'/g, "\\'")}')"
+                                class="flex-shrink-0 text-red-500 hover:text-red-700 ml-2">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
+            selectedUsersElement.innerHTML = html;
+        }
+
+        // Функция обновления состояния кнопки отправки
+        function updateSubmitButton() {
+            if (submitInvite) {
+                submitInvite.disabled = selectedUsersData.size === 0;
+            }
+        }
+
+        // Функция для показа результатов поиска
+        function displaySearchResults(users) {
+            if (users.length === 0) {
+                searchResults.innerHTML = `
+                    <div class="p-4 text-center text-gray-500">
+                        <i class="fas fa-search mb-2"></i>
+                        <p>Пользователи не найдены</p>
+                    </div>
+                `;
+                searchResults.classList.remove('hidden');
+                return;
+            }
+
+            let html = '';
+
+            users.forEach(user => {
+                const isDisabled = user.status !== 'can_invite';
+                const statusText = user.status === 'already_member' ? 'Уже в организации' :
+                    user.status === 'already_invited' ? 'Уже приглашен' : '';
+
+                const safeEmail = escapeHtml(user.email);
+                const safeName = escapeHtml(user.name);
+
+                html += `
+                    <div class="p-3 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 ${isDisabled ? 'opacity-60' : 'cursor-pointer'}"
+                         onclick="${isDisabled ? '' : `selectUser('${safeEmail.replace(/'/g, "\\'")}', '${safeName.replace(/'/g, "\\'")}')`}">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-medium text-gray-900">${safeName}</div>
+                                <div class="text-sm text-gray-600">${safeEmail}</div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                ${statusText ? `<span class="text-xs px-2 py-1 rounded-full ${user.status === 'already_member' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${statusText}</span>` : ''}
+                                ${!isDisabled ? `<i class="fas fa-plus text-green-500"></i>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            searchResults.innerHTML = html;
+            searchResults.classList.remove('hidden');
+        }
+
+        // Функция скрытия результатов поиска
+        function hideSearchResults() {
+            searchResults.classList.add('hidden');
+        }
+
+        // Функция поиска пользователей
+        function searchUsers(searchTerm) {
+            const csrfToken = getCsrfToken();
+
+            const url = new URL('/team/invitations/search', window.location.origin);
+            url.searchParams.append('search', searchTerm);
+
+            fetch(url.toString(), {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        displaySearchResults(data.users);
+                    } else {
+                        hideSearchResults();
+                    }
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                    hideSearchResults();
+                });
+        }
 
         // Проверяем существование элементов перед добавлением обработчиков
         if (inviteModal && closeInviteModal && cancelInvite && inviteForm && userSearch) {
@@ -977,46 +1128,58 @@
             inviteForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
-                if (selectedEmails.size === 0) {
+                if (selectedUsersData.size === 0) {
                     showNotification('error', 'Выберите хотя бы одного пользователя');
                     return;
                 }
 
-                const formData = new FormData(this);
-                formData.append('emails', Array.from(selectedEmails).join(','));
+                const formData = new FormData();
+                const emailsArray = Array.from(selectedUsersData.keys());
+                formData.append('emails', emailsArray.join(','));
+
+                const roleId = document.getElementById('inviteRole').value;
+                const departmentId = document.getElementById('inviteDepartment').value;
+
+                if (roleId) formData.append('role_id', roleId);
+                if (departmentId) formData.append('department_id', departmentId);
+
+                // Добавляем CSRF токен
+                const csrfToken = getCsrfToken();
+                if (csrfToken) {
+                    formData.append('_token', csrfToken);
+                }
 
                 const originalText = submitInvite.innerHTML;
 
                 // Показываем индикатор загрузки
                 submitInvite.innerHTML = `
-            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-            <span>Отправка...</span>
-        `;
+                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <span>Отправка...</span>
+                `;
                 submitInvite.disabled = true;
-
-                // Получаем CSRF токен безопасным способом
-                const csrfToken = getCsrfToken();
 
                 fetch('/team/invite', {
                     method: 'POST',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json'
                     },
                     body: formData
                 })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
+                            return response.text().then(text => {
+                                throw new Error(`HTTP ${response.status}: ${text}`);
+                            });
                         }
                         return response.json();
                     })
                     .then(data => {
-                        if (data.success) {
-                            showNotification('success', data.message);
+                        console.log('Response data:', data);
 
-                            // Показываем предупреждения если есть
+                        if (data.success) {
+                            showNotification('success', data.message || 'Приглашения отправлены!');
+
                             if (data.warning) {
                                 showNotification('warning', data.warning);
                             }
@@ -1024,182 +1187,78 @@
                                 showNotification('info', data.info);
                             }
 
-                            inviteModal.classList.add('hidden');
-                            resetForm();
+                            setTimeout(() => {
+                                inviteModal.classList.add('hidden');
+                                resetForm();
+                            }, 1000);
                         } else {
-                            showNotification('error', data.error || 'Произошла ошибка');
+                            showNotification('error', data.error || 'Произошла ошибка при отправке приглашений');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        showNotification('error', 'Произошла ошибка при отправке приглашений');
+
+                        try {
+                            const errorData = JSON.parse(error.message.split(':')[1]);
+                            if (errorData.message) {
+                                showNotification('error', errorData.message);
+                                return;
+                            }
+                        } catch(e) {
+                            showNotification('error', 'Произошла ошибка при отправке приглашений');
+                        }
                     })
                     .finally(() => {
                         submitInvite.innerHTML = originalText;
-                        submitInvite.disabled = selectedEmails.size === 0;
+                        submitInvite.disabled = selectedUsersData.size === 0;
                     });
             });
         }
 
-        // Функция поиска пользователей
-        function searchUsers(searchTerm) {
-            const csrfToken = getCsrfToken();
-
-            fetch('/team/invitations/search?search=' + encodeURIComponent(searchTerm), {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json'
-                }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        displaySearchResults(data.users);
-                    } else {
-                        hideSearchResults();
-                    }
-                })
-                .catch(error => {
-                    console.error('Search error:', error);
-                    hideSearchResults();
-                });
-        }
-
-        // Функция отображения результатов поиска
-        function displaySearchResults(users) {
-            if (users.length === 0) {
-                searchResults.innerHTML = `
-            <div class="p-4 text-center text-gray-500">
-                <i class="fas fa-search mb-2"></i>
-                <p>Пользователи не найдены</p>
-            </div>
-        `;
-                searchResults.classList.remove('hidden');
-                return;
-            }
-
-            let html = '';
-
-            users.forEach(user => {
-                const isDisabled = user.status !== 'can_invite';
-                const statusText = user.status === 'already_member' ? 'Уже в организации' :
-                    user.status === 'already_invited' ? 'Уже приглашен' : '';
-
-                html += `
-            <div class="p-3 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 ${isDisabled ? 'opacity-60' : 'cursor-pointer'}"
-                 onclick="${isDisabled ? '' : `selectUser('${user.email}', '${user.name}')`}">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <div class="font-medium text-gray-900">${user.name}</div>
-                        <div class="text-sm text-gray-600">${user.email}</div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        ${statusText ? `<span class="text-xs px-2 py-1 rounded-full ${user.status === 'already_member' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${statusText}</span>` : ''}
-                        ${!isDisabled ? `<i class="fas fa-plus text-green-500"></i>` : ''}
-                    </div>
-                </div>
-            </div>
-        `;
-            });
-
-            searchResults.innerHTML = html;
-            searchResults.classList.remove('hidden');
-        }
-
-        // Функция скрытия результатов поиска
-        function hideSearchResults() {
-            searchResults.classList.add('hidden');
-        }
-
-        // Функция выбора пользователя
-        function selectUser(email, name) {
-            if (selectedEmails.has(email)) {
-                return;
-            }
-
-            selectedEmails.add(email);
-            updateSelectedUsers();
-            userSearch.value = '';
-            hideSearchResults();
-            updateSubmitButton();
-        }
-
-        // Функция удаления выбранного пользователя
-        function removeUser(email) {
-            selectedEmails.delete(email);
-            updateSelectedUsers();
-            updateSubmitButton();
-        }
-
-        // Функция обновления списка выбранных пользователей
-        function updateSelectedUsers() {
-            if (selectedEmails.size === 0) {
-                selectedUsers.innerHTML = '';
-                return;
-            }
-
-            let html = '<div class="text-sm font-medium text-gray-700 mb-2">Выбранные пользователи:</div>';
-
-            selectedEmails.forEach(email => {
-                // Находим имя пользователя по email (можно улучшить, если нужно хранить имена)
-                const name = Array.from(document.querySelectorAll('#searchResults .font-medium'))
-                    .find(el => el.textContent && el.closest('div').querySelector('.text-sm').textContent === email)
-                    ?.textContent || email;
-
-                html += `
-            <div class="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
-                <div>
-                    <div class="font-medium text-blue-900">${name}</div>
-                    <div class="text-sm text-blue-600">${email}</div>
-                </div>
-                <button type="button" onclick="removeUser('${email}')" class="text-red-500 hover:text-red-700">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `;
-            });
-
-            selectedUsers.innerHTML = html;
-        }
-
-        // Функция обновления состояния кнопки отправки
-        function updateSubmitButton() {
-            submitInvite.disabled = selectedEmails.size === 0;
-        }
-
         // Функция сброса формы
         function resetForm() {
-            selectedEmails.clear();
+            selectedUsersData.clear();
             userSearch.value = '';
-            selectedUsers.innerHTML = '';
-            searchResults.classList.add('hidden');
-            document.getElementById('inviteRole').value = '';
-            document.getElementById('inviteDepartment').value = '';
+            if (selectedUsersElement) {
+                selectedUsersElement.innerHTML = '';
+            }
+            if (searchResults) {
+                searchResults.classList.add('hidden');
+            }
+            if (document.getElementById('inviteRole')) {
+                document.getElementById('inviteRole').value = '';
+            }
+            if (document.getElementById('inviteDepartment')) {
+                document.getElementById('inviteDepartment').value = '';
+            }
             updateSubmitButton();
         }
 
         // Безопасное получение CSRF токена
         function getCsrfToken() {
-            // Пробуем получить из meta тега
             const metaTag = document.querySelector('meta[name="csrf-token"]');
             if (metaTag) {
                 return metaTag.getAttribute('content');
             }
 
-            // Пробуем получить из input в форме
             const csrfInput = document.querySelector('input[name="_token"]');
             if (csrfInput) {
                 return csrfInput.value;
             }
 
-            // Если ничего не найдено, возвращаем пустую строку
+            const allInputs = document.querySelectorAll('input[name="_token"]');
+            if (allInputs.length > 0) {
+                return allInputs[0].value;
+            }
+
+            const forms = document.querySelectorAll('form');
+            for (let form of forms) {
+                const input = form.querySelector('input[name="_token"]');
+                if (input) {
+                    return input.value;
+                }
+            }
+
             console.warn('CSRF token not found');
             return '';
         }
@@ -1214,20 +1273,19 @@
                             'bg-blue-500 text-white'
             }`;
             notification.innerHTML = `
-        <div class="flex items-center space-x-2">
-            <i class="fas fa-${
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-${
                 type === 'success' ? 'check-circle' :
                     type === 'error' ? 'exclamation-circle' :
                         type === 'warning' ? 'exclamation-triangle' :
                             'info-circle'
             }"></i>
-            <span>${message}</span>
-        </div>
-    `;
+                    <span>${escapeHtml(message)}</span>
+                </div>
+            `;
 
             document.body.appendChild(notification);
 
-            // Автоматическое скрытие через 5 секунд
             setTimeout(() => {
                 notification.style.transform = 'translateX(100%)';
                 setTimeout(() => {

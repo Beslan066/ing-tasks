@@ -52,7 +52,6 @@ class TaskController extends Controller
 
         // Пользователи, которым можно назначить задачу
         $assignableUsers = User::where('company_id', $user->company_id)
-            ->where('is_active', true)
             ->get();
 
         return view('frontend.tasks.create', compact('departments', 'categories', 'assignableUsers', 'user'));
@@ -541,7 +540,7 @@ class TaskController extends Controller
         }
 
         // Загружаем все необходимые отношения
-        $task->load(['author', 'user', 'department', 'category', 'files', 'subtasks']);
+        $task->load(['author', 'user', 'department', 'category', 'files']);
 
         return response()->json([
             'success' => true,

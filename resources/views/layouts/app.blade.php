@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>МенеджерПлюс - Современная система управления задачами</title>
+    <meta name="csrf-token" content="{{csrf_token()}}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -28,7 +29,7 @@
 </head>
 <body class="bg-white font-sans">
 <!-- Навигация -->
-<nav class="bg-white border-b border-gray-200 py-4 px-6 flex justify-between items-center">
+<nav class="bg-white border-b border-gray-200 py-4 px-4 flex justify-between items-center">
     <a href="{{route('welcome')}}">
         <div class="flex items-center space-x-2">
             <h1 class="text-2xl font-bold text-gray-800">Менеджер<span class="text-primary">Плюс</span></h1>
@@ -37,8 +38,10 @@
 
     <div class="hidden md:flex space-x-8">
         <a href="{{route('welcome')}}" class="nav-link active-nav text-gray-700 hover:text-primary transition-colors" data-page="welcome">Главная</a>
-        @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
-            <a href="{{route('departments.index')}}" class="nav-link text-gray-700 hover:text-primary transition-colors" data-page="boards">Отделы</a>
+        @if(isset(auth()->user()->role->name))
+            @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
+                <a href="{{route('departments.index')}}" class="nav-link text-gray-700 hover:text-primary transition-colors" data-page="boards">Отделы</a>
+            @endif
         @endif
         <a href="{{route('team.index')}}" class="nav-link text-gray-700 hover:text-primary transition-colors" data-page="team">Команда</a>
         <a href="{{route('photobank')}}" class="nav-link text-gray-700 hover:text-primary transition-colors" data-page="team">Фотобанк</a>
@@ -129,18 +132,25 @@
             @if(isset($categories) && $categories->count() > 0)
                 <div class="space-y-2">
                     @foreach($categories as $category)
-                        <div
-                            class="group flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer board-item"
-                            data-board="development">
+                        <div class="group flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer board-item"
+                             data-board="development">
                             <div class="flex items-center space-x-3">
                                 <div class="w-3 h-3 rounded" style="background-color: {{ $category->color }}"></div>
                                 <span class="text-gray-700">{{ $category->name }}</span>
                             </div>
                             @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
-                                <button onclick="openEditCategoryModal({{ $category->id }})"
-                                        class="text-gray-400 hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                    <i class="fas fa-edit text-xs"></i>
-                                </button>
+                                <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                    <button onclick="openEditCategoryModal({{ $category->id }})"
+                                            class="text-gray-400 hover:text-primary p-1"
+                                            title="Редактировать категорию">
+                                        <i class="fas fa-edit text-xs"></i>
+                                    </button>
+                                    <button onclick="openDeleteCategoryModal({{ $category->id }}, {{ json_encode($category->name) }})"
+                                            class="text-gray-400 hover:text-red-500 p-1"
+                                            title="Удалить категорию">
+                                        <i class="fas fa-trash text-xs"></i>
+                                    </button>
+                                </div>
                             @endif
                         </div>
                     @endforeach
@@ -226,6 +236,9 @@
 <!-- Модальное окно для нового пользователя -->
 @include('partials.modal.user.create')
 
+<!-- Модальное окно подтверждения удаления категории -->
+@include('partials.modal.category.delete')
+
 
 <script>
     // Глобальные переменные
@@ -291,17 +304,6 @@
 
                 document.querySelector('select[name="status"]').value = task.status || 'назначена';
 
-                // Очищаем и заполняем подзадачи
-                const subtasksContainer = document.getElementById('subtasksContainer');
-                subtasksContainer.innerHTML = '';
-
-                if (task.subtasks && task.subtasks.length > 0) {
-                    task.subtasks.forEach(subtask => {
-                        addSubtaskWithValue(subtask.name);
-                    });
-                } else {
-                    addSubtask(); // Добавляем пустое поле
-                }
 
                 // Обновляем заголовок и кнопку
                 document.querySelector('#taskModal h3').textContent = 'Редактировать задачу';
@@ -323,9 +325,6 @@
     function resetTaskForm() {
         document.getElementById('taskForm').reset();
         document.getElementById('fileList').innerHTML = '';
-        const subtasksContainer = document.getElementById('subtasksContainer');
-        subtasksContainer.innerHTML = '<div class="flex space-x-2 mb-2"><input type="text" name="subtasks[]" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Название подзадачи"><button type="button" onclick="removeSubtask(this)" class="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"><i class="fas fa-times"></i></button></div>';
-
         // Установить заголовок для создания
         document.querySelector('#taskModal h3').textContent = 'Новая задача';
         document.querySelector('#taskModal p').textContent = 'Заполните информацию о задаче';
@@ -339,19 +338,6 @@
         currentEditingTaskId = null;
     }
 
-    // Функция для добавления подзадачи с значением
-    function addSubtaskWithValue(value = '') {
-        const container = document.getElementById('subtasksContainer');
-        const div = document.createElement('div');
-        div.className = 'flex space-x-2 mb-2';
-        div.innerHTML = `
-            <input type="text" name="subtasks[]" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Название подзадачи" value="${value}">
-            <button type="button" onclick="removeSubtask(this)" class="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
-        container.appendChild(div);
-    }
 
     // Закрытие модальных окон
     function closeTaskModal() {
@@ -399,26 +385,6 @@
         document.getElementById('departmentForm').reset();
     }
 
-    // ==================== УПРАВЛЕНИЕ ПОДЗАДАЧАМИ ====================
-
-    function addSubtask() {
-        const container = document.getElementById('subtasksContainer');
-        const div = document.createElement('div');
-        div.className = 'flex space-x-2 mb-2';
-        div.innerHTML = `
-        <input type="text" name="subtasks[]" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Название подзадачи">
-        <button type="button" onclick="removeSubtask(this)" class="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
-            <i class="fas fa-times"></i>
-        </button>
-    `;
-        container.appendChild(div);
-    }
-
-    function removeSubtask(button) {
-        if (document.querySelectorAll('#subtasksContainer > div').length > 1) {
-            button.parentElement.remove();
-        }
-    }
 
     // ==================== УПРАВЛЕНИЕ ФАЙЛАМИ ====================
 
@@ -1113,6 +1079,91 @@
         console.log('Обновление списка отделов...');
         // location.reload(); // или AJAX запрос
     }
+
+
+    // Модальное окно удаления категории
+    let currentDeletingCategoryId = null;
+
+    function openDeleteCategoryModal(categoryId, categoryName) {
+        currentDeletingCategoryId = categoryId;
+
+        // Устанавливаем название категории
+        document.getElementById('deleteCategoryName').textContent = categoryName;
+
+        // Устанавливаем ID категории в скрытое поле формы
+        const categoryIdField = document.getElementById('delete_category_id');
+        if (categoryIdField) {
+            categoryIdField.value = categoryId;
+        }
+
+        // Показываем модальное окно
+        document.getElementById('deleteCategoryModal').classList.remove('hidden');
+    }
+
+    function closeDeleteCategoryModal() {
+        document.getElementById('deleteCategoryModal').classList.add('hidden');
+        currentDeletingCategoryId = null;
+    }
+
+    // Обработчик отправки формы удаления
+    document.getElementById('deleteCategoryForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
+
+        // Проверка, что category_id установлен
+        const categoryId = document.getElementById('delete_category_id').value;
+        if (!categoryId) {
+            showNotification('Ошибка: ID категории не указан', 'error');
+            return;
+        }
+
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Удаление...';
+        submitButton.disabled = true;
+
+        try {
+            // Для отладки: посмотреть, что отправляется
+            console.log('Отправляемые данные:', Object.fromEntries(formData));
+
+            const response = await fetch('/category/delete', {
+                method: 'POST', // Laravel требует POST для DELETE через метод-переопределение
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                }
+            });
+
+            // Для отладки
+            console.log('Статус ответа:', response.status);
+            console.log('Заголовки:', response.headers);
+
+            const data = await response.json();
+            console.log('Ответ сервера:', data);
+
+            if (data.success) {
+                closeDeleteCategoryModal();
+                showNotification('Категория успешно удалена!', 'success');
+
+                // Обновить список категорий на странице
+                if (typeof refreshCategories === 'function') {
+                    refreshCategories();
+                } else {
+                    window.location.reload();
+                }
+            } else {
+                showNotification(data.message, 'error');
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+            showNotification('Произошла ошибка при удалении категории: ' + error.message, 'error');
+        } finally {
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
+        }
+    });
 </script>
 
 <script>
