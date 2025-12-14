@@ -121,6 +121,9 @@
                         </select>
                     </div>
 
+
+
+
                     <!-- Категория -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
@@ -177,6 +180,7 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Исполнитель</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Отдел</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Приоритет</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Автор</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Дедлайн</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
                         </tr>
@@ -273,6 +277,17 @@
                             </span>
                                     @else
                                         <span class="text-sm text-gray-400">—</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($task->author)
+                                        <div class="flex items-center">
+                                            <div class="ml-3">
+                                                <div class="text-sm font-medium text-gray-900">{{ $task->author->name }}</div>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <span class="text-sm text-gray-500">Нет автора</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

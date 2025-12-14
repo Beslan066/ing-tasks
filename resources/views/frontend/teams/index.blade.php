@@ -8,9 +8,9 @@
                 <p class="text-gray-500">Участники вашей организации</p>
             </div>
             <div class="flex space-x-2">
-                <button id="toggleFilters" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700 transition">
+                <button id="toggleFilters" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-50 transition">
                     <i class="fas fa-filter"></i>
-                    <span>Показать фильтры</span>
+                    <span>Фильтр</span>
                     <i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>
                 </button>
                 <button class="bg-primary text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-secondary transition" id="newUserBtn">
@@ -27,11 +27,11 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
                     <input type="text" id="searchInput" placeholder="Поиск по имени или email..."
                            value="{{ request('search') }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:green-blue-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
-                    <select id="departmentFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select id="departmentFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 bg-transparent">
                         <option value="">Все отделы</option>
                         @foreach($departments as $department)
                             <option value="{{ $department->id }}" {{ request('department') == $department->id ? 'selected' : '' }}>
@@ -42,7 +42,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Роль</label>
-                    <select id="roleFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select id="roleFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 bg-transparent">
                         <option value="">Все роли</option>
                         @foreach($roles as $role)
                             <option value="{{ $role->id }}" {{ request('role') == $role->id ? 'selected' : '' }}>
@@ -53,7 +53,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                    <select id="statusFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select id="statusFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 bg-transparent">
                         <option value="">Все</option>
                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Активные</option>
                         <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Неактивные</option>
@@ -65,21 +65,21 @@
             <div id="advancedFilters" class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 hidden">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Дата регистрации от</label>
-                    <input type="date" id="dateFrom" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="date" id="dateFrom" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Дата регистрации до</label>
-                    <input type="date" id="dateTo" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="date" id="dateTo" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Минимальный % выполнения</label>
                     <input type="number" id="completionMin" min="0" max="100" placeholder="0"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Максимальный % выполнения</label>
                     <input type="number" id="completionMax" min="0" max="100" placeholder="100"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
                 </div>
             </div>
 
@@ -351,7 +351,7 @@
                                 <select
                                     id="inviteRole"
                                     name="role_id"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-transparent bg-transparent"
                                 >
                                     <option value="">Выберите роль</option>
                                     @foreach($roles as $role)
@@ -367,7 +367,7 @@
                                 <select
                                     id="inviteDepartment"
                                     name="department_id"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-transparent bg-transparent"
                                 >
                                     <option value="">Выберите отдел</option>
                                     @foreach($departments as $department)
@@ -467,7 +467,7 @@
                 filterArrow.className = 'fas fa-chevron-down text-xs ml-1';
                 toggleFiltersBtn.innerHTML = `
                     <i class="fas fa-filter"></i>
-                    <span>Показать фильтры</span>
+                    <span>Фильтр</span>
                     <i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>
                 `;
                 filtersVisible = false;
@@ -613,7 +613,7 @@
                                 <div class="text-center mb-6">
                                     ${user.avatar ?
                     `<img src="/storage/public/${user.avatar}" alt="${user.name}" class="w-24 h-24 rounded-full mx-auto mb-4">` :
-                    `<div class="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    `<div class="w-24 h-24  rounded-full flex items-center justify-center mx-auto mb-4" style="background-color: #16a34a">
                                             <span class="text-white text-2xl font-bold">${user.name.charAt(0)}</span>
                                         </div>`
                 }
@@ -660,10 +660,10 @@
 
                                 <!-- Фильтры периода -->
                                 <div class="flex space-x-2 mb-4">
-                                    <button class="period-filter-btn px-3 py-1 bg-blue-600 text-white rounded text-sm" data-period="week">Неделя</button>
-                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
-                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="year">Год</button>
-                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="all">Все время</button>
+                                    <button class="period-filter-btn px-3 py-1 text-white rounded text-sm" data-period="week" style="background-color: #16a34a">Неделя</button>
+                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-white-700 rounded text-sm" data-period="month">Месяц</button>
+                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-white-700 rounded text-sm" data-period="year">Год</button>
+                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-white-700 rounded text-sm" data-period="all">Все время</button>
                                 </div>
 
                                 <!-- Карточки статистики -->

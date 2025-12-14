@@ -33,6 +33,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
+    const ROLE_SUPERVISOR = "Руководитель";
+
     protected function casts(): array
     {
         return [
@@ -112,7 +114,8 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isSupervisor(): bool
     {
-        return $this->supervisedDepartments()->exists();
+        return $this->role_id === self::ROLE_SUPERVISOR
+            && $this->supervisedDepartments()->exists();
     }
 
     /**
@@ -257,8 +260,8 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function canViewAllCompanyTasks(): bool
     {
-        // Руководитель компании или руководитель отдела
-        return $this->isCompanyOwner() || $this->isSupervisor();
+        // Владелец компании, руководитель, менеджер - все могут создавать задачи
+        return $this->isCompanyOwner() || $this->isSupervisor() || $this->isLeader() || $this->isManagerRole();
     }
 
     /**
