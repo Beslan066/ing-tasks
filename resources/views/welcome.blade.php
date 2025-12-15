@@ -213,7 +213,7 @@
         <div class="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-semibold">Просмотр задачи</h3>
-                <button onclick="closeTaskModal()" class="text-gray-500 hover:text-gray-700">
+                <button onclick="closeTaskViewModal()" class="text-gray-500 hover:text-gray-700">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
