@@ -7,13 +7,22 @@
             <h1 class="text-3xl font-bold text-dark">Мои задачи</h1>
             <p class="text-gray-500">{{ $user->company->name }} • {{ $stats['in_progress'] }} активных задач</p>
         </div>
+        <!-- В блоке с заголовком и статистикой -->
         <div class="flex space-x-4">
+            <!-- Кнопка создания задачи -->
+            <button onclick="openPersonalTaskModal()"
+                    class=" text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-900-700 transition" style="background-color: #16a34a;">
+                <i class="fas fa-plus"></i>
+                <span>Создать задачу</span>
+            </button>
+
             <button
                 class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-50 transition">
                 <i class="fas fa-filter"></i>
                 <span>Фильтр</span>
             </button>
         </div>
+
     </div>
 
     <!-- Доска с задачами -->
@@ -260,8 +269,167 @@
         </div>
     </div>
 
+
+    <!-- Модальное окно для создания задачи -->
+    @include('partials.modal.task.create')
+
+
     <script>
         let currentTaskId = null;
+
+
+
+        // Открыть модальное окно для личной задачи
+        function openPersonalTaskModal() {
+            // Используем существующую модалку
+            const modal = document.getElementById('taskModal');
+            const form = document.getElementById('taskForm');
+
+            // Меняем заголовок
+            modal.querySelector('h3').textContent = 'Новая личная задача';
+            modal.querySelector('p').textContent = 'Создайте задачу для себя';
+
+            // Скрываем ненужные поля
+            const executorField = document.querySelector('select[name="user_id"]').closest('.space-y-2');
+            const departmentField = document.querySelector('select[name="department_id"]').closest('.space-y-2');
+            const statusField = document.querySelector('select[name="status"]').closest('.space-y-2');
+
+            // Добавляем визуальные подсказки
+            if (executorField) {
+                executorField.style.display = 'none';
+            }
+
+            if (departmentField) {
+                // Оставляем только отдел пользователя
+                const select = departmentField.querySelector('select');
+                select.innerHTML = `<option value="{{ $user->department_id }}" selected>{{ $user->department->name }}</option>`;
+                select.disabled = true;
+            }
+
+            if (statusField) {
+                // Оставляем только "назначена"
+                const select = statusField.querySelector('select');
+                select.innerHTML = `<option value="назначена" selected>назначена</option>`;
+                select.disabled = true;
+            }
+
+            // Меняем обработчик формы
+            form.onsubmit = createPersonalTask;
+
+            // Показываем модальное окно
+            modal.classList.remove('hidden');
+        }
+
+        // Создать личную задачу
+        async function createPersonalTask(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+
+            // Добавляем скрытые поля для личной задачи
+            formData.set('user_id', '{{ $user->id }}');
+            formData.set('author_id', '{{ $user->id }}');
+            formData.set('status', 'назначена');
+            formData.set('department_id', '{{ $user->department_id }}');
+
+            // Показываем индикатор загрузки
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Создание...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('/tasks/personal/store', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Личная задача успешно создана!');
+                    closeTaskModal();
+                    location.reload();
+                } else {
+                    if (data.errors) {
+                        let errorMessage = 'Ошибки при создании задачи:\n';
+                        Object.values(data.errors).forEach(errors => {
+                            errors.forEach(error => {
+                                errorMessage += `• ${error}\n`;
+                            });
+                        });
+                        alert(errorMessage);
+                    } else {
+                        alert(data.message || 'Ошибка при создании задачи');
+                    }
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка при создании задачи');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Закрыть модальное окно и сбросить поля
+        function closeTaskModal() {
+            const modal = document.getElementById('taskModal');
+            const form = document.getElementById('taskForm');
+
+            // Восстанавливаем все поля
+            const executorField = document.querySelector('select[name="user_id"]').closest('.space-y-2');
+            const departmentField = document.querySelector('select[name="department_id"]').closest('.space-y-2');
+            const statusField = document.querySelector('select[name="status"]').closest('.space-y-2');
+
+            if (executorField) executorField.style.display = 'block';
+            if (departmentField) {
+                const select = departmentField.querySelector('select');
+                select.disabled = false;
+                // Здесь нужно восстановить оригинальные опции отделов
+                @if(isset($departments))
+                    select.innerHTML = `
+            <option value="" class="text-gray-400">Выберите отдел</option>
+            @foreach($departments as $department)
+                <option value="{{ $department->id }}">{{ $department->name }}</option>
+            @endforeach
+                `;
+                @endif
+            }
+            if (statusField) {
+                const select = statusField.querySelector('select');
+                select.disabled = false;
+                // Восстанавливаем оригинальные статусы
+                @php
+                    $availableStatuses = array_filter(\App\Models\Task::getStatuses(), function($status) {
+                        return $status !== 'в работе';
+                    });
+                @endphp
+                    select.innerHTML = `
+            @foreach($availableStatuses as $status)
+                <option value="{{ $status }}" {{ $status == 'назначена' ? 'selected' : '' }}>
+                    {{ $status }}
+                </option>
+            @endforeach
+                `;
+            }
+
+            // Восстанавливаем заголовки
+            modal.querySelector('h3').textContent = 'Новая задача';
+            modal.querySelector('p').textContent = 'Заполните информацию о задаче';
+
+            // Восстанавливаем обработчик формы (если был другой)
+            form.onsubmit = null; // или исходный обработчик, если он есть
+
+            // Скрываем модальное окно
+            modal.classList.add('hidden');
+            form.reset();
+        }
+
 
         // Открыть модальное окно просмотра задачи
         async function openTaskViewModal(taskId) {

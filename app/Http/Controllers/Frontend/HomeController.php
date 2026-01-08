@@ -77,6 +77,11 @@ class HomeController extends Controller
         return view('welcome', compact('user', 'tasksByStatus', 'availableTasks', 'stats'));
     }
 
+    public function home()
+    {
+        return view('frontend.index');
+    }
+
     public function indexAdmin(Request $request)
     {
         $user = Auth::user();
@@ -109,6 +114,7 @@ class HomeController extends Controller
         // Базовый запрос - ВСЕ задачи компании пользователя
         $tasksQuery = Task::with(['author', 'user', 'department', 'category'])
             ->withCount('rejections') // Добавляем подсчет отказов
+            ->where('is_personal', 0)
             ->where('company_id', $user->company_id);
 
         // Поиск
@@ -165,19 +171,39 @@ class HomeController extends Controller
 
         // Статистика
         $stats = [
-            'total' => Task::where('company_id', $user->company_id)->count(),
+            'total' => Task::where('company_id', $user->company_id)
+                ->where('is_personal', 0)
+                ->count(),
+
             'assigned' => Task::where('company_id', $user->company_id)
-                ->where('status', Task::STATUS_ASSIGNED)->count(),
+                ->where('is_personal', 0)
+                ->where('status', Task::STATUS_ASSIGNED)
+                ->count(),
+
             'not_assigned' => Task::where('company_id', $user->company_id)
-                ->where('status', Task::STATUS_NOT_ASSIGNED)->count(),
+                ->where('is_personal', 0)
+                ->where('status', Task::STATUS_NOT_ASSIGNED)
+                ->count(),
+
             'in_progress' => Task::where('company_id', $user->company_id)
-                ->where('status', Task::STATUS_IN_PROGRESS)->count(),
+                ->where('is_personal', 0)
+                ->where('status', Task::STATUS_IN_PROGRESS)
+                ->count(),
+
             'review' => Task::where('company_id', $user->company_id)
-                ->where('status', Task::STATUS_REVIEW)->count(),
+                ->where('is_personal', 0)
+                ->where('status', Task::STATUS_REVIEW)
+                ->count(),
+
             'overdue' => Task::where('company_id', $user->company_id)
-                ->where('status', Task::STATUS_OVERDUE)->count(),
+                ->where('is_personal', 0)
+                ->where('status', Task::STATUS_OVERDUE)
+                ->count(),
+
             'completed' => Task::where('company_id', $user->company_id)
-                ->where('status', Task::STATUS_COMPLETED)->count(),
+                ->where('is_personal', 0)
+                ->where('status', Task::STATUS_COMPLETED)
+                ->count(),
         ];
 
         // Данные для фильтров

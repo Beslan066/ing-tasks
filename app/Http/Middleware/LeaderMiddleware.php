@@ -38,7 +38,7 @@ class LeaderMiddleware
             }
 
             // Для веб-запросов редирект с сообщением
-            return redirect()->route('dashboard')
+            return redirect()->route('welcome')
                 ->with('error', 'Доступ разрешен только руководителям.');
         }
 

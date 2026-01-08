@@ -19,7 +19,7 @@ class CheckUserRole
         $user = Auth::user();
 
         if (!$user) {
-            return redirect('/login');
+            return redirect('/');
         }
 
         // Предзагружаем роль для оптимизации

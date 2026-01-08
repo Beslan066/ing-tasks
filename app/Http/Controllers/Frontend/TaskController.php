@@ -33,7 +33,26 @@ class TaskController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('frontend.tasks.index', compact('tasks', 'user'));
+        // Добавляем категории компании для создания задач
+        $categories = Category::where('company_id', $user->company_id)->get();
+
+        // Группируем задачи по статусам
+        $tasksByStatus = [
+            'new' => $tasks->where('status', 'назначена'),
+            'in_progress' => $tasks->where('status', 'в работе'),
+            'review' => $tasks->where('status', 'на проверке'),
+            'done' => $tasks->where('status', 'выполнена'),
+        ];
+
+        // Статистика
+        $stats = [
+            'new' => $tasksByStatus['new']->count(),
+            'in_progress' => $tasksByStatus['in_progress']->count(),
+            'review' => $tasksByStatus['review']->count(),
+            'done' => $tasksByStatus['done']->count(),
+        ];
+
+        return view('frontend.tasks.index', compact('tasks', 'user', 'tasksByStatus', 'stats', 'categories'));
     }
 
     /**
@@ -731,5 +750,96 @@ class TaskController extends Controller
         // Обычные пользователи видят только свои задачи и задачи своего отдела
         return $task->company_id === $user->company_id &&
             ($task->user_id === $user->id || $task->department_id === $user->department_id);
+    }
+
+    public function storePersonal(Request $request)
+    {
+        $user = Auth::user();
+
+        \Log::info('Creating personal task for user:', ['user_id' => $user->id]);
+
+        // Валидация для личных задач (более простая)
+        $validator = \Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'category_id' => 'nullable|exists:categories,id',
+            'priority' => 'required|in:низкий,средний,высокий,критический',
+            'deadline' => 'nullable|date',
+            'estimated_hours' => 'nullable|numeric|min:0',
+            'files.*' => 'nullable|file|max:10240',
+        ]);
+
+        if ($validator->fails()) {
+            \Log::error('Validation failed for personal task:', $validator->errors()->toArray());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибки валидации',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            // Проверяем категорию, если указана
+            if ($request->category_id) {
+                $category = Category::find($request->category_id);
+                if (!$category || $category->company_id !== $user->company_id) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Выбранная категория не доступна'
+                    ], 422);
+                }
+            }
+
+            // Создаем личную задачу
+            $taskData = [
+                'name' => $request->name,
+                'description' => $request->description,
+                'department_id' => $user->department_id, // Отдел пользователя
+                'category_id' => $request->category_id,
+                'user_id' => $user->id, // Назначаем на себя
+                'priority' => $request->priority,
+                'status' => 'назначена', // Начинаем с назначенной
+                'deadline' => $request->deadline,
+                'estimated_hours' => $request->estimated_hours,
+                'company_id' => $user->company_id,
+                'author_id' => $user->id, // Автор - сам пользователь
+                'is_personal' => true, // Флаг личной задачи
+            ];
+
+            $task = Task::create($taskData);
+            \Log::info('Personal task created:', ['task_id' => $task->id]);
+
+            // Обрабатываем файлы
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    $path = $file->store('tasks/' . $task->id, 'public');
+
+                    File::create([
+                        'name' => $file->getClientOriginalName(),
+                        'file' => $path,
+                        'file_path' => $path,
+                        'file_size' => $file->getSize(),
+                        'mime_type' => $file->getMimeType(),
+                        'task_id' => $task->id,
+                        'user_id' => $user->id,
+                        'department_id' => $user->department_id,
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Личная задача успешно создана',
+                'task' => $task->load(['department', 'category'])
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error creating personal task: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при создании задачи: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

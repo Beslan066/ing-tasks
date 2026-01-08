@@ -12,15 +12,19 @@ Route::get('/check-overdue-tasks', function() {
     return response()->json(['message' => 'Checked overdue tasks']);
 });
 
+
+Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class, 'home'])->name('index');
 // Домашняя страница
 Route::middleware(['auth', 'checkUserRole', 'verified'])->group(function () {
-    Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('welcome');
+    Route::get('/home', [\App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('welcome');
 
     // Админская страница для руководителей и менеджеров
     Route::get('/admin/tasks', [\App\Http\Controllers\Frontend\HomeController::class, 'indexAdmin'])->name('tasks.admin');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/chat', [\App\Http\Controllers\Frontend\ChatController::class, 'index'])->name('chat');
+    Route::get('/file-manager', [\App\Http\Controllers\Frontend\FileManagerController::class, 'index'])->name('fileManager');
     Route::get('/mail', [\App\Http\Controllers\Frontend\MailController::class, 'index'])->name('mail.index');
 });
 
@@ -37,6 +41,9 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified']], functi
     Route::get('/create', [App\Http\Controllers\Frontend\TaskController::class, 'create'])->name('tasks.create');
     Route::post('/store', [App\Http\Controllers\Frontend\TaskController::class, 'store'])->name('tasks.store');
 
+    // Задачи себе
+    Route::post('/personal/store', [App\Http\Controllers\Frontend\TaskController::class, 'storePersonal'])->name('tasks.personal.store');
+
     // Маршрут для просмотра задачи
     Route::get('/{task}/view', [App\Http\Controllers\Frontend\TaskController::class, 'view'])->name('tasks.view');
 
@@ -49,6 +56,7 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified']], functi
     Route::patch('/{task}/status', [App\Http\Controllers\Frontend\TaskController::class, 'updateTaskStatus'])->name('tasks.status');
     Route::post('/{task}/reject', [App\Http\Controllers\Frontend\TaskController::class, 'rejectTask'])->name('tasks.reject');
     Route::post('/{task}/attach-file', [App\Http\Controllers\Frontend\TaskController::class, 'attachFile'])->name('tasks.attach-file');
+
 
     // МАРШРУТЫ ДЛЯ АДМИНИСТРАТОРОВ
     Route::post('/{task}/return-to-work', [App\Http\Controllers\Frontend\TaskController::class, 'returnToWork'])->name('admin.tasks.return-to-work');
@@ -84,7 +92,7 @@ Route::group(['prefix' => 'departments', 'middleware' => ['auth', 'verified', 'i
 });
 
 // Маршруты для команды с системой приглашений
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'isLeader'])->group(function () {
     Route::prefix('team')->name('team.')->group(function () {
         // Основные маршруты команды
         Route::get('/', [TeamController::class, 'index'])->name('index');

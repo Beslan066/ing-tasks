@@ -25,6 +25,17 @@
             }
         }
     </script>
+
+
+    <style>
+        .fon {
+            /*background: url("https://images.unsplash.com/photo-1650624225233-75df5a34ceea?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") no-repeat center center;*/
+            background-size: cover; /* покрывает всю область */
+            position: relative;
+        }
+
+
+    </style>
     <link rel="stylesheet" href="{{asset('css/style.css')}}">
 </head>
 <body class="bg-white font-sans">
@@ -37,15 +48,20 @@
     </a>
 
     <div class="hidden md:flex space-x-8">
-        <a href="{{route('welcome')}}" class="nav-link active-nav text-gray-700 hover:text-primary transition-colors" data-page="welcome">Главная</a>
+        <a href="{{route('welcome')}}" class="nav-link active-nav text-gray-700 hover:text-primary transition-colors"
+           data-page="welcome">Главная</a>
         @if(isset(auth()->user()->role->name))
             @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
-                <a href="{{route('departments.index')}}" class="nav-link text-gray-700 hover:text-primary transition-colors" data-page="boards">Отделы</a>
+                <a href="{{route('departments.index')}}"
+                   class="nav-link text-gray-700 hover:text-primary transition-colors" data-page="boards">Отделы</a>
             @endif
         @endif
-        <a href="{{route('team.index')}}" class="nav-link text-gray-700 hover:text-primary transition-colors" data-page="team">Команда</a>
-        <a href="{{route('photobank')}}" class="nav-link text-gray-700 hover:text-primary transition-colors" data-page="team">Фотобанк</a>
-        <a href="{{route('mail.index')}}" class="nav-link text-gray-700 hover:text-primary transition-colors" data-page="mail">Почта</a>
+        <a href="{{route('team.index')}}" class="nav-link text-gray-700 hover:text-primary transition-colors"
+           data-page="team">Команда</a>
+        <a href="{{route('photobank')}}" class="nav-link text-gray-700 hover:text-primary transition-colors"
+           data-page="team">Фотобанк</a>
+        <a href="{{route('mail.index')}}" class="nav-link text-gray-700 hover:text-primary transition-colors"
+           data-page="mail">Почта</a>
     </div>
 
     @auth()
@@ -67,36 +83,71 @@
     @endauth
 </nav>
 
-<div class="flex">
+<div class="flex fon">
     <!-- Боковая панель -->
-    <div class="sidebar w-64 bg-white border-r border-gray-200 py-6 px-4">
+    <div class="sidebar w-64 bg-white border-r border-gray-200 py-6 px-4 bg-transparent">
 
-        <div class="mb-8">
-            <div class="mb-4">
-                <a href="{{route('tasks.admin')}}">
-                    <h2 class="text-lg font-semibold text-gray-700">Моя организация</h2>
-                </a>
-            </div>
+        <div class="mb-8 hover:fill-[#16a34a]">
+            @if(isset(auth()->user()->role->name))
+                @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
+                    <div class="mb-4 hover:bg-green-50 cursor-pointer p-2 rounded-[50px]">
+                        <a href="{{route('tasks.admin')}}" class="flex align-items-center">
 
-            <div class="mb-4">
-                <a href="{{route('welcome')}}">
-                    <h2 class="text-lg font-semibold text-gray-700">Мои задачи</h2>
+                            <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg" class="">
+                                <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
+                                <path
+                                    d="m21.41,6.09L12.41,2.09c-.26-.12-.55-.12-.81,0L2.59,6.09c-.36.16-.59.52-.59.91v3c0,.55.45,1,1,1v5c-.55,0-1,.45-1,1v4c0,.55.45,1,1,1h18c.55,0,1-.45,1-1v-4c0-.55-.45-1-1-1v-5c.55,0,1-.45,1-1v-3c0-.4-.23-.75-.59-.91Zm-17.41,1.56l8-3.55,8,3.55v1.35H4v-1.35Zm9,8.35h-2v-5h2v5Zm-7-5h2v5h-2v-5Zm14,9H4v-2h16v2Zm-2-4h-2v-5h2v5Z"/>
+                            </svg>
+                            <h2 class="text-md font-semibold text-gray-700 hover:text-[#16a34a] ml-2">Моя
+                                организация</h2>
+                        </a>
+                    </div>
+                @endif
+            @endif
+
+            <div class="mb-4 hover:bg-green-50 cursor-pointer p-2 rounded-[50px]">
+                <a href="{{route('welcome')}}" class="flex align-items-center">
+
+                    <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg">
+                        <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
+                        <path
+                            d="M9 15.59 4.71 11.3 3.3 12.71l5 5c.2.2.45.29.71.29s.51-.1.71-.29l11-11-1.41-1.41L9.02 15.59Z"/>
+                    </svg>
+                    <h2 class="text-md font-semibold text-gray-700 ml-2">Мои задачи</h2>
                 </a>
             </div>
         </div>
 
-        <div class="mb-8">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-gray-700">Отделы</h2>
-                <button onclick="openDepartmentModal()" class="text-primary hover:text-secondary">
+        <div class="mb-8 p-2 cursor-pointer">
+            <div class="flex items-center justify-between mb-4 group relative">
+                <div class="flex align-items-center">
+                    <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg">
+                        <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
+                        <path
+                            d="m21,6h-2v-2c0-1.1-.9-2-2-2H7c-1.1,0-2,.9-2,2v6h-2c-1.1,0-2,.9-2,2v9c0,.55.45,1,1,1h20c.55,0,1-.45,1-1v-13c0-1.1-.9-2-2-2Zm0,14h-7v-5h-4v5H3v-8h3c.55,0,1-.45,1-1v-7h10v3c0,.55.45,1,1,1h3v12Z"/>
+                        <path d="M9 10H11V12H9z"/>
+                        <path d="M9 6H11V8H9z"/>
+                        <path d="M5 14H7V16H5z"/>
+                        <path d="M17 14H19V16H17z"/>
+                        <path d="M17 10H19V12H17z"/>
+                        <path d="M13 6H15V8H13z"/>
+                        <path d="M13 10H15V12H13z"/>
+                    </svg>
+                    <h2 class="text-md font-semibold text-gray-700 ml-2">Отделы</h2>
+                </div>
+                <button
+                    onclick="openDepartmentModal()"
+                    class="absolute top-1 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-primary hover:text-secondary"
+                >
                     <i class="fas fa-plus"></i>
                 </button>
             </div>
             @if(isset($departments) && $departments->count() > 0)
                 <div class="space-y-2">
                     @foreach($departments as $department)
-                        <div class="group flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer workspace-item"
-                             data-workspace="alpha" onclick="openDepartmentMail('{{ $department->email }}')">
+                        <div
+                            class="group flex items-center justify-between p-2 hover:bg-green-50 cursor-pointer rounded-[50px] workspace-item"
+                            data-workspace="alpha" onclick="openDepartmentMail('{{ $department->email }}')">
                             <div class="flex items-center">
                                 <span class="text-gray-700">{{ $department->name }}</span>
                                 <div class="email-badge">{{ $department->unread_count ?? 0 }}</div>
@@ -120,10 +171,19 @@
             @endif
         </div>
 
-        <div class="mb-8">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-gray-700">Категории</h2>
-                <button onclick="openCategoryModal()" class="text-primary hover:text-secondary">
+        <div class="mb-8 p-2  cursor-pointer">
+            <div class="flex items-center justify-between mb-4 group relative">
+                <div class="flex align-items-center">
+                    <svg width="24" height="24" fill="#16a34a" viewBox="0 0 24 24" transform="" id="injected-svg">
+                        <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
+                        <path
+                            d="M18 6h-8c-1.1 0-2 .9-2 2v13c0 .36.19.69.5.87s.69.17 1 0l4.49-2.66 4.49 2.66c.16.09.33.14.51.14s.34-.04.5-.13c.31-.18.5-.51.5-.87v-13c0-1.1-.9-2-2-2Zm0 8v5.25l-3.49-2.07a.98.98 0 0 0-1.02 0L10 19.25V8h8z"/>
+                        <path d="M16 2H6c-1.1 0-2 .9-2 2v14h2V4h10z"/>
+                    </svg>
+                    <h2 class="text-md font-semibold text-gray-700 ml-2">Теги</h2>
+                </div>
+                <button onclick="openCategoryModal()"
+                        class="absolute top-1 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-primary hover:text-secondary">
                     <i class="fas fa-plus"></i>
                 </button>
             </div>
@@ -132,22 +192,31 @@
             @if(isset($categories) && $categories->count() > 0)
                 <div class="space-y-2">
                     @foreach($categories as $category)
-                        <div class="group flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer board-item"
-                             data-board="development">
+                        <div
+                            class="group flex items-center justify-between ml-4 hover:bg-green-50 cursor-pointer rounded-[50px] board-item"
+                            data-board="development">
                             <div class="flex items-center space-x-3">
-                                <div class="w-3 h-3 rounded" style="background-color: {{ $category->color }}"></div>
+                                <svg width="24" height="24" fill="{{ $category->color }}" viewBox="0 0 24 24"
+                                     transform="" id="injected-svg">
+                                    <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
+                                    <path
+                                        d="m12,2C6.49,2,2,6.49,2,12s4.49,10,10,10c.27,0,.52-.11.71-.29l9-9c.19-.19.29-.44.29-.71,0-5.51-4.49-10-10-10ZM4,12c0-4.41,3.59-8,8-8,4.08,0,7.45,3.07,7.93,7.02-.14,0-.29-.02-.43-.02-4.69,0-8.5,3.81-8.5,8.5,0,.14.01.29.02.43-3.95-.48-7.02-3.85-7.02-7.93Z"/>
+                                </svg>
+
                                 <span class="text-gray-700">{{ $category->name }}</span>
                             </div>
                             @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
-                                <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <div
+                                    class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                     <button onclick="openEditCategoryModal({{ $category->id }})"
                                             class="text-gray-400 hover:text-primary p-1"
                                             title="Редактировать категорию">
                                         <i class="fas fa-edit text-xs"></i>
                                     </button>
-                                    <button onclick="openDeleteCategoryModal({{ $category->id }}, {{ json_encode($category->name) }})"
-                                            class="text-gray-400 hover:text-red-500 p-1"
-                                            title="Удалить категорию">
+                                    <button
+                                        onclick="openDeleteCategoryModal({{ $category->id }}, {{ json_encode($category->name) }})"
+                                        class="text-gray-400 hover:text-red-500 p-1"
+                                        title="Удалить категорию">
                                         <i class="fas fa-trash text-xs"></i>
                                     </button>
                                 </div>
@@ -161,9 +230,6 @@
         </div>
 
         <div class="mb-8">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-gray-700">Пользователи онлайн</h2>
-            </div>
             <div class="flex flex-wrap gap-2">
                 <!-- Пример пользователей онлайн -->
                 <div class="avatar-container">
@@ -192,17 +258,32 @@
                 </div>
             </div>
         </div>
+
+        <div class="fixed bottom-[10px] p-2" style="border: 1px solid #16a34a; border-radius: 10px;">
+            <div class="" ><h6
+                    class="font-heading text-sm/tighter font-bold -tracking-snug text-slate-600 mb-4 flex items-center">
+                    <img src="{{asset('img/icons/disk.svg')}}" alt="">
+                    <span class="ml-2">Файловое хранилище</span></h6>
+                <div class="flex rounded-sm bg-slate-100 dark:bg-slate-900 overflow-hidden h-1.5">
+                    <div
+                        class="text-xs text-center px-1 text-white bg-green-600 bg-[length:theme(spacing.1.5)_theme(spacing.1.5)]"
+                        style="width: 15%;"></div>
+                </div>
+                <div class="text-xs font-medium text-slate-400 mt-4">12.47 GB из 50 GB занято</div>
+            </div>
+        </div>
     </div>
 
     <!-- Основной контент -->
-    <div class="flex-1 p-6 bg-gray-50">
+    <div class="flex-1 min-h-[calc(100vh-80px)] "> <!-- Убрал p-6 и bg-gray-50 -->
         <!-- Главная страница -->
-        <div id="home" class="page active-page">
+        <div id="home" class="page active-page p-6"> <!-- Добавил padding внутрь -->
             @yield('content')
         </div>
 
         <div class="chat-button" style="position: fixed; bottom: 10px; right: 20px;">
-            <button class="bg-primary text-white p-2 rounded-full hover:bg-secondary transition-colors" style="width: 70px;">
+            <button class="bg-primary text-white p-2 rounded-full hover:bg-secondary transition-colors"
+                    style="width: 70px;">
                 <i class="fas fa-comment-dots"></i>
             </button>
         </div>
@@ -217,7 +298,7 @@
 
 <!-- Модальное окно профиля пользователя -->
 @auth()
-@include('partials.modal.user-profile-modal')
+    @include('partials.modal.user-profile-modal')
 @endauth
 
 
@@ -515,7 +596,6 @@
         }
     });
 
-    // Остальные функции оставляем без изменений...
     // Обработка формы пользователя
     document.getElementById('userForm').addEventListener('submit', async function (e) {
         e.preventDefault();

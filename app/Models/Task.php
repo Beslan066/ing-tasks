@@ -45,6 +45,7 @@ class Task extends Model
         'estimated_hours',
         'actual_hours',
         'deleted_by', // Добавляем поле для отслеживания кто удалил
+        'is_personal',
     ];
 
     protected $casts = [
@@ -319,5 +320,15 @@ class Task extends Model
         }
 
         return false;
+    }
+
+    public function scopePersonal($query, $userId = null)
+    {
+        if ($userId) {
+            return $query->where('author_id', $userId)
+                ->where('user_id', $userId)
+                ->where('is_personal', true);
+        }
+        return $query->where('is_personal', true);
     }
 }

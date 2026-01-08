@@ -199,3 +199,8 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 .priority-medium { border-left: 4px solid #f59e0b; }
 .priority-high { border-left: 4px solid #ef4444; }
 .priority-critical { border-left: 4px solid #7c3aed; }
+
+
+.sidebar-icon {
+    height: 20px;
+}
