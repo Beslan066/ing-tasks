@@ -29,9 +29,13 @@
 
     <style>
         .fon {
-            /*background: url("https://images.unsplash.com/photo-1650624225233-75df5a34ceea?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") no-repeat center center;*/
+            /*background: url("https://avatars.mds.yandex.net/i?id=0852a6db87ebed02920b87d285db69e5_l-3707062-images-thumbs&n=13") no-repeat center center;*/
             background-size: cover; /* покрывает всю область */
             position: relative;
+            /*background: -webkit-linear-gradient(45deg, rgb(86, 181, 184), rgb(22, 163, 74));*/
+            /*background: -moz-linear-gradient(45deg, rgb(86, 181, 184),   rgb(22, 163, 74));*/
+            /*background: linear-gradient(45deg, rgb(86, 181, 184),  rgb(22, 163, 74));*/
+
         }
 
 
@@ -85,7 +89,7 @@
 
 <div class="flex fon">
     <!-- Боковая панель -->
-    <div class="sidebar w-64 bg-white border-r border-gray-200 py-6 px-4 bg-transparent">
+    <div class="sidebar w-64 bg-white border-r border-gray-200 py-6 px-4 bg-transparent  hidden sm:block">
 
         <div class="mb-8 hover:fill-[#16a34a]">
             @if(isset(auth()->user()->role->name))

@@ -142,15 +142,6 @@
                             <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <a href="{{ request()->fullUrlWithQuery(['sort' => 'id', 'direction' => $currentSort == 'id' && $currentDirection == 'asc' ? 'desc' : 'asc']) }}"
-                                       class="flex items-center space-x-1 hover:text-blue-600 {{ $currentSort == 'id' ? 'text-blue-600 font-semibold' : '' }}">
-                                        <span>ID</span>
-                                        @if($currentSort == 'id')
-                                            <span class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
-                                        @endif
-                                    </a>
-                                </th>
-                                <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <a href="{{ request()->fullUrlWithQuery(['sort' => 'name', 'direction' => $currentSort == 'name' && $currentDirection == 'asc' ? 'desc' : 'asc']) }}"
                                        class="flex items-center space-x-1 hover:text-blue-600 {{ $currentSort == 'name' ? 'text-blue-600 font-semibold' : '' }}">
                                         <span>Пользователь</span>
@@ -197,7 +188,6 @@
                                             ->count();
                                     @endphp
                                     <tr class="bg-white border-b hover:bg-gray-50 transition user-row cursor-pointer" data-user-id="{{ $user->id }}">
-                                        <td class="px-3 py-4 text-sm">{{ $user->id }}</td>
                                         <td class="px-3 py-4">
                                             <div class="flex items-center space-x-3">
                                                 @if(isset($user->avatar))
@@ -215,7 +205,7 @@
                                         </td>
                                         <td class="px-3 py-4">
                                             @if(isset($user->role))
-                                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
                                                     {{ $user->role->name }}
                                                 </span>
                                             @else
@@ -308,9 +298,6 @@
                                     <h3 class="font-semibold text-gray-900 truncate">{{ $user->name }}</h3>
                                     <p class="text-sm text-gray-600 truncate">{{ $user->email }}</p>
                                     <div class="flex items-center space-x-2 mt-1">
-                                        <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs">
-                                            ID: {{ $user->id }}
-                                        </span>
                                         @if($user->is_active)
                                             <span class="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs">Активный</span>
                                         @else
@@ -320,7 +307,7 @@
                                 </div>
                             </div>
                             <div class="flex space-x-1">
-                                <button class="view-user-btn text-blue-600 hover:text-blue-800 p-1" data-user-id="{{ $user->id }}" title="Просмотр">
+                                <button class="view-user-btn text-green-600 hover:text-green-800 p-1" data-user-id="{{ $user->id }}" title="Просмотр">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>

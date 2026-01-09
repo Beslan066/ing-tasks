@@ -17,14 +17,14 @@
                     </svg>
                     Фильтры
                     <template x-if="hasActiveFilters">
-                        <span class="bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+                        <span class="bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
                               x-text="getActiveFiltersCount"></span>
                     </template>
                 </button>
 
                 <!-- Кнопка добавления фото -->
                 <button @click="showUploadModal = true"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
+                        class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -47,7 +47,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Поиск</label>
                     <input type="text" x-model="filters.search" @input.debounce.500ms="loadPhotos"
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
                            placeholder="Название, описание...">
                 </div>
 
@@ -55,7 +55,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Категория</label>
                     <select x-model="filters.category" @change="loadPhotos"
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500  dark:text-white bg-white">
                         <option value="">Все категории</option>
                         <template x-for="category in categories" :key="category.id">
                             <option :value="category.id" x-text="category.name"></option>
@@ -67,7 +67,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Теги</label>
                     <select x-model="filters.tags" @change="loadPhotos"
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white">
                         <option value="">Все теги</option>
                         <template x-for="tag in tags" :key="tag.id">
                             <option :value="tag.id" x-text="tag.name"></option>
@@ -79,9 +79,9 @@
             <!-- Активные фильтры -->
             <div x-show="hasActiveFilters" class="mt-4 flex flex-wrap gap-2">
                 <template x-if="filters.search">
-                <span class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                <span class="inline-flex items-center gap-1 bg-blue-100 text-green-800 px-3 py-1 rounded-full text-sm">
                     Поиск: <span x-text="filters.search"></span>
-                    <button @click="filters.search = ''; loadPhotos();" class="hover:text-blue-900">×</button>
+                    <button @click="filters.search = ''; loadPhotos();" class="hover:text-green-900">×</button>
                 </span>
                 </template>
                 <template x-if="filters.category">
@@ -105,13 +105,13 @@
         <!-- Быстрые категории -->
         <div class="flex items-center justify-center py-4 flex-wrap gap-2 mb-8">
             <button @click="setCategoryFilter('')"
-                    :class="{'bg-blue-600 text-white': !filters.category, 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300': filters.category}"
+                    :class="{'bg-green-600 text-white': !filters.category, 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300': filters.category}"
                     class="px-4 py-2 rounded-lg font-medium transition-colors border border-gray-300 dark:border-gray-600">
                 Все категории
             </button>
             <template x-for="category in categories" :key="category.id">
                 <button @click="setCategoryFilter(category.id)"
-                        :class="{'bg-blue-600 text-white': filters.category == category.id, 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300': filters.category != category.id}"
+                        :class="{'bg-green-600 text-white': filters.category == category.id, 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300': filters.category != category.id}"
                         class="px-4 py-2 rounded-lg font-medium transition-colors border border-gray-300 dark:border-gray-600"
                         x-text="category.name">
                 </button>
@@ -123,7 +123,7 @@
             <!-- Индикатор загрузки -->
             <div x-show="loading" class="absolute inset-0 bg-white dark:bg-gray-900 bg-opacity-80 flex items-center justify-center z-10 rounded-lg">
                 <div class="flex items-center gap-3 text-gray-600 dark:text-gray-400">
-                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
                     <span>Загрузка фотографий...</span>
                 </div>
             </div>
@@ -139,13 +139,13 @@
                                  loading="lazy">
 
                             <!-- Наложение с информацией -->
-                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-end p-3">
-                                <div class="text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 mb-4">
+                            <div class="absolute inset-0 bg-black bg-opacity-60 group-hover:bg-opacity-60 transition-all duration-300 flex items-end p-3 w-100">
+                                <div class="text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 mb-4 w-100 pointer">
                                     <h3 class="font-semibold text-sm mb-1" x-text="photo.title"></h3>
                                     <p class="text-xs opacity-90 mb-2" x-text="photo.category.name"></p>
                                     <div class="flex flex-wrap gap-1">
                                         <template x-for="tag in photo.tags" :key="tag.id">
-                                            <span class="bg-blue-500 bg-opacity-80 px-2 py-1 rounded text-xs" x-text="tag.name"></span>
+                                            <span class="bg-green-500 bg-opacity-80 px-2 py-1 rounded text-xs" x-text="tag.name"></span>
                                         </template>
                                     </div>
                                 </div>
@@ -167,7 +167,7 @@
                         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2" x-text="hasActiveFilters ? 'Ничего не найдено' : 'Пока нет фотографий'"></h3>
                         <p class="text-gray-500 dark:text-gray-400 mb-6" x-text="hasActiveFilters ? 'Попробуйте изменить параметры поиска' : 'Будьте первым, кто добавит фотографию!'"></p>
                         <button @click="hasActiveFilters ? clearFilters() : (showUploadModal = true)"
-                                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                             <span x-text="hasActiveFilters ? 'Сбросить фильтры' : 'Добавить фото'"></span>
                         </button>
                     </div>
@@ -212,7 +212,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Название *</label>
                             <input type="text" x-model="uploadForm.title"
-                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
                                    required>
                             <span x-show="uploadErrors.title" x-text="uploadErrors.title" class="text-red-500 text-sm mt-1"></span>
                         </div>
@@ -221,7 +221,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Описание</label>
                             <textarea x-model="uploadForm.description" rows="3"
-                                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"></textarea>
+                                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"></textarea>
                         </div>
 
                         <!-- Категория -->
@@ -229,7 +229,7 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Категория *</label>
                             <div class="flex gap-2">
                                 <select x-model="uploadForm.category_id"
-                                        class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                        class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 bg-white"
                                         required>
                                     <option value="">Выберите категорию</option>
                                     <template x-for="category in categories" :key="category.id">
@@ -245,7 +245,7 @@
                             <div x-show="showNewCategory" class="flex gap-2 mt-2">
                                 <input type="text" x-model="newCategory.name"
                                        placeholder="Новая категория"
-                                       class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                                       class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white">
                                 <button type="button" @click="createCategory"
                                         class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg">
                                     Создать
@@ -258,7 +258,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Теги</label>
                             <select x-model="uploadForm.tags" multiple
-                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white h-32">
+                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white h-32">
                                 <template x-for="tag in tags" :key="tag.id">
                                     <option :value="tag.id" x-text="tag.name"></option>
                                 </template>
@@ -270,7 +270,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Фотография *</label>
                             <input type="file" @change="handleFileSelect"
-                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
                                    accept="image/*" required>
                             <span x-show="uploadErrors.photo" x-text="uploadErrors.photo" class="text-red-500 text-sm mt-1"></span>
                             <p class="text-sm text-gray-500 mt-2">Поддерживаемые форматы: JPEG, PNG, GIF, WebP. Максимальный размер: 20MB</p>
@@ -293,7 +293,7 @@
                         <div class="flex gap-4 pt-4">
                             <button type="submit"
                                     :disabled="uploadLoading"
-                                    class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                                    class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                                 <span x-show="!uploadLoading">Загрузить фотографию</span>
                                 <span x-show="uploadLoading">Загрузка...</span>
                             </button>
