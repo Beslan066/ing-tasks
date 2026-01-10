@@ -14,8 +14,43 @@ class EmailVerificationPromptController extends Controller
      */
     public function __invoke(Request $request): RedirectResponse|View
     {
-        return $request->user()->hasVerifiedEmail()
-                    ? redirect()->intended(route('dashboard', absolute: false))
-                    : view('auth.verify-email');
+        $user = $request->user();
+
+        // Если пользователь зашел через OAuth И email был получен от соцсети
+        // Или email уже подтвержден
+        if ($this->shouldSkipVerification($user)) {
+            return redirect()->intended(route('dashboard', absolute: false));
+        }
+
+        return $user->hasVerifiedEmail()
+            ? redirect()->intended(route('dashboard', absolute: false))
+            : view('auth.verify-email');
+    }
+
+    /**
+     * Проверяем, нужно ли пропустить верификацию email
+     */
+    private function shouldSkipVerification($user): bool
+    {
+        // 1. Email уже подтвержден
+        if ($user->hasVerifiedEmail()) {
+            return true;
+        }
+
+        // 2. Пользователь зашел через соцсеть и email от соцсети
+        if ($user->provider && $user->email_verified_at) {
+            return true;
+        }
+
+        // 3. Для OAuth пользователей с временным email (содержит .temp)
+        if ($user->provider && str_contains($user->email, '.temp')) {
+            // Автоматически отмечаем как подтвержденный, если это временный email
+            $user->forceFill([
+                'email_verified_at' => now(),
+            ])->save();
+            return true;
+        }
+
+        return false;
     }
 }

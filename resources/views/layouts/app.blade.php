@@ -74,9 +74,15 @@
 
             <div class="flex items-center space-x-2 cursor-pointer" id="userMenuBtn" onclick="userProfileModal()">
                 <div class="avatar-container">
-                    <div class="avatar bg-gradient-to-r from-primary to-secondary">
-                        {{mb_substr(auth()->user()->name, 0,1)}}
-                    </div>
+                    @if(auth()->user()->avatar)
+                        <div class="avatar bg-gradient-to-r " style="width: 50px; height: 50px;">
+                            <img src="{{auth()->user()->getAvatarUrlAttribute()}}" alt="" style="width: 100%; height: 100%; border-radius: 50px; object-fit: cover">
+                        </div>
+                    @else
+                        <div class="avatar bg-gradient-to-r from-primary to-secondary">
+                            {{mb_substr(auth()->user()->name, 0,1)}}
+                        </div>
+                    @endif
                 </div>
                 @if(auth())
                     <span class="hidden md:block font-medium text-gray-700">{{auth()->user()->name}}</span>
@@ -234,33 +240,68 @@
         </div>
 
         <div class="mb-8">
-            <div class="flex flex-wrap gap-2">
-                <!-- Пример пользователей онлайн -->
-                <div class="avatar-container">
-                    <div class="avatar bg-blue-500">
-                        БШ
-                    </div>
-                    <div class="online-indicator"></div>
+            @if(isset($onlineUsersCount) && $onlineUsersCount > 0)
+                <div class="mb-2">
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        Онлайн ({{ $onlineUsersCount }})
+                    </h3>
+
                 </div>
-                <div class="avatar-container">
-                    <div class="avatar bg-purple-500">
-                        АИ
-                    </div>
-                    <div class="online-indicator"></div>
+
+                <div class="flex flex-wrap gap-2">
+                    @if(isset($onlineUsers) && $onlineUsers->count() > 0)
+                        @foreach($onlineUsers as $user)
+                            <div class="avatar-container group relative">
+                                <!-- Аватар с инициалами -->
+                                <div class="avatar {{ $user['color'] ?? 'bg-blue-500' }}"
+                                     title="{{ $user['name'] ?? 'Пользователь' }} - {{ $user['last_activity_text'] ?? 'Недавно' }}">
+                                    {{ $user['initials'] ?? '??' }}
+                                </div>
+
+                                <!-- Индикатор онлайн -->
+                                <div class="online-indicator"></div>
+
+                                <!-- Всплывающая подсказка при наведении -->
+                                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2
+                                    px-2 py-1 bg-gray-800 text-white text-xs rounded
+                                    opacity-0 group-hover:opacity-100 transition-opacity
+                                    whitespace-nowrap z-10 pointer-events-none">
+                                    {{ $user['name'] ?? 'Пользователь' }}
+                                    <div class="text-green-400 text-xs">
+                                        <i class="fas fa-circle mr-1"></i>Онлайн
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+
+                        <!-- Если онлайн много, показываем счетчик -->
+                        @php
+                            $totalCompanyUsers = isset($team) ? $team->count() : 0;
+                            $displayedUsers = isset($onlineUsers) ? $onlineUsers->count() : 0;
+                            $moreOnline = $onlineUsersCount - $displayedUsers;
+                        @endphp
+
+                        @if($moreOnline > 0)
+                            <div class="avatar-container">
+                                <div class="avatar bg-gray-300 text-gray-700"
+                                     title="Еще {{ $moreOnline }} онлайн">
+                                    +{{ $moreOnline }}
+                                </div>
+                            </div>
+                        @endif
+                    @else
+                        <div class="text-center py-4 text-gray-500 w-full">
+                            <i class="fas fa-users text-2xl mb-2 block"></i>
+                            <p>Нет данных об онлайн пользователях</p>
+                        </div>
+                    @endif
                 </div>
-                <div class="avatar-container">
-                    <div class="avatar bg-red-500">
-                        МК
-                    </div>
-                    <div class="online-indicator"></div>
+            @else
+                <div class="text-center py-4 text-gray-500">
+                    <i class="fas fa-users text-2xl mb-2 block"></i>
+                    <p>Сейчас никого нет в сети</p>
                 </div>
-                <div class="avatar-container">
-                    <div class="avatar bg-yellow-500">
-                        ДП
-                    </div>
-                    <div class="online-indicator"></div>
-                </div>
-            </div>
+            @endif
         </div>
 
         <div class="fixed bottom-[10px] p-2" style="border: 1px solid #16a34a; border-radius: 10px;">
@@ -1367,6 +1408,137 @@
             });
         });
     });
+
+
+    function updateUserActivity() {
+        fetch('/update-activity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Активность обновлена:', data);
+
+                // После обновления активности, обновляем список онлайн пользователей
+                updateOnlineUsers();
+            })
+            .catch(error => console.error('Ошибка обновления активности:', error));
+    }
+
+    // Функция для обновления списка онлайн пользователей через AJAX
+    function updateOnlineUsers() {
+        fetch('/get-online-users', {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Обновляем только блок с онлайн пользователями
+                updateOnlineUsersUI(data);
+            })
+            .catch(error => console.error('Ошибка получения онлайн пользователей:', error));
+    }
+
+    // Обновление интерфейса
+    function updateOnlineUsersUI(data) {
+        // Обновляем аватары онлайн пользователей
+        const onlineUsersContainer = document.querySelector('.online-users-avatars');
+        if (onlineUsersContainer && data.onlineUsers) {
+            onlineUsersContainer.innerHTML = data.onlineUsers.map(user => `
+            <div class="avatar-container group relative">
+                <div class="avatar ${user.color}"
+                     title="${user.name} - ${user.last_activity_text}">
+                    ${user.initials}
+                </div>
+                <div class="online-indicator"></div>
+            </div>
+        `).join('');
+        }
+
+        // Обновляем счетчик
+        const counterElement = document.querySelector('.online-users-count');
+        if (counterElement && data.onlineUsersCount !== undefined) {
+            counterElement.textContent = data.onlineUsersCount;
+        }
+    }
+
+    // Обновлять активность каждые 30 секунд
+    setInterval(updateUserActivity, 30000);
+
+    // Обновлять список онлайн пользователей каждые 10 секунд
+    setInterval(updateOnlineUsers, 10000);
+
+    // При загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        updateUserActivity();
+        // Запускаем первый раз через 2 секунды
+        setTimeout(updateOnlineUsers, 2000);
+    });
+
+    // Отправляем запрос при закрытии вкладки
+    window.addEventListener('beforeunload', function(event) {
+        // Используем navigator.sendBeacon для надежной отправки при закрытии
+        const data = new FormData();
+        data.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+
+        navigator.sendBeacon('/user-leaving', data);
+
+        // Альтернатива: синхронный AJAX (менее надежно)
+        // const xhr = new XMLHttpRequest();
+        // xhr.open('POST', '/user-leaving', false);
+        // xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+        // xhr.send();
+    });
+
+    // Также отслеживаем видимость вкладки
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            // Вкладка стала невидимой (пользователь переключился на другую вкладку)
+            fetch('/user-hidden', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ hidden: true })
+            });
+        } else {
+            // Вкладка снова стала видимой
+            updateUserActivity();
+        }
+    });
+
+    // Heartbeat - периодическая проверка активности
+    let lastActivity = Date.now();
+    const INACTIVITY_TIMEOUT = 30000; // 30 секунд неактивности
+
+    // Отслеживаем любую активность пользователя
+    ['mousemove', 'keydown', 'click', 'scroll'].forEach(eventName => {
+        document.addEventListener(eventName, function() {
+            lastActivity = Date.now();
+        });
+    });
+
+    // Проверяем неактивность каждые 10 секунд
+    setInterval(function() {
+        const now = Date.now();
+        if (now - lastActivity > INACTIVITY_TIMEOUT) {
+            // Пользователь неактивен более 30 секунд
+            fetch('/user-inactive', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ inactive: true })
+            });
+        }
+    }, 10000);
 </script>
 
 

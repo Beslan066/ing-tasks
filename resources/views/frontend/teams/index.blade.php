@@ -53,14 +53,6 @@
                         @endforeach
                     </select>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                    <select id="statusFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 bg-transparent text-sm md:text-base">
-                        <option value="">Все</option>
-                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Активные</option>
-                        <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Неактивные</option>
-                    </select>
-                </div>
             </div>
 
             <!-- Дополнительные фильтры -->
@@ -156,15 +148,7 @@
                                 <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Выполнено</th>
                                 <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">% выполнения</th>
                                 <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Просрочено</th>
-                                <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <a href="{{ request()->fullUrlWithQuery(['sort' => 'is_active', 'direction' => $currentSort == 'is_active' && $currentDirection == 'asc' ? 'desc' : 'asc']) }}"
-                                       class="flex items-center space-x-1 hover:text-blue-600 {{ $currentSort == 'is_active' ? 'text-blue-600 font-semibold' : '' }}">
-                                        <span>Статус</span>
-                                        @if($currentSort == 'is_active')
-                                            <span class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
-                                        @endif
-                                    </a>
-                                </th>
+
                                 <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <a href="{{ request()->fullUrlWithQuery(['sort' => 'created_at', 'direction' => $currentSort == 'created_at' && $currentDirection == 'asc' ? 'desc' : 'asc']) }}"
                                        class="flex items-center space-x-1 hover:text-blue-600 {{ $currentSort == 'created_at' ? 'text-blue-600 font-semibold' : '' }}">
@@ -189,12 +173,12 @@
                                     @endphp
                                     <tr class="bg-white border-b hover:bg-gray-50 transition user-row cursor-pointer" data-user-id="{{ $user->id }}">
                                         <td class="px-3 py-4">
-                                            <div class="flex items-center space-x-3">
+                                            <div class="flex items-center space-x-3" >
                                                 @if(isset($user->avatar))
-                                                    <img src="{{ asset('storage/public/' . $user->avatar) }}" alt="{{ $user->name }}" class="w-8 h-8 rounded-full">
+                                                    <img src="{{$user->getAvatarUrlAttribute()}}" alt="{{ $user->name }}" class="w-8 h-8 rounded-full object-cover" style="width:50px; height: 50px;">
                                                 @else
-                                                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                                                        <span class="text-gray-600 text-xs font-medium">{{ substr($user->name, 0, 1) }}</span>
+                                                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0" style="width:50px; height: 50px;">
+                                                        <span class="text-gray-600 text-xs font-medium" >{{ substr($user->name, 0, 1) }}</span>
                                                     </div>
                                                 @endif
                                                 <div class="min-w-0">
@@ -233,13 +217,6 @@
                                                 {{ $overdue }}
                                             </span>
                                         </td>
-                                        <td class="px-3 py-4">
-                                            @if($user->is_active)
-                                                <span class="bg-green-500 px-2 py-1 text-white rounded-md text-xs">Активный</span>
-                                            @else
-                                                <span class="bg-gray-500 px-2 py-1 text-white rounded-md text-xs">Неактивный</span>
-                                            @endif
-                                        </td>
                                         <td class="px-3 py-4 text-sm text-gray-900">{{ $user->created_at->format('d.m.Y') }}</td>
                                         <td class="px-3 py-4">
                                             <div class="flex items-center space-x-2">
@@ -249,9 +226,19 @@
                                                 <button class="text-gray-600 hover:text-gray-800 p-1" title="Изменить">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button class="text-red-600 hover:text-red-800 p-1" title="Удалить">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                                @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
+
+                                                    <form action="{{ route('team.destroy', $user->id) }}"
+                                                          method="post"
+                                                          class="d-inline"
+                                                          onsubmit="return confirm('Вы уверены, что хотите удалить {{ $user->name }} из команды? Пользователю будет отправлено уведомление.')">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <button type="submit" class="text-red-600 hover:text-red-800 p-1">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -288,7 +275,7 @@
                         <div class="flex justify-between items-start mb-3">
                             <div class="flex items-center space-x-3">
                                 @if(isset($user->avatar))
-                                    <img src="{{ asset('storage/public/' . $user->avatar) }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full">
+                                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full">
                                 @else
                                     <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
                                         <span class="text-gray-600 font-medium">{{ substr($user->name, 0, 1) }}</span>
@@ -297,13 +284,6 @@
                                 <div class="min-w-0">
                                     <h3 class="font-semibold text-gray-900 truncate">{{ $user->name }}</h3>
                                     <p class="text-sm text-gray-600 truncate">{{ $user->email }}</p>
-                                    <div class="flex items-center space-x-2 mt-1">
-                                        @if($user->is_active)
-                                            <span class="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs">Активный</span>
-                                        @else
-                                            <span class="px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full text-xs">Неактивный</span>
-                                        @endif
-                                    </div>
                                 </div>
                             </div>
                             <div class="flex space-x-1">
@@ -729,137 +709,130 @@
                 const stats = data.stats;
 
                 modalContent.innerHTML = `
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Левая колонка - Информация о пользователе -->
-                        <div class="lg:col-span-1">
-                            <div class="bg-gray-50 rounded-lg p-6">
-                                <div class="text-center mb-6">
-                                    ${user.avatar ?
-                    `<img src="/storage/public/${user.avatar}" alt="${user.name}" class="w-24 h-24 rounded-full mx-auto mb-4">` :
-                    `<div class="w-24 h-24  rounded-full flex items-center justify-center mx-auto mb-4" style="background-color: #16a34a">
-                                            <span class="text-white text-2xl font-bold">${user.name.charAt(0)}</span>
-                                        </div>`
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Левая колонка - Информация о пользователе -->
+        <div class="lg:col-span-1">
+            <div class="bg-gray-50 rounded-lg p-6">
+                <div class="text-center mb-6">
+                    ${user.avatar_url && user.avatar_url !== user.defaultAvatarUrl ?
+                    `<img src="${user.avatar_url}" alt="${user.name}" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">` :
+                    `<div class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4" style="background-color: #16a34a">
+                            <span class="text-white text-2xl font-bold">${user.name.charAt(0)}</span>
+                        </div>`
                 }
-                                    <h4 class="text-xl font-bold text-gray-900">${user.name}</h4>
-                                    <p class="text-gray-600">${user.email}</p>
-                                    <div class="mt-2">
-                                        <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                                            ${user.role ? user.role.name : 'Роль не назначена'}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="text-sm font-medium text-gray-600">Отдел:</label>
-                                        <p class="text-gray-900">${user.department ? user.department.name : 'Не назначен'}</p>
-                                    </div>
-                                    <div>
-                                        <label class="text-sm font-medium text-gray-600">Статус:</label>
-                                        <p>
-                                            <span class="px-2 py-1 ${user.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'} rounded-full text-xs">
-                                                ${user.is_active ? 'Активный' : 'Неактивный'}
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <label class="text-sm font-medium text-gray-600">Зарегистрирован:</label>
-                                        <p class="text-gray-900">${new Date(user.created_at).toLocaleDateString('ru-RU')}</p>
-                                    </div>
-                                    ${user.last_login_at ? `
-                                        <div>
-                                            <label class="text-sm font-medium text-gray-600">Последний вход:</label>
-                                            <p class="text-gray-900">${new Date(user.last_login_at).toLocaleString('ru-RU')}</p>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Правая колонка - Статистика -->
-                        <div class="lg:col-span-2">
-                            <div class="mb-6">
-                                <h4 class="text-lg font-semibold mb-4">Статистика выполнения задач</h4>
-
-                                <!-- Фильтры периода -->
-                                <div class="flex space-x-2 mb-4">
-                                    <button class="period-filter-btn px-3 py-1 text-white rounded text-sm" data-period="week" style="background-color: #16a34a">Неделя</button>
-                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-white-700 rounded text-sm" data-period="month">Месяц</button>
-                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-white-700 rounded text-sm" data-period="year">Год</button>
-                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-white-700 rounded text-sm" data-period="all">Все время</button>
-                                </div>
-
-                                <!-- Карточки статистики -->
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
-                                        <div class="text-2xl font-bold text-blue-600">${stats.total_tasks}</div>
-                                        <div class="text-sm text-gray-600">Всего задач</div>
-                                    </div>
-                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
-                                        <div class="text-2xl font-bold text-green-600">${stats.completed_tasks}</div>
-                                        <div class="text-sm text-gray-600">Выполнено</div>
-                                    </div>
-                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
-                                        <div class="text-2xl font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</div>
-                                        <div class="text-sm text-gray-600">Средний % выполнения</div>
-                                    </div>
-                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
-                                        <div class="text-2xl font-bold ${stats.overdue_tasks > 0 ? 'text-red-600' : 'text-green-600'}">${stats.overdue_tasks}</div>
-                                        <div class="text-sm text-gray-600">Просрочено</div>
-                                    </div>
-                                </div>
-
-                                <!-- Прогресс бар -->
-                                <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <span class="font-medium text-gray-700">Средний процент выполнения задач</span>
-                                        <span class="font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-3">
-                                        <div class="h-3 rounded-full transition-all duration-500 ${getCompletionRateColor(data.completion_rate).replace('text-', 'bg-')}"
-                                             style="width: ${Math.min(data.completion_rate, 100)}%"></div>
-                                    </div>
-                                    <div class="flex justify-between text-xs text-gray-500 mt-1">
-                                        <span>0%</span>
-                                        <span>50%</span>
-                                        <span>100%</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Кнопки экспорта и печати -->
-                            <div class="flex space-x-2 mb-6">
-                                <a href="/team/user/${user.id}/export?type=excel&period=all"
-                                   class="export-btn px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center space-x-2">
-                                    <i class="fas fa-file-excel"></i>
-                                    <span>Excel</span>
-                                </a>
-                                <a href="/team/user/${user.id}/export?type=pdf&period=all"
-                                   class="export-btn px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center space-x-2">
-                                    <i class="fas fa-file-pdf"></i>
-                                    <span>PDF</span>
-                                </a>
-                                <a href="/team/user/${user.id}/print"
-                                   target="_blank"
-                                   class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center space-x-2">
-                                    <i class="fas fa-print"></i>
-                                    <span>Печать</span>
-                                </a>
-                            </div>
-
-                            <!-- Список задач -->
-                            <div>
-                                <h4 class="text-lg font-semibold mb-4">Задачи</h4>
-                                <div id="userTasksList">
-                                    <div class="flex justify-center items-center py-4">
-                                        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                                        <span class="ml-2 text-gray-600">Загрузка задач...</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <h4 class="text-xl font-bold text-gray-900">${user.name}</h4>
+                    <p class="text-gray-600">${user.email}</p>
+                    <div class="mt-2">
+                        <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                            ${user.role ? user.role.name : 'Роль не назначена'}
+                        </span>
                     </div>
-                `;
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-600">Отдел:</label>
+                        <p class="text-gray-900">${user.department ? user.department.name : 'Не назначен'}</p>
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium text-gray-600">Зарегистрирован:</label>
+                        <p class="text-gray-900">${new Date(user.created_at).toLocaleDateString('ru-RU')}</p>
+                    </div>
+                    ${user.last_login_at ? `
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Последний вход:</label>
+                            <p class="text-gray-900">${new Date(user.last_login_at).toLocaleString('ru-RU')}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая колонка - Статистика -->
+        <div class="lg:col-span-2">
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold mb-4">Статистика выполнения задач</h4>
+
+                <!-- Фильтры периода -->
+                <div class="flex space-x-2 mb-4">
+                    <button class="period-filter-btn px-3 py-1 text-white rounded text-sm" data-period="week" style="background-color: #16a34a">Неделя</button>
+                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
+                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="year">Год</button>
+                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="all">Все время</button>
+                </div>
+
+                <!-- Карточки статистики -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-blue-600">${stats.total_tasks}</div>
+                        <div class="text-sm text-gray-600">Всего задач</div>
+                    </div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-green-600">${stats.completed_tasks}</div>
+                        <div class="text-sm text-gray-600">Выполнено</div>
+                    </div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</div>
+                        <div class="text-sm text-gray-600">Средний % выполнения</div>
+                    </div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold ${stats.overdue_tasks > 0 ? 'text-red-600' : 'text-green-600'}">${stats.overdue_tasks}</div>
+                        <div class="text-sm text-gray-600">Просрочено</div>
+                    </div>
+                </div>
+
+                <!-- Прогресс бар -->
+                <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium text-gray-700">Средний процент выполнения задач</span>
+                        <span class="font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div class="h-3 rounded-full transition-all duration-500 ${getCompletionRateColor(data.completion_rate).replace('text-', 'bg-')}"
+                             style="width: ${Math.min(data.completion_rate, 100)}%"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>0%</span>
+                        <span>50%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопки экспорта и печати -->
+            <div class="flex space-x-2 mb-6">
+                <a href="/team/user/${user.id}/export?type=excel&period=all"
+                   class="export-btn px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center space-x-2">
+                    <i class="fas fa-file-excel"></i>
+                    <span>Excel</span>
+                </a>
+                <a href="/team/user/${user.id}/export?type=pdf&period=all"
+                   class="export-btn px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center space-x-2">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>PDF</span>
+                </a>
+                <a href="/team/user/${user.id}/print"
+                   target="_blank"
+                   class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center space-x-2">
+                    <i class="fas fa-print"></i>
+                    <span>Печать</span>
+                </a>
+            </div>
+
+            <!-- Список задач -->
+            <div>
+                <h4 class="text-lg font-semibold mb-4">Задачи</h4>
+                <div id="userTasksList">
+                    <div class="flex justify-center items-center py-4">
+                        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                        <span class="ml-2 text-gray-600">Загрузка задач...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+`;
 
                 loadUserTasks(user.id);
 

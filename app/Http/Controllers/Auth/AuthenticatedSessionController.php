@@ -28,6 +28,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Получаем пользователя и обновляем его активность
+        $user = Auth::user();
+        if ($user) {
+            $user->update([
+                'last_activity_at' => now(),
+                'is_active' => true
+            ]);
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
@@ -36,6 +45,13 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $user = Auth::user();
+
+        if ($user) {
+            // Обновляем время активности при выходе
+            $user->update(['last_activity_at' => now()]);
+        }
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

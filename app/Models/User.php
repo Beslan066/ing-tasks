@@ -12,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -26,6 +27,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'department_id',
         'is_active',
         'last_login_at',
+        'avatar',
+        'provider',
+        'provider_id',
+        'provider_avatar',
     ];
 
     protected $hidden = [
@@ -41,6 +46,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'last_login_at' => 'datetime',
+            'last_activity_at' => 'datetime',
             'is_active' => 'boolean',
         ];
     }
@@ -567,5 +573,187 @@ class User extends Authenticatable implements MustVerifyEmail
 
         // Менеджер видит только пользователей из своих отделов
         return $this->getAssignableUsers();
+    }
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->avatar) {
+            return Storage::url($this->avatar);
+        }
+
+        // Если есть аватар из соц. сети, используем его
+        if ($this->provider_avatar) {
+            return $this->provider_avatar;
+        }
+
+        return $this->defaultAvatarUrl();
+    }
+
+    private function defaultAvatarUrl(): string
+    {
+        $name = urlencode($this->name);
+        return "https://ui-avatars.com/api/?name={$name}&color=7F9CF5&background=EBF4FF";
+    }
+
+    // В модели User
+    /**
+     * Проверяет, онлайн ли пользователь
+     * @param int $minutesThreshold - порог времени в минутах для определения онлайн статуса
+     * @return bool
+     */
+    public function isOnline(int $minutesThreshold = 2): bool
+    {
+        // Если пользователь не активен
+        if (!$this->is_active) {
+            return false;
+        }
+
+        // Если нет времени последней активности
+        if (!$this->last_activity_at) {
+            // Но если он залогинился недавно
+            if ($this->last_login_at && $this->last_login_at->diffInMinutes(now()) < 2) {
+                return true;
+            }
+            return false;
+        }
+
+        // Основная проверка по last_activity_at
+        return $this->last_activity_at->diffInMinutes(now()) < $minutesThreshold;
+    }
+
+    /**
+     * Пометить пользователя как вышедшего
+     */
+    public function markAsOffline(): void
+    {
+        $this->update([
+            'last_activity_at' => now()->subMinutes(10), // Устанавливаем время 10 минут назад
+            'is_active' => false // Или оставляем true, но время показывает оффлайн
+        ]);
+    }
+
+    /**
+     * Получает точное время последней активности
+     */
+
+    /**
+     * Получает время последней активности в удобном формате
+     */
+    public function getLastActivityText(): string
+    {
+        if (!$this->last_activity_at) {
+            return 'Никогда не был активен';
+        }
+
+        $diffInMinutes = $this->last_activity_at->diffInMinutes(now());
+
+        if ($diffInMinutes < 1) {
+            return 'Только что';
+        }
+
+        if ($diffInMinutes < 60) {
+            return $diffInMinutes . ' мин. назад';
+        }
+
+        if ($diffInMinutes < 1440) {
+            $hours = floor($diffInMinutes / 60);
+            return $hours . ' ' . trans_choice('час|часа|часов', $hours) . ' назад';
+        }
+
+        return $this->last_activity_at->format('d.m.Y H:i');
+    }
+
+    /**
+     * Получает цвет статуса онлайн
+     */
+    public function getOnlineStatusColor(): string
+    {
+        if ($this->isOnline()) {
+            return 'success'; // зеленый для онлайн
+        }
+
+        if ($this->isOnline(60)) { // Был в сети в течение часа
+            return 'warning'; // желтый для недавней активности
+        }
+
+        return 'secondary'; // серый для оффлайн
+    }
+
+    /**
+     * Получает иконку статуса онлайн
+     */
+    public function getOnlineStatusIcon(): string
+    {
+        if ($this->isOnline()) {
+            return 'fa-circle';
+        }
+
+        if ($this->isOnline(60)) {
+            return 'fa-clock';
+        }
+
+        return 'fa-circle-o';
+    }
+
+    public function getInitials(): string
+    {
+        $words = explode(' ', trim($this->name));
+        $initials = '';
+
+        foreach ($words as $word) {
+            if (!empty($word)) {
+                $initials .= mb_strtoupper(mb_substr($word, 0, 1, 'UTF-8'), 'UTF-8');
+            }
+
+            if (mb_strlen($initials, 'UTF-8') >= 2) {
+                break;
+            }
+        }
+
+        return $initials ?: '??';
+    }
+
+    /**
+     * Получает цвет для аватара
+     */
+    public function getAvatarColor(): string
+    {
+        $colors = [
+            'bg-blue-500',
+            'bg-purple-500',
+            'bg-red-500',
+            'bg-yellow-500',
+            'bg-green-500',
+            'bg-indigo-500',
+            'bg-pink-500',
+            'bg-teal-500',
+            'bg-orange-500',
+            'bg-cyan-500',
+        ];
+
+        $hash = crc32($this->name);
+        $index = abs($hash) % count($colors);
+
+        return $colors[$index];
+    }
+
+    public function markAsLoggedIn(): void
+    {
+        $this->update([
+            'last_login_at' => now(),
+            'last_activity_at' => now(),
+            'is_active' => true
+        ]);
+    }
+
+    /**
+     * Обновляет время последней активности пользователя
+     */
+    public function updateLastActivity(): void
+    {
+        $this->timestamps = false; // Отключаем автоматическое обновление updated_at
+        $this->update([
+            'last_activity_at' => now()
+        ]);
+        $this->timestamps = true; // Включаем обратно
     }
 }

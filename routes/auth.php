@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -56,4 +57,20 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+});
+
+// OAuth роуты
+Route::prefix('auth')->group(function () {
+    // VK
+    Route::get('vkontakte/redirect', [OAuthController::class, 'redirectToVK'])
+        ->name('auth.vkontakte.redirect');
+    Route::get('vkontakte/callback', [OAuthController::class, 'handleVKCallback'])
+        ->name('auth.vkontakte.callback');
+
+    // Яндекс
+    Route::get('yandex/redirect', [OAuthController::class, 'redirectToYandex'])
+        ->name('auth.yandex.redirect');  // Обратите внимание на префикс 'auth/'
+    Route::get('yandex/callback', [OAuthController::class, 'handleYandexCallback'])
+        ->name('auth.yandex.callback');
 });

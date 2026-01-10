@@ -12,23 +12,125 @@ Route::get('/check-overdue-tasks', function() {
     return response()->json(['message' => 'Checked overdue tasks']);
 });
 
-
 Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class, 'home'])->name('index');
 // Домашняя страница
-Route::middleware(['auth', 'checkUserRole', 'verified'])->group(function () {
+Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->group(function () {
     Route::get('/home', [\App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('welcome');
 
     // Админская страница для руководителей и менеджеров
     Route::get('/admin/tasks', [\App\Http\Controllers\Frontend\HomeController::class, 'indexAdmin'])->name('tasks.admin');
+
+    Route::post('/update-activity', function () {
+        $user = auth()->user();
+
+        if ($user) {
+            $user->update(['last_activity_at' => now()]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Активность обновлена',
+                'last_activity_at' => $user->last_activity_at->format('H:i:s'),
+                'is_online' => $user->isOnline()
+            ]);
+        }
+
+        return response()->json(['success' => false], 401);
+    })->name('update.activity');
+
+    Route::get('/get-online-users', function () {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json(['onlineUsers' => [], 'onlineUsersCount' => 0]);
+        }
+
+        $onlineUsers = \App\Models\User::where('company_id', $user->company_id)
+            ->where('is_active', true)
+            ->whereNotNull('last_activity_at')
+            ->where('last_activity_at', '>=', now()->subMinutes(5))
+            ->orderBy('last_activity_at', 'desc')
+            ->limit(12)
+            ->get()
+            ->map(function ($onlineUser) {
+                return [
+                    'id' => $onlineUser->id,
+                    'name' => $onlineUser->name,
+                    'initials' => \App\Providers\ViewServiceProvider::generateInitials($onlineUser->name),
+                    'color' => \App\Providers\ViewServiceProvider::generateColorFromName($onlineUser->name),
+                    'is_online' => true,
+                    'last_activity_text' => $onlineUser->getLastActivityText(),
+                ];
+            });
+
+        $onlineUsersCount = \App\Models\User::where('company_id', $user->company_id)
+            ->where('is_active', true)
+            ->whereNotNull('last_activity_at')
+            ->where('last_activity_at', '>=', now()->subMinutes(5))
+            ->count();
+
+        return response()->json([
+            'onlineUsers' => $onlineUsers,
+            'onlineUsersCount' => $onlineUsersCount
+        ]);
+    })->name('get.online.users');
+
+
+    Route::post('/user-leaving', function (Request $request) {
+        $user = auth()->user();
+
+        if ($user) {
+            // Ставим метку, что пользователь ушел
+            // Можно установить время на 1-2 минуты назад, чтобы сразу показывать оффлайн
+            $user->update([
+                'last_activity_at' => now()->subMinutes(2)
+            ]);
+
+            // Или альтернатива: удаляем last_activity_at
+            // $user->update(['last_activity_at' => null]);
+
+            \Log::info("User {$user->id} left the page");
+        }
+
+        return response()->json(['success' => true]);
+    });
+
+    Route::post('/user-hidden', function (Request $request) {
+        $user = auth()->user();
+
+        if ($user) {
+            // Если вкладка скрыта, обновляем активность реже
+            // или ставим время активности на 1 минуту назад
+            $user->update([
+                'last_activity_at' => now()->subMinutes(1)
+            ]);
+        }
+
+        return response()->json(['success' => true]);
+    });
+
+    Route::post('/user-inactive', function (Request $request) {
+        $user = auth()->user();
+
+        if ($user) {
+            // Пользователь неактивен 30+ секунд
+            $user->update([
+                'last_activity_at' => now()->subMinutes(1)
+            ]);
+        }
+
+        return response()->json(['success' => true]);
+    });
+
+
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () {
     Route::get('/chat', [\App\Http\Controllers\Frontend\ChatController::class, 'index'])->name('chat');
     Route::get('/file-manager', [\App\Http\Controllers\Frontend\FileManagerController::class, 'index'])->name('fileManager');
     Route::get('/mail', [\App\Http\Controllers\Frontend\MailController::class, 'index'])->name('mail.index');
 });
 
-Route::get('/create-company', [\App\Http\Controllers\Frontend\HomeController::class, 'noCompanies'])->middleware(['auth', 'verified'])->name('no.companies');
+Route::get('/create-company', [\App\Http\Controllers\Frontend\HomeController::class, 'noCompanies'])->middleware(['auth', 'verified', 'trackUserActivity'])->name('no.companies');
 
 // Публичные маршруты для приглашений (доступны без авторизации)
 Route::get('/invitation/{token}', [InvitationController::class, 'showInvitationForm'])->name('invitation.accept');
@@ -96,6 +198,8 @@ Route::middleware(['auth', 'verified', 'isLeader'])->group(function () {
     Route::prefix('team')->name('team.')->group(function () {
         // Основные маршруты команды
         Route::get('/', [TeamController::class, 'index'])->name('index');
+        Route::delete('/{user}', [TeamController::class, 'destroy'])->name('destroy');
+        Route::post('/bulk-destroy', [TeamController::class, 'bulkDestroy'])->name('bulk-destroy');
         Route::get('/export', [TeamController::class, 'exportTable'])->name('export-table');
         Route::get('/print', [TeamController::class, 'printTable'])->name('print-table');
 

@@ -34,8 +34,9 @@ class ViewServiceProvider extends ServiceProvider
                 return $this->shareGuestData($view);
             }
 
-            // Используем кэширование на время запроса
+            // Для онлайн пользователей кэшируем на 15 секунд,
             $cacheKey = 'view_data_' . $user->id;
+            $cacheTime = 15; // секунды
 
             if (Cache::has($cacheKey)) {
                 $view->with(Cache::get($cacheKey));
@@ -44,8 +45,8 @@ class ViewServiceProvider extends ServiceProvider
 
             $data = $this->getUserViewData($user);
 
-            // Кэшируем на 5 минут
-            Cache::put($cacheKey, $data, 300);
+            // Кэшируем на 15 секунд для быстрого обновления
+            Cache::put($cacheKey, $data, $cacheTime);
 
             $view->with($data);
         });
@@ -59,6 +60,8 @@ class ViewServiceProvider extends ServiceProvider
             'ownedCompanies' => collect(),
             'assignableUsers' => collect(),
             'team' => collect(),
+            'onlineUsers' => collect(),
+            'onlineUsersCount' => 0,
             'roles' => Role::all(),
             'isLeader' => false,
             'isManagerRole' => false,
@@ -83,12 +86,20 @@ class ViewServiceProvider extends ServiceProvider
         // ====== КОМАНДА ======
         list($team, $assignableUsers) = $this->getUserTeamData($user);
 
+        // ====== ОНЛАЙН ПОЛЬЗОВАТЕЛИ ======
+        $onlineUsers = $this->getOnlineUsers($user);
+
+        // Получаем общее количество онлайн пользователей
+        $onlineUsersCount = $this->getOnlineUsersCount($user);
+
         return [
             'departments' => $departments,
             'categories' => $categories,
             'ownedCompanies' => $ownedCompanies,
             'assignableUsers' => $assignableUsers,
-            'team' => $team,
+            'team' => $this->prepareTeamData($team), // Обрабатываем данные команды
+            'onlineUsers' => $onlineUsers,
+            'onlineUsersCount' => $onlineUsersCount,
             'roles' => Role::all(),
             'isLeader' => $user->isLeader(),
             'isManagerRole' => $user->isManagerRole(),
@@ -96,11 +107,40 @@ class ViewServiceProvider extends ServiceProvider
         ];
     }
 
+    private function prepareTeamData($team)
+    {
+        return $team->map(function ($member) {
+            return [
+                'id' => $member->id,
+                'name' => $member->name,
+                'initials' => $this->generateInitials($member->name),
+                'color' => $this->generateColorFromName($member->name),
+                'is_online' => $member->isOnline(), // Используем метод isOnline() модели
+                'last_activity_text' => $member->getLastActivityText(),
+                'avatar_url' => $member->avatar_url,
+                'department' => $member->department,
+                'role' => $member->role,
+            ];
+        });
+    }
+
+    private function getOnlineUsersCount($user)
+    {
+        if (!$user->company_id) {
+            return 0;
+        }
+
+        return User::where('company_id', $user->company_id)
+            ->where('is_active', true)
+            ->whereNotNull('last_activity_at')
+            ->where('last_activity_at', '>=', now()->subMinutes(5))
+            ->count();
+    }
+
     private function getUserCompanies($user)
     {
         $ownedCompanies = $user->ownedCompanies()->orderBy('id', 'desc')->get();
 
-        // Добавляем текущую компанию если пользователь ее владелец
         if ($user->company && $user->company->user_id === $user->id) {
             $ownedCompanies = $ownedCompanies->push($user->company)->unique('id');
         }
@@ -140,15 +180,84 @@ class ViewServiceProvider extends ServiceProvider
             return [collect(), collect()];
         }
 
-        // ВСЕ пользователи компании (для отображения)
         $team = User::where('company_id', $user->company_id)
             ->where('is_active', true)
             ->with('department', 'role')
             ->get();
 
-        // Пользователи, которым МОЖНО назначать задачи
         $assignableUsers = $user->getAssignableUsers();
 
         return [$team, $assignableUsers];
+    }
+
+    private function getOnlineUsers($user)
+    {
+        if (!$user->company_id) {
+            return collect();
+        }
+
+        $onlineUsers = User::where('company_id', $user->company_id)
+            ->where('is_active', true)
+            ->whereNotNull('last_activity_at')
+            ->where('last_activity_at', '>=', now()->subMinutes(5))
+            ->orderBy('last_activity_at', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function ($user) {
+                $initials = $this->generateInitials($user->name);
+                $color = $this->generateColorFromName($user->name);
+
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'initials' => $initials,
+                    'color' => $color,
+                    'is_online' => true,
+                    'avatar_url' => $user->avatar_url,
+                    'last_activity_at' => $user->last_activity_at,
+                    'last_activity_text' => $user->getLastActivityText(),
+                ];
+            });
+
+        return $onlineUsers;
+    }
+
+    private function generateInitials(string $name): string
+    {
+        $words = explode(' ', trim($name));
+        $initials = '';
+
+        foreach ($words as $word) {
+            if (!empty($word)) {
+                $initials .= mb_strtoupper(mb_substr($word, 0, 1, 'UTF-8'), 'UTF-8');
+            }
+
+            if (mb_strlen($initials, 'UTF-8') >= 2) {
+                break;
+            }
+        }
+
+        return $initials ?: '??';
+    }
+
+    private function generateColorFromName(string $name): string
+    {
+        $colors = [
+            'bg-blue-500',
+            'bg-purple-500',
+            'bg-red-500',
+            'bg-yellow-500',
+            'bg-green-500',
+            'bg-indigo-500',
+            'bg-pink-500',
+            'bg-teal-500',
+            'bg-orange-500',
+            'bg-cyan-500',
+        ];
+
+        $hash = crc32($name);
+        $index = abs($hash) % count($colors);
+
+        return $colors[$index];
     }
 }

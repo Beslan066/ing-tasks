@@ -1,19 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
+    <div class="min-h-screen bg-gradient-to-br">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Hero Section -->
             <div class="text-center mb-12">
                 <div class="mb-8">
-                    <div class="w-24 h-24 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                        </svg>
-                    </div>
-                    <h1 class="text-4xl font-bold text-gray-900 mb-4">
-                        Добро пожаловать в команду!
-                    </h1>
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4">
+                        Добро пожаловать в Менеджер<span style="color: #16a34a">Плюс</span>!
+                    </h2>
                     <p class="text-xl text-gray-600 max-w-2xl mx-auto">
                         Чтобы начать работу, вам нужно присоединиться к организации или создать свою.
                     </p>
@@ -62,8 +57,8 @@
                                 </div>
 
                                 <a href="{{ route('invitation.accept', $invitation->token) }}"
-                                   class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium flex items-center justify-center">
-                                    Присоединиться к компании
+                                   class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium flex items-center justify-center">
+                                    Присоединиться
                                     <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                                     </svg>
@@ -114,11 +109,11 @@
 
                 <!-- Create Company Card -->
                 <div class="bg-white rounded-xl shadow-lg p-8 border border-blue-200 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500 opacity-5 rounded-full -mr-6 -mt-6"></div>
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-green-500 opacity-5 rounded-full -mr-6 -mt-6"></div>
 
                     <div class="text-center mb-6">
                         <div class="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                             </svg>
                         </div>
@@ -130,19 +125,19 @@
 
                     <div class="space-y-4 mb-6">
                         <div class="flex items-start">
-                            <svg class="w-5 h-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                             </svg>
                             <span class="text-gray-700">Полный контроль над настройками компании</span>
                         </div>
                         <div class="flex items-start">
-                            <svg class="w-5 h-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                             </svg>
                             <span class="text-gray-700">Возможность приглашать неограниченное количество сотрудников</span>
                         </div>
                         <div class="flex items-start">
-                            <svg class="w-5 h-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                             </svg>
                             <span class="text-gray-700">Расширенная аналитика и управление задачами</span>
@@ -150,7 +145,7 @@
                     </div>
 
                     <a href="{{ route('companies.create') }}"
-                       class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium flex items-center justify-center shadow-lg hover:shadow-xl">
+                       class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 font-medium flex items-center justify-center shadow-lg hover:shadow-xl">
                         Создать компанию
                         <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
@@ -161,13 +156,13 @@
 
             <!-- Help Section -->
             <div class="mt-12 text-center">
-                <div class="bg-blue-50 rounded-2xl p-6 border border-blue-200">
+                <div class="bg-green-50 rounded-2xl p-6 ">
                     <h4 class="text-lg font-semibold text-gray-900 mb-2">Нужна помощь?</h4>
                     <p class="text-gray-600 mb-4">
                         Обратитесь к администратору вашей компании или в службу поддержки
                     </p>
                     <div class="flex justify-center space-x-4">
-                        <a href="mailto:support@example.com" class="text-blue-600 hover:text-blue-700 font-medium flex items-center">
+                        <a href="mailto:support@example.com" class="text-green-600 hover:text-green-700 font-medium flex items-center">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>

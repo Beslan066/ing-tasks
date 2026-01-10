@@ -288,9 +288,7 @@
                                                 {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
                                                 {{ $task->status }}
                                             </span>
-                                            @if($task->isOverdue())
-                                                <div class="text-xs text-red-600 mt-1">⚠️ Просрочена</div>
-                                            @endif
+
                                         @endif
                                     </td>
                                     <td class="px-3 py-4">

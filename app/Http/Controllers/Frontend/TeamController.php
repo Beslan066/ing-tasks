@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Mail\UserRemovedMail;
 use App\Models\Department;
 use App\Models\Role;
 use App\Models\Task;
@@ -10,6 +11,8 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class TeamController extends Controller
 {
@@ -19,7 +22,7 @@ class TeamController extends Controller
             $authUser = auth()->user();
 
             $usersQuery = User::query()
-                ->where('company_id', $authUser->company_id)
+                ->where('company_id', $authUser->company_id) // ← ТОЛЬКО пользователи этой компании
                 ->with(['role', 'department']);
 
             // Поиск
@@ -73,6 +76,265 @@ class TeamController extends Controller
         } catch (\Exception $e) {
             \Log::error('Team index error: ' . $e->getMessage());
             return back()->with('error', 'Произошла ошибка при загрузке страницы');
+        }
+    }
+
+
+    public function destroy(Request $request, $id)
+    {
+        try {
+            \Log::info('=== УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ ИЗ КОМПАНИИ ===');
+
+            $authUser = auth()->user();
+            $userToRemove = User::where('company_id', $authUser->company_id)
+                ->findOrFail($id);
+
+            \Log::info('Данные:', [
+                'auth_user_id' => $authUser->id,
+                'target_user_id' => $userToRemove->id,
+                'company_id' => $authUser->company_id
+            ]);
+
+            // ПРОВЕРКИ
+            if ($userToRemove->id === $authUser->id) {
+                \Log::warning('Попытка удалить себя');
+                return back()->with('error', 'Вы не можете удалить себя');
+            }
+
+            if ($userToRemove->isCompanyOwner()) {
+                \Log::warning('Попытка удалить владельца компании');
+                return back()->with('error', 'Нельзя удалить владельца компании');
+            }
+
+            if (!$this->canRemoveUser($authUser, $userToRemove)) {
+                \Log::warning('Нет прав на удаление');
+                return back()->with('error', 'У вас нет прав для удаления этого пользователя');
+            }
+
+            DB::beginTransaction();
+
+            try {
+                // 1. ОТПРАВКА ПИСЬМА
+                \Log::info('Отправка email...');
+                Mail::to($userToRemove->email)->send(
+                    new UserRemovedMail($authUser->company, $userToRemove->name)
+                );
+                \Log::info('Email отправлен');
+
+                // 2. ПЕРЕНАЗНАЧЕНИЕ АКТИВНЫХ ЗАДАЧ
+                $activeTasks = $userToRemove->assignedTasks()
+                    ->where('status', '!=', 'выполнена')
+                    ->where('company_id', $authUser->company_id)
+                    ->get();
+
+                \Log::info('Активных задач для переназначения: ' . $activeTasks->count());
+
+                foreach ($activeTasks as $task) {
+                    // Переназначаем на автора задачи или на руководителя
+                    if ($task->author_id && $task->author_id !== $userToRemove->id) {
+                        $task->update(['user_id' => $task->author_id]);
+                        \Log::info("Задача {$task->id} переназначена на автора: {$task->author_id}");
+                    } elseif ($task->department && $task->department->supervisor_id) {
+                        $task->update(['user_id' => $task->department->supervisor_id]);
+                        \Log::info("Задача {$task->id} переназначена на руководителя отдела: {$task->department->supervisor_id}");
+                    } else {
+                        $task->update(['user_id' => $authUser->id]);
+                        \Log::info("Задача {$task->id} переназначена на вас: {$authUser->id}");
+                    }
+                }
+
+                // 3. ОТКЛЮЧАЕМ ПОЛЬЗОВАТЕЛЯ ОТ ОТДЕЛОВ (многие-ко-многим)
+                if ($userToRemove->departments()->exists()) {
+                    $count = $userToRemove->departments()->detach();
+                    \Log::info("Удалено из отделов (многие-ко-многим): {$count}");
+                }
+
+                // 4. УБИРАЕМ ИЗ РУКОВОДСТВА ОТДЕЛАМИ ЭТОЙ КОМПАНИИ
+                $supervisedDepartments = $userToRemove->supervisedDepartments()
+                    ->where('company_id', $authUser->company_id)
+                    ->get();
+
+                if ($supervisedDepartments->count() > 0) {
+                    $count = \App\Models\Department::where('supervisor_id', $userToRemove->id)
+                        ->where('company_id', $authUser->company_id)
+                        ->update(['supervisor_id' => null]);
+                    \Log::info("Убрано из руководства отделов: {$count}");
+                }
+
+                // 5. СБРАСЫВАЕМ СВЯЗИ С КОМПАНИЕЙ И ОТДЕЛОМ
+                $updateData = [
+                    'company_id' => null,  // ← ОСНОВНОЕ: убираем из компании
+                    'department_id' => null, // убираем из отдела
+                    'role_id' => null,      // сбрасываем роль в компании
+                ];
+
+                \Log::info('Обновляемые данные:', $updateData);
+
+                // Обновляем пользователя - ТОЛЬКО связи с компанией
+                $updated = $userToRemove->update($updateData);
+
+                \Log::info('Результат обновления:', ['updated' => $updated]);
+
+                // 6. ОЧИЩАЕМ ТОКЕНЫ (если используете Sanctum/Passport)
+                if (method_exists($userToRemove, 'tokens')) {
+                    $tokensCount = $userToRemove->tokens()->delete();
+                    \Log::info("Удалено токенов: {$tokensCount}");
+                }
+
+                DB::commit();
+
+                // Перезагружаем модель, чтобы убедиться в изменениях
+                $userToRemove->refresh();
+
+                \Log::info('=== УДАЛЕНИЕ УСПЕШНО ===');
+                \Log::info('После обновления:', [
+                    'company_id' => $userToRemove->company_id,
+                    'department_id' => $userToRemove->department_id,
+                    'is_active' => $userToRemove->is_active // остается true
+                ]);
+
+                return back()->with('success', 'Пользователь успешно удален из команды. Уведомление отправлено.');
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                \Log::error('Ошибка в транзакции: ' . $e->getMessage());
+                \Log::error($e->getTraceAsString());
+                return back()->with('error', 'Произошла ошибка: ' . $e->getMessage());
+            }
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::error('Пользователь не найден: ' . $e->getMessage());
+            return back()->with('error', 'Пользователь не найден');
+        } catch (\Exception $e) {
+            \Log::error('Общая ошибка: ' . $e->getMessage());
+            return back()->with('error', 'Произошла ошибка: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Проверка прав на удаление пользователя
+     */
+    private function canRemoveUser($authUser, $userToRemove): bool
+    {
+        // Владелец компании может удалить кого угодно (кроме другого владельца)
+        if ($authUser->isCompanyOwner()) {
+            return true;
+        }
+
+        // Руководитель/менеджер может удалить только обычных сотрудников
+        if ($authUser->isManager() || $authUser->isManagerRole()) {
+            // Не может удалить другого руководителя/менеджера или владельца
+            if ($userToRemove->isCompanyOwner() ||
+                $userToRemove->isManager() ||
+                $userToRemove->isManagerRole()) {
+                return false;
+            }
+
+            // Может удалить только из своих отделов
+            $manageableDepartmentIds = $authUser->getManageableDepartments()
+                ->pluck('id')
+                ->toArray();
+
+            return in_array($userToRemove->department_id, $manageableDepartmentIds);
+        }
+
+        return false;
+    }
+
+    /**
+     * Переназначение активных задач пользователя
+     */
+    private function reassignUserTasks($user, $authUser)
+    {
+        $activeTasks = $user->assignedTasks()
+            ->where('status', '!=', 'выполнена')
+            ->get();
+
+        foreach ($activeTasks as $task) {
+            // Вариант 1: Назначить на руководителя, который удаляет
+            // $task->update(['user_id' => $authUser->id]);
+
+            // Вариант 2: Назначить на автора задачи
+            if ($task->author_id) {
+                $task->update(['user_id' => $task->author_id]);
+            }
+            // Вариант 3: Назначить на руководителя отдела
+            else if ($task->department && $task->department->supervisor_id) {
+                $task->update(['user_id' => $task->department->supervisor_id]);
+            }
+            // Вариант 4: Назначить на того, кто удаляет
+            else {
+                $task->update(['user_id' => $authUser->id]);
+            }
+
+            Log::info('Задача переназначена', [
+                'task_id' => $task->id,
+                'old_user' => $user->id,
+                'new_user' => $task->user_id,
+            ]);
+        }
+
+        return $activeTasks->count();
+    }
+
+    /**
+     * Массовое удаление пользователей
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'user_ids' => 'required|array',
+            'user_ids.*' => 'exists:users,id',
+        ]);
+
+        try {
+            $authUser = auth()->user();
+            $removedCount = 0;
+
+            foreach ($request->user_ids as $userId) {
+                $userToRemove = User::where('company_id', $authUser->company_id)
+                    ->find($userId);
+
+                if (!$userToRemove) {
+                    continue;
+                }
+
+                // Проверка прав
+                if (!$this->canRemoveUser($authUser, $userToRemove)) {
+                    continue;
+                }
+
+                // Нельзя удалить себя
+                if ($userToRemove->id === $authUser->id) {
+                    continue;
+                }
+
+                DB::transaction(function () use ($userToRemove, $authUser) {
+                    // Отправка письма
+                    Mail::to($userToRemove->email)->send(
+                        new UserRemovedMail($authUser->company, $userToRemove->name)
+                    );
+
+                    // Переназначение задач
+                    $this->reassignUserTasks($userToRemove, $authUser);
+
+                    // Деактивация
+                    $userToRemove->update([
+                        'is_active' => false,
+                        'company_id' => null,
+                        'department_id' => null,
+                        'role_id' => null,
+                    ]);
+                });
+
+                $removedCount++;
+            }
+
+            return back()->with('success', "Успешно удалено $removedCount пользователей");
+
+        } catch (\Exception $e) {
+            Log::error('Ошибка при массовом удалении: ' . $e->getMessage());
+            return back()->with('error', 'Произошла ошибка при удалении пользователей');
         }
     }
 
@@ -208,7 +470,7 @@ class TeamController extends Controller
                 $usersQuery->where('is_active', $request->status === 'active');
             }
 
-            $users = $usersQuery->orderBy('id', 'desc')->get();
+            $users = $usersQuery->orderBy('created_at', 'desc')->get();
 
             return view('frontend.teams.print', [
                 'users' => $users,
@@ -254,7 +516,28 @@ class TeamController extends Controller
 
             return response()->json([
                 'success' => true,
-                'user' => $user,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'avatar_url' => $user->avatar_url, // Вот это важно!
+                    'avatar' => $user->avatar,
+                    'is_active' => $user->is_active,
+                    'created_at' => $user->created_at,
+                    'last_login_at' => $user->last_login_at,
+                    'role' => $user->role ? [
+                        'id' => $user->role->id,
+                        'name' => $user->role->name,
+                    ] : null,
+                    'department' => $user->department ? [
+                        'id' => $user->department->id,
+                        'name' => $user->department->name,
+                    ] : null,
+                    'company' => $user->company ? [
+                        'id' => $user->company->id,
+                        'name' => $user->company->name,
+                    ] : null,
+                ],
                 'completion_rate' => $averageCompletionRate,
                 'stats' => [
                     'total_tasks' => $user->total_tasks_count,

@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'checkUserRole' => \App\Http\Middleware\CheckUserRole::class,
             'isLeader' => \App\Http\Middleware\LeaderMiddleware::class,
             'isManager' => \App\Http\Middleware\ManagerMiddleware::class,
+            'trackUserActivity' => \App\Http\Middleware\TrackUserActivity::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

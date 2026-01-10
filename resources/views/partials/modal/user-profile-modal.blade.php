@@ -9,10 +9,17 @@
         </div>
 
         <div class="text-center mb-6">
-            <div
-                class="w-20 h-20 rounded-full bg-gradient-to-r from-primary to-secondary mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold">
-                {{mb_substr(auth()->user()->name, 0,1)}}
-            </div>
+            @if(isset(auth()->user()->avatar))
+                <div
+                    class=" rounded-full bg-gradient-to-r from-primary to-secondary mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold" style="width: 170px; height: 170px;">
+                    <img src="{{auth()->user()->getAvatarUrlAttribute()}}" alt="" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover">
+                </div>
+            @else
+                <div
+                    class="w-20 h-20 rounded-full bg-gradient-to-r from-primary to-secondary mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold">
+                    {{mb_substr(auth()->user()->name, 0,1)}}
+                </div>
+            @endif
             <h3 class="font-bold text-lg">{{auth()->user()->name}}</h3>
         </div>
 

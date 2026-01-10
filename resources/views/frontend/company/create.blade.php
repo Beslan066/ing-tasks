@@ -16,7 +16,7 @@
                 <div class="mb-4 w-1/2">
                     <label class="block text-gray-700 text-sm font-medium mb-2">Название</label>
                     <input type="text"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600"
                            placeholder="Введите название" name="name">
                 </div>
 
@@ -36,7 +36,7 @@
                             </svg>
                         </div>
                         <input type="text" id="phone-input" aria-describedby="helper-text-explanation"
-                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                               class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600  block w-full ps-10 p-2.5 0"
                                placeholder="7(***)***-**-**" required name="phone"/>
                     </div>
                     <p id="helper-text-explanation" class="mt-2 text-sm text-gray-500 dark:text-gray-400">Введите номер
@@ -50,7 +50,7 @@
                 <div class="mb-4 w-1/2">
                     <label class="block text-gray-700 text-sm font-medium mb-2">Руководитель</label>
                     <select
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600 bg-white"
                         name="user_id">
                         <option value="{{auth()->user()->id}}">{{auth()->user()->name}}</option>
                     </select>
@@ -60,12 +60,12 @@
                 <div class="text-danger">{{ $message }}</div>
                 @enderror
 
-                <div class="flex justify-end space-x-3">
+                <div class="flex">
                     <button type="button" id="cancelTask"
                             class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Отмена
                     </button>
-                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary">Создать
-                        задачу
+                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary ml-2">Создать
+                        компанию
                     </button>
                 </div>
             </form>
