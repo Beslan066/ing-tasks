@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="shortcut icon" href="{{asset('img/favicon.ico')}}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -28,6 +31,13 @@
 
 
     <style>
+        body {
+            font-family: "Inter", sans-serif !important;
+            font-optical-sizing: auto;
+            font-style: normal;
+        }
+
+
         .fon {
             /*background: url("https://4kwallpapers.com/images/walls/thumbs_3t/14811.jpg") no-repeat center;*/
             background-size: cover; /* покрывает всю область */
@@ -67,78 +77,19 @@
     <link rel="stylesheet" href="{{asset('css/style.css')}}">
 </head>
 <body class="bg-white font-sans">
-<!-- Навигация -->
-<nav class="bg-white border-b border-gray-200 py-4 px-4 flex justify-between items-center">
-    <a href="{{route('welcome')}}">
-        <div class="flex items-center space-x-2">
-            <h1 class="text-2xl font-bold text-gray-800">Менеджер<span class="text-primary">Плюс</span></h1>
-        </div>
-    </a>
-
-    <div class="hidden md:flex space-x-8">
-        <a href="{{route('welcome')}}" class="nav-link active-nav text-gray-700 hover:text-primary transition-colors"
-           data-page="welcome">Главная</a>
-        @if(isset(auth()->user()->role->name))
-            @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
-                <a href="{{route('departments.index')}}"
-                   class="nav-link text-gray-700 hover:text-primary transition-colors" data-page="boards">Отделы</a>
-            @endif
-        @endif
-        <a href="{{route('team.index')}}" class="nav-link text-gray-700 hover:text-primary transition-colors"
-           data-page="team">Команда</a>
-        <a href="{{route('photobank')}}" class="nav-link text-gray-700 hover:text-primary transition-colors"
-           data-page="team">Фотобанк</a>
-        <a href="{{route('mail.index')}}" class="nav-link text-gray-700 hover:text-primary transition-colors"
-           data-page="mail">Почта</a>
-    </div>
-
-    @auth()
-        <div class="flex items-center space-x-4">
-            <!-- Кнопка чата -->
-
-            <div class="flex items-center space-x-2 cursor-pointer" id="userMenuBtn" onclick="userProfileModal()">
-                <div class="avatar-container">
-                    @if(auth()->user()->avatar)
-                        <div class="avatar bg-gradient-to-r " style="width: 50px; height: 50px;">
-                            <img src="{{auth()->user()->getAvatarUrlAttribute()}}" alt="" style="width: 100%; height: 100%; border-radius: 50px; object-fit: cover">
-                        </div>
-                    @else
-                        <div class="avatar bg-gradient-to-r from-primary to-secondary">
-                            {{mb_substr(auth()->user()->name, 0,1)}}
-                        </div>
-                    @endif
-                </div>
-                @if(auth())
-                    <span class="hidden md:block font-medium text-gray-700">{{auth()->user()->name}}</span>
-                @endif
-                <i class="fas fa-chevron-down text-gray-500"></i>
-            </div>
-        </div>
-    @endauth
-</nav>
 
 <div class="flex fon">
     <!-- Боковая панель -->
     <div class="sidebar w-64 bg-white border-r border-gray-200 py-6 px-4 bg-transparent  hidden sm:block" style="backdrop-filter: blur(40px);">
 
+        <a href="{{route('welcome')}}">
+            <div class="flex items-center space-x-2">
+                <h1 class="text-2xl font-bold text-gray-800">Менеджер<span class="text-primary">Плюс</span></h1>
+            </div>
+        </a>
+
         <div class="mb-8 hover:fill-[#16a34a]">
-            @if(isset(auth()->user()->role->name))
-                @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
-                    <div class="mb-4 hover:bg-green-50 cursor-pointer p-2 rounded-[50px]">
-                        <a href="{{route('tasks.admin')}}" class="flex align-items-center">
-
-                            <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg" class="">
-                                <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
-                                <path
-                                    d="m21.41,6.09L12.41,2.09c-.26-.12-.55-.12-.81,0L2.59,6.09c-.36.16-.59.52-.59.91v3c0,.55.45,1,1,1v5c-.55,0-1,.45-1,1v4c0,.55.45,1,1,1h18c.55,0,1-.45,1-1v-4c0-.55-.45-1-1-1v-5c.55,0,1-.45,1-1v-3c0-.4-.23-.75-.59-.91Zm-17.41,1.56l8-3.55,8,3.55v1.35H4v-1.35Zm9,8.35h-2v-5h2v5Zm-7-5h2v5h-2v-5Zm14,9H4v-2h16v2Zm-2-4h-2v-5h2v5Z"/>
-                            </svg>
-                            <h2 class="text-md font-semibold text-gray-700 hover:text-[#16a34a] ml-2">Моя компания</h2>
-                        </a>
-                    </div>
-                @endif
-            @endif
-
-            <div class="mb-4 hover:bg-green-50 cursor-pointer p-2 rounded-[50px]">
+                <div class="hover:bg-green-50 cursor-pointer p-2 rounded-[50px]">
                 <a href="{{route('welcome')}}" class="flex align-items-center">
 
                     <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg">
@@ -149,60 +100,109 @@
                     <h2 class="text-md font-semibold text-gray-700 ml-2">Мои задачи</h2>
                 </a>
             </div>
+                @if(isset(auth()->user()->role->name))
+                    @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
+                        <div class="hover:bg-green-50 cursor-pointer p-2 rounded-[50px]">
+                            <a href="{{route('tasks.admin')}}" class="flex align-items-center">
+
+                                <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg" class="">
+                                    <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
+                                    <path
+                                        d="m21.41,6.09L12.41,2.09c-.26-.12-.55-.12-.81,0L2.59,6.09c-.36.16-.59.52-.59.91v3c0,.55.45,1,1,1v5c-.55,0-1,.45-1,1v4c0,.55.45,1,1,1h18c.55,0,1-.45,1-1v-4c0-.55-.45-1-1-1v-5c.55,0,1-.45,1-1v-3c0-.4-.23-.75-.59-.91Zm-17.41,1.56l8-3.55,8,3.55v1.35H4v-1.35Zm9,8.35h-2v-5h2v5Zm-7-5h2v5h-2v-5Zm14,9H4v-2h16v2Zm-2-4h-2v-5h2v5Z"/>
+                                </svg>
+                                <h2 class="text-md font-semibold text-gray-700 hover:text-[#16a34a] ml-2">Моя компания</h2>
+                            </a>
+                        </div>
+                    @endif
+                @endif
+                <div class="p-2 cursor-pointer">
+                    <div class="flex items-center justify-between mb-2 group relative">
+                        <div class="flex align-items-center">
+                            <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg">
+                                <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
+                                <path
+                                    d="m21,6h-2v-2c0-1.1-.9-2-2-2H7c-1.1,0-2,.9-2,2v6h-2c-1.1,0-2,.9-2,2v9c0,.55.45,1,1,1h20c.55,0,1-.45,1-1v-13c0-1.1-.9-2-2-2Zm0,14h-7v-5h-4v5H3v-8h3c.55,0,1-.45,1-1v-7h10v3c0,.55.45,1,1,1h3v12Z"/>
+                                <path d="M9 10H11V12H9z"/>
+                                <path d="M9 6H11V8H9z"/>
+                                <path d="M5 14H7V16H5z"/>
+                                <path d="M17 14H19V16H17z"/>
+                                <path d="M17 10H19V12H17z"/>
+                                <path d="M13 6H15V8H13z"/>
+                                <path d="M13 10H15V12H13z"/>
+                            </svg>
+                            <h2 class="text-md font-semibold text-gray-700 ml-2">Отделы</h2>
+                        </div>
+                        <button
+                            onclick="openDepartmentModal()"
+                            class="absolute top-1 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-primary hover:text-secondary"
+                        >
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    @if(isset($departments) && $departments->count() > 0)
+                        <div class="space-y-2">
+                            @foreach($departments as $department)
+                                <div
+                                    class="group flex items-center justify-between p-2 hover:bg-green-50 cursor-pointer rounded-[50px] workspace-item"
+                                    data-workspace="alpha" onclick="openDepartmentMail('{{ $department->email }}')">
+                                    <div class="flex items-center">
+                                        <span class="text-gray-700">{{ $department->name }}</span>
+                                        <div class="email-badge">{{ $department->unread_count ?? 0 }}</div>
+                                    </div>
+                                    <div class="flex items-center space-x-1">
+                                        <button class="text-gray-400 hover:text-blue-500" title="Почта отдела">
+                                            <i class="fas fa-envelope text-xs"></i>
+                                        </button>
+                                        @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
+                                            <button onclick="openEditDepartmentModal({{ $department->id }})"
+                                                    class="text-gray-400 hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                <i class="fas fa-edit text-xs"></i>
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-sm text-gray-500">Нет доступных отделов</p>
+                    @endif
+                </div>
+
+                <div class="hover:bg-green-50 cursor-pointer p-2 rounded-[50px]">
+                    <a href="{{route('tasks.admin')}}" class="flex align-items-center">
+
+                        <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg" class="">
+                            <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
+                            <path
+                                d="m21.41,6.09L12.41,2.09c-.26-.12-.55-.12-.81,0L2.59,6.09c-.36.16-.59.52-.59.91v3c0,.55.45,1,1,1v5c-.55,0-1,.45-1,1v4c0,.55.45,1,1,1h18c.55,0,1-.45,1-1v-4c0-.55-.45-1-1-1v-5c.55,0,1-.45,1-1v-3c0-.4-.23-.75-.59-.91Zm-17.41,1.56l8-3.55,8,3.55v1.35H4v-1.35Zm9,8.35h-2v-5h2v5Zm-7-5h2v5h-2v-5Zm14,9H4v-2h16v2Zm-2-4h-2v-5h2v5Z"/>
+                        </svg>
+                        <h2 class="text-md font-semibold text-gray-700 hover:text-[#16a34a] ml-2">Почта</h2>
+                    </a>
+                </div>
+                <div class="hover:bg-green-50 cursor-pointer p-2 rounded-[50px]">
+                    <a href="{{route('tasks.admin')}}" class="flex align-items-center">
+
+                        <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg" class="">
+                            <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
+                            <path
+                                d="m21.41,6.09L12.41,2.09c-.26-.12-.55-.12-.81,0L2.59,6.09c-.36.16-.59.52-.59.91v3c0,.55.45,1,1,1v5c-.55,0-1,.45-1,1v4c0,.55.45,1,1,1h18c.55,0,1-.45,1-1v-4c0-.55-.45-1-1-1v-5c.55,0,1-.45,1-1v-3c0-.4-.23-.75-.59-.91Zm-17.41,1.56l8-3.55,8,3.55v1.35H4v-1.35Zm9,8.35h-2v-5h2v5Zm-7-5h2v5h-2v-5Zm14,9H4v-2h16v2Zm-2-4h-2v-5h2v5Z"/>
+                        </svg>
+                        <h2 class="text-md font-semibold text-gray-700 hover:text-[#16a34a] ml-2">Почта</h2>
+                    </a>
+                </div><div class="hover:bg-green-50 cursor-pointer p-2 rounded-[50px]">
+                    <a href="{{route('tasks.admin')}}" class="flex align-items-center">
+
+                        <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg" class="">
+                            <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
+                            <path
+                                d="m21.41,6.09L12.41,2.09c-.26-.12-.55-.12-.81,0L2.59,6.09c-.36.16-.59.52-.59.91v3c0,.55.45,1,1,1v5c-.55,0-1,.45-1,1v4c0,.55.45,1,1,1h18c.55,0,1-.45,1-1v-4c0-.55-.45-1-1-1v-5c.55,0,1-.45,1-1v-3c0-.4-.23-.75-.59-.91Zm-17.41,1.56l8-3.55,8,3.55v1.35H4v-1.35Zm9,8.35h-2v-5h2v5Zm-7-5h2v5h-2v-5Zm14,9H4v-2h16v2Zm-2-4h-2v-5h2v5Z"/>
+                        </svg>
+                        <h2 class="text-md font-semibold text-gray-700 hover:text-[#16a34a] ml-2">Мессенджер</h2>
+                    </a>
+                </div>
         </div>
 
-        <div class="mb-8 p-2 cursor-pointer">
-            <div class="flex items-center justify-between mb-4 group relative">
-                <div class="flex align-items-center">
-                    <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg">
-                        <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
-                        <path
-                            d="m21,6h-2v-2c0-1.1-.9-2-2-2H7c-1.1,0-2,.9-2,2v6h-2c-1.1,0-2,.9-2,2v9c0,.55.45,1,1,1h20c.55,0,1-.45,1-1v-13c0-1.1-.9-2-2-2Zm0,14h-7v-5h-4v5H3v-8h3c.55,0,1-.45,1-1v-7h10v3c0,.55.45,1,1,1h3v12Z"/>
-                        <path d="M9 10H11V12H9z"/>
-                        <path d="M9 6H11V8H9z"/>
-                        <path d="M5 14H7V16H5z"/>
-                        <path d="M17 14H19V16H17z"/>
-                        <path d="M17 10H19V12H17z"/>
-                        <path d="M13 6H15V8H13z"/>
-                        <path d="M13 10H15V12H13z"/>
-                    </svg>
-                    <h2 class="text-md font-semibold text-gray-700 ml-2">Отделы</h2>
-                </div>
-                <button
-                    onclick="openDepartmentModal()"
-                    class="absolute top-1 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-primary hover:text-secondary"
-                >
-                    <i class="fas fa-plus"></i>
-                </button>
-            </div>
-            @if(isset($departments) && $departments->count() > 0)
-                <div class="space-y-2">
-                    @foreach($departments as $department)
-                        <div
-                            class="group flex items-center justify-between p-2 hover:bg-green-50 cursor-pointer rounded-[50px] workspace-item"
-                            data-workspace="alpha" onclick="openDepartmentMail('{{ $department->email }}')">
-                            <div class="flex items-center">
-                                <span class="text-gray-700">{{ $department->name }}</span>
-                                <div class="email-badge">{{ $department->unread_count ?? 0 }}</div>
-                            </div>
-                            <div class="flex items-center space-x-1">
-                                <button class="text-gray-400 hover:text-blue-500" title="Почта отдела">
-                                    <i class="fas fa-envelope text-xs"></i>
-                                </button>
-                                @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
-                                    <button onclick="openEditDepartmentModal({{ $department->id }})"
-                                            class="text-gray-400 hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                        <i class="fas fa-edit text-xs"></i>
-                                    </button>
-                                @endif
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <p class="text-sm text-gray-500">Нет доступных отделов</p>
-            @endif
-        </div>
+
 
         <div class="mb-8 p-2  cursor-pointer">
             <div class="flex items-center justify-between mb-4 group relative">

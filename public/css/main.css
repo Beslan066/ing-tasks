@@ -1851,7 +1851,7 @@ body{
 .tk::before{
     content: var(--tw-content);
     --tw-bg-opacity: 1;
-    background-color: rgb(255 234 194 / var(--tw-bg-opacity));
+    background-color: rgb(33 235 107 / 44%);
 }
 
 .uk::before{

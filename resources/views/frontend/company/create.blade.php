@@ -10,7 +10,7 @@
                 </button>
             </div>
 
-            <form id="taskForm" action="{{route('companies.store')}}" method="post">
+            <form id="companyForm" action="{{route('companies.store')}}" method="post">
                 @csrf
                 @method('post')
                 <div class="mb-4 w-1/2">

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Solid - Tailwind CSS Saas Template</title>
+    <title>МенеджерПлюс - современная система управления командами</title>
     <link rel="icon" href="favicon.ico">
     <link href="css/main.css" rel="stylesheet">
 </head>
@@ -334,7 +334,7 @@
                 <h2 class="cj ej dm ri nr sa">Начните пользоваться уже сегодня</h2>
                 <p class="jo/12 ba">МенеджерПлюс — это быстроразвивающийся отечественный продукт, разработанный на
                     основе передовых технологий.
-                    Платфоорма предоставляет все необходимые инструменты для комфортной и продуктивной работы.
+                    Платформа предоставляет все необходимые инструменты для комфортной и продуктивной работы.
                     Мы уделяем большое внимание конфиденциальности и безопасности ваших данных.</p>
             </div>
 
@@ -362,9 +362,7 @@
             <!-- Section Title Start -->
             <div class="animate_top mi ba"
                  x-data="{ sectionTitle: ``, sectionSubtitle: `Почему выбирают нас`, sectionTitlePara: ` `}">
-                <div class="eg sl ol pl pb xe oh hh sa">
-                    <h4 x-text="sectionTitle" class="bj yi ej dm"></h4>
-                </div>
+
                 <h2 x-text="sectionSubtitle" class="cj ri nr ej dm ym/5 zp/2 ba sa"></h2>
                 <p class="ba ym/5 mo/5 aq" x-text="sectionTitlePara"></p>
 
@@ -441,15 +439,14 @@
         <div class="ba md dh pn vq kh wq ye fg gg hg xl yl _l sl cm">
             <div class="qb de en fn gn te hn">
                 <div class="animate_left zm ko/2">
-                    <h2 class="ej dm ri or cj sa xc/12">Join With Us Today & Incrud-ease Your Productivity</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor eros. Donec
-                        vitae tortor lacus. Phasellus aliquam ante in maximus.</p>
+                    <h2 class="ej dm ri or cj sa xc/12">Начните уже сегодня чтобы повысить вашу продуктивность</h2>
+                    <p>Вам доступна бесплатная версия на 5 пользователей. Протестируйте и решите для себя, стоит ли пользоваться нашими инструментами.</p>
                 </div>
                 <div class="animate_right lo">
                     <div class="qb ee fe cq">
                         <img src="images/shape-06.png" alt="Saly" class="ub yp" />
                         <a href="signup.html" class="sb ee je bj fj em tf ul xe yg xg _k mm">
-                            Sign up free
+                            Зарегистрироваться
                             <img src="images/icon-arrow-dark.svg" alt="Arrow" class="nl" />
                             <img src="images/icon-arrow-light.svg" alt="Arrow" class="ub ml" />
                         </a>
@@ -469,10 +466,10 @@
             </div>
             <div class="qb de en fn te gq">
                 <div class="animate_left _m/5 ko/2">
-                    <h4 class="ej dm bj dj">OUR FAQS</h4>
+                    <h4 class="ej dm bj dj">ЧАВО</h4>
                     <h2 class="h cj ej dm ri jr xa">
-                        Frequently Asked
-                        <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">Questions</span>
+                        Часто задаваемые
+                        <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">вопросы</span>
                     </h2>
 
                     <a href="#" class="qb ee je ej dm eb">
@@ -550,12 +547,9 @@
         <div class="ba nd _g nn pq">
             <!-- Section Title Start -->
             <div class="animate_top mi ba"
-                 x-data="{ sectionTitle: `TESTIMONIALS`, sectionSubtitle: `Client’s Testimonials`, sectionTitlePara: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor eros. Donec vitae tortor lacus. Phasellus aliquam ante in maximus.`}">
-                <div class="eg sl ol pl pb xe oh hh sa">
-                    <h4 x-text="sectionTitle" class="bj yi ej dm"></h4>
-                </div>
+                 x-data="{ sectionTitle: `TESTIMONIALS`, sectionSubtitle: `Отзывы пользователей`}">
+
                 <h2 x-text="sectionSubtitle" class="cj ri nr ej dm ym/5 zp/2 ba sa"></h2>
-                <p class="ba ym/5 mo/5 aq" x-text="sectionTitlePara"></p>
 
             </div>
             <!-- Section Title End -->
@@ -610,9 +604,7 @@
         <div class="ba nd _g nn pq">
             <!-- Section Title Start -->
             <div class="animate_top mi ba" x-data="{ sectionTitle: ``, sectionSubtitle: `Тарифы`}">
-                <div class="eg sl ol pl pb xe oh hh sa">
-                    <h4 x-text="sectionTitle" class="bj yi ej dm"></h4>
-                </div>
+
                 <h2 x-text="sectionSubtitle" class="cj ri nr ej dm ym/5 zp/2 ba sa"></h2>
                 <p class="ba ym/5 mo/5 aq" x-text="sectionTitlePara"></p>
 
@@ -728,27 +720,25 @@
 
             <div class="qb de en ce dn te jq gn">
                 <div class="animate_top rc xm/5 mo/4 mj ye uf tl ol pl ug nq">
-                    <h2 class="ej dm ri mr aj _a">Send a message</h2>
+                    <h2 class="ej dm ri mr aj _a">Оставьте заявку</h2>
 
                     <form action="https://formbold.com/s/unique_form_id" method="POST">
                         <div class="qb be po so le bp ea">
-                            <input type="text" placeholder="Full name"
+                            <input type="text" placeholder="Ваше ФИО"
                                    class="rc ko/2 bg kf nf pl jl gl qm il rm gi" />
 
-                            <input type="email" placeholder="Email address"
+                            <input type="email" placeholder="Email"
                                    class="rc ko/2 bg kf nf pl jl gl qm il rm gi" />
                         </div>
 
                         <div class="qb be po so le bp ab">
-                            <input type="text" placeholder="Subject"
-                                   class="rc ko/2 bg kf nf pl jl gl qm il rm gi" />
 
-                            <input type="text" placeholder="Phone number"
+                            <input type="text" placeholder="Номер телефона"
                                    class="rc ko/2 bg kf nf pl jl gl qm il rm gi" />
                         </div>
 
                         <div class="qb ib">
-                                <textarea placeholder="Message" rows="4"
+                                <textarea placeholder="Сообщение" rows="4"
                                           class="rc bg kf nf pl jl gl qm il rm"></textarea>
                         </div>
 
@@ -768,13 +758,12 @@
                                                 </span>
                                         </div>
                                     </div>
-                                    By clicking Checkbox, you agree to use our “Form” terms And consent cookie usage
-                                    in browser.
+                                    Нажав на галочку, вы соглашаетесь с использованием наших условий использования «Формы» и даете согласие на использование файлов cookie.
                                 </label>
                             </div>
 
                             <button class="sb ee je tf xk hk ek rl bj fj xe xg yg">
-                                Send Message
+                                Отпрвить
                                 <svg class="ig" width="14" height="14" viewBox="0 0 14 14" fill="none"
                                      xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -787,20 +776,20 @@
                 </div>
 
                 <div class="animate_top rc _m/5 no ln hr">
-                    <h2 class="ej dm ri mr aj ab">Find us</h2>
+                    <h2 class="ej dm ri mr aj ab">Контакты</h2>
 
                     <div class="fa 5">
-                        <h4 class="bj ej dm ui sa">Our Loaction</h4>
+                        <h4 class="bj ej dm ui sa">Наш адрес</h4>
                         <p>290 Maryam Springs 260, Courbevoie, Paris, France</p>
                     </div>
                     <div class="fa 5">
-                        <h4 class="bj ej dm ui sa">Email Address</h4>
+                        <h4 class="bj ej dm ui sa">Email</h4>
                         <p><a href="#"><span class="__cf_email__"
                                              data-cfemail="7d0412080f101c14113d1912101c1413131c1018531e1210">[email&#160;protected]</span></a>
                         </p>
                     </div>
                     <div>
-                        <h4 class="bj ej dm ui sa">Phone Number</h4>
+                        <h4 class="bj ej dm ui sa">Телефон</h4>
                         <p><a href="#">+009 42334 6343 843</a></p>
                     </div>
                 </div>
@@ -809,69 +798,67 @@
     </section>
     <!-- ===== Contact End ===== -->
 
-    <!-- ===== Blog Start ===== -->
-    <section class="zg ep oq">
-        <div class="ba nd _g nn pq">
-            <!-- Section Title Start -->
-            <div class="animate_top mi ba"
-                 x-data="{ sectionTitle: `NEWS & BLOGS`, sectionSubtitle: `Latest News & Blogs`, sectionTitlePara: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor eros. Donec vitae tortor lacus. Phasellus aliquam ante in maximus.`}">
-                <div class="eg sl ol pl pb xe oh hh sa">
-                    <h4 x-text="sectionTitle" class="bj yi ej dm"></h4>
-                </div>
-                <h2 x-text="sectionSubtitle" class="cj ri nr ej dm ym/5 zp/2 ba sa"></h2>
-                <p class="ba ym/5 mo/5 aq" x-text="sectionTitlePara"></p>
+{{--    <!-- ===== Blog Start ===== -->--}}
+{{--    <section class="zg ep oq">--}}
+{{--        <div class="ba nd _g nn pq">--}}
+{{--            <!-- Section Title Start -->--}}
+{{--            <div class="animate_top mi ba"--}}
+{{--                 x-data="{ sectionTitle: `NEWS & BLOGS`, sectionSubtitle: `Latest News & Blogs`, sectionTitlePara: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor eros. Donec vitae tortor lacus. Phasellus aliquam ante in maximus.`}">--}}
 
-            </div>
-            <!-- Section Title End -->
-        </div>
+{{--                <h2 x-text="sectionSubtitle" class="cj ri nr ej dm ym/5 zp/2 ba sa"></h2>--}}
+{{--                <p class="ba ym/5 mo/5 aq" x-text="sectionTitlePara"></p>--}}
 
-        <div class="ba ld _g nn pq ha vp">
-            <div class="tb _d bn oo le dq">
-                <!-- Blog Item -->
-                <div class="animate_top uf sl ye mj pg sh">
-                    <a href="#" class="ob">
-                        <img src="images/blog-01.png" alt="Blog" />
-                    </a>
+{{--            </div>--}}
+{{--            <!-- Section Title End -->--}}
+{{--        </div>--}}
 
-                    <div class="_g">
-                        <h4 class="bj oi ir ej bl dm ia ja">
-                            <a href="blog-single.html">Free advertising for your online business</a>
-                        </h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit convallis tortor.</p>
-                    </div>
-                </div>
+{{--        <div class="ba ld _g nn pq ha vp">--}}
+{{--            <div class="tb _d bn oo le dq">--}}
+{{--                <!-- Blog Item -->--}}
+{{--                <div class="animate_top uf sl ye mj pg sh">--}}
+{{--                    <a href="#" class="ob">--}}
+{{--                        <img src="images/blog-01.png" alt="Blog" />--}}
+{{--                    </a>--}}
 
-                <!-- Blog Item -->
-                <div class="animate_top uf sl ye mj pg sh">
-                    <a href="#" class="ob">
-                        <img src="images/blog-02.png" alt="Blog" />
-                    </a>
+{{--                    <div class="_g">--}}
+{{--                        <h4 class="bj oi ir ej bl dm ia ja">--}}
+{{--                            <a href="blog-single.html">Free advertising for your online business</a>--}}
+{{--                        </h4>--}}
+{{--                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit convallis tortor.</p>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
 
-                    <div class="_g">
-                        <h4 class="bj oi ir ej bl dm ia ja">
-                            <a href="bog-single.html">9 simple ways to improve your design skills</a>
-                        </h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit convallis tortor.</p>
-                    </div>
-                </div>
+{{--                <!-- Blog Item -->--}}
+{{--                <div class="animate_top uf sl ye mj pg sh">--}}
+{{--                    <a href="#" class="ob">--}}
+{{--                        <img src="images/blog-02.png" alt="Blog" />--}}
+{{--                    </a>--}}
 
-                <!-- Blog Item -->
-                <div class="animate_top uf sl ye mj pg sh">
-                    <a href="#" class="ob">
-                        <img src="images/blog-03.png" alt="Blog" />
-                    </a>
+{{--                    <div class="_g">--}}
+{{--                        <h4 class="bj oi ir ej bl dm ia ja">--}}
+{{--                            <a href="bog-single.html">9 simple ways to improve your design skills</a>--}}
+{{--                        </h4>--}}
+{{--                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit convallis tortor.</p>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
 
-                    <div class="_g">
-                        <h4 class="bj oi ir ej bl dm ia ja">
-                            <a href="blog-single.html">Tips to quickly improve your coding speed.</a>
-                        </h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit convallis tortor.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- ===== Blog End ===== -->
+{{--                <!-- Blog Item -->--}}
+{{--                <div class="animate_top uf sl ye mj pg sh">--}}
+{{--                    <a href="#" class="ob">--}}
+{{--                        <img src="images/blog-03.png" alt="Blog" />--}}
+{{--                    </a>--}}
+
+{{--                    <div class="_g">--}}
+{{--                        <h4 class="bj oi ir ej bl dm ia ja">--}}
+{{--                            <a href="blog-single.html">Tips to quickly improve your coding speed.</a>--}}
+{{--                        </h4>--}}
+{{--                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit convallis tortor.</p>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--    </section>--}}
+{{--    <!-- ===== Blog End ===== -->--}}
 </main>
 <!-- ===== Footer Start ===== -->
 <footer class="uf sl lf nf pl">
@@ -1048,7 +1035,6 @@
     </svg>
 </button>
 
-<!-- ====== Back To Top End ===== -->
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script defer src="js/bundle.js"></script>
 <script defer

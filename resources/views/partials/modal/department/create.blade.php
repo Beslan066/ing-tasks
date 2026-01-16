@@ -20,7 +20,7 @@
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-medium mb-2">Компания</label>
                 <select name="company_id"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white">
 
                     @if(isset($ownedCompanies))
                         @foreach($ownedCompanies as $company)
