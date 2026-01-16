@@ -23,8 +23,8 @@
         </div>
 
         <!-- Скрываемый блок фильтров -->
-        <div id="filtersSection" class="bg-white rounded-lg shadow-sm md:shadow-md mb-4 md:mb-6 transition-all duration-300 overflow-hidden" style="max-height: 0; opacity: 0;">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <div id="filtersSection" class="bg-white rounded-lg shadow-sm md:shadow-md mb-4 md:mb-6 transition-all duration-300 overflow-hidden " style="max-height: 0; opacity: 0;">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 p-2">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
                     <input type="text" id="searchInput" placeholder="Поиск по имени или email..."
@@ -99,33 +99,34 @@
             </div>
         </div>
 
-        <!-- Кнопки экспорта и печати -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
-            <div class="text-base md:text-lg font-semibold text-gray-700">
-                Список сотрудников
-            </div>
-            <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-                <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'excel'])) }}"
-                   class="flex-1 sm:flex-none bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                    <i class="fas fa-file-excel"></i>
-                    <span>Excel</span>
-                </a>
-                <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'pdf'])) }}"
-                   class="flex-1 sm:flex-none bg-red-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-red-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                    <i class="fas fa-file-pdf"></i>
-                    <span>PDF</span>
-                </a>
-                <a href="{{ route('team.print-table', request()->query()) }}"
-                   target="_blank"
-                   class="flex-1 sm:flex-none bg-blue-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                    <i class="fas fa-print"></i>
-                    <span>Печать</span>
-                </a>
-            </div>
-        </div>
-
         <!-- Основной контейнер с таблицей -->
         <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
+
+            <!-- Кнопки экспорта и печати -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+                <div class="text-base md:text-lg font-semibold text-gray-700">
+                    Список сотрудников
+                </div>
+                <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                    <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'excel'])) }}"
+                       class="flex-1 sm:flex-none bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                        <i class="fas fa-file-excel"></i>
+                        <span>Excel</span>
+                    </a>
+                    <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'pdf'])) }}"
+                       class="flex-1 sm:flex-none bg-red-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-red-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>PDF</span>
+                    </a>
+                    <a href="{{ route('team.print-table', request()->query()) }}"
+                       target="_blank"
+                       class="flex-1 sm:flex-none bg-blue-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                        <i class="fas fa-print"></i>
+                        <span>Печать</span>
+                    </a>
+                </div>
+            </div>
+
             <!-- Десктопный вид таблицы -->
             <div class="overflow-x-auto -mx-4 md:mx-0 hidden md:block">
                 <div class="inline-block min-w-full align-middle">
@@ -175,9 +176,9 @@
                                         <td class="px-3 py-4">
                                             <div class="flex items-center space-x-3" >
                                                 @if(isset($user->avatar))
-                                                    <img src="{{$user->getAvatarUrlAttribute()}}" alt="{{ $user->name }}" class="w-8 h-8 rounded-full object-cover" style="width:50px; height: 50px;">
+                                                    <img src="{{$user->getAvatarUrlAttribute()}}" alt="{{ $user->name }}" class="w-8 h-8 rounded-full object-cover" style="width:40px; height: 40px;">
                                                 @else
-                                                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0" style="width:50px; height: 50px;">
+                                                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0" style="width:40px; height: 40px;">
                                                         <span class="text-gray-600 text-xs font-medium" >{{ substr($user->name, 0, 1) }}</span>
                                                     </div>
                                                 @endif

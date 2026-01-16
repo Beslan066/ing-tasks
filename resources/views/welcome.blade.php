@@ -28,7 +28,7 @@
     <!-- Доска с задачами -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <!-- Колонка "Новые" -->
-        <div class="bg-gray-100 rounded-lg p-4 board-column" data-status="new">
+        <div class="bg-gray-100 rounded-lg p-4 board-column bg-transparent" data-status="new">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-semibold text-gray-700">Новые</h3>
                 <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded">{{ $stats['new'] }}</span>
@@ -177,7 +177,7 @@
         </div>
 
         <!-- Колонка "Завершено" -->
-        <div class="bg-gray-100 rounded-lg p-4 board-column" data-status="done">
+        <div class="bg-gray-100 rounded-lg p-4 board-column bg-transparent" data-status="done" style="border: 1px solid #fff">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-semibold text-gray-700">Завершено</h3>
                 <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">{{ $stats['done'] }}</span>
@@ -185,7 +185,7 @@
 
             <div class="space-y-4 task-container" data-status="done">
                 @foreach($tasksByStatus['done'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow opacity-70 cursor-move" draggable="true" data-task="{{ $task->id }}">
+                    <div class="task-card bg-white p-4 rounded-lg shadow opacity-80 cursor-move" draggable="true" data-task="{{ $task->id }}">
                         <div class="flex justify-between items-start mb-2">
                             <h4 class="font-medium cursor-pointer hover:text-blue-600" onclick="openTaskViewModal({{ $task->id }})">
                                 {{ $task->name }}

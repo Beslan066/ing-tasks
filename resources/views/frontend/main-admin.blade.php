@@ -128,6 +128,20 @@
                 <div class="text-xl md:text-3xl font-bold" style="color: #16a34a;">{{ $stats['total'] }}</div>
             </div>
 
+            <!-- Назначены -->
+            <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
+                <div class="flex items-center justify-between mb-3 md:mb-4">
+                    <div>
+                        <h3 class="font-bold text-sm md:text-lg text-gray-800">Назначены</h3>
+                        <p class="text-gray-500 text-xs md:text-sm">Ожидают подтверждения</p>
+                    </div>
+                    <div class="w-8 h-8 md:w-12 md:h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user-check text-purple-600 text-sm md:text-xl"></i>
+                    </div>
+                </div>
+                <div class="text-xl md:text-3xl font-bold text-purple-600">{{ $stats['assigned'] }}</div>
+            </div>
+
             <!-- В работе -->
             <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
                 <div class="flex items-center justify-between mb-3 md:mb-4">
@@ -140,6 +154,20 @@
                     </div>
                 </div>
                 <div class="text-xl md:text-3xl font-bold text-orange-600">{{ $stats['in_progress'] }}</div>
+            </div>
+
+            <!-- На проверке -->
+            <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
+                <div class="flex items-center justify-between mb-3 md:mb-4">
+                    <div>
+                        <h3 class="font-bold text-sm md:text-lg text-gray-800">На проверке</h3>
+                        <p class="text-gray-500 text-xs md:text-sm">Ожидают подтверждения</p>
+                    </div>
+                    <div class="w-8 h-8 md:w-12 md:h-12 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-search text-yellow-600 text-sm md:text-xl"></i>
+                    </div>
+                </div>
+                <div class="text-xl md:text-3xl font-bold text-yellow-600">{{ $stats['review'] }}</div>
             </div>
 
             <!-- Выполнено -->
@@ -168,34 +196,6 @@
                     </div>
                 </div>
                 <div class="text-xl md:text-3xl font-bold text-red-600">{{ $stats['overdue'] }}</div>
-            </div>
-
-            <!-- На проверке -->
-            <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
-                <div class="flex items-center justify-between mb-3 md:mb-4">
-                    <div>
-                        <h3 class="font-bold text-sm md:text-lg text-gray-800">На проверке</h3>
-                        <p class="text-gray-500 text-xs md:text-sm">Ожидают подтверждения</p>
-                    </div>
-                    <div class="w-8 h-8 md:w-12 md:h-12 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-search text-yellow-600 text-sm md:text-xl"></i>
-                    </div>
-                </div>
-                <div class="text-xl md:text-3xl font-bold text-yellow-600">{{ $stats['review'] }}</div>
-            </div>
-
-            <!-- Назначены -->
-            <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
-                <div class="flex items-center justify-between mb-3 md:mb-4">
-                    <div>
-                        <h3 class="font-bold text-sm md:text-lg text-gray-800">Назначены</h3>
-                        <p class="text-gray-500 text-xs md:text-sm">Ожидают выполнения</p>
-                    </div>
-                    <div class="w-8 h-8 md:w-12 md:h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-user-check text-purple-600 text-sm md:text-xl"></i>
-                    </div>
-                </div>
-                <div class="text-xl md:text-3xl font-bold text-purple-600">{{ $stats['assigned'] }}</div>
             </div>
         </div>
 

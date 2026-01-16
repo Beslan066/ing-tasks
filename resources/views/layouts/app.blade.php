@@ -29,13 +29,37 @@
 
     <style>
         .fon {
-            /*background: url("https://avatars.mds.yandex.net/i?id=0852a6db87ebed02920b87d285db69e5_l-3707062-images-thumbs&n=13") no-repeat center center;*/
+            /*background: url("https://4kwallpapers.com/images/walls/thumbs_3t/14811.jpg") no-repeat center;*/
             background-size: cover; /* покрывает всю область */
             position: relative;
             /*background: -webkit-linear-gradient(45deg, rgb(86, 181, 184), rgb(22, 163, 74));*/
             /*background: -moz-linear-gradient(45deg, rgb(86, 181, 184),   rgb(22, 163, 74));*/
             /*background: linear-gradient(45deg, rgb(86, 181, 184),  rgb(22, 163, 74));*/
 
+        }
+
+        .priority-option {
+            position: relative;
+        }
+
+        .priority-option::before {
+            content: "";
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            background-image: var(--priority-icon);
+            background-size: contain;
+        }
+
+        .priority-option[value="низкий"] {
+            --priority-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2314ab28' viewBox='0 0 24 24'%3E%3Cpath d='M3 15h2v5H3zm4-3h2v8H7zm4-3h2v11h-2z'%3E%3C/path%3E%3C/svg%3E");
+        }
+
+        .priority-option[value="средний"] {
+            --priority-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffb300' viewBox='0 0 24 24'%3E%3Cpath d='M7 12h2v6H7zm4-3h2v9h-2zm4-3h2v12h-2z'%3E%3C/path%3E%3C/svg%3E");
         }
 
 
@@ -95,7 +119,7 @@
 
 <div class="flex fon">
     <!-- Боковая панель -->
-    <div class="sidebar w-64 bg-white border-r border-gray-200 py-6 px-4 bg-transparent  hidden sm:block">
+    <div class="sidebar w-64 bg-white border-r border-gray-200 py-6 px-4 bg-transparent  hidden sm:block" style="backdrop-filter: blur(40px);">
 
         <div class="mb-8 hover:fill-[#16a34a]">
             @if(isset(auth()->user()->role->name))
@@ -108,8 +132,7 @@
                                 <path
                                     d="m21.41,6.09L12.41,2.09c-.26-.12-.55-.12-.81,0L2.59,6.09c-.36.16-.59.52-.59.91v3c0,.55.45,1,1,1v5c-.55,0-1,.45-1,1v4c0,.55.45,1,1,1h18c.55,0,1-.45,1-1v-4c0-.55-.45-1-1-1v-5c.55,0,1-.45,1-1v-3c0-.4-.23-.75-.59-.91Zm-17.41,1.56l8-3.55,8,3.55v1.35H4v-1.35Zm9,8.35h-2v-5h2v5Zm-7-5h2v5h-2v-5Zm14,9H4v-2h16v2Zm-2-4h-2v-5h2v5Z"/>
                             </svg>
-                            <h2 class="text-md font-semibold text-gray-700 hover:text-[#16a34a] ml-2">Моя
-                                организация</h2>
+                            <h2 class="text-md font-semibold text-gray-700 hover:text-[#16a34a] ml-2">Моя компания</h2>
                         </a>
                     </div>
                 @endif
@@ -242,8 +265,8 @@
         <div class="mb-8">
             @if(isset($onlineUsersCount) && $onlineUsersCount > 0)
                 <div class="mb-2">
-                    <h3 class="text-lg font-semibold text-gray-800">
-                        Онлайн ({{ $onlineUsersCount }})
+                    <h3 class="text-md font-semibold text-white">
+                        В сети ({{ $onlineUsersCount }})
                     </h3>
 
                 </div>
@@ -304,7 +327,7 @@
             @endif
         </div>
 
-        <div class="fixed bottom-[10px] p-2" style="border: 1px solid #16a34a; border-radius: 10px;">
+        <div class=" p-2" style="border: 1px solid #16a34a; border-radius: 10px;">
             <div class="" ><h6
                     class="font-heading text-sm/tighter font-bold -tracking-snug text-slate-600 mb-4 flex items-center">
                     <img src="{{asset('img/icons/disk.svg')}}" alt="">
@@ -327,10 +350,13 @@
         </div>
 
         <div class="chat-button" style="position: fixed; bottom: 10px; right: 20px;">
-            <button class="bg-primary text-white p-2 rounded-full hover:bg-secondary transition-colors"
-                    style="width: 70px;">
-                <i class="fas fa-comment-dots"></i>
-            </button>
+            <a href="{{route('chat')}}">
+                <button class="bg-primary text-white p-2 rounded-full hover:bg-secondary transition-colors"
+                        style="width: 70px;">
+                    <i class="fas fa-comment-dots"></i>
+                </button>
+            </a>
+
         </div>
     </div>
 </div>
