@@ -1,5 +1,6 @@
-<div id="taskModal" class="fixed inset-0 modal-overlay flex items-center justify-center hidden z-50 p-4">
-    <div class="bg-white modal-content rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+<div id="taskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white modal-content rounded-xl w-full max-w-3xl max-h-[90vh]
+            overflow-y-auto custom-scrollbar">
         <!-- Заголовок -->
         <div class="flex justify-between items-center p-6 border-b border-gray-200 bg-gradient-to-r from-white to-gray-50">
             <div>
@@ -144,7 +145,7 @@
                         class="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors">
                     Отмена
                 </button>
-                <button type="submit" class="px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-secondary font-medium transition-colors flex items-center shadow-sm">
+                <button type="submit" class="px-6 py-2.5 bg-primary-500 text-white rounded-lg hover:bg-secondary font-medium transition-colors flex items-center shadow-sm">
                     <i class="fas fa-plus mr-2"></i>Создать задачу
                 </button>
             </div>

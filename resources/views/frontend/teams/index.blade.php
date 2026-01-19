@@ -15,7 +15,7 @@
                     <span>Фильтр</span>
                     <i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>
                 </button>
-                <button class="flex-1 md:flex-none bg-primary text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-secondary transition text-sm md:text-base" id="newUserBtn">
+                <button class="flex-1 md:flex-none bg-primary-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-secondary transition text-sm md:text-base" id="newUserBtn">
                     <i class="fas fa-user-plus"></i>
                     <span>Пригласить</span>
                 </button>
@@ -227,19 +227,7 @@
                                                 <button class="text-gray-600 hover:text-gray-800 p-1" title="Изменить">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
 
-                                                    <form action="{{ route('team.destroy', $user->id) }}"
-                                                          method="post"
-                                                          class="d-inline"
-                                                          onsubmit="return confirm('Вы уверены, что хотите удалить {{ $user->name }} из команды? Пользователю будет отправлено уведомление.')">
-                                                        @csrf
-                                                        @method('delete')
-                                                        <button type="submit" class="text-red-600 hover:text-red-800 p-1">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                @endif
                                             </div>
                                         </td>
                                     </tr>

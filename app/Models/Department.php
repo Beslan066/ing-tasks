@@ -64,14 +64,41 @@ class Department extends Model
     }
 
     /**
-     * Пользователи отдела (многие ко многим)
-     * @return BelongsToMany - возвращает всех пользователей отдела
+     * Пользователи отдела (ВСЕ пользователи - и через department_id, и через многие-ко-многим)
+     * @return \Illuminate\Database\Eloquent\Collection - возвращает всех пользователей отдела
+     */
+    public function getAllUsersAttribute()
+    {
+        // Получаем пользователей через поле department_id
+        $directUsers = User::where('department_id', $this->id)
+            ->where('company_id', $this->company_id)
+            ->get();
+
+        // Получаем пользователей через связь многие-ко-многим
+        $manyToManyUsers = $this->users()->get();
+
+        // Объединяем и убираем дубликаты
+        return $directUsers->merge($manyToManyUsers)->unique('id');
+    }
+
+    /**
+     * Пользователи отдела через многие-ко-многим
+     * @return BelongsToMany - возвращает пользователей через промежуточную таблицу
      */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'department_user')
-            ->withPivot('is_primary')
             ->withTimestamps();
+    }
+
+    /**
+     * Пользователи отдела через прямое отношение (department_id)
+     * @return HasMany - возвращает пользователей с указанным department_id
+     */
+    public function directUsers(): HasMany
+    {
+        return $this->hasMany(User::class, 'department_id')
+            ->where('company_id', $this->company_id);
     }
 
 
@@ -87,10 +114,28 @@ class Department extends Model
     }
 
     /**
-     * Получает количество пользователей в отделе
-     * @return int - количество пользователей отдела
+     * Получает количество ВСЕХ пользователей в отделе
+     * @return int - количество пользователей отдела (всех типов)
      */
     public function getUsersCount(): int
+    {
+        return $this->getAllUsersAttribute()->count();
+    }
+
+    /**
+     * Получает количество пользователей через прямое отношение
+     * @return int - количество пользователей с department_id
+     */
+    public function getDirectUsersCount(): int
+    {
+        return $this->directUsers()->count();
+    }
+
+    /**
+     * Получает количество пользователей через многие-ко-многим
+     * @return int - количество пользователей через department_user
+     */
+    public function getManyToManyUsersCount(): int
     {
         return $this->users()->count();
     }
@@ -123,33 +168,57 @@ class Department extends Model
     }
 
     /**
-     * Добавляет пользователя в отдел
+     * Добавляет пользователя в отдел (оба способа)
      * @param User $user - пользователь для добавления
+     * @param bool $useDirectRelation - использовать прямое отношение (department_id) вместо многие-ко-многим
      * @return bool - true если операция успешна
      */
-    public function addUser(User $user): bool
+    public function addUser(User $user, bool $useDirectRelation = false): bool
     {
         // Проверяем, что пользователь принадлежит компании отдела
         if ($user->company_id !== $this->company_id) {
             return false;
         }
 
-        if (!$this->users()->where('user_id', $user->id)->exists()) {
-            $this->users()->attach($user->id);
-            return true;
+        if ($useDirectRelation) {
+            // Используем прямое отношение через department_id
+            if ($user->department_id !== $this->id) {
+                $user->department_id = $this->id;
+                return $user->save();
+            }
+        } else {
+            // Используем отношение многие-ко-многим
+            if (!$this->users()->where('user_id', $user->id)->exists()) {
+                $this->users()->attach($user->id);
+                return true;
+            }
         }
 
         return false;
     }
 
     /**
-     * Удаляет пользователя из отдела
+     * Удаляет пользователя из отдела (оба способа)
      * @param User $user - пользователь для удаления
      * @return bool - true если операция успешна
      */
     public function removeUser(User $user): bool
     {
-        return $this->users()->detach($user->id) > 0;
+        $removed = false;
+
+        // Удаляем из связи многие-ко-многим
+        if ($this->users()->where('user_id', $user->id)->exists()) {
+            $removed = $this->users()->detach($user->id) > 0;
+        }
+
+        // Если пользователь был добавлен через department_id, сбрасываем его
+        if ($user->department_id === $this->id) {
+            $user->department_id = null;
+            $user->save();
+            $removed = true;
+        }
+
+        return $removed;
     }
 
     /**
@@ -174,5 +243,41 @@ class Department extends Model
     public function isActive(): bool
     {
         return $this->status === 'active';
+    }
+
+    /**
+     * Методы для работы почты
+     */
+
+    public function emails()
+    {
+        return $this->hasMany(Email::class);
+    }
+
+    public function getEmailCount(): int
+    {
+        return $this->emails()->count();
+    }
+
+    public function getUnreadEmailCount(): int
+    {
+        return $this->emails()->where('is_read', false)->count();
+    }
+
+    public function incrementUnreadCount(): void
+    {
+        $this->increment('unread_emails_count');
+    }
+
+    public function decrementUnreadCount(): void
+    {
+        if ($this->unread_emails_count > 0) {
+            $this->decrement('unread_emails_count');
+        }
+    }
+
+    public function resetUnreadCount(): void
+    {
+        $this->update(['unread_emails_count' => 0]);
     }
 }

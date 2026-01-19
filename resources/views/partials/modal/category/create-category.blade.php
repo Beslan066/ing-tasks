@@ -61,9 +61,7 @@
                 <button type="button" onclick="closeCategoryModal()"
                         class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Отмена
                 </button>
-                <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary">Создать
-                    категорию
-                </button>
+                <button type="submit" class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-secondary">Создать</button>
             </div>
         </form>
     </div>

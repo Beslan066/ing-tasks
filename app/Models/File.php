@@ -2,120 +2,45 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class File extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
-        'file',
-        'file_path',
-        'file_size',
+        'path',
+        'size',
         'mime_type',
+        'extension',
+        'uploaded_by',
+        'company_id',
         'department_id',
-        'task_id',
-        'user_id',
-        'files'
+        'disk',
+        'folder',
     ];
 
-    protected $casts = [
-        'deadline' => 'datetime',
-        'completed_at' => 'datetime',
-    ];
-    // === СВЯЗИ ===
-
-    /**
-     * Отдел, к которому прикреплен файл
-     * @return BelongsTo - возвращает отдел владелец файла
-     */
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
     }
 
-    /**
-     * Задача, к которой прикреплен файл
-     * @return BelongsTo - возвращает задачу, к которой прикреплен файл
-     */
-    public function task(): BelongsTo
+    public function company(): BelongsTo
     {
-        return $this->belongsTo(Task::class);
+        return $this->belongsTo(Company::class);
     }
 
-    /**
-     * Пользователь, загрузивший файл
-     * @return BelongsTo - возвращает пользователя, который загрузил файл
-     */
-    public function user(): BelongsTo
+    public function uploadedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'uploaded_by');
     }
 
-    // === МЕТОДЫ ===
-
-    /**
-     * Получает размер файла в читаемом формате
-     * @return string - размер файла в формате (например, "2.5 MB")
-     */
-    public function getFormattedSize(): string
+    public function emailFiles(): HasMany
     {
-        $bytes = $this->file_size;
-        if ($bytes >= 1073741824) {
-            return number_format($bytes / 1073741824, 2) . ' GB';
-        } elseif ($bytes >= 1048576) {
-            return number_format($bytes / 1048576, 2) . ' MB';
-        } elseif ($bytes >= 1024) {
-            return number_format($bytes / 1024, 2) . ' KB';
-        } else {
-            return $bytes . ' bytes';
-        }
-    }
-
-    /**
-     * Проверяет, является ли файл изображением
-     * @return bool - true если файл является изображением
-     */
-    public function isImage(): bool
-    {
-        return strpos($this->mime_type, 'image/') === 0;
-    }
-
-    /**
-     * Проверяет, является ли файл документом
-     * @return bool - true если файл является документом
-     */
-    public function isDocument(): bool
-    {
-        return in_array($this->mime_type, [
-            'application/pdf',
-            'application/msword',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        ]);
-    }
-
-    /**
-     * Получает имена файлов как массив
-     */
-    public function getFilesArrayAttribute()
-    {
-        if (!$this->files) {
-            return [];
-        }
-
-        return array_map('trim', explode(',', $this->files));
-    }
-
-    /**
-     * Получает количество файлов из поля files
-     */
-    public function getFilesCountAttribute()
-    {
-        if (!$this->files) {
-            return 0;
-        }
-
-        return count($this->getFilesArrayAttribute());
+        return $this->hasMany(EmailFile::class);
     }
 }

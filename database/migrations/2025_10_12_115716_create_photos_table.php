@@ -25,13 +25,6 @@ return new class extends Migration
             $table->boolean('is_approved')->default(false);
             $table->timestamps();
         });
-
-        Schema::create('photo_tag', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('photo_id')->constrained()->onDelete('cascade');
-            $table->foreignId('tag_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
-        });
     }
 
     public function down()

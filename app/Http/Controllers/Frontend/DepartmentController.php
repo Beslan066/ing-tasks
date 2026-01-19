@@ -11,11 +11,34 @@ class DepartmentController extends Controller
 {
     public function index()
     {
-        $departments = Department::query()
-            ->where('company_id', auth()->user()->company_id)
-            ->get();
+        $user = Auth::user();
 
-        return view('frontend.department.index', compact('departments'));
+        $departments = Department::where('company_id', $user->company_id)
+            ->with(['company', 'supervisor', 'users', 'emails'])
+            ->withCount(['tasks', 'users', 'emails'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(12);
+
+        // Статистика
+        $totalActiveTasks = 0;
+        $totalUnreadEmails = 0;
+        $totalUsers = 0;
+
+        foreach ($departments as $department) {
+            $totalActiveTasks += $department->getActiveTasksCount();
+            $totalUnreadEmails += $department->getUnreadEmailCount();
+            $totalUsers += $department->getUsersCount();
+        }
+
+        return view('frontend.department.index', [
+            'departments' => $departments,
+            'totalActiveTasks' => $totalActiveTasks,
+            'totalUnreadEmails' => $totalUnreadEmails,
+            'totalUsers' => $totalUsers,
+            'ownedCompanies' => $user->getAllOwnedCompanies(),
+            'assignableUsers' => $user->getAssignableUsers(),
+            'currentUser' => $user,
+        ]);
     }
 
     public function store(Request $request)

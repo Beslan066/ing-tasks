@@ -89,6 +89,9 @@ class ViewServiceProvider extends ServiceProvider
         // ====== ОНЛАЙН ПОЛЬЗОВАТЕЛИ ======
         $onlineUsers = $this->getOnlineUsers($user);
 
+        // ====== ПОЧТА ======
+        $unreadEmailsCount = $this->getUnreadEmailsCount($user);
+
         // Получаем общее количество онлайн пользователей
         $onlineUsersCount = $this->getOnlineUsersCount($user);
 
@@ -98,6 +101,8 @@ class ViewServiceProvider extends ServiceProvider
             'ownedCompanies' => $ownedCompanies,
             'assignableUsers' => $assignableUsers,
             'team' => $this->prepareTeamData($team), // Обрабатываем данные команды
+            'unread_emails_count' => $unreadEmailsCount,
+            'has_email_access' => $user->hasPermission('access_email'),
             'onlineUsers' => $onlineUsers,
             'onlineUsersCount' => $onlineUsersCount,
             'roles' => Role::all(),
@@ -259,5 +264,16 @@ class ViewServiceProvider extends ServiceProvider
         $index = abs($hash) % count($colors);
 
         return $colors[$index];
+    }
+
+    private function getUnreadEmailsCount($user)
+    {
+        if (!$user->company_id || !$user->department_id) {
+            return 0;
+        }
+
+        // Для простоты используем счетчик отдела
+        $department = Department::find($user->department_id);
+        return $department ? $department->unread_emails_count : 0;
     }
 }

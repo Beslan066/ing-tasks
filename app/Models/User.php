@@ -756,4 +756,86 @@ class User extends Authenticatable implements MustVerifyEmail
         ]);
         $this->timestamps = true; // Включаем обратно
     }
+
+    /**
+     * Проверяет наличие разрешения у пользователя
+     */
+    public function hasPermission(string $permission): bool
+    {
+        if (!$this->role) {
+            return false;
+        }
+
+        // Если у роли есть поле permissions (массив)
+        if ($this->role->permissions && is_array($this->role->permissions)) {
+            return in_array($permission, $this->role->permissions);
+        }
+
+        // Fallback: проверка по названию роли
+        return $this->checkPermissionByRoleName($permission);
+    }
+
+    /**
+     * Проверяет разрешение на основе названия роли (fallback)
+     */
+    private function checkPermissionByRoleName(string $permission): bool
+    {
+        if (!$this->role) {
+            return false;
+        }
+
+        $roleName = trim($this->role->name);
+
+        // Базовая логика прав доступа по ролям
+        switch ($permission) {
+            case 'access_email':
+                // Доступ к почте имеют все пользователи с ролью
+                return in_array($roleName, ['Администратор', 'Руководитель', 'Менеджер', 'Сотрудник']);
+
+            case 'send_emails':
+                return in_array($roleName, ['Администратор', 'Руководитель', 'Менеджер']);
+
+            case 'view_all_emails':
+                return in_array($roleName, ['Администратор', 'Руководитель']);
+
+            case 'create_tasks':
+                return in_array($roleName, ['Администратор', 'Руководитель', 'Менеджер']);
+
+            case 'manage_users':
+                return in_array($roleName, ['Администратор', 'Руководитель']);
+
+            case 'manage_departments':
+                return in_array($roleName, ['Администратор', 'Руководитель']);
+
+            default:
+                // По умолчанию администраторы имеют все права
+                return $roleName === 'Администратор';
+        }
+    }
+
+    /**
+     * Проверяет наличие хотя бы одного из переданных разрешений
+     */
+    public function hasAnyPermission(array $permissions): bool
+    {
+        foreach ($permissions as $permission) {
+            if ($this->hasPermission($permission)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Проверяет наличие всех переданных разрешений
+     */
+    public function hasAllPermissions(array $permissions): bool
+    {
+        foreach ($permissions as $permission) {
+            if (!$this->hasPermission($permission)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

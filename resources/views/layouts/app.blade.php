@@ -11,335 +11,433 @@
     <link rel="shortcut icon" href="{{asset('img/favicon.ico')}}" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#16a34a',
-                        secondary: '#15803d',
-                        accent: '#10B981',
-                        dark: '#1F2937',
-                        light: '#F9FAFB'
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d'
+                        },
+                        sidebar: {
+                            bg: '#1a1f2e',
+                            text: '#94a3b8',
+                            active: '#ffffff',
+                            hover: '#2d3447'
+                        }
+                    },
+                    animation: {
+                        'slide-in': 'slideIn 0.3s ease-out',
+                        'pulse-glow': 'pulseGlow 2s infinite'
+                    },
+                    keyframes: {
+                        slideIn: {
+                            '0%': { transform: 'translateX(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' }
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0.7' }
+                        }
                     }
                 }
             }
         }
     </script>
 
-
     <style>
-        body {
-            font-family: "Inter", sans-serif !important;
-            font-optical-sizing: auto;
-            font-style: normal;
+        * {
+            font-family: "Inter", sans-serif;
         }
 
+        .sidebar {
+            background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-        .fon {
-            /*background: url("https://4kwallpapers.com/images/walls/thumbs_3t/14811.jpg") no-repeat center;*/
-            background-size: cover; /* покрывает всю область */
+        .sidebar:hover {
+            box-shadow: 0 0 50px rgba(34, 197, 94, 0.1);
+        }
+
+        .nav-item {
             position: relative;
-            /*background: -webkit-linear-gradient(45deg, rgb(86, 181, 184), rgb(22, 163, 74));*/
-            /*background: -moz-linear-gradient(45deg, rgb(86, 181, 184),   rgb(22, 163, 74));*/
-            /*background: linear-gradient(45deg, rgb(86, 181, 184),  rgb(22, 163, 74));*/
-
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
         }
 
-        .priority-option {
-            position: relative;
-        }
-
-        .priority-option::before {
-            content: "";
+        .nav-item::before {
+            content: '';
             position: absolute;
-            left: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 16px;
-            height: 16px;
-            background-image: var(--priority-icon);
-            background-size: contain;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(180deg, #22c55e, #16a34a);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
         }
 
-        .priority-option[value="низкий"] {
-            --priority-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2314ab28' viewBox='0 0 24 24'%3E%3Cpath d='M3 15h2v5H3zm4-3h2v8H7zm4-3h2v11h-2z'%3E%3C/path%3E%3C/svg%3E");
+        .nav-item:hover::before {
+            transform: scaleY(1);
         }
 
-        .priority-option[value="средний"] {
-            --priority-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffb300' viewBox='0 0 24 24'%3E%3Cpath d='M7 12h2v6H7zm4-3h2v9h-2zm4-3h2v12h-2z'%3E%3C/path%3E%3C/svg%3E");
+        .nav-item.active::before {
+            transform: scaleY(1);
         }
 
+        .nav-item.active {
+            background: rgba(34, 197, 94, 0.1);
+        }
 
+        .avatar-container {
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+
+        .avatar-container:hover {
+            transform: translateY(-2px);
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-radius: 50%;
+            border: 2px solid #1a1f2e;
+            animation: pulseGlow 2s infinite;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+            border-radius: 9999px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-weight: 600;
+        }
+
+        .category-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .category-item:hover .category-dot {
+            transform: scale(1.3);
+        }
+
+        .scrollbar-thin {
+            scrollbar-width: thin;
+            scrollbar-color: #4b5563 transparent;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 2px;
+        }
+
+        .dropdown-enter {
+            animation: dropdownEnter 0.2s ease-out;
+        }
+
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: transparent transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: transparent;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes dropdownEnter {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset;
+            -webkit-text-fill-color: #111827;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .dark input:-webkit-autofill,
+        .dark input:-webkit-autofill:hover,
+        .dark input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px #374151 inset;
+            -webkit-text-fill-color: white;
+        }
     </style>
-    <link rel="stylesheet" href="{{asset('css/style.css')}}">
 </head>
-<body class="bg-white font-sans">
+<body class="bg-gray-50 font-sans">
 
-<div class="flex fon">
+<div class="flex min-h-screen">
     <!-- Боковая панель -->
-    <div class="sidebar w-64 bg-white border-r border-gray-200 py-6 px-4 bg-transparent  hidden sm:block" style="backdrop-filter: blur(40px);">
-
-        <a href="{{route('welcome')}}">
-            <div class="flex items-center space-x-2">
-                <h1 class="text-2xl font-bold text-gray-800">Менеджер<span class="text-primary">Плюс</span></h1>
-            </div>
-        </a>
-
-        <div class="mb-8 hover:fill-[#16a34a]">
-                <div class="hover:bg-green-50 cursor-pointer p-2 rounded-[50px]">
-                <a href="{{route('welcome')}}" class="flex align-items-center">
-
-                    <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg">
-                        <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
-                        <path
-                            d="M9 15.59 4.71 11.3 3.3 12.71l5 5c.2.2.45.29.71.29s.51-.1.71-.29l11-11-1.41-1.41L9.02 15.59Z"/>
-                    </svg>
-                    <h2 class="text-md font-semibold text-gray-700 ml-2">Мои задачи</h2>
-                </a>
-            </div>
-                @if(isset(auth()->user()->role->name))
-                    @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
-                        <div class="hover:bg-green-50 cursor-pointer p-2 rounded-[50px]">
-                            <a href="{{route('tasks.admin')}}" class="flex align-items-center">
-
-                                <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg" class="">
-                                    <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
-                                    <path
-                                        d="m21.41,6.09L12.41,2.09c-.26-.12-.55-.12-.81,0L2.59,6.09c-.36.16-.59.52-.59.91v3c0,.55.45,1,1,1v5c-.55,0-1,.45-1,1v4c0,.55.45,1,1,1h18c.55,0,1-.45,1-1v-4c0-.55-.45-1-1-1v-5c.55,0,1-.45,1-1v-3c0-.4-.23-.75-.59-.91Zm-17.41,1.56l8-3.55,8,3.55v1.35H4v-1.35Zm9,8.35h-2v-5h2v5Zm-7-5h2v5h-2v-5Zm14,9H4v-2h16v2Zm-2-4h-2v-5h2v5Z"/>
-                                </svg>
-                                <h2 class="text-md font-semibold text-gray-700 hover:text-[#16a34a] ml-2">Моя компания</h2>
-                            </a>
-                        </div>
-                    @endif
-                @endif
-                <div class="p-2 cursor-pointer">
-                    <div class="flex items-center justify-between mb-2 group relative">
-                        <div class="flex align-items-center">
-                            <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg">
-                                <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
-                                <path
-                                    d="m21,6h-2v-2c0-1.1-.9-2-2-2H7c-1.1,0-2,.9-2,2v6h-2c-1.1,0-2,.9-2,2v9c0,.55.45,1,1,1h20c.55,0,1-.45,1-1v-13c0-1.1-.9-2-2-2Zm0,14h-7v-5h-4v5H3v-8h3c.55,0,1-.45,1-1v-7h10v3c0,.55.45,1,1,1h3v12Z"/>
-                                <path d="M9 10H11V12H9z"/>
-                                <path d="M9 6H11V8H9z"/>
-                                <path d="M5 14H7V16H5z"/>
-                                <path d="M17 14H19V16H17z"/>
-                                <path d="M17 10H19V12H17z"/>
-                                <path d="M13 6H15V8H13z"/>
-                                <path d="M13 10H15V12H13z"/>
-                            </svg>
-                            <h2 class="text-md font-semibold text-gray-700 ml-2">Отделы</h2>
-                        </div>
-                        <button
-                            onclick="openDepartmentModal()"
-                            class="absolute top-1 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-primary hover:text-secondary"
-                        >
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </div>
-                    @if(isset($departments) && $departments->count() > 0)
-                        <div class="space-y-2">
-                            @foreach($departments as $department)
-                                <div
-                                    class="group flex items-center justify-between p-2 hover:bg-green-50 cursor-pointer rounded-[50px] workspace-item"
-                                    data-workspace="alpha" onclick="openDepartmentMail('{{ $department->email }}')">
-                                    <div class="flex items-center">
-                                        <span class="text-gray-700">{{ $department->name }}</span>
-                                        <div class="email-badge">{{ $department->unread_count ?? 0 }}</div>
-                                    </div>
-                                    <div class="flex items-center space-x-1">
-                                        <button class="text-gray-400 hover:text-blue-500" title="Почта отдела">
-                                            <i class="fas fa-envelope text-xs"></i>
-                                        </button>
-                                        @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
-                                            <button onclick="openEditDepartmentModal({{ $department->id }})"
-                                                    class="text-gray-400 hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                                <i class="fas fa-edit text-xs"></i>
-                                            </button>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <p class="text-sm text-gray-500">Нет доступных отделов</p>
-                    @endif
-                </div>
-
-                <div class="hover:bg-green-50 cursor-pointer p-2 rounded-[50px]">
-                    <a href="{{route('tasks.admin')}}" class="flex align-items-center">
-
-                        <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg" class="">
-                            <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
-                            <path
-                                d="m21.41,6.09L12.41,2.09c-.26-.12-.55-.12-.81,0L2.59,6.09c-.36.16-.59.52-.59.91v3c0,.55.45,1,1,1v5c-.55,0-1,.45-1,1v4c0,.55.45,1,1,1h18c.55,0,1-.45,1-1v-4c0-.55-.45-1-1-1v-5c.55,0,1-.45,1-1v-3c0-.4-.23-.75-.59-.91Zm-17.41,1.56l8-3.55,8,3.55v1.35H4v-1.35Zm9,8.35h-2v-5h2v5Zm-7-5h2v5h-2v-5Zm14,9H4v-2h16v2Zm-2-4h-2v-5h2v5Z"/>
-                        </svg>
-                        <h2 class="text-md font-semibold text-gray-700 hover:text-[#16a34a] ml-2">Почта</h2>
-                    </a>
-                </div>
-                <div class="hover:bg-green-50 cursor-pointer p-2 rounded-[50px]">
-                    <a href="{{route('tasks.admin')}}" class="flex align-items-center">
-
-                        <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg" class="">
-                            <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
-                            <path
-                                d="m21.41,6.09L12.41,2.09c-.26-.12-.55-.12-.81,0L2.59,6.09c-.36.16-.59.52-.59.91v3c0,.55.45,1,1,1v5c-.55,0-1,.45-1,1v4c0,.55.45,1,1,1h18c.55,0,1-.45,1-1v-4c0-.55-.45-1-1-1v-5c.55,0,1-.45,1-1v-3c0-.4-.23-.75-.59-.91Zm-17.41,1.56l8-3.55,8,3.55v1.35H4v-1.35Zm9,8.35h-2v-5h2v5Zm-7-5h2v5h-2v-5Zm14,9H4v-2h16v2Zm-2-4h-2v-5h2v5Z"/>
-                        </svg>
-                        <h2 class="text-md font-semibold text-gray-700 hover:text-[#16a34a] ml-2">Почта</h2>
-                    </a>
-                </div><div class="hover:bg-green-50 cursor-pointer p-2 rounded-[50px]">
-                    <a href="{{route('tasks.admin')}}" class="flex align-items-center">
-
-                        <svg width="24" height="24" fill="#374151" viewBox="0 0 24 24" id="injected-svg" class="">
-                            <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
-                            <path
-                                d="m21.41,6.09L12.41,2.09c-.26-.12-.55-.12-.81,0L2.59,6.09c-.36.16-.59.52-.59.91v3c0,.55.45,1,1,1v5c-.55,0-1,.45-1,1v4c0,.55.45,1,1,1h18c.55,0,1-.45,1-1v-4c0-.55-.45-1-1-1v-5c.55,0,1-.45,1-1v-3c0-.4-.23-.75-.59-.91Zm-17.41,1.56l8-3.55,8,3.55v1.35H4v-1.35Zm9,8.35h-2v-5h2v5Zm-7-5h2v5h-2v-5Zm14,9H4v-2h16v2Zm-2-4h-2v-5h2v5Z"/>
-                        </svg>
-                        <h2 class="text-md font-semibold text-gray-700 hover:text-[#16a34a] ml-2">Мессенджер</h2>
-                    </a>
-                </div>
-        </div>
-
-
-
-        <div class="mb-8 p-2  cursor-pointer">
-            <div class="flex items-center justify-between mb-4 group relative">
-                <div class="flex align-items-center">
-                    <svg width="24" height="24" fill="#16a34a" viewBox="0 0 24 24" transform="" id="injected-svg">
-                        <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
-                        <path
-                            d="M18 6h-8c-1.1 0-2 .9-2 2v13c0 .36.19.69.5.87s.69.17 1 0l4.49-2.66 4.49 2.66c.16.09.33.14.51.14s.34-.04.5-.13c.31-.18.5-.51.5-.87v-13c0-1.1-.9-2-2-2Zm0 8v5.25l-3.49-2.07a.98.98 0 0 0-1.02 0L10 19.25V8h8z"/>
-                        <path d="M16 2H6c-1.1 0-2 .9-2 2v14h2V4h10z"/>
-                    </svg>
-                    <h2 class="text-md font-semibold text-gray-700 ml-2">Теги</h2>
-                </div>
-                <button onclick="openCategoryModal()"
-                        class="absolute top-1 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-primary hover:text-secondary">
-                    <i class="fas fa-plus"></i>
-                </button>
-            </div>
-
-            <!-- Категории -->
-            @if(isset($categories) && $categories->count() > 0)
-                <div class="space-y-2">
-                    @foreach($categories as $category)
-                        <div
-                            class="group flex items-center justify-between ml-4 hover:bg-green-50 cursor-pointer rounded-[50px] board-item"
-                            data-board="development">
-                            <div class="flex items-center space-x-3">
-                                <svg width="24" height="24" fill="{{ $category->color }}" viewBox="0 0 24 24"
-                                     transform="" id="injected-svg">
-                                    <!-- Boxicons v3.0.6 https://boxicons.com | License  https://docs.boxicons.com/free -->
-                                    <path
-                                        d="m12,2C6.49,2,2,6.49,2,12s4.49,10,10,10c.27,0,.52-.11.71-.29l9-9c.19-.19.29-.44.29-.71,0-5.51-4.49-10-10-10ZM4,12c0-4.41,3.59-8,8-8,4.08,0,7.45,3.07,7.93,7.02-.14,0-.29-.02-.43-.02-4.69,0-8.5,3.81-8.5,8.5,0,.14.01.29.02.43-3.95-.48-7.02-3.85-7.02-7.93Z"/>
-                                </svg>
-
-                                <span class="text-gray-700">{{ $category->name }}</span>
-                            </div>
-                            @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
-                                <div
-                                    class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                    <button onclick="openEditCategoryModal({{ $category->id }})"
-                                            class="text-gray-400 hover:text-primary p-1"
-                                            title="Редактировать категорию">
-                                        <i class="fas fa-edit text-xs"></i>
-                                    </button>
-                                    <button
-                                        onclick="openDeleteCategoryModal({{ $category->id }}, {{ json_encode($category->name) }})"
-                                        class="text-gray-400 hover:text-red-500 p-1"
-                                        title="Удалить категорию">
-                                        <i class="fas fa-trash text-xs"></i>
-                                    </button>
-                                </div>
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <p class="text-sm text-gray-500">Нет доступных категорий</p>
-            @endif
-        </div>
-
+    <div class="sidebar w-64 py-6 px-4 hidden sm:flex flex-col relative">
+        <!-- Логотип -->
         <div class="mb-8">
-            @if(isset($onlineUsersCount) && $onlineUsersCount > 0)
-                <div class="mb-2">
-                    <h3 class="text-md font-semibold text-white">
-                        В сети ({{ $onlineUsersCount }})
-                    </h3>
+            <a href="{{route('welcome')}}" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
+                    <i class="fas fa-tasks text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white">Менеджер<span class="text-primary-500">Плюс</span></h1>
+                    <p class="text-xs text-sidebar-text mt-1">Управление задачами</p>
+                </div>
+            </a>
+        </div>
 
+        <!-- Навигация -->
+        <div class="space-y-2 flex-1 scrollbar-thin">
+            <!-- Главное меню -->
+            <div class="mb-6">
+                <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider mb-4 px-2">ГЛАВНОЕ</h3>
+
+                <div class="space-y-1">
+                    <a href="{{route('welcome')}}" class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover active">
+                        <div class="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center mr-3">
+                            <i class="fas fa-check text-primary-500 text-sm"></i>
+                        </div>
+                        <span class="font-medium">Мои задачи</span>
+                        <div class="ml-auto">
+                            <span class="badge">5</span>
+                        </div>
+                    </a>
+
+                    <a href="{{route('tasks.admin')}}" class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                        <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3">
+                            <i class="fas fa-landmark text-purple-500 text-sm"></i>
+                        </div>
+                        <span class="font-medium">Моя компания</span>
+                    </a>
+                    <a href="{{route('departments.index')}}" class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                        <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center mr-3">
+                            <i class="fas fa-building text-orange-500 text-sm"></i>
+                        </div>
+                        <span class="font-medium">Отделы</span>
+                    </a>
+
+                    <a href="{{route('team.index')}}" class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                        <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center mr-3">
+                            <i class="fas fa-users text-blue-500 text-sm"></i>
+                        </div>
+                        <span class="font-medium">Пользователи</span>
+                    </a>
+
+                    <a href="{{route('chat')}}"
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                        <div class="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center mr-3">
+                            <i class="fas fa-comments text-pink-500 text-sm"></i>
+                        </div>
+                        <span class="font-medium">Мессенджер</span>
+                        <div class="ml-auto">
+                            <span class="badge">3</span>
+                        </div>
+                    </a>
+
+                    <a href="{{route('chat')}}"
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                        <div class="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center mr-3">
+                            <i class="fas fa-envelope text-yellow-500 text-sm"></i>
+                        </div>
+                        <span class="font-medium">Почта</span>
+                        <div class="ml-auto">
+                            <span class="badge">3</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Теги -->
+            <div class="mb-6">
+                <div class="flex items-center justify-between mb-4 px-2">
+                    <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider">ТЕГИ</h3>
+                    <button onclick="openCategoryModal()"
+                            class="w-6 h-6 rounded-full bg-sidebar-hover flex items-center justify-center text-sidebar-text hover:text-white hover:bg-primary-600 transition-colors">
+                        <i class="fas fa-plus text-xs"></i>
+                    </button>
                 </div>
 
-                <div class="flex flex-wrap gap-2">
-                    @if(isset($onlineUsers) && $onlineUsers->count() > 0)
-                        @foreach($onlineUsers as $user)
-                            <div class="avatar-container group relative">
-                                <!-- Аватар с инициалами -->
-                                <div class="avatar {{ $user['color'] ?? 'bg-blue-500' }}"
-                                     title="{{ $user['name'] ?? 'Пользователь' }} - {{ $user['last_activity_text'] ?? 'Недавно' }}">
-                                    {{ $user['initials'] ?? '??' }}
+                <div class="space-y-1">
+                    @if(isset($categories) && $categories->count() > 0)
+                        @foreach($categories as $category)
+                            <div class="group flex items-center justify-between px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-sidebar-hover rounded-lg cursor-pointer transition-all duration-200">
+                                <div class="flex items-center">
+                                    <div class="category-dot" style="background-color: {{ $category->color }}"></div>
+                                    <span class="font-medium">{{ $category->name }}</span>
                                 </div>
-
-                                <!-- Индикатор онлайн -->
-                                <div class="online-indicator"></div>
-
-                                <!-- Всплывающая подсказка при наведении -->
-                                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2
-                                    px-2 py-1 bg-gray-800 text-white text-xs rounded
-                                    opacity-0 group-hover:opacity-100 transition-opacity
-                                    whitespace-nowrap z-10 pointer-events-none">
-                                    {{ $user['name'] ?? 'Пользователь' }}
-                                    <div class="text-green-400 text-xs">
-                                        <i class="fas fa-circle mr-1"></i>Онлайн
+                                @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
+                                    <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button onclick="openEditCategoryModal({{ $category->id }})"
+                                                class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center"
+                                                title="Редактировать">
+                                            <i class="fas fa-edit text-xs"></i>
+                                        </button>
+                                        <button onclick="openDeleteCategoryModal({{ $category->id }}, {{ json_encode($category->name) }})"
+                                                class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center"
+                                                title="Удалить">
+                                            <i class="fas fa-trash text-xs"></i>
+                                        </button>
                                     </div>
-                                </div>
+                                @endif
                             </div>
                         @endforeach
-
-                        <!-- Если онлайн много, показываем счетчик -->
-                        @php
-                            $totalCompanyUsers = isset($team) ? $team->count() : 0;
-                            $displayedUsers = isset($onlineUsers) ? $onlineUsers->count() : 0;
-                            $moreOnline = $onlineUsersCount - $displayedUsers;
-                        @endphp
-
-                        @if($moreOnline > 0)
-                            <div class="avatar-container">
-                                <div class="avatar bg-gray-300 text-gray-700"
-                                     title="Еще {{ $moreOnline }} онлайн">
-                                    +{{ $moreOnline }}
-                                </div>
-                            </div>
-                        @endif
                     @else
-                        <div class="text-center py-4 text-gray-500 w-full">
-                            <i class="fas fa-users text-2xl mb-2 block"></i>
-                            <p>Нет данных об онлайн пользователях</p>
+                        <div class="px-4 py-3 text-center">
+                            <p class="text-sm text-sidebar-text">Нет доступных тегов</p>
                         </div>
                     @endif
                 </div>
-            @else
-                <div class="text-center py-4 text-gray-500">
-                    <i class="fas fa-users text-2xl mb-2 block"></i>
-                    <p>Сейчас никого нет в сети</p>
-                </div>
-            @endif
-        </div>
-
-        <div class=" p-2" style="border: 1px solid #16a34a; border-radius: 10px;">
-            <div class="" ><h6
-                    class="font-heading text-sm/tighter font-bold -tracking-snug text-slate-600 mb-4 flex items-center">
-                    <img src="{{asset('img/icons/disk.svg')}}" alt="">
-                    <span class="ml-2">Файловое хранилище</span></h6>
-                <div class="flex rounded-sm bg-slate-100 dark:bg-slate-900 overflow-hidden h-1.5">
-                    <div
-                        class="text-xs text-center px-1 text-white bg-green-600 bg-[length:theme(spacing.1.5)_theme(spacing.1.5)]"
-                        style="width: 15%;"></div>
-                </div>
-                <div class="text-xs font-medium text-slate-400 mt-4">12.47 GB из 50 GB занято</div>
             </div>
         </div>
+
+        <!-- Нижняя часть -->
+        <div class="mt-auto space-y-4 pt-4 border-t border-white/10">
+            <!-- Онлайн пользователи -->
+            <div class="mb-4">
+                <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider mb-3 px-2">В СЕТИ</h3>
+
+                @if(isset($onlineUsersCount) && $onlineUsersCount > 0)
+                    <div class="flex items-center mb-3">
+                        <div class="flex -space-x-2 mr-3">
+                            @if(isset($onlineUsers) && $onlineUsers->count() > 0)
+                                @foreach($onlineUsers->take(3) as $user)
+                                    <div class="avatar-container">
+                                        <div class="w-8 h-8 rounded-full {{ $user['color'] ?? 'bg-gradient-to-br from-blue-500 to-purple-600' }}
+                                                    flex items-center justify-center text-white text-xs font-bold shadow-lg"
+                                             title="{{ $user['name'] ?? 'Пользователь' }}">
+                                            {{ $user['initials'] ?? '??' }}
+                                        </div>
+                                        <div class="online-indicator"></div>
+                                    </div>
+                                @endforeach
+                                @php
+                                    $moreOnline = $onlineUsersCount - min(3, $onlineUsers->count());
+                                @endphp
+                                @if($moreOnline > 0)
+                                    <div class="w-8 h-8 rounded-full bg-sidebar-hover flex items-center justify-center text-sidebar-text text-xs font-bold shadow-lg"
+                                         title="Еще {{ $moreOnline }} онлайн">
+                                        +{{ $moreOnline }}
+                                    </div>
+                                @endif
+                            @endif
+                        </div>
+                        <div>
+                            <div class="text-white font-medium text-sm">{{ $onlineUsersCount }} онлайн</div>
+                            <div class="text-sidebar-text text-xs">Активные сейчас</div>
+                        </div>
+                    </div>
+                @else
+                    <div class="text-center py-2">
+                        <i class="fas fa-users text-sidebar-text text-lg mb-1"></i>
+                        <p class="text-xs text-sidebar-text">Сейчас никого нет в сети</p>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Файловое хранилище -->
+            <div class="bg-gradient-to-r from-sidebar-hover to-transparent p-4 rounded-xl border border-white/5">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <i class="fas fa-hard-drive text-primary-500 mr-2"></i>
+                        <h6 class="font-medium text-white">Хранилище</h6>
+                    </div>
+                    <span class="text-xs text-sidebar-text">15%</span>
+                </div>
+                <div class="w-full bg-white/10 rounded-full h-1.5 mb-2 overflow-hidden">
+                    <div class="progress-bar h-full rounded-full" style="width: 15%"></div>
+                </div>
+                <div class="text-xs text-sidebar-text">12.47 GB из 50 GB</div>
+            </div>
+
+            <!-- Профиль пользователя -->
+            <div class="flex items-center justify-between p-2 rounded-lg hover:bg-sidebar-hover transition-colors cursor-pointer"
+                 onclick="userProfileModal()">
+                <div class="flex items-center">
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-bold shadow-lg">
+                        <img class="rounded" src="{{auth()->user()->getAvatarUrlAttribute()}}" alt="">
+                    </div>
+                    <div class="ml-3">
+                        <div class="text-white font-medium text-sm">{{ auth()->user()->name }} {{ auth()->user()->surname }}</div>
+                        <div class="text-sidebar-text text-xs">{{ auth()->user()->role->name ?? 'Пользователь' }}</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right text-sidebar-text text-sm"></i>
+            </div>
+        </div>
+
+        <!-- Индикатор активности -->
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-500 to-transparent opacity-20"></div>
     </div>
 
     <!-- Основной контент -->
@@ -396,6 +494,37 @@
     // Глобальные переменные
     let currentModalType = '';
     let currentEditingTaskId = null;
+
+
+    // Добавим интерактивности для сайдбара
+    document.addEventListener('DOMContentLoaded', function() {
+        // Добавляем анимацию при наведении на элементы
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(5px)';
+            });
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+
+        // Индикатор активного элемента
+        const currentPath = window.location.pathname;
+        navItems.forEach(item => {
+            if (item.getAttribute('href') === currentPath) {
+                item.classList.add('active');
+            }
+        });
+    });
+
+    // Добавим плавное появление элементов
+    setTimeout(() => {
+        const elements = document.querySelectorAll('.sidebar > *');
+        elements.forEach((el, index) => {
+            el.style.animation = `slide-in 0.3s ease-out ${index * 0.1}s both`;
+        });
+    }, 100);
 
     // ==================== ФУНКЦИИ ДЛЯ МОДАЛЬНЫХ ОКОН ====================
 
