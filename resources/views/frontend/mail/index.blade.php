@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="min-h-screen bg-gray-50 py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class=" mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Шапка с навигацией -->
             <div class="mb-8">
                 <nav class="flex mb-6" aria-label="Breadcrumb">
@@ -46,7 +46,7 @@
                             <i class="fas fa-download mr-2"></i> Экспорт
                         </a>
                         <a href="{{ route('departments.emails.create', $department) }}"
-                           class="inline-flex items-center px-5 py-2.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-500 transition-colors shadow-sm">
+                           class="inline-flex items-center px-5 py-2.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors shadow-sm">
                             <i class="fas fa-pen mr-2"></i> Написать письмо
                         </a>
                     </div>
@@ -78,6 +78,21 @@
                         </div>
                     </div>
                 </div>
+
+                @if($trashedCount > 0)
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">В корзине</p>
+                                <p class="text-2xl font-bold text-gray-800">{{ $trashedCount }}</p>
+                            </div>
+                            <a href="{{ route('departments.emails.trash.index', $department) }}"
+                               class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200">
+                                <i class="fas fa-trash text-gray-500 text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                @endif
             </div>
 
             <!-- Основной контейнер -->
@@ -132,6 +147,7 @@
                                     <input type="checkbox"
                                            onchange="toggleUnreadFilter()"
                                            id="unreadFilter"
+                                           {{ request()->has('unread') ? 'checked' : '' }}
                                            class="rounded border-gray-300 text-primary focus:ring-primary">
                                     <span class="ml-2 text-sm text-gray-600">Только непрочитанные</span>
                                 </label>
@@ -139,6 +155,7 @@
                                     <input type="checkbox"
                                            onchange="toggleAttachmentFilter()"
                                            id="attachmentFilter"
+                                           {{ request()->has('attachments') ? 'checked' : '' }}
                                            class="rounded border-gray-300 text-primary focus:ring-primary">
                                     <span class="ml-2 text-sm text-gray-600">С вложениями</span>
                                 </label>
@@ -146,6 +163,7 @@
                                     <input type="checkbox"
                                            onchange="toggleImportantFilter()"
                                            id="importantFilter"
+                                           {{ request()->has('important') ? 'checked' : '' }}
                                            class="rounded border-gray-300 text-primary focus:ring-primary">
                                     <span class="ml-2 text-sm text-gray-600">Только важные</span>
                                 </label>
@@ -158,8 +176,11 @@
                                 <h4 class="font-medium text-gray-700 mb-3">Метки</h4>
                                 <div class="space-y-2">
                                     @foreach($tags as $tag)
+                                        @php
+                                            $isActive = in_array($tag->id, (array) request('tags', []));
+                                        @endphp
                                         <button onclick="toggleTagFilter('{{ $tag->id }}')"
-                                                class="tag-filter flex items-center justify-between w-full p-2 rounded hover:bg-gray-50"
+                                                class="tag-filter flex items-center justify-between w-full p-2 rounded hover:bg-gray-50 {{ $isActive ? 'bg-blue-50 border-l-4 border-primary' : '' }}"
                                                 data-tag-id="{{ $tag->id }}">
                                             <div class="flex items-center">
                                                 <span class="w-3 h-3 rounded-full mr-2" style="background-color: {{ $tag->color }}"></span>
@@ -179,20 +200,31 @@
                     <!-- Панель поиска -->
                     <div class="bg-white rounded-xl shadow mb-6">
                         <div class="p-4 border-b">
-                            <div class="relative">
-                                <input type="text"
-                                       id="emailSearch"
-                                       placeholder="Поиск по письмам..."
-                                       class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                                <div class="absolute left-4 top-3.5">
-                                    <i class="fas fa-search text-gray-400"></i>
+                            <form action="{{ route('departments.emails.index', $department) }}" method="GET">
+                                <div class="relative">
+                                    <input type="text"
+                                           name="search"
+                                           id="emailSearch"
+                                           value="{{ request('search') }}"
+                                           placeholder="Поиск по письмам..."
+                                           class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <div class="absolute left-4 top-3.5">
+                                        <i class="fas fa-search text-gray-400"></i>
+                                    </div>
+                                    <div class="absolute right-4 top-3.5">
+                                        @if(request('search'))
+                                            <a href="{{ route('departments.emails.index', $department) }}"
+                                               class="text-gray-400 hover:text-gray-600">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        @endif
+                                    </div>
                                 </div>
-                                <div class="absolute right-4 top-3.5">
-                                    <button onclick="clearSearch()" class="text-gray-400 hover:text-gray-600">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
+                                <!-- Скрытые поля для сохранения фильтров -->
+                                @if(request('filter'))
+                                    <input type="hidden" name="filter" value="{{ request('filter') }}">
+                                @endif
+                            </form>
                         </div>
 
                         <!-- Панель действий -->
@@ -206,10 +238,10 @@
                                         <option value="mark_unread">Отметить как непрочитанные</option>
                                         <option value="mark_important">Пометить важными</option>
                                         <option value="archive">В архив</option>
-                                        <option value="delete">Удалить</option>
+                                        <option value="delete">В корзину</option>
                                     </select>
                                     <button onclick="applyBulkAction()"
-                                            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200">
+                                            class="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600">
                                         Применить
                                     </button>
                                     <span id="selectedCount" class="text-sm text-gray-500">Выбрано: 0</span>
@@ -221,12 +253,13 @@
                                         <i class="fas fa-sync-alt"></i>
                                     </button>
                                     <select id="sortOrder"
-                                            onchange="updateSortOrder()"
+                                            name="sort"
+                                            onchange="this.form.submit()"
                                             class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                                        <option value="newest">Сначала новые</option>
-                                        <option value="oldest">Сначала старые</option>
-                                        <option value="subject_a-z">Тема (А-Я)</option>
-                                        <option value="subject_z-a">Тема (Я-А)</option>
+                                        <option value="newest" {{ request('sort', 'newest') == 'newest' ? 'selected' : '' }}>Сначала новые</option>
+                                        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Сначала старые</option>
+                                        <option value="subject_a-z" {{ request('sort') == 'subject_a-z' ? 'selected' : '' }}>Тема (А-Я)</option>
+                                        <option value="subject_z-a" {{ request('sort') == 'subject_z-a' ? 'selected' : '' }}>Тема (Я-А)</option>
                                     </select>
                                 </div>
                             </div>
@@ -267,20 +300,23 @@
                                                        class="block hover:opacity-90">
                                                         <div class="flex items-center justify-between mb-1">
                                                             <div class="flex items-center space-x-2">
-                                                        <span class="font-semibold text-gray-900 truncate">
-                                                            {{ $email->from_name }}
-                                                        </span>
+                <span class="font-semibold text-gray-900 truncate">
+                    {{ $email->from_name }}
+                </span>
                                                                 <span class="text-sm text-gray-500 hidden md:inline">
-                                                            &lt;{{ $email->from_email }}&gt;
-                                                        </span>
+                    &lt;{{ $email->from_email }}&gt;
+                </span>
                                                             </div>
                                                             <div class="flex items-center space-x-2">
-                                                                @if($email->has_attachments)
-                                                                    <i class="fas fa-paperclip text-gray-400 text-sm" title="Есть вложения"></i>
+                                                                @if($email->files->count() > 0)
+                                                                    <span class="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded flex items-center gap-1">
+                        <i class="fas fa-paperclip text-gray-400 text-xs"></i>
+                        {{ $email->files->count() }}
+                    </span>
                                                                 @endif
                                                                 <span class="text-sm text-gray-500 whitespace-nowrap">
-                                                            {{ $email->sent_at ? $email->sent_at->format('d.m.Y H:i') : 'Черновик' }}
-                                                        </span>
+                    {{ $email->sent_at ? $email->sent_at->format('d.m.Y H:i') : 'Черновик' }}
+                </span>
                                                             </div>
                                                         </div>
 
@@ -295,21 +331,145 @@
                                                             {{ Str::limit(strip_tags($email->body), 150) }}
                                                         </p>
 
+                                                        <!-- Предпросмотр файлов -->
+                                                        @if($email->files->count() > 0)
+                                                            <div class="mb-2">
+                                                                <div class="flex items-center gap-3 flex-wrap">
+                                                                    @php
+                                                                        $images = [];
+                                                                        $otherFiles = [];
+
+                                                                        foreach($email->files as $emailFile) {
+                                                                            $extension = strtolower(pathinfo($emailFile->original_name, PATHINFO_EXTENSION));
+                                                                            if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'])) {
+                                                                                $images[] = $emailFile;
+                                                                            } else {
+                                                                                $otherFiles[] = $emailFile;
+                                                                            }
+                                                                        }
+                                                                    @endphp
+
+                                                                        <!-- Превью изображений -->
+                                                                    @if(count($images) > 0)
+                                                                        <div class="flex items-center gap-2">
+                                                                            @foreach(array_slice($images, 0, 2) as $emailFile)
+                                                                                @if($emailFile->file && $emailFile->file->path)
+                                                                                    <div class="relative group">
+                                                                                        <div class="w-16 h-16 bg-gray-100 rounded border border-gray-200 overflow-hidden flex items-center justify-center">
+                                                                                            <img src="{{ Storage::url($emailFile->file->path) }}"
+                                                                                                 alt="{{ $emailFile->original_name }}"
+                                                                                                 class="max-w-full max-h-full object-contain"
+                                                                                                 onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\'fas fa-file-image text-gray-400 text-lg\'></i>';">
+                                                                                        </div>
+                                                                                        <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                                                            <span class="text-white text-xs px-1 text-center truncate">{{ $emailFile->original_name }}</span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                @endif
+                                                                            @endforeach
+
+                                                                            @if(count($images) > 2)
+                                                                                <div class="w-16 h-16 bg-gray-100 rounded border border-gray-200 flex items-center justify-center">
+                                                                                    <span class="text-gray-600 text-sm">+{{ count($images) - 2 }}</span>
+                                                                                </div>
+                                                                            @endif
+                                                                        </div>
+                                                                    @endif
+
+                                                                    <!-- Другие файлы -->
+                                                                    @if(count($otherFiles) > 0)
+                                                                        <div class="flex flex-col gap-1">
+                                                                            @foreach(array_slice($otherFiles, 0, 3) as $emailFile)
+                                                                                @php
+                                                                                    $extension = strtolower(pathinfo($emailFile->original_name, PATHINFO_EXTENSION));
+                                                                                    $icon = 'fa-file';
+                                                                                    $type = 'Документ';
+
+                                                                                    if (in_array($extension, ['pdf'])) {
+                                                                                        $icon = 'fa-file-pdf';
+                                                                                        $type = 'PDF';
+                                                                                    } elseif (in_array($extension, ['doc', 'docx'])) {
+                                                                                        $icon = 'fa-file-word';
+                                                                                        $type = 'Word';
+                                                                                    } elseif (in_array($extension, ['xls', 'xlsx'])) {
+                                                                                        $icon = 'fa-file-excel';
+                                                                                        $type = 'Excel';
+                                                                                    } elseif (in_array($extension, ['ppt', 'pptx'])) {
+                                                                                        $icon = 'fa-file-powerpoint';
+                                                                                        $type = 'PowerPoint';
+                                                                                    } elseif (in_array($extension, ['zip', 'rar', '7z', 'tar', 'gz'])) {
+                                                                                        $icon = 'fa-file-archive';
+                                                                                        $type = 'Архив';
+                                                                                    } elseif (in_array($extension, ['mp3', 'wav', 'ogg', 'flac'])) {
+                                                                                        $icon = 'fa-file-audio';
+                                                                                        $type = 'Аудио';
+                                                                                    } elseif (in_array($extension, ['mp4', 'avi', 'mov', 'mkv', 'wmv'])) {
+                                                                                        $icon = 'fa-file-video';
+                                                                                        $type = 'Видео';
+                                                                                    } elseif (in_array($extension, ['txt'])) {
+                                                                                        $icon = 'fa-file-alt';
+                                                                                        $type = 'Текст';
+                                                                                    }
+                                                                                @endphp
+
+                                                                                <div class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded text-sm text-gray-700 border border-gray-200">
+                                                                                    <i class="fas {{ $icon }} text-gray-500"></i>
+                                                                                    <div class="flex-1 min-w-0">
+                                                                                        <div class="font-medium truncate" title="{{ $emailFile->original_name }}">
+                                                                                            {{ Str::limit($emailFile->original_name, 25) }}
+                                                                                        </div>
+                                                                                        <div class="text-xs text-gray-500">{{ $type }} • {{ strtoupper($extension) }}</div>
+                                                                                    </div>
+                                                                                    @if($emailFile->file && $emailFile->file->size)
+                                                                                        <div class="text-xs text-gray-500 whitespace-nowrap">
+                                                                                            {{ round($emailFile->file->size / 1024) }} KB
+                                                                                        </div>
+                                                                                    @endif
+                                                                                </div>
+                                                                            @endforeach
+
+                                                                            @if(count($otherFiles) > 3)
+                                                                                <div class="text-sm text-gray-600 px-2">
+                                                                                    + ещё {{ count($otherFiles) - 3 }} файлов
+                                                                                </div>
+                                                                            @endif
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+
+                                                                <!-- Общее количество файлов -->
+                                                                <div class="mt-2 text-xs text-gray-500">
+                                                                    Всего файлов: {{ $email->files->count() }}
+                                                                    @php
+                                                                        $totalSize = 0;
+                                                                        foreach($email->files as $emailFile) {
+                                                                            if($emailFile->file && $emailFile->file->size) {
+                                                                                $totalSize += $emailFile->file->size;
+                                                                            }
+                                                                        }
+                                                                    @endphp
+                                                                    @if($totalSize > 0)
+                                                                        • {{ round($totalSize / 1024) }} KB
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        @endif
+
                                                         <!-- Метки -->
                                                         @if($email->tags->count() > 0)
                                                             <div class="flex flex-wrap gap-1">
                                                                 @foreach($email->tags as $tag)
                                                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
                                                                           style="background-color: {{ $tag->color }}20; color: {{ $tag->color }}">
-                                                        {{ $tag->name }}
-                                                    </span>
+                        {{ $tag->name }}
+                    </span>
                                                                 @endforeach
                                                             </div>
                                                         @endif
                                                     </a>
                                                 </div>
 
-                                                <!-- Действия -->
+                                                <!-- Действия для письма -->
                                                 <div class="ml-3 flex items-center space-x-1">
                                                     @if(!$email->is_draft)
                                                         <a href="{{ route('departments.emails.reply.form', [$department, $email]) }}"
@@ -319,39 +479,30 @@
                                                         </a>
                                                     @endif
 
-                                                    @if($email->is_archived)
-                                                        <form action="{{ route('departments.emails.unarchive', [$department, $email]) }}"
-                                                              method="POST"
-                                                              class="inline">
-                                                            @csrf
-                                                            <button type="submit"
-                                                                    class="p-2 text-yellow-500 hover:text-yellow-700 rounded-lg hover:bg-yellow-50"
-                                                                    title="Извлечь из архива">
-                                                                <i class="fas fa-archive"></i>
-                                                            </button>
-                                                        </form>
-                                                    @else
-                                                        <form action="{{ route('departments.emails.archive', [$department, $email]) }}"
-                                                              method="POST"
-                                                              class="inline">
-                                                            @csrf
-                                                            <button type="submit"
-                                                                    class="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
-                                                                    title="В архив">
-                                                                <i class="fas fa-archive"></i>
-                                                            </button>
-                                                        </form>
-                                                    @endif
+                                                    <!-- Форма архивации -->
+                                                    <form action="{{ route('departments.emails.toggle-archive', [$department, $email]) }}"
+                                                          method="POST"
+                                                          class="inline">
+                                                        @csrf
+                                                        <button type="submit"
+                                                                class="p-2 {{ $email->is_archived ? 'text-yellow-500 hover:text-yellow-700' : 'text-gray-400 hover:text-gray-600' }} rounded-lg hover:bg-gray-100"
+                                                                title="{{ $email->is_archived ? 'Извлечь из архива' : 'В архив' }}"
+                                                                onclick="return confirm('{{ $email->is_archived ? 'Извлечь из архива?' : 'Переместить в архив?' }}')">
+                                                            <i class="fas fa-archive"></i>
+                                                        </button>
+                                                    </form>
 
+                                                    <!-- Форма удаления -->
                                                     <form action="{{ route('departments.emails.destroy', [$department, $email]) }}"
                                                           method="POST"
                                                           class="inline"
-                                                          onsubmit="return confirm('Удалить это письмо?')">
+                                                          id="deleteForm{{ $email->id }}">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit"
+                                                        <button type="button"
+                                                                onclick="showDeleteModal('{{ $email->id }}', '{{ addslashes($email->subject) }}')"
                                                                 class="p-2 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50"
-                                                                title="Удалить">
+                                                                title="В корзину">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
@@ -379,7 +530,7 @@
                                         @endif
                                     </p>
                                     <a href="{{ route('departments.emails.create', $department) }}"
-                                       class="inline-flex items-center px-5 py-2.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-500 transition-colors">
+                                       class="inline-flex items-center px-5 py-2.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors">
                                         <i class="fas fa-pen mr-2"></i> Написать письмо
                                     </a>
                                 </div>
@@ -470,154 +621,165 @@
             </form>
         </div>
     </dialog>
+
+    <!-- Модальное окно удаления -->
+    <dialog id="deleteModal" class="rounded-xl shadow-2xl p-0 max-w-md">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900">Переместить в корзину</h3>
+                <button onclick="closeDeleteModal()"
+                        class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="deleteForm"
+                  action=""
+                  method="POST">
+                @csrf
+                @method('DELETE')
+
+                <div class="mb-6">
+                    <p class="text-sm text-gray-600 mb-3">
+                        Письмо "<span id="emailSubject"></span>" будет перемещено в корзину.
+                    </p>
+
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Причина удаления (необязательно):
+                    </label>
+                    <textarea name="delete_reason"
+                              id="deleteReason"
+                              rows="3"
+                              placeholder="Например: устаревшая информация, ошибка в письме..."
+                              class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 resize-none focus:ring-2 focus:ring-primary"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button type="button"
+                            onclick="closeDeleteModal()"
+                            class="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                        Отмена
+                    </button>
+                    <button type="submit"
+                            class="px-5 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                        Переместить в корзину
+                    </button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
 @endsection
 
 @push('scripts')
     <script>
         // Глобальные переменные
         let selectedEmails = new Set();
-        let activeFilters = {
-            unread: false,
-            attachments: false,
-            important: false,
-            tags: new Set()
-        };
+        let currentEmailId = null;
 
         // Инициализация
         document.addEventListener('DOMContentLoaded', function() {
-            // Инициализация выпадающих меню
-            initDropdowns();
-
-            // Обработчик загрузки файла импорта
-            document.getElementById('importFile').addEventListener('change', function(e) {
-                const fileName = e.target.files[0]?.name;
-                const fileDisplay = document.getElementById('fileName');
-                if (fileName) {
-                    fileDisplay.textContent = `Выбран файл: ${fileName}`;
-                    fileDisplay.classList.remove('hidden');
-                } else {
-                    fileDisplay.classList.add('hidden');
-                }
-            });
-
-            // Drag & drop для импорта файла
-            const dropZone = document.querySelector('.border-dashed');
-            if (dropZone) {
-                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                    dropZone.addEventListener(eventName, preventDefaults, false);
-                });
-
-                dropZone.addEventListener('drop', handleDrop, false);
-            }
+            initEventListeners();
         });
 
-        // Предотвращение стандартного поведения браузера
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
+        function initEventListeners() {
+            // Обработчик загрузки файла импорта
+            document.getElementById('importFile').addEventListener('change', function(e) {
+                updateFileName(e);
+            });
+
+            // Обработчики для чекбоксов
+            document.querySelectorAll('.email-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    toggleEmailSelection(this.dataset.emailId);
+                });
+            });
+
+            // Закрытие модальных окон при клике вне
+            document.querySelectorAll('dialog').forEach(dialog => {
+                dialog.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.close();
+                    }
+                });
+            });
         }
 
-        // Обработка перетаскивания файла
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            const input = document.getElementById('importFile');
-
-            if (files.length > 0) {
-                input.files = files;
-                const event = new Event('change');
-                input.dispatchEvent(event);
+        function updateFileName(e) {
+            const fileName = e.target.files[0]?.name;
+            const fileDisplay = document.getElementById('fileName');
+            if (fileName) {
+                fileDisplay.textContent = `Выбран файл: ${fileName}`;
+                fileDisplay.classList.remove('hidden');
+            } else {
+                fileDisplay.classList.add('hidden');
             }
         }
 
-        // Переключение фильтров
+        function showDeleteModal(emailId, subject) {
+            if (confirm(`Переместить письмо "${subject}" в корзину?`)) {
+                // Находим форму и отправляем
+                const form = document.getElementById(`deleteForm${emailId}`);
+                if (form) {
+                    form.submit();
+                }
+            }
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').close();
+            currentEmailId = null;
+            document.getElementById('deleteReason').value = '';
+        }
+
+        // Фильтрация
         function toggleUnreadFilter() {
-            activeFilters.unread = !activeFilters.unread;
-            applyFilters();
+            const isChecked = document.getElementById('unreadFilter').checked;
+            updateUrlParam('unread', isChecked ? '1' : null);
         }
 
         function toggleAttachmentFilter() {
-            activeFilters.attachments = !activeFilters.attachments;
-            applyFilters();
+            const isChecked = document.getElementById('attachmentFilter').checked;
+            updateUrlParam('attachments', isChecked ? '1' : null);
         }
 
         function toggleImportantFilter() {
-            activeFilters.important = !activeFilters.important;
-            applyFilters();
+            const isChecked = document.getElementById('importantFilter').checked;
+            updateUrlParam('important', isChecked ? '1' : null);
         }
 
         function toggleTagFilter(tagId) {
-            const button = document.querySelector(`[data-tag-id="${tagId}"]`);
-            if (activeFilters.tags.has(tagId)) {
-                activeFilters.tags.delete(tagId);
-                button.classList.remove('bg-blue-50', 'border-l-4', 'border-primary');
+            const currentTags = new URLSearchParams(window.location.search).getAll('tags[]');
+            if (currentTags.includes(tagId)) {
+                // Удаляем тег
+                const newTags = currentTags.filter(tag => tag !== tagId);
+                updateUrlParam('tags[]', newTags);
             } else {
-                activeFilters.tags.add(tagId);
-                button.classList.add('bg-blue-50', 'border-l-4', 'border-primary');
+                // Добавляем тег
+                updateUrlParam('tags[]', [...currentTags, tagId]);
             }
-            applyFilters();
         }
 
-        // Применение фильтров
-        function applyFilters() {
-            const emailItems = document.querySelectorAll('.email-item');
+        function updateUrlParam(param, value) {
+            const url = new URL(window.location.href);
 
-            emailItems.forEach(item => {
-                let shouldShow = true;
-
-                // Проверка фильтра непрочитанных
-                if (activeFilters.unread && item.dataset.read === 'true') {
-                    shouldShow = false;
-                }
-
-                // Проверка фильтра вложений
-                if (activeFilters.attachments && item.dataset.attachments === 'false') {
-                    shouldShow = false;
-                }
-
-                // Проверка фильтра важных
-                if (activeFilters.important && item.dataset.important === 'false') {
-                    shouldShow = false;
-                }
-
-                // Показываем/скрываем элемент
-                item.style.display = shouldShow ? 'block' : 'none';
-            });
-        }
-
-        // Поиск писем
-        let searchTimeout;
-        document.getElementById('emailSearch').addEventListener('input', function(e) {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                const searchTerm = e.target.value.toLowerCase();
-                const emailItems = document.querySelectorAll('.email-item');
-
-                emailItems.forEach(item => {
-                    const text = item.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
+            if (Array.isArray(value)) {
+                url.searchParams.delete(param);
+                value.forEach(val => {
+                    if (val) url.searchParams.append(param, val);
                 });
-            }, 300);
-        });
+            } else {
+                if (value) {
+                    url.searchParams.set(param, value);
+                } else {
+                    url.searchParams.delete(param);
+                }
+            }
 
-        function clearSearch() {
-            document.getElementById('emailSearch').value = '';
-            const emailItems = document.querySelectorAll('.email-item');
-            emailItems.forEach(item => {
-                item.style.display = 'block';
-            });
+            window.location.href = url.toString();
         }
 
         // Массовые действия
-        function updateSelectedCount() {
-            const count = selectedEmails.size;
-            document.getElementById('selectedCount').textContent = `Выбрано: ${count}`;
-        }
-
         function toggleEmailSelection(emailId) {
             const checkbox = document.querySelector(`[data-email-id="${emailId}"]`);
             if (checkbox.checked) {
@@ -628,22 +790,9 @@
             updateSelectedCount();
         }
 
-        function selectAllEmails() {
-            const checkboxes = document.querySelectorAll('.email-checkbox');
-            checkboxes.forEach(cb => {
-                cb.checked = true;
-                selectedEmails.add(cb.dataset.emailId);
-            });
-            updateSelectedCount();
-        }
-
-        function deselectAllEmails() {
-            const checkboxes = document.querySelectorAll('.email-checkbox');
-            checkboxes.forEach(cb => {
-                cb.checked = false;
-            });
-            selectedEmails.clear();
-            updateSelectedCount();
+        function updateSelectedCount() {
+            const count = selectedEmails.size;
+            document.getElementById('selectedCount').textContent = `Выбрано: ${count}`;
         }
 
         async function applyBulkAction() {
@@ -658,7 +807,7 @@
                 return;
             }
 
-            if (action === 'delete' && !confirm(`Удалить ${selectedEmails.size} писем?`)) {
+            if (action === 'delete' && !confirm(`Переместить ${selectedEmails.size} писем в корзину?`)) {
                 return;
             }
 
@@ -667,7 +816,8 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({
                         action: action,
@@ -687,34 +837,10 @@
             }
         }
 
-        // Обновление сортировки
-        function updateSortOrder() {
-            const sortOrder = document.getElementById('sortOrder').value;
-            // Здесь можно добавить AJAX запрос для пересортировки
-            console.log('Сортировка изменена на:', sortOrder);
-        }
-
         // Обновление списка
         function refreshList() {
             location.reload();
         }
-
-        // Инициализация выпадающих меню
-        function initDropdowns() {
-            // Обработчики для чекбоксов
-            document.querySelectorAll('.email-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    toggleEmailSelection(this.dataset.emailId);
-                });
-            });
-        }
-
-        // Обработка закрытия модальных окон
-        document.getElementById('importModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.close();
-            }
-        });
 
         // Обработка отправки формы импорта
         document.getElementById('importForm').addEventListener('submit', function(e) {
@@ -725,10 +851,17 @@
                 return;
             }
 
-            // Можно добавить индикатор загрузки
+            // Индикатор загрузки
             const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Импорт...';
             submitBtn.disabled = true;
+
+            // Восстановление кнопки в случае ошибки
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 5000);
         });
     </script>
 @endpush
@@ -742,13 +875,19 @@
             overflow: hidden;
         }
 
-        .border-dashed:hover {
-            border-color: #4f46e5;
-            transition: border-color 0.2s ease;
-        }
-
         .sticky {
             position: sticky;
+        }
+
+        dialog {
+            background: white;
+            border: none;
+            border-radius: 0.75rem;
+        }
+
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
         }
 
         /* Анимации */

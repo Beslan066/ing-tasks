@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('extension');
             $table->foreignId('uploaded_by')->constrained('users')->onDelete('set null');
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
-            $table->foreignId('department_id')->constrained()->onDelete('cascade');
+            $table->foreignId('department_id')->nullable()->constrained()->onDelete('cascade');
             $table->boolean('is_public')->default(false);
             $table->json('meta')->nullable();
             $table->timestamps();

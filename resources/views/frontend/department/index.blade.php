@@ -9,7 +9,7 @@
                 <p class="text-gray-600 mt-2">Управляйте отделами, задачами и почтовой системой</p>
             </div>
             <button onclick="openDepartmentModal()"
-                    class="bg-primary-500 text-white px-6 py-3 rounded-lg hover:bg-primary-500 transition-colors flex items-center space-x-2">
+                    class="bg-primary-500 text-white px-6 py-3 rounded-lg hover:bg-primary-600 transition-colors flex items-center space-x-2">
                 <i class="fas fa-plus"></i>
                 <span>Новый отдел</span>
             </button>
@@ -233,7 +233,7 @@
                                 <span>Написать письмо</span>
                             </a>
                             <a href="{{ route('tasks.create', ['department_id' => $department->id]) }}"
-                               class="flex-1 bg-green-50 text-green-600 hover:bg-green-100 px-4 py-3 rounded-lg text-center transition-colors flex items-center justify-center space-x-2">
+                               class="flex-1 bg-green-50 text-green-500 hover:bg-green-600 px-4 py-3 rounded-lg hover:text-white text-center transition-colors flex items-center justify-center space-x-2">
                                 <i class="fas fa-plus-circle"></i>
                                 <span>Создать задачу</span>
                             </a>
@@ -311,18 +311,18 @@
                             <div class="flex space-x-2">
                                 @if($department->getUnreadEmailCount() > 0)
                                     <a href="{{ route('departments.emails.index', ['department' => $department, 'filter' => 'inbox']) }}"
-                                       class="bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition-colors flex items-center space-x-2">
+                                       class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-600 transition-colors flex items-center space-x-2">
                                         <i class="fas fa-envelope"></i>
                                         <span>Открыть почту</span>
-                                        @if($department->getUnreadEmailCount() > 0)
-                                            <span class="bg-white text-primary text-xs px-2 py-1 rounded-full">
-                                        {{ $department->getUnreadEmailCount() }}
-                                    </span>
-                                        @endif
+{{--                                        @if($department->getUnreadEmailCount() > 0)--}}
+{{--                                            <span class="bg- text-primary text-xs px-2 py-1 rounded-full">--}}
+{{--                                        {{ $department->getUnreadEmailCount() }}--}}
+{{--                                    </span>--}}
+{{--                                        @endif--}}
                                     </a>
                                 @endif
                                 <a href=""
-                                   class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+                                   class="bg- text-gray-700 border border-gray-300 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">
                                     Подробнее
                                 </a>
                             </div>
@@ -430,7 +430,7 @@
                             Отмена
                         </button>
                         <button type="submit"
-                                class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-500 transition-colors">
+                                class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
                             Создать отдел
                         </button>
                     </div>

@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Email extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'subject',
@@ -30,6 +31,8 @@ class Email extends Model
         'has_attachments',
         'sent_at',
         'received_at',
+        'deleted_by',
+        'delete_reason',
     ];
 
     protected $casts = [
@@ -43,6 +46,7 @@ class Email extends Model
         'has_attachments' => 'boolean',
         'sent_at' => 'datetime',
         'received_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     // === СКОПЫ ДЛЯ ФИЛЬТРАЦИИ ===
@@ -127,6 +131,11 @@ class Email extends Model
         return $this->belongsTo(User::class, 'sent_by');
     }
 
+    public function deletedBy(): BelongsTo // Добавить
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
     public function files(): HasMany
     {
         return $this->hasMany(EmailFile::class);
@@ -198,5 +207,96 @@ class Email extends Model
         return $this->files->sum(function ($emailFile) {
             return $emailFile->file->size ?? 0;
         });
+    }
+
+    // === МЕТОДЫ ДЛЯ УДАЛЕНИЯ ===
+
+    /**
+     * Мягкое удаление письма с сохранением информации
+     */
+    public function softDelete(User $deletedBy, ?string $reason = null): bool
+    {
+        return $this->update([
+            'deleted_by' => $deletedBy->id,
+            'delete_reason' => $reason,
+            'deleted_at' => now(),
+        ]);
+    }
+
+    /**
+     * Восстановление письма
+     */
+    public function restoreEmail(): bool
+    {
+        return $this->update([
+            'deleted_by' => null,
+            'delete_reason' => null,
+            'deleted_at' => null,
+        ]);
+    }
+
+    /**
+     * Полное удаление письма (только для администраторов)
+     */
+    public function forceDeleteEmail(): bool
+    {
+        // Удаляем связанные файлы
+        foreach ($this->files as $emailFile) {
+            $file = $emailFile->file;
+            if ($file) {
+                \Illuminate\Support\Facades\Storage::disk($file->disk)->delete($file->path);
+                $file->forceDelete();
+            }
+        }
+
+        // Удаляем связанные уведомления
+        $this->notifications()->forceDelete();
+
+        // Удаляем связи с тегами
+        $this->tags()->detach();
+
+        // Полное удаление письма
+        return $this->forceDelete();
+    }
+
+    /**
+     * Проверяет, удалено ли письмо
+     */
+    public function isDeleted(): bool
+    {
+        return !is_null($this->deleted_at);
+    }
+
+    /**
+     * Получает информацию об удалении
+     */
+    public function getDeleteInfo(): array
+    {
+        if (!$this->isDeleted()) {
+            return [];
+        }
+
+        return [
+            'deleted_at' => $this->deleted_at,
+            'deleted_by' => $this->deletedBy ? $this->deletedBy->name : 'Неизвестно',
+            'reason' => $this->delete_reason,
+        ];
+    }
+
+    // === СКОПЫ ===
+
+    public function scopeOnlyTrashed($query)
+    {
+        return $query->whereNotNull('deleted_at');
+    }
+
+    public function scopeWithTrashed($query)
+    {
+        return $query->withTrashed();
+    }
+
+    public function scopeWithoutTrashed($query)
+    {
+        return $query->whereNull('deleted_at');
     }
 }

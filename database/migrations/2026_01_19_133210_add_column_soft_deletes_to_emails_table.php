@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::table('emails', function (Blueprint $table) {
             // Добавляем поля для мягкого удаления
-            $table->softDeletes();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->onDelete('set null');
             $table->text('delete_reason')->nullable();
         });

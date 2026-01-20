@@ -42,14 +42,17 @@ class EmailPolicy
      */
     public function delete(User $user, Email $email): bool
     {
-        // Отправитель может удалять свои письма
+        // Пользователь может удалять свои письма
         if ($email->sent_by === $user->id && $user->hasPermission('delete_own_emails')) {
             return true;
         }
 
-        // Руководитель или администратор может удалять любые письма отдела
-        return $email->department_id === $user->department_id
-            && $user->hasPermission('delete_all_emails');
+        // Руководитель или менеджер может удалять любые письма отдела
+        if ($email->department_id === $user->department_id) {
+            return $user->isManager() || $user->isLeader() || $user->hasPermission('delete_all_emails');
+        }
+
+        return false;
     }
 
     /**
@@ -57,7 +60,50 @@ class EmailPolicy
      */
     public function archive(User $user, Email $email): bool
     {
-        return $email->department_id === $user->department_id
-            && $user->hasPermission('archive_emails');
+        // Пользователь может архивировать свои письма
+        if ($email->sent_by === $user->id && $user->hasPermission('archive_own_emails')) {
+            return true;
+        }
+
+        // Руководитель или менеджер может архивировать любые письма отдела
+        if ($email->department_id === $user->department_id) {
+            return $user->isManager() || $user->isLeader() || $user->hasPermission('archive_all_emails');
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine whether the user can restore the email.
+     */
+    public function restore(User $user, Email $email): bool
+    {
+        // Восстанавливать может только тот, кто удалил, или руководитель
+        if ($email->deleted_by === $user->id) {
+            return true;
+        }
+
+        if ($email->department_id === $user->department_id) {
+            return $user->isManager() || $user->isLeader() || $user->hasPermission('restore_emails');
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine whether the user can force delete the email.
+     */
+    public function forceDelete(User $user, Email $email): bool
+    {
+        // Полное удаление только для администраторов
+        return $user->hasRole('Администратор') || $user->hasPermission('force_delete_emails');
+    }
+
+    /**
+     * Determine whether the user can view deleted emails.
+     */
+    public function viewTrashed(User $user): bool
+    {
+        return $user->isManager() || $user->isLeader() || $user->hasPermission('view_deleted_emails');
     }
 }

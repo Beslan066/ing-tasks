@@ -33,7 +33,15 @@ class DepartmentEmailController extends Controller
 //            abort(403, 'У вас нет доступа к почте отдела');
 //        }
 
-        $query = $department->emails()->with(['sender', 'files.file', 'tags']);
+        $query = $department->emails()->with([
+            'sender',
+            'files' => function($q) {
+                $q->with('file')->take(5);
+            },
+            'tags'
+        ]);
+
+        $trashedCount = $department->emails()->onlyTrashed()->count();
 
         // Фильтрация
         if ($search = $request->input('search')) {
@@ -108,7 +116,8 @@ class DepartmentEmailController extends Controller
             'tags',
             'filter',
             'draftCount',
-            'attachmentsCount'
+            'attachmentsCount',
+            'trashedCount'
         ));
     }
 
@@ -263,11 +272,25 @@ class DepartmentEmailController extends Controller
             ->with('success', $message);
     }
 
+
     public function show(Department $department, Email $email)
     {
+
         $email->markAsRead();
 
-        return view('emails.show', compact('department', 'email'));
+        // Проверка прав доступа
+        if ($email->department_id !== $department->id) {
+            abort(404);
+        }
+
+        // Загружаем все связанные данные
+        $email->load([
+            'files.file',
+            'tags',
+            'sender'
+        ]);
+
+        return view('frontend.mail.show', compact('department', 'email'));
     }
 
     public function export(Request $request, Department $department)
@@ -276,6 +299,23 @@ class DepartmentEmailController extends Controller
 
         return Excel::download(new EmailsExport($department), "emails_{$department->id}.{$format}");
     }
+
+
+    public function toggleArchive(Request $request, Department $department, Email $email)
+    {
+        $this->authorize('archive', $email); // Используйте политику
+
+        $email->update([
+            'is_archived' => !$email->is_archived,
+        ]);
+
+        $message = $email->is_archived
+            ? 'Письмо перемещено в архив'
+            : 'Письмо извлечено из архива';
+
+        return back()->with('success', $message);
+    }
+
 
     public function import(Request $request, Department $department)
     {

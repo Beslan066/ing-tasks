@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Frontend\EmailTrashController;
+use App\Http\Controllers\Frontend\FileStorageController;
 use App\Http\Controllers\Frontend\DepartmentEmailController;
-use App\Http\Controllers\EmailTemplateController;
+use App\Http\Controllers\Frontend\EmailTemplateController;
 use App\Http\Controllers\Frontend\TeamController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
@@ -129,9 +131,6 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
 
 Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () {
     Route::get('/chat', [\App\Http\Controllers\Frontend\ChatController::class, 'index'])->name('chat');
-    Route::get('/file-manager', [\App\Http\Controllers\Frontend\FileManagerController::class, 'index'])->name('fileManager');
-    Route::get('/mail', [\App\Http\Controllers\Frontend\MailController::class, 'index'])->name('mail.index');
-
 
     Route::prefix('departments/{department}/emails')->name('departments.emails.')->group(function () {
         Route::get('/', [DepartmentEmailController::class, 'index'])->name('index');
@@ -141,11 +140,15 @@ Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () 
         Route::get('/{email}', [DepartmentEmailController::class, 'show'])->name('show');
         Route::get('/{email}/reply', [DepartmentEmailController::class, 'reply'])->name('reply.form');
         Route::post('/{email}/reply', [DepartmentEmailController::class, 'reply'])->name('reply');
-        Route::post('/{email}/archive', [DepartmentEmailController::class, 'archive'])->name('archive');
-        Route::post('/{email}/unarchive', [DepartmentEmailController::class, 'unarchive'])->name('unarchive');
+
+        // ОДИН маршрут для архивации/разархивации
+        Route::post('/{email}/toggle-archive', [DepartmentEmailController::class, 'toggleArchive'])->name('toggle-archive');
+
         Route::post('/{email}/add-tag', [DepartmentEmailController::class, 'addTag'])->name('add-tag');
         Route::post('/{email}/remove-tag', [DepartmentEmailController::class, 'removeTag'])->name('remove-tag');
-        Route::delete('/{email}', [DepartmentEmailController::class, 'destroy'])->name('destroy');
+
+        // УДАЛЕНИЕ письма в корзину
+        Route::delete('/{email}', [EmailTrashController::class, 'destroy'])->name('destroy');
 
         // Массовые действия
         Route::post('/bulk', [DepartmentEmailController::class, 'bulkAction'])->name('bulk');
@@ -153,6 +156,15 @@ Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () 
         // Импорт/экспорт
         Route::get('/export', [DepartmentEmailController::class, 'export'])->name('export');
         Route::post('/import', [DepartmentEmailController::class, 'import'])->name('import');
+    });
+
+// Корзина
+    Route::prefix('departments/{department}/emails/trash')->name('departments.emails.trash.')->group(function () {
+        Route::get('/', [EmailTrashController::class, 'index'])->name('index');
+        Route::post('/restore/{email}', [EmailTrashController::class, 'restore'])->name('restore');
+        Route::delete('/force/{email}', [EmailTrashController::class, 'forceDestroy'])->name('force');
+        Route::post('/clear', [EmailTrashController::class, 'clear'])->name('clear');
+        Route::post('/restore-all', [EmailTrashController::class, 'restoreAll'])->name('restore-all');
     });
 
     // Шаблоны писем
@@ -172,8 +184,15 @@ Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () 
         Route::post('/{setting}/test', [SmtpSettingController::class, 'test'])->name('test');
     });
 
-    // Загрузка файлов
-    Route::get('/files/{file}/download', [DepartmentEmailController::class, 'downloadFile'])->name('files.download');
+
+    Route::prefix('files')->group(function () {
+        Route::get('/', [FileStorageController::class, 'index'])->name('files.index');
+        Route::post('/upload', [FileStorageController::class, 'upload'])->name('files.upload');
+        Route::get('/download/{file}', [FileStorageController::class, 'download'])->name('files.download');
+        Route::get('/view/{file}', [FileStorageController::class, 'view'])->name('files.view');
+        Route::delete('/delete/{file}', [FileStorageController::class, 'destroy'])->name('files.destroy');
+        Route::get('/statistics', [FileStorageController::class, 'getStatistics'])->name('files.statistics');
+    });
 });
 
 Route::get('/create-company', [\App\Http\Controllers\Frontend\HomeController::class, 'noCompanies'])->middleware(['auth', 'verified', 'trackUserActivity'])->name('no.companies');

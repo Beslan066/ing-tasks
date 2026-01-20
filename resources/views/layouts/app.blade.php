@@ -25,6 +25,18 @@
                             600: '#16a34a',
                             700: '#15803d'
                         },
+                        brown: {
+                            "50": "#fdf7f2",
+                            "100": "#f9eee5",
+                            "200": "#f2d9c5",
+                            "300": "#e7bd9a",
+                            "400": "#da9c6a",
+                            "500": "#c47c45",
+                            "600": "#a66238",
+                            "700": "#854e2e",
+                            "800": "#6a3e25",
+                            "900": "#3d2416",
+                        },
                         sidebar: {
                             bg: '#1a1f2e',
                             text: '#94a3b8',
@@ -300,9 +312,6 @@
                             <i class="fas fa-comments text-pink-500 text-sm"></i>
                         </div>
                         <span class="font-medium">Мессенджер</span>
-                        <div class="ml-auto">
-                            <span class="badge">3</span>
-                        </div>
                     </a>
 
                     <a href="{{route('chat')}}"
@@ -311,9 +320,14 @@
                             <i class="fas fa-envelope text-yellow-500 text-sm"></i>
                         </div>
                         <span class="font-medium">Почта</span>
-                        <div class="ml-auto">
-                            <span class="badge">3</span>
+                    </a>
+
+                    <a href="{{route('chat')}}"
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                        <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
+                            <i class="fas fa-hard-drive text-brown-500 text-sm"></i>
                         </div>
+                        <span class="font-medium">Хранилище</span>
                     </a>
                 </div>
             </div>
@@ -359,10 +373,7 @@
                     @endif
                 </div>
             </div>
-        </div>
 
-        <!-- Нижняя часть -->
-        <div class="mt-auto space-y-4 pt-4 border-t border-white/10">
             <!-- Онлайн пользователи -->
             <div class="mb-4">
                 <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider mb-3 px-2">В СЕТИ</h3>
@@ -404,21 +415,26 @@
                     </div>
                 @endif
             </div>
+        </div>
+
+        <!-- Нижняя часть -->
+        <div class="mt-auto space-y-4 pt-4 border-t border-white/10">
+
 
             <!-- Файловое хранилище -->
-            <div class="bg-gradient-to-r from-sidebar-hover to-transparent p-4 rounded-xl border border-white/5">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center">
-                        <i class="fas fa-hard-drive text-primary-500 mr-2"></i>
-                        <h6 class="font-medium text-white">Хранилище</h6>
-                    </div>
-                    <span class="text-xs text-sidebar-text">15%</span>
-                </div>
-                <div class="w-full bg-white/10 rounded-full h-1.5 mb-2 overflow-hidden">
-                    <div class="progress-bar h-full rounded-full" style="width: 15%"></div>
-                </div>
-                <div class="text-xs text-sidebar-text">12.47 GB из 50 GB</div>
-            </div>
+{{--            <div class="bg-gradient-to-r from-sidebar-hover to-transparent p-4 rounded-xl border border-white/5">--}}
+{{--                <div class="flex items-center justify-between mb-3">--}}
+{{--                    <div class="flex items-center">--}}
+{{--                        <i class="fas fa-hard-drive text-primary-500 mr-2"></i>--}}
+{{--                        <h6 class="font-medium text-white">Хранилище</h6>--}}
+{{--                    </div>--}}
+{{--                    <span class="text-xs text-sidebar-text">15%</span>--}}
+{{--                </div>--}}
+{{--                <div class="w-full bg-white/10 rounded-full h-1.5 mb-2 overflow-hidden">--}}
+{{--                    <div class="progress-bar h-full rounded-full" style="width: 15%"></div>--}}
+{{--                </div>--}}
+{{--                <div class="text-xs text-sidebar-text">12.47 GB из 50 GB</div>--}}
+{{--            </div>--}}
 
             <!-- Профиль пользователя -->
             <div class="flex items-center justify-between p-2 rounded-lg hover:bg-sidebar-hover transition-colors cursor-pointer"
@@ -429,7 +445,9 @@
                     </div>
                     <div class="ml-3">
                         <div class="text-white font-medium text-sm">{{ auth()->user()->name }} {{ auth()->user()->surname }}</div>
-                        <div class="text-sidebar-text text-xs">{{ auth()->user()->role->name ?? 'Пользователь' }}</div>
+                        @if(auth()->user()->role)
+                            <div class="text-sidebar-text text-xs">{{ auth()->user()->role->name }}</div>
+                        @endif
                     </div>
                 </div>
                 <i class="fas fa-chevron-right text-sidebar-text text-sm"></i>
