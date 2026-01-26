@@ -838,4 +838,47 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         return true;
     }
+
+    public function emails()
+    {
+        return $this->morphMany(Email::class, 'recipient');
+    }
+
+    /**
+     * Получить отправленные письма
+     */
+    public function sentEmails()
+    {
+        return $this->hasMany(Email::class, 'sender_id');
+    }
+
+    /**
+     * Получить непрочитанные письма
+     */
+    public function getUnreadEmails()
+    {
+        return $this->emails()->where('is_read', false)->count();
+    }
+
+    /**
+     * Получить количество непрочитанных писем во всех отделах пользователя
+     */
+    public function getDepartmentUnreadEmails(): int
+    {
+        $total = 0;
+        foreach ($this->departments as $department) {
+            if ($department->email) {
+                $total += $department->getUnreadEmails();
+            }
+        }
+        return $total;
+    }
+
+    /**
+     * Получить общее количество непрочитанных писем
+     */
+    public function getTotalUnreadEmails(): int
+    {
+        return $this->getUnreadEmails() + $this->getDepartmentUnreadEmails();
+    }
 }

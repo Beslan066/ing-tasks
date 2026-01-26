@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -106,9 +107,10 @@ class Task extends Model
     /**
      * Файлы, прикрепленные к задаче
      */
-    public function files(): HasMany
+    public function files(): BelongsToMany
     {
-        return $this->hasMany(File::class);
+        return $this->belongsToMany(File::class, 'task_files')
+            ->withTimestamps();
     }
 
     /**

@@ -73,17 +73,21 @@ class TaskController extends Controller
         $assignableUsers = User::where('company_id', $user->company_id)
             ->get();
 
-        return view('frontend.tasks.create', compact('departments', 'categories', 'assignableUsers', 'user'));
+        return view('frontend.task.create', compact('departments', 'categories', 'assignableUsers', 'user'));
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
         \Log::info('=== START TASK STORE ===');
-        \Log::info('Request data:', $request->all());
-        \Log::info('Files:', $request->hasFile('files') ? ['has_files' => true] : ['has_files' => false]);
+        \Log::info('Request data:', $request->except(['_token', 'files', 'new_files', 'selected_file_ids']));
+        \Log::info('Selected file IDs:', $request->input('selected_file_ids', []));
+        \Log::info('Has new files:', ['has_files' => $request->hasFile('new_files')]);
 
         $user = Auth::user();
         \Log::info('User:', [
@@ -112,8 +116,9 @@ class TaskController extends Controller
             'status' => 'required|in:назначена,не назначена,в работе,просрочена,на проверке,выполнена',
             'deadline' => 'nullable|date',
             'estimated_hours' => 'nullable|numeric|min:0',
-            'files.*' => 'nullable|file|max:10240',
-            'subtasks.*' => 'nullable|string|max:255',
+            'selected_file_ids' => 'nullable|array',
+            'selected_file_ids.*' => 'exists:files,id',
+            'new_files.*' => 'nullable|file|max:10240',
         ]);
 
         if ($validator->fails()) {
@@ -181,6 +186,54 @@ class TaskController extends Controller
             $task = Task::create($taskData);
             \Log::info('Task created:', ['task_id' => $task->id]);
 
+            // Привязываем выбранные файлы из хранилища
+            if ($request->has('selected_file_ids')) {
+                \Log::info('Attaching selected files:', $request->input('selected_file_ids'));
+                $selectedFiles = File::whereIn('id', $request->selected_file_ids)
+                    ->where('company_id', $user->company_id)
+                    ->get();
+
+                foreach ($selectedFiles as $file) {
+                    // Если используете связь многие-ко-многим
+                    if (method_exists($task, 'files')) {
+                        $task->files()->attach($file->id);
+                        \Log::info('File attached:', ['file_id' => $file->id, 'task_id' => $task->id]);
+                    } else {
+                        // Если храните task_id в таблице files
+                        $file->update(['task_id' => $task->id]);
+                    }
+                }
+            }
+
+            // Загружаем новые файлы
+            if ($request->hasFile('new_files')) {
+                \Log::info('Processing new files:', ['count' => count($request->file('new_files'))]);
+                foreach ($request->file('new_files') as $file) {
+                    $path = $file->store("tasks/{$task->id}", 'public');
+                    \Log::info('File stored:', ['path' => $path, 'original_name' => $file->getClientOriginalName()]);
+
+                    $fileRecord = File::create([
+                        'name' => $file->getClientOriginalName(),
+                        'path' => $path,
+                        'file_path' => $path,
+                        'size' => $file->getSize(),
+                        'mime_type' => $file->getMimeType(),
+                        'extension' => $file->getClientOriginalExtension(),
+                        'uploaded_by' => $user->id,
+                        'company_id' => $user->company_id,
+                        'department_id' => $task->department_id,
+                        'disk' => 'public',
+                        'folder' => 'tasks',
+                        'is_public' => false,
+                    ]);
+
+                    // Привязываем новый файл к задаче
+                    if (method_exists($task, 'files')) {
+                        $task->files()->attach($fileRecord->id);
+                    }
+                }
+            }
+
             // Отправляем уведомление
             if ($assignedUser && $task->user_id) {
                 try {
@@ -189,44 +242,6 @@ class TaskController extends Controller
                     \Log::info('Notification sent successfully');
                 } catch (\Exception $e) {
                     \Log::error('Notification error: ' . $e->getMessage());
-                }
-            }
-
-            // Обрабатываем файлы
-            if ($request->hasFile('files')) {
-                \Log::info('Processing files');
-                foreach ($request->file('files') as $file) {
-                    $path = $file->store('tasks/' . $task->id, 'public');
-                    \Log::info('File stored:', ['path' => $path]);
-
-                    File::create([
-                        'name' => $file->getClientOriginalName(),
-                        'file' => $path,
-                        'file_path' => $path,
-                        'file_size' => $file->getSize(),
-                        'mime_type' => $file->getMimeType(),
-                        'task_id' => $task->id,
-                        'user_id' => $user->id,
-                        'department_id' => $task->department_id,
-                    ]);
-                }
-            }
-
-            // Обрабатываем подзадачи
-            if ($request->has('subtasks')) {
-                \Log::info('Processing subtasks:', ['count' => count($request->subtasks)]);
-                foreach ($request->subtasks as $subtaskName) {
-                    if (!empty(trim($subtaskName))) {
-                        Task::create([
-                            'name' => trim($subtaskName),
-                            'parent_id' => $task->id,
-                            'company_id' => $user->company_id,
-                            'department_id' => $task->department_id,
-                            'author_id' => $user->id,
-                            'status' => 'не назначена',
-                            'priority' => $task->priority,
-                        ]);
-                    }
                 }
             }
 
@@ -841,5 +856,64 @@ class TaskController extends Controller
                 'message' => 'Ошибка при создании задачи: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Получение списка файлов для выбора
+     */
+    public function getFiles(Request $request)
+    {
+        $user = Auth::user();
+
+        // Получаем файлы компании
+        $files = File::where('company_id', $user->company_id)
+            ->where(function($query) {
+                // Если используете связь многие-ко-многим
+                if (method_exists(File::class, 'tasks')) {
+                    $query->whereDoesntHave('tasks');
+                }
+            })
+            ->where(function($query) use ($user) {
+                // Разные права доступа в зависимости от роли
+                if ($user->role->name === 'Руководитель') {
+                    return $query->where('company_id', $user->company_id);
+                }
+                if ($user->role->name === 'Менеджер') {
+                    return $query->where('company_id', $user->company_id)
+                        ->where(function($q) use ($user) {
+                            $q->where('department_id', $user->department_id)
+                                ->orWhere('uploaded_by', $user->id)
+                                ->orWhere('is_public', true);
+                        });
+                }
+                if ($user->role->name === 'Сотрудник') {
+                    return $query->where('company_id', $user->company_id)
+                        ->where('uploaded_by', $user->id);
+                }
+            })
+            ->select('id', 'name', 'path', 'size', 'mime_type', 'extension', 'created_at', 'department_id', 'uploaded_by')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($file) {
+                return [
+                    'id' => $file->id,
+                    'name' => $file->name,
+                    'size' => $file->size,
+                    'extension' => $file->extension,
+                    'created_at' => $file->created_at->toDateTimeString(),
+                    'formatted_size' => $this->formatFileSize($file->size),
+                ];
+            });
+
+        return response()->json($files);
+    }
+
+    private function formatFileSize($bytes)
+    {
+        if ($bytes == 0) return "0 Bytes";
+        $k = 1024;
+        $sizes = ["Bytes", "KB", "MB", "GB"];
+        $i = floor(log($bytes) / log($k));
+        return round($bytes / pow($k, $i), 2) . " " . $sizes[$i];
     }
 }

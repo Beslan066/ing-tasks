@@ -50,12 +50,12 @@
                     },
                     keyframes: {
                         slideIn: {
-                            '0%': { transform: 'translateX(-20px)', opacity: '0' },
-                            '100%': { transform: 'translateX(0)', opacity: '1' }
+                            '0%': {transform: 'translateX(-20px)', opacity: '0'},
+                            '100%': {transform: 'translateX(0)', opacity: '1'}
                         },
                         pulseGlow: {
-                            '0%, 100%': { opacity: '1' },
-                            '50%': { opacity: '0.7' }
+                            '0%, 100%': {opacity: '1'},
+                            '50%': {opacity: '0.7'}
                         }
                     }
                 }
@@ -150,8 +150,12 @@
         }
 
         @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
         }
 
         .badge {
@@ -249,6 +253,53 @@
             -webkit-box-shadow: 0 0 0px 1000px #374151 inset;
             -webkit-text-fill-color: white;
         }
+
+
+        /* Стили для выпадающего меню почты */
+        .email-nav-container .absolute {
+            display: none;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .email-nav-container:hover .absolute {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Альтернативный вариант с visibility */
+        .email-nav-container .email-dropdown {
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            pointer-events: none;
+        }
+
+        .email-nav-container:hover .email-dropdown {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Для мобильных устройств */
+        @media (max-width: 768px) {
+            .email-nav-container .absolute {
+                position: static;
+                display: none;
+                width: 100%;
+                box-shadow: none;
+                border: none;
+                margin-top: 0.5rem;
+            }
+
+            .email-nav-container.active .absolute {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans">
@@ -259,7 +310,8 @@
         <!-- Логотип -->
         <div class="mb-8">
             <a href="{{route('welcome')}}" class="flex items-center space-x-3 group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
                     <i class="fas fa-tasks text-white text-lg"></i>
                 </div>
                 <div>
@@ -276,7 +328,8 @@
                 <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider mb-4 px-2">ГЛАВНОЕ</h3>
 
                 <div class="space-y-1">
-                    <a href="{{route('welcome')}}" class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover active">
+                    <a href="{{route('welcome')}}"
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover active">
                         <div class="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-check text-primary-500 text-sm"></i>
                         </div>
@@ -286,20 +339,23 @@
                         </div>
                     </a>
 
-                    <a href="{{route('tasks.admin')}}" class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                    <a href="{{route('tasks.admin')}}"
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
                         <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-landmark text-purple-500 text-sm"></i>
                         </div>
                         <span class="font-medium">Моя компания</span>
                     </a>
-                    <a href="{{route('departments.index')}}" class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                    <a href="{{route('departments.index')}}"
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
                         <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-building text-orange-500 text-sm"></i>
                         </div>
                         <span class="font-medium">Отделы</span>
                     </a>
 
-                    <a href="{{route('team.index')}}" class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                    <a href="{{route('team.index')}}"
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
                         <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-users text-blue-500 text-sm"></i>
                         </div>
@@ -314,15 +370,134 @@
                         <span class="font-medium">Мессенджер</span>
                     </a>
 
-                    <a href="{{route('chat')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
-                        <div class="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center mr-3">
-                            <i class="fas fa-envelope text-yellow-500 text-sm"></i>
-                        </div>
-                        <span class="font-medium">Почта</span>
-                    </a>
+                    @php
+                        $user = auth()->user();
 
-                    <a href="{{route('chat')}}"
+                        // Считаем непрочитанные письма пользователя
+                        $personalUnreadCount = $user ? $user->getUnreadEmails() : 0;
+
+                        // Считаем непрочитанные письма в отделах, где состоит пользователь
+                        $departmentUnreadCount = 0;
+                        if ($user && $user->departments) {
+                            foreach ($user->departments as $department) {
+                                if ($department->email) {
+                                    $departmentUnreadCount += $department->getUnreadEmails();
+                                }
+                            }
+                        }
+
+                        $totalUnreadCount = $personalUnreadCount + $departmentUnreadCount;
+                    @endphp
+
+                        <!-- Основная кнопка почты -->
+                    <div class="relative email-nav-container group">
+                        <a href="{{ route('personal.emails.index') }}"
+                           class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover email-nav-button">
+                            <div
+                                class="relative w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center mr-3 group-hover:bg-yellow-500/20">
+                                <i class="fas fa-envelope text-yellow-500 text-sm"></i>
+                                @if($totalUnreadCount > 0)
+                                    <span
+                                        class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {{ $totalUnreadCount }}
+                </span>
+                                @endif
+                            </div>
+                            <span class="font-medium">Почта</span>
+
+                            <!-- Стрелочка для индикации выпадающего меню -->
+                            <svg
+                                class="w-4 h-4 ml-2 text-gray-400 group-hover:text-gray-300 transition-transform duration-200 group-hover:rotate-180"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </a>
+
+                        <!-- Выпадающее меню при наведении -->
+                        <div
+                            class="absolute left-0 top-full mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform -translate-x-1/2 left-1/2">
+                            <div class="py-2">
+                                <!-- Личная почта -->
+                                <a href="{{ route('personal.emails.index') }}"
+                                   class="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                                    <div class="flex items-center">
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                            <i class="fas fa-user text-blue-500 text-xs"></i>
+                                        </div>
+                                        <span>Моя почта</span>
+                                    </div>
+                                    @if($personalUnreadCount > 0)
+                                        <span
+                                            class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
+                        {{ $personalUnreadCount }}
+                    </span>
+                                    @endif
+                                </a>
+
+                                <!-- Почта отделов -->
+                                @if($user && $user->departments->whereNotNull('email')->count() > 0)
+                                    <div class="border-t border-gray-100 my-1"></div>
+                                    <div class="px-4 py-1 text-xs text-gray-500 font-medium uppercase tracking-wider">
+                                        Почта отделов
+                                    </div>
+
+                                    @foreach($user->departments->whereNotNull('email')->take(3) as $department)
+                                        @php
+                                            $deptUnread = $department->getUnreadEmails();
+                                        @endphp
+                                        <a href="{{ route('departments.emails.index', $department) }}"
+                                           class="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                                            <div class="flex items-center">
+                                                <div
+                                                    class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
+                                                    <i class="fas fa-building text-indigo-500 text-xs"></i>
+                                                </div>
+                                                <span class="truncate">{{ $department->name }}</span>
+                                            </div>
+                                            @if($deptUnread > 0)
+                                                <span
+                                                    class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full font-medium">
+                                {{ $deptUnread }}
+                            </span>
+                                            @else
+                                                <span class="text-gray-400 text-xs">
+                                <i class="fas fa-check"></i>
+                            </span>
+                                            @endif
+                                        </a>
+                                    @endforeach
+
+                                    @if($user->departments->whereNotNull('email')->count() > 3)
+                                        <a href="{{ route('departments.index') }}"
+                                           class="flex items-center px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700">
+                                            <div class="w-8 h-8 flex items-center justify-center mr-3">
+                                                <i class="fas fa-ellipsis-h text-gray-400"></i>
+                                            </div>
+                                            <span>Все отделы...</span>
+                                        </a>
+                                    @endif
+                                @endif
+
+                                <!-- Быстрые действия -->
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <a href="{{ route('personal.emails.create') }}"
+                                   class="flex items-center px-4 py-2 text-sm text-green-600 hover:bg-green-50 hover:text-green-700 transition-colors">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                                        <i class="fas fa-pen text-green-500 text-xs"></i>
+                                    </div>
+                                    <span>Написать письмо</span>
+                                    <span class="ml-auto text-green-400">
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{{route('files.index')}}"
                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
                         <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-hard-drive text-brown-500 text-sm"></i>
@@ -345,21 +520,24 @@
                 <div class="space-y-1">
                     @if(isset($categories) && $categories->count() > 0)
                         @foreach($categories as $category)
-                            <div class="group flex items-center justify-between px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-sidebar-hover rounded-lg cursor-pointer transition-all duration-200">
+                            <div
+                                class="group flex items-center justify-between px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-sidebar-hover rounded-lg cursor-pointer transition-all duration-200">
                                 <div class="flex items-center">
                                     <div class="category-dot" style="background-color: {{ $category->color }}"></div>
                                     <span class="font-medium">{{ $category->name }}</span>
                                 </div>
                                 @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
-                                    <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div
+                                        class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <button onclick="openEditCategoryModal({{ $category->id }})"
                                                 class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center"
                                                 title="Редактировать">
                                             <i class="fas fa-edit text-xs"></i>
                                         </button>
-                                        <button onclick="openDeleteCategoryModal({{ $category->id }}, {{ json_encode($category->name) }})"
-                                                class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center"
-                                                title="Удалить">
+                                        <button
+                                            onclick="openDeleteCategoryModal({{ $category->id }}, {{ json_encode($category->name) }})"
+                                            class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center"
+                                            title="Удалить">
                                             <i class="fas fa-trash text-xs"></i>
                                         </button>
                                     </div>
@@ -396,8 +574,9 @@
                                     $moreOnline = $onlineUsersCount - min(3, $onlineUsers->count());
                                 @endphp
                                 @if($moreOnline > 0)
-                                    <div class="w-8 h-8 rounded-full bg-sidebar-hover flex items-center justify-center text-sidebar-text text-xs font-bold shadow-lg"
-                                         title="Еще {{ $moreOnline }} онлайн">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-sidebar-hover flex items-center justify-center text-sidebar-text text-xs font-bold shadow-lg"
+                                        title="Еще {{ $moreOnline }} онлайн">
                                         +{{ $moreOnline }}
                                     </div>
                                 @endif
@@ -422,29 +601,32 @@
 
 
             <!-- Файловое хранилище -->
-{{--            <div class="bg-gradient-to-r from-sidebar-hover to-transparent p-4 rounded-xl border border-white/5">--}}
-{{--                <div class="flex items-center justify-between mb-3">--}}
-{{--                    <div class="flex items-center">--}}
-{{--                        <i class="fas fa-hard-drive text-primary-500 mr-2"></i>--}}
-{{--                        <h6 class="font-medium text-white">Хранилище</h6>--}}
-{{--                    </div>--}}
-{{--                    <span class="text-xs text-sidebar-text">15%</span>--}}
-{{--                </div>--}}
-{{--                <div class="w-full bg-white/10 rounded-full h-1.5 mb-2 overflow-hidden">--}}
-{{--                    <div class="progress-bar h-full rounded-full" style="width: 15%"></div>--}}
-{{--                </div>--}}
-{{--                <div class="text-xs text-sidebar-text">12.47 GB из 50 GB</div>--}}
-{{--            </div>--}}
+            {{--            <div class="bg-gradient-to-r from-sidebar-hover to-transparent p-4 rounded-xl border border-white/5">--}}
+            {{--                <div class="flex items-center justify-between mb-3">--}}
+            {{--                    <div class="flex items-center">--}}
+            {{--                        <i class="fas fa-hard-drive text-primary-500 mr-2"></i>--}}
+            {{--                        <h6 class="font-medium text-white">Хранилище</h6>--}}
+            {{--                    </div>--}}
+            {{--                    <span class="text-xs text-sidebar-text">15%</span>--}}
+            {{--                </div>--}}
+            {{--                <div class="w-full bg-white/10 rounded-full h-1.5 mb-2 overflow-hidden">--}}
+            {{--                    <div class="progress-bar h-full rounded-full" style="width: 15%"></div>--}}
+            {{--                </div>--}}
+            {{--                <div class="text-xs text-sidebar-text">12.47 GB из 50 GB</div>--}}
+            {{--            </div>--}}
 
             <!-- Профиль пользователя -->
-            <div class="flex items-center justify-between p-2 rounded-lg hover:bg-sidebar-hover transition-colors cursor-pointer"
-                 onclick="userProfileModal()">
+            <div
+                class="flex items-center justify-between p-2 rounded-lg hover:bg-sidebar-hover transition-colors cursor-pointer"
+                onclick="userProfileModal()">
                 <div class="flex items-center">
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-bold shadow-lg">
+                    <div
+                        class="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-bold shadow-lg">
                         <img class="rounded" src="{{auth()->user()->getAvatarUrlAttribute()}}" alt="">
                     </div>
                     <div class="ml-3">
-                        <div class="text-white font-medium text-sm">{{ auth()->user()->name }} {{ auth()->user()->surname }}</div>
+                        <div
+                            class="text-white font-medium text-sm">{{ auth()->user()->name }} {{ auth()->user()->surname }}</div>
                         @if(auth()->user()->role)
                             <div class="text-sidebar-text text-xs">{{ auth()->user()->role->name }}</div>
                         @endif
@@ -455,7 +637,8 @@
         </div>
 
         <!-- Индикатор активности -->
-        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-500 to-transparent opacity-20"></div>
+        <div
+            class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-500 to-transparent opacity-20"></div>
     </div>
 
     <!-- Основной контент -->
@@ -512,17 +695,49 @@
     // Глобальные переменные
     let currentModalType = '';
     let currentEditingTaskId = null;
+    let selectedFiles = []; // Файлы, выбранные из хранилища
+    let allFiles = []; // Все файлы из хранилища
+    let currentPreviewFile = null; // Файл в предпросмотре
 
 
     // Добавим интерактивности для сайдбара
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // При клике на письмо в выпадающем меню
+        document.querySelectorAll('.email-dropdown-item').forEach(item => {
+            item.addEventListener('click', function (e) {
+                const url = this.getAttribute('href');
+                const badge = this.querySelector('.unread-badge');
+
+                // Если есть непрочитанные, сбрасываем счетчик
+                if (badge && badge.textContent > 0) {
+                    updateUnreadCount();
+                }
+
+                window.location.href = url;
+            });
+        });
+
+        // Открытие меню при клике (для мобильных)
+        const emailButton = document.querySelector('.email-nav-button');
+        if (emailButton) {
+            emailButton.addEventListener('click', function (e) {
+                if (window.innerWidth < 768) {
+                    e.preventDefault();
+                    const dropdown = this.querySelector('.email-dropdown');
+                    dropdown.classList.toggle('hidden');
+                }
+            });
+        }
+
+
         // Добавляем анимацию при наведении на элементы
         const navItems = document.querySelectorAll('.nav-item');
         navItems.forEach(item => {
-            item.addEventListener('mouseenter', function() {
+            item.addEventListener('mouseenter', function () {
                 this.style.transform = 'translateX(5px)';
             });
-            item.addEventListener('mouseleave', function() {
+            item.addEventListener('mouseleave', function () {
                 this.style.transform = 'translateX(0)';
             });
         });
@@ -603,6 +818,11 @@
 
                 document.querySelector('select[name="status"]').value = task.status || 'назначена';
 
+                // Загружаем прикрепленные файлы (если есть)
+                if (task.files && task.files.length > 0) {
+                    // Можно реализовать загрузку уже прикрепленных файлов
+                    // для редактирования задачи
+                }
 
                 // Обновляем заголовок и кнопку
                 document.querySelector('#taskModal h3').textContent = 'Редактировать задачу';
@@ -623,7 +843,24 @@
     // Функция для сброса формы задачи
     function resetTaskForm() {
         document.getElementById('taskForm').reset();
-        document.getElementById('fileList').innerHTML = '';
+        // Сбрасываем выбранные файлы
+        selectedFiles = [];
+        updateSelectedFilesDisplay();
+
+        // Сбрасываем загруженные файлы
+        const uploadInput = document.getElementById('uploadNewFilesInput');
+        if (uploadInput) {
+            uploadInput.value = '';
+        }
+        const uploadContainer = document.getElementById('uploadFilesContainer');
+        if (uploadContainer) {
+            uploadContainer.innerHTML = '';
+        }
+        const uploadList = document.getElementById('uploadFilesList');
+        if (uploadList) {
+            uploadList.classList.add('hidden');
+        }
+
         // Установить заголовок для создания
         document.querySelector('#taskModal h3').textContent = 'Новая задача';
         document.querySelector('#taskModal p').textContent = 'Заполните информацию о задаче';
@@ -684,48 +921,658 @@
         document.getElementById('departmentForm').reset();
     }
 
+    // ==================== УПРАВЛЕНИЕ ФАЙЛАМИ И ФАЙЛОВЫЙ МЕНЕДЖЕР ====================
 
-    // ==================== УПРАВЛЕНИЕ ФАЙЛАМИ ====================
+    // Управление вкладками файлов
+    function switchFileTab(tabName) {
+        // Обновляем активные вкладки
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.tab === tabName) {
+                btn.classList.add('active');
+            }
+        });
 
-    function initFileUpload() {
-        const fileInput = document.getElementById('fileInput');
-        const fileList = document.getElementById('fileList');
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+            content.classList.add('hidden');
+        });
 
-        fileInput.addEventListener('change', function (e) {
-            fileList.innerHTML = '';
+        const activeContent = document.getElementById(tabName + 'TabContent');
+        if (activeContent) {
+            activeContent.classList.remove('hidden');
+            activeContent.classList.add('active');
+        }
+    }
 
-            Array.from(e.target.files).forEach(file => {
-                const div = document.createElement('div');
-                div.className = 'flex items-center justify-between p-2 bg-gray-50 rounded mb-1';
-                div.innerHTML = `
-                <div class="flex items-center">
-                    <i class="fas fa-file text-gray-400 mr-2"></i>
-                    <span class="text-sm truncate max-w-xs">${file.name}</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <span class="text-xs text-gray-500">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
-                    <button type="button" onclick="removeFile('${file.name}')" class="text-red-500 hover:text-red-700">
-                        <i class="fas fa-times"></i>
+    // Файловый менеджер
+    async function openFileManager() {
+        const modal = document.getElementById('fileManagerModal');
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        await loadFiles();
+    }
+
+    function closeFileManager() {
+        document.getElementById('fileManagerModal').classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+
+    async function loadFiles() {
+        const contentDiv = document.getElementById('fileManagerContent');
+        contentDiv.innerHTML = `
+            <div class="col-span-full text-center py-12">
+                <i class="fas fa-spinner fa-spin text-3xl text-gray-400 mb-4"></i>
+                <p class="text-gray-600">Загрузка файлов...</p>
+            </div>
+        `;
+
+        try {
+            const response = await fetch('/tasks/file-storage/get-files', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            });
+
+            if (!response.ok) throw new Error('Ошибка загрузки файлов');
+
+            const files = await response.json();
+            allFiles = files;
+
+            renderFiles(files);
+            updateSelectedCount();
+
+        } catch (error) {
+            contentDiv.innerHTML = `
+                <div class="col-span-full text-center py-12 text-red-600">
+                    <i class="fas fa-exclamation-triangle text-3xl mb-4"></i>
+                    <p class="text-lg font-medium">Ошибка загрузки файлов</p>
+                    <p class="text-sm mt-2">${error.message}</p>
+                    <button onclick="loadFiles()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-redo mr-2"></i>Повторить
                     </button>
                 </div>
             `;
-                fileList.appendChild(div);
+        }
+    }
+
+    function renderFiles(files) {
+        const contentDiv = document.getElementById('fileManagerContent');
+
+        if (files.length === 0) {
+            contentDiv.innerHTML = `
+                <div class="col-span-full text-center py-12 text-gray-600">
+                    <i class="fas fa-folder-open text-3xl mb-4"></i>
+                    <p class="text-lg font-medium">Файлы не найдены</p>
+                    <p class="text-sm mt-2">В хранилище нет доступных файлов</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">';
+
+        files.forEach(file => {
+            const isSelected = selectedFiles.some(f => f.id === file.id);
+            const fileIcon = getFileIcon(file.extension);
+            const fileType = getFileTypeClass(file.extension);
+
+            html += `
+                <div class="file-card bg-white border ${isSelected ? 'border-blue-500 shadow-md' : 'border-gray-200'} rounded-lg p-4 cursor-pointer transition-all hover:shadow-lg"
+                     onclick="toggleFileSelection(${file.id})">
+                    <div class="flex flex-col h-full">
+                        <!-- Checkbox -->
+                        <div class="flex justify-end mb-2">
+                            <div class="w-5 h-5 rounded border ${isSelected ? 'bg-blue-500 border-blue-500' : 'border-gray-300'} flex items-center justify-center"
+                                 onclick="event.stopPropagation(); toggleFileSelection(${file.id})">
+                                ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                            </div>
+                        </div>
+
+                        <!-- Icon -->
+                        <div class="flex justify-center mb-3">
+                            <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center">
+                                <span class="text-2xl">${fileIcon}</span>
+                            </div>
+                        </div>
+
+                        <!-- File info -->
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-800 truncate text-center mb-1" title="${file.name}">
+                                ${file.name}
+                            </p>
+                            <p class="text-xs text-gray-500 text-center">${formatFileSize(file.size)}</p>
+                            <p class="text-xs text-gray-400 text-center mt-1">
+                                ${formatDate(file.created_at)}
+                            </p>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex justify-center space-x-2 mt-3 pt-3 border-t border-gray-100">
+                            <button onclick="event.stopPropagation(); previewFile(${file.id})"
+                                    class="text-gray-400 hover:text-blue-600 p-1"
+                                    title="Предпросмотр">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button onclick="event.stopPropagation(); downloadFile(${file.id})"
+                                    class="text-gray-400 hover:text-green-600 p-1"
+                                    title="Скачать">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        contentDiv.innerHTML = html;
+    }
+
+    function toggleFileSelection(fileId) {
+        const file = allFiles.find(f => f.id === fileId);
+        if (!file) return;
+
+        const index = selectedFiles.findIndex(f => f.id === fileId);
+
+        if (index === -1) {
+            selectedFiles.push(file);
+        } else {
+            selectedFiles.splice(index, 1);
+        }
+
+        renderFiles(allFiles);
+        updateSelectedCount();
+    }
+
+    function updateSelectedCount() {
+        const selectedCount = document.getElementById('selectedCount');
+        const confirmCount = document.getElementById('confirmCount');
+
+        if (selectedCount) {
+            selectedCount.textContent = selectedFiles.length;
+        }
+        if (confirmCount) {
+            confirmCount.textContent = selectedFiles.length;
+        }
+    }
+
+    function confirmFileSelection() {
+        if (selectedFiles.length === 0) {
+            showNotification('Выберите хотя бы один файл', 'warning');
+            return;
+        }
+
+        // Обновляем скрытое поле
+        document.getElementById('selectedFiles').value = JSON.stringify(selectedFiles);
+
+        // Обновляем отображение выбранных файлов
+        updateSelectedFilesDisplay();
+
+        // Переключаемся на вкладку хранилища
+        switchFileTab('storage');
+
+        closeFileManager();
+    }
+
+    function updateSelectedFilesDisplay() {
+        const container = document.getElementById('selectedFilesContainer');
+        const fileCounter = document.getElementById('fileCounter');
+        const fileCount = document.getElementById('fileCount');
+
+        if (selectedFiles.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg">
+                    <i class="fas fa-folder-open text-3xl text-gray-300 mb-3"></i>
+                    <p class="text-sm text-gray-500">Файлы не выбраны</p>
+                    <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
+                </div>
+            `;
+            if (fileCounter) fileCounter.classList.add('hidden');
+        } else {
+            let html = '';
+            selectedFiles.forEach(file => {
+                const fileIcon = getFileIcon(file.extension);
+                const fileType = getFileTypeClass(file.extension);
+
+                html += `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-white transition-colors">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
+                                <span class="text-lg">${fileIcon}</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-800 truncate">${file.name}</p>
+                                <div class="flex items-center space-x-3 mt-1">
+                                    <span class="text-xs text-gray-500">${formatFileSize(file.size)}</span>
+                                    <span class="text-xs text-gray-400">•</span>
+                                    <span class="text-xs text-gray-400">${formatDate(file.created_at)}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="previewSelectedFile(${file.id})"
+                                    class="text-gray-400 hover:text-blue-600 p-1"
+                                    title="Предпросмотр">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button onclick="removeSelectedFile(${file.id})"
+                                    class="text-gray-400 hover:text-red-600 p-1"
+                                    title="Удалить">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
             });
+            container.innerHTML = html;
+            if (fileCount) fileCount.textContent = selectedFiles.length;
+            if (fileCounter) fileCounter.classList.remove('hidden');
+        }
+    }
+
+    function removeSelectedFile(fileId) {
+        selectedFiles = selectedFiles.filter(f => f.id !== fileId);
+        updateSelectedFilesDisplay();
+        updateSelectedCount();
+    }
+
+    function clearSelectedFiles() {
+        if (selectedFiles.length === 0) return;
+
+        if (confirm(`Удалить все выбранные файлы (${selectedFiles.length})?`)) {
+            selectedFiles = [];
+            updateSelectedFilesDisplay();
+            updateSelectedCount();
+        }
+    }
+
+    // Предпросмотр файлов
+    function previewFile(fileId) {
+        const file = allFiles.find(f => f.id === fileId);
+        if (!file) return;
+
+        currentPreviewFile = file;
+        const previewPanel = document.getElementById('fileManagerPreviewPanel');
+        const content = document.getElementById('filePreviewContent');
+
+        const fileIcon = getFileIcon(file.extension);
+        const fileType = getFileTypeClass(file.extension);
+
+        content.innerHTML = `
+            <div class="bg-white rounded-lg p-4 shadow-sm">
+                <!-- Header -->
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 ${fileType.bg} rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">${fileIcon}</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 truncate max-w-xs">${file.name}</h4>
+                            <p class="text-sm text-gray-500">${formatFileSize(file.size)}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="downloadFile(${file.id})"
+                                class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                            <i class="fas fa-download mr-1"></i>Скачать
+                        </button>
+                        <button onclick="toggleFileSelection(${file.id})"
+                                class="px-3 py-1 ${selectedFiles.some(f => f.id === file.id) ? 'bg-gray-200 text-gray-700' : 'bg-green-600 text-white'} rounded-lg hover:opacity-90 text-sm">
+                            ${selectedFiles.some(f => f.id === file.id) ? '✓ Выбран' : 'Выбрать'}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Details -->
+                <div class="space-y-3 border-t border-gray-100 pt-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Тип файла</p>
+                            <p class="text-sm font-medium">${file.extension ? file.extension.toUpperCase() : 'Неизвестно'}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Дата загрузки</p>
+                            <p class="text-sm font-medium">${formatDate(file.created_at, true)}</p>
+                        </div>
+                    </div>
+
+                    <!-- Preview content -->
+                    <div id="filePreviewContainer" class="mt-4">
+                        <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                            ${getFilePreview(file)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        previewPanel.classList.remove('hidden');
+    }
+
+    function previewSelectedFile(fileId) {
+        const file = selectedFiles.find(f => f.id === fileId);
+        if (file) {
+            previewFile(fileId);
+        }
+    }
+
+    function closeFilePreview() {
+        const previewPanel = document.getElementById('fileManagerPreviewPanel');
+        if (previewPanel) {
+            previewPanel.classList.add('hidden');
+        }
+    }
+
+    function getFilePreview(file) {
+        const extension = file.extension ? file.extension.toLowerCase() : '';
+
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+            return `
+                <div class="text-center">
+                    <p class="text-sm text-gray-600 mb-2">Изображение</p>
+                    <div class="bg-gray-200 rounded p-2 inline-block">
+                        <i class="fas fa-image text-4xl text-gray-400"></i>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p>
+                </div>
+            `;
+        } else if (['pdf'].includes(extension)) {
+            return `
+                <div class="text-center">
+                    <p class="text-sm text-gray-600 mb-2">PDF документ</p>
+                    <div class="bg-red-100 rounded p-2 inline-block">
+                        <i class="fas fa-file-pdf text-4xl text-red-400"></i>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p>
+                </div>
+            `;
+        } else if (['doc', 'docx'].includes(extension)) {
+            return `
+                <div class="text-center">
+                    <p class="text-sm text-gray-600 mb-2">Word документ</p>
+                    <div class="bg-blue-100 rounded p-2 inline-block">
+                        <i class="fas fa-file-word text-4xl text-blue-400"></i>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p>
+                </div>
+            `;
+        } else if (['xls', 'xlsx'].includes(extension)) {
+            return `
+                <div class="text-center">
+                    <p class="text-sm text-gray-600 mb-2">Excel таблица</p>
+                    <div class="bg-green-100 rounded p-2 inline-block">
+                        <i class="fas fa-file-excel text-4xl text-green-400"></i>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p>
+                </div>
+            `;
+        } else {
+            return `
+                <div class="text-center">
+                    <p class="text-sm text-gray-600 mb-2">Файл ${extension.toUpperCase()}</p>
+                    <div class="bg-gray-200 rounded p-2 inline-block">
+                        <i class="fas fa-file text-4xl text-gray-400"></i>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p>
+                </div>
+            `;
+        }
+    }
+
+    // Загрузка новых файлов
+    const uploadInput = document.getElementById('uploadNewFilesInput');
+    if (uploadInput) {
+        uploadInput.addEventListener('change', function (e) {
+            const container = document.getElementById('uploadFilesContainer');
+            const list = document.getElementById('uploadFilesList');
+
+            container.innerHTML = '';
+
+            if (this.files.length > 0) {
+                list.classList.remove('hidden');
+
+                Array.from(this.files).forEach((file, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200';
+
+                    const fileIcon = getFileIcon(file.name.split('.').pop());
+                    const fileType = getFileTypeClass(file.name.split('.').pop());
+
+                    div.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
+                                <span class="text-lg">${fileIcon}</span>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-800 truncate max-w-[200px]">${file.name}</p>
+                                <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="removeUploadedFile(${index})"
+                                class="text-red-500 hover:text-red-700 p-1">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    container.appendChild(div);
+                });
+            } else {
+                list.classList.add('hidden');
+            }
         });
     }
 
-    function removeFile(fileName) {
-        const fileInput = document.getElementById('fileInput');
-        const files = Array.from(fileInput.files);
-        const updatedFiles = files.filter(file => file.name !== fileName);
+    function removeUploadedFile(index) {
+        const input = document.getElementById('uploadNewFilesInput');
+        const dt = new DataTransfer();
 
-        // Создаем новый DataTransfer для обновления файлов
-        const dataTransfer = new DataTransfer();
-        updatedFiles.forEach(file => dataTransfer.items.add(file));
-        fileInput.files = dataTransfer.files;
+        Array.from(input.files).forEach((file, i) => {
+            if (i !== index) dt.items.add(file);
+        });
 
-        // Обновляем отображение
-        fileInput.dispatchEvent(new Event('change'));
+        input.files = dt.files;
+        input.dispatchEvent(new Event('change'));
+    }
+
+    // Drag and drop для загрузки файлов
+    const uploadArea = document.querySelector('.file-upload-area');
+    if (uploadArea) {
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('border-blue-400', 'bg-blue-50');
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('border-blue-400', 'bg-blue-50');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('border-blue-400', 'bg-blue-50');
+
+            const input = document.getElementById('uploadNewFilesInput');
+            if (input && e.dataTransfer.files.length > 0) {
+                input.files = e.dataTransfer.files;
+                input.dispatchEvent(new Event('change'));
+            }
+        });
+    }
+
+    // Вспомогательные функции для файлов
+    function getFileIcon(extension) {
+        const ext = (extension || '').toLowerCase();
+        const icons = {
+            'pdf': '📄',
+            'doc': '📝',
+            'docx': '📝',
+            'xls': '📊',
+            'xlsx': '📊',
+            'jpg': '🖼️',
+            'jpeg': '🖼️',
+            'png': '🖼️',
+            'gif': '🖼️',
+            'zip': '📦',
+            'rar': '📦',
+            '7z': '📦',
+            'txt': '📃',
+            'mp3': '🎵',
+            'mp4': '🎬',
+            'avi': '🎬',
+            'mov': '🎬',
+            'wav': '🎵',
+            'ppt': '📊',
+            'pptx': '📊'
+        };
+        return icons[ext] || '📎';
+    }
+
+    function getFileTypeClass(extension) {
+        const ext = (extension || '').toLowerCase();
+
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) {
+            return {bg: 'bg-pink-100', text: 'text-pink-600'};
+        } else if (['pdf'].includes(ext)) {
+            return {bg: 'bg-red-100', text: 'text-red-600'};
+        } else if (['doc', 'docx', 'txt', 'rtf'].includes(ext)) {
+            return {bg: 'bg-blue-100', text: 'text-blue-600'};
+        } else if (['xls', 'xlsx', 'csv'].includes(ext)) {
+            return {bg: 'bg-green-100', text: 'text-green-600'};
+        } else if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) {
+            return {bg: 'bg-yellow-100', text: 'text-yellow-600'};
+        } else if (['mp3', 'wav', 'ogg', 'flac'].includes(ext)) {
+            return {bg: 'bg-purple-100', text: 'text-purple-600'};
+        } else if (['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(ext)) {
+            return {bg: 'bg-indigo-100', text: 'text-indigo-600'};
+        } else {
+            return {bg: 'bg-gray-100', text: 'text-gray-600'};
+        }
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function formatDate(dateString, full = false) {
+        const date = new Date(dateString);
+        if (full) {
+            return date.toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        return date.toLocaleDateString('ru-RU');
+    }
+
+    async function downloadFile(fileId) {
+        const file = allFiles.find(f => f.id === fileId);
+        if (!file) return;
+
+        try {
+            const response = await fetch(`/file-storage/download/${fileId}`, {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.name;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }
+        } catch (error) {
+            showNotification('Ошибка при скачивании файла', 'error');
+        }
+    }
+
+    // Поиск и фильтрация в файловом менеджере
+    const fileSearch = document.getElementById('fileManagerSearch');
+    const typeFilter = document.getElementById('fileManagerTypeFilter');
+    const sortBy = document.getElementById('fileManagerSortBy');
+
+    if (fileSearch && typeFilter && sortBy) {
+        fileSearch.addEventListener('input', function (e) {
+            filterAndRenderFiles();
+        });
+
+        typeFilter.addEventListener('change', function (e) {
+            filterAndRenderFiles();
+        });
+
+        sortBy.addEventListener('change', function (e) {
+            filterAndRenderFiles();
+        });
+    }
+
+    function filterAndRenderFiles() {
+        const searchTerm = document.getElementById('fileManagerSearch')?.value.toLowerCase() || '';
+        const typeFilter = document.getElementById('fileManagerTypeFilter')?.value || '';
+        const sortBy = document.getElementById('fileManagerSortBy')?.value || 'newest';
+
+        let filteredFiles = [...allFiles];
+
+        // Фильтрация по поиску
+        if (searchTerm) {
+            filteredFiles = filteredFiles.filter(file =>
+                file.name.toLowerCase().includes(searchTerm)
+            );
+        }
+
+        // Фильтрация по типу
+        if (typeFilter) {
+            filteredFiles = filteredFiles.filter(file => {
+                const ext = (file.extension || '').toLowerCase();
+                switch (typeFilter) {
+                    case 'image':
+                        return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext);
+                    case 'document':
+                        return ['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(ext);
+                    case 'video':
+                        return ['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(ext);
+                    case 'audio':
+                        return ['mp3', 'wav', 'ogg', 'flac'].includes(ext);
+                    case 'archive':
+                        return ['zip', 'rar', '7z', 'tar', 'gz'].includes(ext);
+                    default:
+                        return true;
+                }
+            });
+        }
+
+        // Сортировка
+        filteredFiles.sort((a, b) => {
+            switch (sortBy) {
+                case 'oldest':
+                    return new Date(a.created_at) - new Date(b.created_at);
+                case 'name_asc':
+                    return a.name.localeCompare(b.name);
+                case 'name_desc':
+                    return b.name.localeCompare(a.name);
+                case 'size_asc':
+                    return a.size - b.size;
+                case 'size_desc':
+                    return b.size - a.size;
+                case 'newest':
+                default:
+                    return new Date(b.created_at) - new Date(a.created_at);
+            }
+        });
+
+        renderFiles(filteredFiles);
     }
 
     // ==================== ОБРАБОТКА ФОРМ ====================
@@ -735,6 +1582,13 @@
         e.preventDefault();
 
         const formData = new FormData(this);
+        const selectedFilesData = JSON.parse(document.getElementById('selectedFiles').value || '[]');
+
+        // Добавляем ID выбранных файлов в FormData
+        selectedFilesData.forEach(file => {
+            formData.append('selected_file_ids[]', file.id);
+        });
+
         const submitButton = this.querySelector('button[type="submit"]');
         const originalText = submitButton.innerHTML;
 
@@ -756,12 +1610,10 @@
             let url, method;
 
             if (taskId) {
-                // Режим редактирования - используем POST с _method
                 url = `/tasks/${taskId}/update`;
                 method = 'POST';
-                formData.append('_method', 'PUT'); // Для Laravel
+                formData.append('_method', 'PUT');
             } else {
-                // Режим создания
                 url = '/tasks/store';
                 method = 'POST';
             }
@@ -775,7 +1627,6 @@
                 }
             });
 
-            // Проверяем, является ли ответ JSON
             const contentType = response.headers.get('content-type');
             if (!contentType || !contentType.includes('application/json')) {
                 const text = await response.text();
@@ -795,11 +1646,9 @@
                     'success'
                 );
 
-                // Обновить список задач на странице
                 if (typeof refreshTasks === 'function') {
                     refreshTasks();
                 } else {
-                    // Если функция не определена, перезагружаем страницу
                     window.location.reload();
                 }
             } else {
@@ -1281,9 +2130,6 @@
     // ==================== ИНИЦИАЛИЗАЦИЯ ====================
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Инициализация загрузки файлов
-        initFileUpload();
-
         // Инициализация drag and drop
         initTaskDragAndDrop();
 
@@ -1298,7 +2144,7 @@
 
         const newUserBtn = document.getElementById('newUserBtn');
         if (newUserBtn) {
-            newUserBtn.addEventListener('click', openUserModal);
+            newUserBtn.addEventListener('click', createUserModal);
         }
 
         // Закрытие модальных окон при клике вне их
@@ -1647,14 +2493,14 @@
     setInterval(updateOnlineUsers, 10000);
 
     // При загрузке страницы
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         updateUserActivity();
         // Запускаем первый раз через 2 секунды
         setTimeout(updateOnlineUsers, 2000);
     });
 
     // Отправляем запрос при закрытии вкладки
-    window.addEventListener('beforeunload', function(event) {
+    window.addEventListener('beforeunload', function (event) {
         // Используем navigator.sendBeacon для надежной отправки при закрытии
         const data = new FormData();
         data.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
@@ -1669,7 +2515,7 @@
     });
 
     // Также отслеживаем видимость вкладки
-    document.addEventListener('visibilitychange', function() {
+    document.addEventListener('visibilitychange', function () {
         if (document.hidden) {
             // Вкладка стала невидимой (пользователь переключился на другую вкладку)
             fetch('/user-hidden', {
@@ -1678,7 +2524,7 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
-                body: JSON.stringify({ hidden: true })
+                body: JSON.stringify({hidden: true})
             });
         } else {
             // Вкладка снова стала видимой
@@ -1692,13 +2538,13 @@
 
     // Отслеживаем любую активность пользователя
     ['mousemove', 'keydown', 'click', 'scroll'].forEach(eventName => {
-        document.addEventListener(eventName, function() {
+        document.addEventListener(eventName, function () {
             lastActivity = Date.now();
         });
     });
 
     // Проверяем неактивность каждые 10 секунд
-    setInterval(function() {
+    setInterval(function () {
         const now = Date.now();
         if (now - lastActivity > INACTIVITY_TIMEOUT) {
             // Пользователь неактивен более 30 секунд
@@ -1708,7 +2554,7 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
-                body: JSON.stringify({ inactive: true })
+                body: JSON.stringify({inactive: true})
             });
         }
     }, 10000);

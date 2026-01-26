@@ -22,11 +22,19 @@ class File extends Model
         'department_id',
         'disk',
         'folder',
+        'task_id',
+        'is_public'
     ];
 
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
+    }
+
+    // Связь с задачей
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class);
     }
 
     public function company(): BelongsTo

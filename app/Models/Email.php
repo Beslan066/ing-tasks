@@ -13,6 +13,7 @@ class Email extends Model
 {
     use HasFactory, SoftDeletes;
 
+
     protected $fillable = [
         'subject',
         'body',
@@ -21,8 +22,9 @@ class Email extends Model
         'to_emails',
         'cc_emails',
         'bcc_emails',
-        'department_id',
-        'sent_by',
+        'sender_id', // Кто отправил (user_id)
+        'recipient_id', // Кому адресовано (user_id или department_id)
+        'recipient_type', // 'user' или 'department'
         'parent_id',
         'is_read',
         'is_archived',
@@ -126,9 +128,15 @@ class Email extends Model
         return $this->belongsTo(Department::class);
     }
 
+    // Полиморфная связь получателя
+    public function recipient()
+    {
+        return $this->morphTo();
+    }
+
     public function sender(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'sent_by');
+        return $this->belongsTo(User::class, 'sender_id');
     }
 
     public function deletedBy(): BelongsTo // Добавить

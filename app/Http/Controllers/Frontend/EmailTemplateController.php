@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Http\Controllers\Controller;
 use App\Models\EmailTemplate;
 use App\Models\Department;
 use App\Models\Company;

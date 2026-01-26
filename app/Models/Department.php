@@ -14,6 +14,8 @@ class Department extends Model
         'company_id',
         'status',
         'supervisor_id',
+        'email', // email отдела
+        'email_verified_at',
     ];
 
     // === СВЯЗИ ===
@@ -249,11 +251,6 @@ class Department extends Model
      * Методы для работы почты
      */
 
-    public function emails()
-    {
-        return $this->hasMany(Email::class);
-    }
-
     public function getEmailCount(): int
     {
         return $this->emails()->count();
@@ -279,5 +276,32 @@ class Department extends Model
     public function resetUnreadCount(): void
     {
         $this->update(['unread_emails_count' => 0]);
+    }
+
+    /**
+     * Проверить, подтвержден ли email отдела
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    /**
+     * Получить все письма отдела
+     */
+    public function emails()
+    {
+        return $this->morphMany(Email::class, 'recipient');
+    }
+
+    /**
+     * Получить количество непрочитанных писем отдела
+     */
+    public function getUnreadEmails(): int
+    {
+        return $this->emails()
+            ->where('is_read', false)
+            ->where('is_archived', false)
+            ->count();
     }
 }
