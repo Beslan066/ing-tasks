@@ -15,7 +15,7 @@
                     <span>Фильтр</span>
                     <i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>
                 </button>
-                <button class="flex-1 md:flex-none bg-primary-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-secondary transition text-sm md:text-base" id="newUserBtn">
+                <button class="flex-1 md:flex-none bg-primary-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-secondary transition text-sm md:text-base" id="inviteUserBtn">
                     <i class="fas fa-user-plus"></i>
                     <span>Пригласить</span>
                 </button>
@@ -1166,9 +1166,9 @@
         // Проверяем существование элементов перед добавлением обработчиков
         if (inviteModal && closeInviteModal && cancelInvite && inviteForm && userSearch) {
             // Открытие модального окна приглашения
-            const newUserBtn = document.getElementById('newUserBtn');
-            if (newUserBtn) {
-                newUserBtn.addEventListener('click', function() {
+            const inviteUserBtn = document.getElementById('inviteUserBtn');
+            if (inviteUserBtn) {
+                inviteUserBtn.addEventListener('click', function() {
                     inviteModal.classList.remove('hidden');
                     userSearch.focus();
                     resetForm();

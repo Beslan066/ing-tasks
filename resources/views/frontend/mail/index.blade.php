@@ -601,7 +601,7 @@
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Формат файла</label>
                     <select name="format"
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-transparent">
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-1 focus:ring-primary focus:border-transparent">
                         <option value="csv">CSV</option>
                         <option value="excel">Excel</option>
                     </select>
@@ -651,7 +651,7 @@
                               id="deleteReason"
                               rows="3"
                               placeholder="Например: устаревшая информация, ошибка в письме..."
-                              class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 resize-none focus:ring-2 focus:ring-primary"></textarea>
+                              class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 resize-none focus:ring-1 focus:ring-primary"></textarea>
                 </div>
 
                 <div class="flex justify-end space-x-3">

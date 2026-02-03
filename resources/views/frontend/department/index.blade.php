@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container mx-auto px-4 py-8">
+    <div>
         <!-- Заголовок и кнопки -->
         <div class="flex justify-between items-center mb-8">
             <div>
@@ -431,7 +431,7 @@
                         </button>
                         <button type="submit"
                                 class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
-                            Создать отдел
+                            Создать
                         </button>
                     </div>
                 </form>

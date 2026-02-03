@@ -356,7 +356,7 @@
                                     <div class="col-span-2 flex items-center">
                                         <div class="flex w-full items-center justify-center gap-2">
                                             <a href="{{ route('files.download', $file) }}"
-                                               class="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
+                                               class="text-gray-500 hover:text-green-500"
                                                title="Скачать">
                                                 <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                                                      xmlns="http://www.w3.org/2000/svg">
@@ -425,7 +425,7 @@
                                 <form id="uploadForm" action="{{ route('files.upload') }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 cursor-pointer">
                                             Выберите файл
                                         </label>
                                         <input type="file" name="file" id="fileInput"
@@ -433,9 +433,8 @@
                                                 file:mr-4 file:py-2 file:px-4
                                                 file:rounded-full file:border-0
                                                 file:text-sm file:font-semibold
-                                                file:bg-blue-50 file:text-blue-700
-                                                hover:file:bg-blue-100
-                                                dark:file:bg-blue-900 dark:file:text-blue-300"
+                                                file:bg-green-500 file:text-white
+                                                hover:file:bg-green-600 cursor-pointer"
                                                required>
                                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                             Максимальный размер:
@@ -450,7 +449,7 @@
                                             Папка (необязательно)
                                         </label>
                                         <input type="text" name="folder"
-                                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                                placeholder="Например: documents">
                                     </div>
                                 </form>
@@ -460,11 +459,11 @@
                 </div>
                 <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 sm:px-6 sm:flex sm:flex-row-reverse">
                     <button type="submit" form="uploadForm"
-                            class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                            class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-green-500 border border-transparent rounded-md shadow-sm hover:bg-green-600 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm">
                         Загрузить
                     </button>
                     <button type="button" onclick="closeUploadModal()"
-                            class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-gray-600 dark:text-white dark:border-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-green-500 dark:bg-gray-600 dark:text-white dark:border-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                         Отмена
                     </button>
                 </div>
