@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Frontend\ChatController;
 use App\Http\Controllers\Frontend\EmailTrashController;
 use App\Http\Controllers\Frontend\FileStorageController;
 use App\Http\Controllers\Frontend\DepartmentEmailController;
@@ -131,7 +132,25 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
 });
 
 Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () {
-    Route::get('/chat', [\App\Http\Controllers\Frontend\ChatController::class, 'index'])->name('chat');
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::prefix('chat/api')->name('chat.api.')->group(function () {
+        // GET запросы
+        Route::get('/chats', [ChatController::class, 'getChats'])->name('chats');
+        Route::get('/colleagues', [ChatController::class, 'getColleagues'])->name('colleagues');
+        Route::get('/chats/{chat}/messages', [ChatController::class, 'getMessages'])->name('messages');
+
+        // POST запросы
+        Route::post('/private-chat', [ChatController::class, 'startPrivateChat'])->name('private-chat');
+        Route::post('/group-chat', [ChatController::class, 'createGroupChat'])->name('group-chat');
+        Route::post('/chats/{chat}/send', [ChatController::class, 'sendMessage'])->name('send');
+        Route::post('/chats/{chat}/upload', [ChatController::class, 'uploadFile'])->name('upload');
+        Route::post('/chats/{chat}/add-users', [ChatController::class, 'addUsers'])->name('add-users');
+        Route::post('/chats/{chat}/remove-user', [ChatController::class, 'removeUser'])->name('remove-user');
+        Route::post('/chats/{chat}/mark-read', [ChatController::class, 'markAsRead'])->name('mark-read');
+
+        // DELETE запросы
+        Route::delete('/chats/{chat}', [ChatController::class, 'deleteChat'])->name('delete');
+    });
 
 
 

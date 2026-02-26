@@ -362,7 +362,7 @@
                         <span class="font-medium">Пользователи</span>
                     </a>
 
-                    <a href="{{route('chat')}}"
+                    <a href="{{route('chat.index')}}"
                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
                         <div class="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-comments text-pink-500 text-sm"></i>
@@ -649,7 +649,7 @@
         </div>
 
         <div class="chat-button" style="position: fixed; bottom: 10px; right: 20px;">
-            <a href="{{route('chat')}}">
+            <a href="{{route('chat.index')}}">
                 <button class="bg-primary text-white p-2 rounded-full hover:bg-secondary transition-colors"
                         style="width: 70px;">
                     <i class="fas fa-comment-dots"></i>

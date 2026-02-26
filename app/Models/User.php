@@ -881,4 +881,106 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->getUnreadEmails() + $this->getDepartmentUnreadEmails();
     }
+
+    /**
+     * Чаты пользователя
+     */
+    public function chats()
+    {
+        return $this->belongsToMany(Chat::class, 'chat_user')
+            ->withPivot(['role', 'last_read_at', 'is_muted', 'joined_at', 'left_at'])
+            ->withTimestamps()
+            ->wherePivotNull('left_at'); // Только активные чаты
+    }
+
+    /**
+     * Сообщения пользователя
+     */
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    /**
+     * Статусы сообщений пользователя
+     */
+    public function messageStatuses()
+    {
+        return $this->hasMany(MessageStatus::class);
+    }
+
+    /**
+     * Получить непрочитанные сообщения
+     */
+    public function getUnreadMessagesCount()
+    {
+        $count = 0;
+
+        foreach ($this->chats as $chat) {
+            $lastRead = $chat->pivot->last_read_at;
+
+            $unread = Message::where('chat_id', $chat->id)
+                ->where('user_id', '!=', $this->id)
+                ->when($lastRead, function ($query) use ($lastRead) {
+                    $query->where('created_at', '>', $lastRead);
+                })
+                ->count();
+
+            $count += $unread;
+        }
+
+        return $count;
+    }
+
+    /**
+     * Получить коллег по компании
+     */
+    public function getColleagues()
+    {
+        return User::where('company_id', $this->company_id)
+            ->where('id', '!=', $this->id)
+            ->where('is_active', true)
+            ->get();
+    }
+
+    public static function getPrivateChat($user1Id, $user2Id, $companyId)
+    {
+        // Ищем чат где есть оба пользователя
+        $chats = self::where('company_id', $companyId)
+            ->where('type', 'private')
+            ->whereHas('users', function ($query) use ($user1Id) {
+                $query->where('user_id', $user1Id);
+            })
+            ->whereHas('users', function ($query) use ($user2Id) {
+                $query->where('user_id', $user2Id);
+            })
+            ->get();
+
+        // Проверяем каждый чат вручную
+        foreach ($chats as $chat) {
+            $userIds = $chat->users()->pluck('user_id')->toArray();
+            if (in_array($user1Id, $userIds) && in_array($user2Id, $userIds) && count($userIds) == 2) {
+                return $chat;
+            }
+        }
+
+        // Создаем новый чат
+        DB::beginTransaction();
+        try {
+            $chat = self::create([
+                'company_id' => $companyId,
+                'created_by' => $user1Id,
+                'type' => 'private'
+            ]);
+
+            $chat->users()->attach($user1Id, ['role' => 'admin', 'joined_at' => now()]);
+            $chat->users()->attach($user2Id, ['role' => 'member', 'joined_at' => now()]);
+
+            DB::commit();
+            return $chat;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 }

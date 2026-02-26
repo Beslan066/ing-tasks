@@ -1,476 +1,1360 @@
+{{-- resources/views/frontend/chat/index.blade.php --}}
 @extends('layouts.app')
 
 @push('styles')
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        [x-cloak] { display: none !important; }
+        .chat-container {
+            height: calc(100vh - 186px);
+        }
+        .chat-container {
+            height: calc(100vh - 186px);
+        }
+        .message-list {
+            scroll-behavior: smooth;
+        }
+        .message-item {
+            transition: background-color 0.2s;
+        }
+        .message-item:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .typing-indicator span {
+            width: 4px;
+            height: 4px;
+            background-color: #6B7280;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+        .online-indicator {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        .online { background-color: #10B981; }
+        .away { background-color: #F59E0B; }
+        .offline { background-color: #9CA3AF; }
+        .file-attachment {
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 8px 12px;
+            background: #F9FAFB;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .file-attachment:hover {
+            background: #F3F4F6;
+        }
+        .message-input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        .bg-green-500 {
+            background-color: #10B981;
+        }
+        .bg-green-600:hover {
+            background-color: #059669;
+        }
+        .text-green-500 {
+            color: #10B981;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
 @endpush
 
 @section('content')
-    <div class="h-[calc(100vh-186px)] overflow-hidden sm:h-[calc(100vh-174px)]">
-        <div class="flex h-full flex-col gap-6 xl:flex-row xl:gap-5">
-            <!-- Chat Sidebar Start -->
-            <div @click.outside="isMobile = !isMobile" class="flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white xl:flex xl:w-1/4 dark:border-gray-800 dark:bg-white/[0.03]">
-                <!-- ====== Chat List Start -->
+    <div class="chat-container overflow-hidden" x-data="chatApp()" x-init="init()" x-cloak>
+
+    <div class="flex h-full flex-col gap-6 xl:flex-row xl:gap-5">
+            <!-- Chat Sidebar -->
+            <div class="flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white xl:flex xl:w-1/4 dark:border-gray-800 dark:bg-white/[0.03]"
+                 :class="{'hidden xl:flex': activeChat, 'flex': !activeChat}">
+
                 <div class="sticky px-4 pt-4 pb-4 sm:px-5 sm:pt-5 xl:pb-0">
                     <div class="flex items-start justify-between">
                         <div>
                             <h3 class="text-theme-xl font-semibold text-gray-800 sm:text-2xl dark:text-white/90">
-                                Chats
+                                Чаты
+                                <span x-show="unreadTotal > 0"
+                                      class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
+                                <span x-text="unreadTotal"></span>
+                            </span>
                             </h3>
                         </div>
 
-                        <div x-data="{openDropDown: false}" class="relative">
-                            <button @click="openDropDown = !openDropDown" :class="openDropDown ? 'text-gray-700 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white'" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                                <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M10.2441 6C10.2441 5.0335 11.0276 4.25 11.9941 4.25H12.0041C12.9706 4.25 13.7541 5.0335 13.7541 6C13.7541 6.9665 12.9706 7.75 12.0041 7.75H11.9941C11.0276 7.75 10.2441 6.9665 10.2441 6ZM10.2441 18C10.2441 17.0335 11.0276 16.25 11.9941 16.25H12.0041C12.9706 16.25 13.7541 17.0335 13.7541 18C13.7541 18.9665 12.9706 19.75 12.0041 19.75H11.9941C11.0276 19.75 10.2441 18.9665 10.2441 18ZM11.9941 10.25C11.0276 10.25 10.2441 11.0335 10.2441 12C10.2441 12.9665 11.0276 13.75 11.9941 13.75H12.0041C12.9706 13.75 13.7541 12.9665 13.7541 12C13.7541 11.0335 12.9706 10.25 12.0041 10.25H11.9941Z" fill=""></path>
-                                </svg>
+                        <div x-data="{openMenu: false}" class="relative">
+                            <button @click="openMenu = !openMenu"
+                                    class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-2">
+                                <i class="fas fa-ellipsis-v"></i>
                             </button>
-                            <div x-show="openDropDown" @click.outside="openDropDown = false" class="shadow-theme-lg dark:bg-gray-dark absolute top-full right-0 z-40 w-40 space-y-1 rounded-2xl border border-gray-200 bg-white p-2 dark:border-gray-800" style="display: none;">
-                                <button class="text-theme-xs flex w-full rounded-lg px-3 py-2 text-left font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
-                                    View More
+                            <div x-show="openMenu" @click.outside="openMenu = false" x-cloak
+                                 class="absolute right-0 top-full z-40 w-48 space-y-1 rounded-2xl border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-800 dark:bg-gray-800">
+                                <button @click="showNewChatModal = true; openMenu = false"
+                                        class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+                                    <i class="fas fa-plus w-5"></i>
+                                    Новый чат
                                 </button>
-                                <button class="text-theme-xs flex w-full rounded-lg px-3 py-2 text-left font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
-                                    Delete
+                                <button @click="showNewGroupModal = true; openMenu = false"
+                                        class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+                                    <i class="fas fa-users w-5"></i>
+                                    Создать группу
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="mt-4 flex items-center gap-3 pb-14 xl:pb-0">
-                        <button @click="isMobile = !isMobile" class="flex h-11 w-full max-w-11 items-center justify-center rounded-lg border border-gray-300 text-gray-700 xl:hidden dark:border-gray-700 dark:text-gray-400">
-                            <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M3.25 6C3.25 5.58579 3.58579 5.25 4 5.25H20C20.4142 5.25 20.75 5.58579 20.75 6C20.75 6.41421 20.4142 6.75 20 6.75L4 6.75C3.58579 6.75 3.25 6.41422 3.25 6ZM3.25 18C3.25 17.5858 3.58579 17.25 4 17.25L20 17.25C20.4142 17.25 20.75 17.5858 20.75 18C20.75 18.4142 20.4142 18.75 20 18.75L4 18.75C3.58579 18.75 3.25 18.4142 3.25 18ZM4 11.25C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75L20 12.75C20.4142 12.75 20.75 12.4142 20.75 12C20.75 11.5858 20.4142 11.25 20 11.25L4 11.25Z" fill=""></path>
-                            </svg>
-                        </button>
+                    <div class="mt-4 relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text"
+                               x-model="searchQuery"
+                               @input="filterChats()"
+                               placeholder="Поиск..."
+                               class="w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+                    </div>
+                </div>
 
-                        <div class="relative my-2 w-full">
-                            <form>
-                                <button class="absolute top-1/2 left-4 -translate-y-1/2">
-                                    <svg class="fill-gray-500 dark:fill-gray-400" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M3.04199 9.37381C3.04199 5.87712 5.87735 3.04218 9.37533 3.04218C12.8733 3.04218 15.7087 5.87712 15.7087 9.37381C15.7087 12.8705 12.8733 15.7055 9.37533 15.7055C5.87735 15.7055 3.04199 12.8705 3.04199 9.37381ZM9.37533 1.54218C5.04926 1.54218 1.54199 5.04835 1.54199 9.37381C1.54199 13.6993 5.04926 17.2055 9.37533 17.2055C11.2676 17.2055 13.0032 16.5346 14.3572 15.4178L17.1773 18.2381C17.4702 18.531 17.945 18.5311 18.2379 18.2382C18.5308 17.9453 18.5309 17.4704 18.238 17.1775L15.4182 14.3575C16.5367 13.0035 17.2087 11.2671 17.2087 9.37381C17.2087 5.04835 13.7014 1.54218 9.37533 1.54218Z" fill=""></path>
-                                    </svg>
+                <!-- Chat List -->
+                <div class="flex-1 overflow-auto px-4 pb-4 sm:px-5 custom-scrollbar">
+                    <template x-if="loading">
+                        <div class="flex justify-center py-8">
+                            <i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i>
+                        </div>
+                    </template>
+
+                    <template x-if="!loading && filteredChats.length === 0">
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-comments text-4xl mb-2 opacity-50"></i>
+                            <p>Нет чатов</p>
+                        </div>
+                    </template>
+
+                    <template x-for="chat in filteredChats" :key="chat.id">
+                        <div @click="selectChat(chat)"
+                             class="flex cursor-pointer items-center gap-3 rounded-lg p-3 mb-1 hover:bg-gray-100 dark:hover:bg-white/[0.03]"
+                             :class="{'bg-gray-100 dark:bg-white/[0.03]': activeChat?.id === chat.id}">
+
+                            <div class="relative flex-shrink-0">
+                                <template x-if="chat.type === 'private' && chat.users && chat.users[0]">
+                                    <div class="h-12 w-12 rounded-full overflow-hidden bg-gray-200">
+                                        <template x-if="chat.users[0].avatar">
+                                            <img :src="chat.users[0].avatar" class="h-full w-full object-cover">
+                                        </template>
+                                        <template x-if="!chat.users[0].avatar">
+                                            <div class="h-full w-full flex items-center justify-center text-lg font-medium text-white"
+                                                 :class="'bg-' + (chat.users[0].avatar_color || 'blue-500')">
+                                                <span x-text="chat.users[0].initials || '?'"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+
+                                <template x-if="chat.type === 'group'">
+                                    <div class="h-12 w-12 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                                        <i class="fas fa-users text-xl text-gray-500"></i>
+                                    </div>
+                                </template>
+
+                                <template x-if="chat.type === 'private' && chat.users && chat.users[0]">
+                                <span class="online-indicator"
+                                      :class="chat.users[0].is_online ? 'online' : 'offline'"></span>
+                                </template>
+                            </div>
+
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-start justify-between">
+                                    <h5 class="text-sm font-medium text-gray-800 truncate dark:text-white/90"
+                                        x-text="chat.display_name || chat.name || 'Чат'"></h5>
+                                    <span class="text-xs text-gray-400 flex-shrink-0 ml-2" x-text="formatTime(chat.updated_at)"></span>
+                                </div>
+
+                                <p class="text-xs text-gray-500 truncate dark:text-gray-400 mt-0.5">
+                                    <template x-if="chat.last_message">
+                                    <span>
+                                        <span x-text="chat.last_message.user?.name + ': '"
+                                              x-show="chat.type === 'group'"></span>
+                                        <span x-text="chat.last_message.content || 'Файл'"></span>
+                                    </span>
+                                    </template>
+                                    <template x-if="!chat.last_message">
+                                        <span>Нет сообщений</span>
+                                    </template>
+                                </p>
+
+                                <div class="flex items-center justify-between mt-1">
+                                <span class="text-xs text-gray-400 truncate max-w-[150px]"
+                                      x-text="chat.users?.map(u => u.name).join(', ')"></span>
+
+                                    <div class="flex items-center gap-1 flex-shrink-0">
+                                    <span x-show="chat.unread_count > 0"
+                                          class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-green-500 rounded-full"
+                                          x-text="chat.unread_count"></span>
+
+                                        <span x-show="chat.pivot?.is_muted"
+                                              class="text-gray-400">
+                                        <i class="fas fa-volume-mute text-xs"></i>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Chat Box -->
+            <div class="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] xl:w-3/4"
+                 :class="{'hidden xl:flex': !activeChat, 'flex': activeChat}">
+
+                <template x-if="!activeChat">
+                    <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                        <i class="fas fa-comments text-6xl mb-4"></i>
+                        <p class="text-lg">Выберите чат для начала общения</p>
+                    </div>
+                </template>
+
+                <template x-if="activeChat">
+                    <div class="flex flex-col h-full">
+                        <!-- Chat Header -->
+                        <div class="sticky flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-800">
+                            <div class="flex items-center gap-3">
+                                <button @click="activeChat = null" class="xl:hidden mr-2 p-2 hover:bg-gray-100 rounded-full">
+                                    <i class="fas fa-arrow-left"></i>
                                 </button>
 
-                                <input type="text" placeholder="Search..." class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pr-3.5 pl-[42px] text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30">
+                                <div class="relative flex-shrink-0">
+                                    <template x-if="activeChat.type === 'private' && activeChat.users && activeChat.users[0]">
+                                        <div class="h-10 w-10 rounded-full overflow-hidden bg-gray-200">
+                                            <template x-if="activeChat.users[0].avatar">
+                                                <img :src="activeChat.users[0].avatar" class="h-full w-full object-cover">
+                                            </template>
+                                            <template x-if="!activeChat.users[0].avatar">
+                                                <div class="h-full w-full flex items-center justify-center text-sm font-medium text-white"
+                                                     :class="'bg-' + (activeChat.users[0].avatar_color || 'blue-500')">
+                                                    <span x-text="activeChat.users[0].initials || '?'"></span>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+
+                                    <template x-if="activeChat.type === 'group'">
+                                        <div class="h-10 w-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                                            <i class="fas fa-users text-lg text-gray-500"></i>
+                                        </div>
+                                    </template>
+
+                                    <template x-if="activeChat.type === 'private' && activeChat.users && activeChat.users[0]">
+                                    <span class="online-indicator w-3 h-3"
+                                          :class="activeChat.users[0].is_online ? 'online' : 'offline'"></span>
+                                    </template>
+                                </div>
+
+                                <div>
+                                    <h5 class="text-sm font-medium text-gray-800 dark:text-white/90"
+                                        x-text="activeChat.display_name || activeChat.name || 'Чат'"></h5>
+                                    <p class="text-xs text-gray-500 mt-0.5">
+                                    <span x-show="activeChat.type === 'private' && activeChat.users && activeChat.users[0]"
+                                          x-text="activeChat.users[0].is_online ? 'В сети' : (activeChat.users[0].last_activity ? 'Был(а) ' + formatTime(activeChat.users[0].last_activity) : '')"></span>
+                                        <span x-show="activeChat.type === 'group'"
+                                              x-text="activeChat.users?.length + ' участников'"></span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button @click="toggleMute(activeChat)"
+                                        class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white/90 rounded-full hover:bg-gray-100"
+                                        :class="{'text-green-500': activeChat.pivot?.is_muted}">
+                                    <i class="fas" :class="activeChat.pivot?.is_muted ? 'fa-volume-off' : 'fa-volume-up'"></i>
+                                </button>
+
+                                <button @click="showChatInfo = !showChatInfo"
+                                        class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white/90 rounded-full hover:bg-gray-100">
+                                    <i class="fas fa-info-circle"></i>
+                                </button>
+
+                                <div x-data="{openMenu: false}" class="relative">
+                                    <button @click="openMenu = !openMenu"
+                                            class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white/90 rounded-full hover:bg-gray-100">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div x-show="openMenu" @click.outside="openMenu = false" x-cloak
+                                         class="absolute right-0 top-full z-40 w-48 space-y-1 rounded-2xl border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-800 dark:bg-gray-800">
+
+                                        <template x-if="activeChat.type === 'group' && (activeChat.pivot?.role === 'admin' || isLeader)">
+                                            <button @click="showAddUsersModal = true; openMenu = false"
+                                                    class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+                                                <i class="fas fa-user-plus w-5"></i>
+                                                Добавить участников
+                                            </button>
+                                        </template>
+
+                                        <button @click="leaveChat(activeChat); openMenu = false"
+                                                class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
+                                            <i class="fas fa-sign-out-alt w-5"></i>
+                                            Покинуть чат
+                                        </button>
+
+                                        <template x-if="activeChat.type === 'group' && (activeChat.pivot?.role === 'admin' || isLeader)">
+                                            <button @click="deleteChat(activeChat); openMenu = false"
+                                                    class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
+                                                <i class="fas fa-trash w-5"></i>
+                                                Удалить чат
+                                            </button>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Messages Area -->
+                        <div class="flex-1 overflow-auto p-5 space-y-4 custom-scrollbar"
+                             x-ref="messagesContainer"
+                             @scroll="checkScroll()">
+
+                            <template x-if="loadingMessages">
+                                <div class="flex justify-center py-4">
+                                    <i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i>
+                                </div>
+                            </template>
+
+                            <template x-for="message in messages" :key="message.id">
+                                <div class="flex"
+                                     :class="message.user_id === userId ? 'justify-end' : 'justify-start'">
+
+                                    <div class="max-w-[70%]"
+                                         :class="message.user_id === userId ? 'text-right' : ''">
+
+                                        <!-- System Message -->
+                                        <template x-if="message.type === 'system'">
+                                            <div class="text-center text-xs text-gray-500 my-2">
+                                            <span class="bg-gray-100 px-3 py-1 rounded-full dark:bg-gray-800"
+                                                  x-text="message.content"></span>
+                                            </div>
+                                        </template>
+
+                                        <!-- Regular Message -->
+                                        <template x-if="message.type !== 'system'">
+                                            <div>
+                                                <!-- Sender name for group chats -->
+                                                <p x-show="activeChat.type === 'group' && message.user_id !== userId"
+                                                   class="text-xs text-gray-500 mb-1 ml-2"
+                                                   x-text="message.user?.name"></p>
+
+                                                <!-- Message content -->
+                                                <div class="rounded-2xl px-4 py-2 break-words"
+                                                     :class="message.user_id === userId ?
+                                                        'bg-green-500 text-white rounded-br-none' :
+                                                        'bg-gray-100 dark:bg-white/5 rounded-bl-none'">
+
+                                                    <!-- File message -->
+                                                    <template x-if="message.type === 'file'">
+                                                        <div class="file-attachment" @click="downloadFile(message)">
+                                                            <div class="flex items-center gap-3">
+                                                                <i :class="'fas ' + (message.file_icon || 'fa-file') + ' text-2xl'"></i>
+                                                                <div class="flex-1 min-w-0">
+                                                                    <p class="text-sm font-medium truncate"
+                                                                       x-text="message.file_name || 'Файл'"></p>
+                                                                    <p class="text-xs opacity-75"
+                                                                       x-text="message.formatted_file_size || ''"></p>
+                                                                </div>
+                                                                <i class="fas fa-download"></i>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+
+                                                    <!-- Image message -->
+                                                    <template x-if="message.type === 'image'">
+                                                        <div class="max-w-sm">
+                                                            <img :src="message.file_url"
+                                                                 :alt="message.file_name"
+                                                                 class="rounded-lg cursor-pointer max-h-48 object-cover"
+                                                                 @click="openImageViewer(message)">
+                                                        </div>
+                                                    </template>
+
+                                                    <!-- Text message -->
+                                                    <template x-if="message.type === 'text' || !message.type">
+                                                        <p class="text-sm whitespace-pre-wrap break-words"
+                                                           x-text="message.content"></p>
+                                                    </template>
+
+                                                    <!-- Edited indicator -->
+                                                    <span x-show="message.is_edited"
+                                                          class="text-xs opacity-70 mt-1 block">
+                                                    (ред.)
+                                                </span>
+                                                </div>
+
+                                                <!-- Message footer -->
+                                                <div class="flex items-center gap-2 mt-1 text-xs text-gray-400">
+                                                    <span x-text="formatTime(message.created_at)"></span>
+
+                                                    <template x-if="message.user_id === userId">
+                                                        <div class="flex items-center gap-1">
+                                                            <i class="fas fa-check text-xs"
+                                                               :class="{'text-blue-400': message.delivered_at, 'text-gray-400': !message.delivered_at}"></i>
+                                                            <i class="fas fa-check text-xs"
+                                                               :class="{'text-blue-600': message.statuses?.[0]?.status === 'read', 'text-gray-400': message.statuses?.[0]?.status !== 'read'}"></i>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- Typing indicator -->
+                            <div x-show="typingUsers.length > 0"
+                                 class="flex items-center gap-2 text-gray-500">
+                                <div class="typing-indicator">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <span class="text-xs" x-text="getTypingText()"></span>
+                            </div>
+                        </div>
+
+                        <!-- Scroll to bottom button -->
+                        <button x-show="showScrollButton"
+                                @click="scrollToBottom()"
+                                class="fixed bottom-24 right-8 bg-green-500 text-white rounded-full p-3 shadow-lg hover:bg-green-600 transition z-10">
+                            <i class="fas fa-arrow-down"></i>
+                        </button>
+
+                        <!-- Message Input -->
+                        <div class="sticky bottom-0 border-t border-gray-200 p-3 dark:border-gray-800 bg-white dark:bg-gray-900">
+                            <form @submit.prevent="sendMessage" class="flex items-center gap-2">
+                                <button type="button"
+                                        @click="triggerFileUpload"
+                                        class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white/90 rounded-full hover:bg-gray-100"
+                                        :disabled="sending">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
+
+                                <input type="file"
+                                       x-ref="fileInput"
+                                       @change="uploadFile"
+                                       class="hidden"
+                                       accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar">
+
+                                <div class="relative flex-1">
+                                <textarea x-model="newMessage"
+                                          @keydown.enter.prevent="handleEnterKey"
+                                          @input="handleTyping"
+                                          rows="1"
+                                          placeholder="Написать сообщение..."
+                                          class="message-input w-full border-0 bg-transparent px-4 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-0 dark:text-white/90 resize-none max-h-32"
+                                          style="max-height: 120px;"
+                                          :disabled="sending"></textarea>
+                                </div>
+
+                                <button type="submit"
+                                        :disabled="(!newMessage.trim() && !selectedFile) || sending"
+                                        class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500 text-white hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
                             </form>
                         </div>
-                    </div>
-                </div>
 
-                <div class="no-scrollbar flex-col overflow-auto hidden xl:flex" :class="isMobile ? 'flex fixed xl:static top-0 left-0 z-999999 h-screen bg-white dark:bg-gray-900' : 'hidden xl:flex'">
-                    <div class="flex items-center justify-between border-b border-gray-200 p-5 xl:hidden dark:border-gray-800">
-                        <div>
-                            <h3 class="text-theme-xl font-semibold text-gray-800 sm:text-2xl dark:text-white/90">
-                                Chat
-                            </h3>
-                        </div>
+                        <!-- Chat Info Sidebar -->
+                        <div x-show="showChatInfo" x-cloak
+                             class="absolute right-0 top-0 bottom-0 w-80 bg-white border-l border-gray-200 dark:bg-gray-800 dark:border-gray-700 p-4 overflow-auto shadow-xl z-20"
+                             x-transition:enter="transition transform duration-300"
+                             x-transition:enter-start="translate-x-full"
+                             x-transition:enter-end="translate-x-0"
+                             x-transition:leave="transition transform duration-300"
+                             x-transition:leave-start="translate-x-0"
+                             x-transition:leave-end="translate-x-full">
 
-                        <div class="flex items-center gap-1">
-                            <div x-data="{openDropDown: false}" class="relative -mb-1.5">
-                                <button @click="openDropDown = !openDropDown" :class="openDropDown ? 'text-gray-700 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white'" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                                    <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M10.2441 6C10.2441 5.0335 11.0276 4.25 11.9941 4.25H12.0041C12.9706 4.25 13.7541 5.0335 13.7541 6C13.7541 6.9665 12.9706 7.75 12.0041 7.75H11.9941C11.0276 7.75 10.2441 6.9665 10.2441 6ZM10.2441 18C10.2441 17.0335 11.0276 16.25 11.9941 16.25H12.0041C12.9706 16.25 13.7541 17.0335 13.7541 18C13.7541 18.9665 12.9706 19.75 12.0041 19.75H11.9941C11.0276 19.75 10.2441 18.9665 10.2441 18ZM11.9941 10.25C11.0276 10.25 10.2441 11.0335 10.2441 12C10.2441 12.9665 11.0276 13.75 11.9941 13.75H12.0041C12.9706 13.75 13.7541 12.9665 13.7541 12C13.7541 11.0335 12.9706 10.25 12.0041 10.25H11.9941Z" fill=""></path>
-                                    </svg>
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-semibold">Информация о чате</h4>
+                                <button @click="showChatInfo = false" class="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-100 rounded-full">
+                                    <i class="fas fa-times"></i>
                                 </button>
-                                <div x-show="openDropDown" @click.outside="openDropDown = false" class="shadow-theme-lg dark:bg-gray-dark absolute top-full right-0 z-40 w-40 space-y-1 rounded-2xl border border-gray-200 bg-white p-2 dark:border-gray-800" style="display: none;">
-                                    <button class="text-theme-xs flex w-full rounded-lg px-3 py-2 text-left font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
-                                        View More
-                                    </button>
-                                    <button class="text-theme-xs flex w-full rounded-lg px-3 py-2 text-left font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
-                                        Delete
-                                    </button>
-                                </div>
                             </div>
 
-                            <button @click="isMobile = !isMobile" class="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 text-gray-700 dark:border-gray-700 dark:text-gray-400">
-                                <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M6.21967 7.28131C5.92678 6.98841 5.92678 6.51354 6.21967 6.22065C6.51256 5.92775 6.98744 5.92775 7.28033 6.22065L11.999 10.9393L16.7176 6.22078C17.0105 5.92789 17.4854 5.92788 17.7782 6.22078C18.0711 6.51367 18.0711 6.98855 17.7782 7.28144L13.0597 12L17.7782 16.7186C18.0711 17.0115 18.0711 17.4863 17.7782 17.7792C17.4854 18.0721 17.0105 18.0721 16.7176 17.7792L11.999 13.0607L7.28033 17.7794C6.98744 18.0722 6.51256 18.0722 6.21967 17.7794C5.92678 17.4865 5.92678 17.0116 6.21967 16.7187L10.9384 12L6.21967 7.28131Z" fill=""></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="flex max-h-full flex-col overflow-auto px-4 sm:px-5">
-                        <div class="custom-scrollbar max-h-full space-y-1 overflow-auto">
-                            <!-- Chat List Item -->
-                            <div class="flex cursor-pointer items-center gap-3 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-white/[0.03]">
-                                <div class="relative h-12 w-full max-w-[48px] rounded-full">
-                                    <img src="src/images/user/user-18.jpg" alt="profile" class="h-full w-full overflow-hidden rounded-full object-cover object-center">
-                                    <span class="bg-success-500 absolute right-0 bottom-0 block h-3 w-3 rounded-full border-[1.5px] border-white dark:border-gray-900"></span>
-                                </div>
-                                <div class="w-full">
-                                    <div class="flex items-start justify-between">
-                                        <div>
-                                            <h5 class="text-sm font-medium text-gray-800 dark:text-white/90">
-                                                Kaiya George
-                                            </h5>
-                                            <p class="text-theme-xs mt-0.5 text-gray-500 dark:text-gray-400">
-                                                Project Manager
-                                            </p>
-                                        </div>
-                                        <span class="text-theme-xs text-gray-400"> 15 mins </span>
+                            <div class="space-y-4">
+                                <div class="text-center">
+                                    <div class="w-20 h-20 mx-auto rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                                        <template x-if="activeChat.type === 'private' && activeChat.users && activeChat.users[0]">
+                                            <template x-if="activeChat.users[0].avatar">
+                                                <img :src="activeChat.users[0].avatar" class="h-full w-full object-cover">
+                                            </template>
+                                            <template x-if="!activeChat.users[0].avatar">
+                                                <div class="h-full w-full flex items-center justify-center text-2xl font-medium text-white bg-blue-500">
+                                                    <span x-text="activeChat.users[0].initials"></span>
+                                                </div>
+                                            </template>
+                                        </template>
+                                        <template x-if="activeChat.type === 'group'">
+                                            <i class="fas fa-users text-4xl text-gray-400"></i>
+                                        </template>
                                     </div>
+                                    <h5 class="mt-2 font-medium" x-text="activeChat.display_name || activeChat.name"></h5>
+                                    <p class="text-sm text-gray-500" x-show="activeChat.description" x-text="activeChat.description"></p>
                                 </div>
-                            </div>
 
-                            <!-- Chat List Item -->
-                            <div class="flex cursor-pointer items-center gap-3 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-white/[0.03]">
-                                <div class="relative h-12 w-full max-w-[48px] rounded-full">
-                                    <img src="src/images/user/user-17.jpg" alt="profile" class="h-full w-full overflow-hidden rounded-full object-cover object-center">
-                                    <span class="bg-success-500 absolute right-0 bottom-0 block h-3 w-3 rounded-full border-[1.5px] border-white dark:border-gray-900"></span>
-                                </div>
-                                <div class="w-full">
-                                    <div class="flex items-start justify-between">
-                                        <div>
-                                            <h5 class="text-sm font-medium text-gray-800 dark:text-white/90">
-                                                Lindsey Curtis
-                                            </h5>
-                                            <p class="text-theme-xs mt-0.5 text-gray-500 dark:text-gray-400">
-                                                Designer
-                                            </p>
-                                        </div>
-                                        <span class="text-theme-xs text-gray-400"> 30 mins </span>
-                                    </div>
-                                </div>
-                            </div>
+                                <div>
+                                    <h5 class="font-medium mb-2">Участники · <span x-text="activeChat.users?.length"></span></h5>
+                                    <div class="space-y-2 max-h-96 overflow-auto custom-scrollbar">
+                                        <template x-for="user in activeChat.users" :key="user.id">
+                                            <div class="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="relative flex-shrink-0">
+                                                        <div class="w-8 h-8 rounded-full overflow-hidden bg-gray-200">
+                                                            <template x-if="user.avatar">
+                                                                <img :src="user.avatar" class="h-full w-full object-cover">
+                                                            </template>
+                                                            <template x-if="!user.avatar">
+                                                                <div class="h-full w-full flex items-center justify-center text-xs font-medium text-white"
+                                                                     :class="'bg-' + (user.avatar_color || 'blue-500')">
+                                                                    <span x-text="user.initials"></span>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                        <span class="online-indicator w-2.5 h-2.5"
+                                                              :class="user.is_online ? 'online' : 'offline'"></span>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-medium" x-text="user.name"></p>
+                                                        <p class="text-xs text-gray-500" x-text="user.role || 'Сотрудник'"></p>
+                                                    </div>
+                                                </div>
 
-                            <!-- Chat List Item -->
-                            <div class="flex cursor-pointer items-center gap-3 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-white/[0.03]">
-                                <div class="relative h-12 w-full max-w-[48px] rounded-full">
-                                    <img src="src/images/user/user-19.jpg" alt="profile" class="h-full w-full overflow-hidden rounded-full object-cover object-center">
-                                    <span class="bg-success-500 absolute right-0 bottom-0 block h-3 w-3 rounded-full border-[1.5px] border-white dark:border-gray-900"></span>
-                                </div>
-                                <div class="w-full">
-                                    <div class="flex items-start justify-between">
-                                        <div>
-                                            <h5 class="text-sm font-medium text-gray-800 dark:text-white/90">
-                                                Zain Geidt
-                                            </h5>
-                                            <p class="text-theme-xs mt-0.5 text-gray-500 dark:text-gray-400">
-                                                Content Writer
-                                            </p>
-                                        </div>
-                                        <span class="text-theme-xs text-gray-400"> 45 mins </span>
-                                    </div>
-                                </div>
-                            </div>
+                                                <template x-if="activeChat.type === 'group' && (activeChat.pivot?.role === 'admin' || isLeader) && user.id !== userId">
+                                                    <button @click="removeUserFromChat(user.id)"
+                                                            class="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded-full">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </template>
 
-                            <!-- Chat List Item -->
-                            <div class="flex cursor-pointer items-center gap-3 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-white/[0.03]">
-                                <div class="relative h-12 w-full max-w-[48px] rounded-full">
-                                    <img src="src/images/user/user-05.jpg" alt="profile" class="h-full w-full overflow-hidden rounded-full object-cover object-center">
-                                    <span class="bg-warning-500 absolute right-0 bottom-0 block h-3 w-3 rounded-full border-[1.5px] border-white dark:border-gray-900"></span>
-                                </div>
-                                <div class="w-full">
-                                    <div class="flex items-start justify-between">
-                                        <div>
-                                            <h5 class="text-sm font-medium text-gray-800 dark:text-white/90">
-                                                Carla George
-                                            </h5>
-                                            <p class="text-theme-xs mt-0.5 text-gray-500 dark:text-gray-400">
-                                                Front-end Developer
-                                            </p>
-                                        </div>
-                                        <span class="text-theme-xs text-gray-400"> 2 days </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Chat List Item -->
-                            <div class="flex cursor-pointer items-center gap-3 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-white/[0.03]">
-                                <div class="relative h-12 w-full max-w-[48px] rounded-full">
-                                    <img src="src/images/user/user-20.jpg" alt="profile" class="h-full w-full overflow-hidden rounded-full object-cover object-center">
-                                    <span class="bg-success-500 absolute right-0 bottom-0 block h-3 w-3 rounded-full border-[1.5px] border-white dark:border-gray-900"></span>
-                                </div>
-                                <div class="w-full">
-                                    <div class="flex items-start justify-between">
-                                        <div>
-                                            <h5 class="text-sm font-medium text-gray-800 dark:text-white/90">
-                                                Abram Schleifer
-                                            </h5>
-                                            <p class="text-theme-xs mt-0.5 text-gray-500 dark:text-gray-400">
-                                                Digital Marketer
-                                            </p>
-                                        </div>
-                                        <span class="text-theme-xs text-gray-400"> 1 hour </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Chat List Item -->
-                            <div class="flex cursor-pointer items-center gap-3 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-white/[0.03]">
-                                <div class="relative h-12 w-full max-w-[48px] rounded-full">
-                                    <img src="src/images/user/user-34.jpg" alt="profile" class="h-full w-full overflow-hidden rounded-full object-cover object-center">
-                                    <span class="bg-success-500 absolute right-0 bottom-0 block h-3 w-3 rounded-full border-[1.5px] border-white dark:border-gray-900"></span>
-                                </div>
-                                <div class="w-full">
-                                    <div class="flex items-start justify-between">
-                                        <div>
-                                            <h5 class="text-sm font-medium text-gray-800 dark:text-white/90">
-                                                Lincoln Donin
-                                            </h5>
-                                            <p class="text-theme-xs mt-0.5 text-gray-500 dark:text-gray-400">
-                                                Project ManagerProduct Designer
-                                            </p>
-                                        </div>
-                                        <span class="text-theme-xs text-gray-400"> 3 days </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Chat List Item -->
-                            <div class="flex cursor-pointer items-center gap-3 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-white/[0.03]">
-                                <div class="relative h-12 w-full max-w-[48px] rounded-full">
-                                    <img src="src/images/user/user-35.jpg" alt="profile" class="h-full w-full overflow-hidden rounded-full object-cover object-center">
-                                    <span class="bg-success-500 absolute right-0 bottom-0 block h-3 w-3 rounded-full border-[1.5px] border-white dark:border-gray-900"></span>
-                                </div>
-                                <div class="w-full">
-                                    <div class="flex items-start justify-between">
-                                        <div>
-                                            <h5 class="text-sm font-medium text-gray-800 dark:text-white/90">
-                                                Erin Geidthem
-                                            </h5>
-                                            <p class="text-theme-xs mt-0.5 text-gray-500 dark:text-gray-400">
-                                                Copyrighter
-                                            </p>
-                                        </div>
-                                        <span class="text-theme-xs text-gray-400"> 5 days </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Chat List Item -->
-                            <div class="flex cursor-pointer items-center gap-3 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-white/[0.03]">
-                                <div class="relative h-12 w-full max-w-[48px] rounded-full">
-                                    <img src="src/images/user/user-36.jpg" alt="profile" class="h-full w-full overflow-hidden rounded-full object-cover object-center">
-                                    <span class="bg-error-500 absolute right-0 bottom-0 block h-3 w-3 rounded-full border-[1.5px] border-white dark:border-gray-900"></span>
-                                </div>
-                                <div class="w-full">
-                                    <div class="flex items-start justify-between">
-                                        <div>
-                                            <h5 class="text-sm font-medium text-gray-800 dark:text-white/90">
-                                                Alena Baptista
-                                            </h5>
-                                            <p class="text-theme-xs mt-0.5 text-gray-500 dark:text-gray-400">
-                                                SEO Expert
-                                            </p>
-                                        </div>
-                                        <span class="text-theme-xs text-gray-400"> 2 hours </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Chat List Item -->
-                            <div class="flex cursor-pointer items-center gap-3 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-white/[0.03]">
-                                <div class="relative h-12 w-full max-w-[48px] rounded-full">
-                                    <img src="src/images/user/user-37.jpg" alt="profile" class="h-full w-full overflow-hidden rounded-full object-cover object-center">
-                                    <span class="bg-success-500 absolute right-0 bottom-0 block h-3 w-3 rounded-full border-[1.5px] border-white dark:border-gray-900"></span>
-                                </div>
-                                <div class="w-full">
-                                    <div class="flex items-start justify-between">
-                                        <div>
-                                            <h5 class="text-sm font-medium text-gray-800 dark:text-white/90">
-                                                Wilium vamos
-                                            </h5>
-                                            <p class="text-theme-xs mt-0.5 text-gray-500 dark:text-gray-400">
-                                                Content Writer
-                                            </p>
-                                        </div>
-                                        <span class="text-theme-xs text-gray-400"> 5 days </span>
+                                                <span x-show="user.id === activeChat.created_by"
+                                                      class="text-xs text-gray-400">
+                                                <i class="fas fa-crown text-yellow-500"></i>
+                                            </span>
+                                            </div>
+                                        </template>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- ====== Chat List End -->
+                </template>
             </div>
-            <!-- Chat Sidebar End -->
+        </div>
 
-            <!-- Chat Box Start -->
-            <div class="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] xl:w-3/4">
-                <!-- ====== Chat Box Start -->
-                <div class="sticky flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-800 xl:px-6">
-                    <div class="flex items-center gap-3">
-                        <div class="relative h-12 w-full max-w-[48px] rounded-full">
-                            <img src="src/images/user/user-17.jpg" alt="profile" class="h-full w-full overflow-hidden rounded-full object-cover object-center">
-                            <span class="absolute bottom-0 right-0 block h-3 w-3 rounded-full border-[1.5px] border-white bg-success-500 dark:border-gray-900"></span>
-                        </div>
+        <!-- New Chat Modal -->
+        <div x-show="showNewChatModal" x-cloak
+             class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+             @click.self="showNewChatModal = false">
+            <div class="bg-white rounded-2xl w-full max-w-md p-6 dark:bg-gray-800">
+                <h3 class="text-lg font-semibold mb-4">Новый чат</h3>
 
-                        <h5 class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                            Lindsey Curtis
-                        </h5>
-                    </div>
-
-                    <div class="flex items-center gap-3">
-                        <button class="text-gray-700 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white/90">
-                            <svg class="stroke-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5.54488 11.7254L8.80112 10.056C8.94007 9.98476 9.071 9.89524 9.16639 9.77162C9.57731 9.23912 9.66722 8.51628 9.38366 7.89244L7.76239 4.32564C7.23243 3.15974 5.7011 2.88206 4.79552 3.78764L3.72733 4.85577C3.36125 5.22182 3.18191 5.73847 3.27376 6.24794C3.9012 9.72846 5.56003 13.0595 8.25026 15.7497C10.9405 18.44 14.2716 20.0988 17.7521 20.7262C18.2615 20.8181 18.7782 20.6388 19.1442 20.2727L20.2124 19.2045C21.118 18.2989 20.8403 16.7676 19.6744 16.2377L16.1076 14.6164C15.4838 14.3328 14.7609 14.4227 14.2284 14.8336C14.1048 14.929 14.0153 15.06 13.944 15.1989L12.2747 18.4552" stroke="" stroke-width="1.5"></path>
-                            </svg>
-                        </button>
-
-                        <button class="text-gray-700 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white/90">
-                            <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M4.25 5.25C3.00736 5.25 2 6.25736 2 7.5V16.5C2 17.7426 3.00736 18.75 4.25 18.75H15.25C16.4926 18.75 17.5 17.7426 17.5 16.5V15.3957L20.1118 16.9465C20.9451 17.4412 22 16.8407 22 15.8716V8.12838C22 7.15933 20.9451 6.55882 20.1118 7.05356L17.5 8.60433V7.5C17.5 6.25736 16.4926 5.25 15.25 5.25H4.25ZM17.5 10.3488V13.6512L20.5 15.4325V8.56756L17.5 10.3488ZM3.5 7.5C3.5 7.08579 3.83579 6.75 4.25 6.75H15.25C15.6642 6.75 16 7.08579 16 7.5V16.5C16 16.9142 15.6642 17.25 15.25 17.25H4.25C3.83579 17.25 3.5 16.9142 3.5 16.5V7.5Z" fill=""></path>
-                            </svg>
-                        </button>
-
-                        <div x-data="{openDropDown: false}" class="relative -mb-1.5">
-                            <button @click="openDropDown = !openDropDown" :class="openDropDown ? 'text-gray-800 dark:text-white/90' : 'text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white/90'" class="text-gray-700 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white/90">
-                                <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M10.2441 6C10.2441 5.0335 11.0276 4.25 11.9941 4.25H12.0041C12.9706 4.25 13.7541 5.0335 13.7541 6C13.7541 6.9665 12.9706 7.75 12.0041 7.75H11.9941C11.0276 7.75 10.2441 6.9665 10.2441 6ZM10.2441 18C10.2441 17.0335 11.0276 16.25 11.9941 16.25H12.0041C12.9706 16.25 13.7541 17.0335 13.7541 18C13.7541 18.9665 12.9706 19.75 12.0041 19.75H11.9941C11.0276 19.75 10.2441 18.9665 10.2441 18ZM11.9941 10.25C11.0276 10.25 10.2441 11.0335 10.2441 12C10.2441 12.9665 11.0276 13.75 11.9941 13.75H12.0041C12.9706 13.75 13.7541 12.9665 13.7541 12C13.7541 11.0335 12.9706 10.25 12.0041 10.25H11.9941Z" fill=""></path>
-                                </svg>
-                            </button>
-                            <div x-show="openDropDown" @click.outside="openDropDown = false" class="absolute right-0 top-full z-40 w-40 space-y-1 rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark" style="display: none;">
-                                <button class="flex w-full rounded-lg px-3 py-2 text-left text-theme-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
-                                    View More
-                                </button>
-                                <button class="flex w-full rounded-lg px-3 py-2 text-left text-theme-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
+                <div class="mb-4">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text"
+                               x-model="colleagueSearch"
+                               placeholder="Поиск сотрудников..."
+                               class="w-full rounded-lg border border-gray-300 px-4 py-2 pl-10 dark:bg-gray-700 dark:border-gray-600">
                     </div>
                 </div>
 
-                <div class="custom-scrollbar max-h-full flex-1 space-y-6 overflow-auto p-5 xl:space-y-8 xl:p-6">
-                    <div class="max-w-[350px]">
-                        <div class="flex items-start gap-4">
-                            <div class="h-10 w-full max-w-10 rounded-full">
-                                <img src="src/images/user/user-17.jpg" alt="profile" class="h-full w-full overflow-hidden rounded-full object-cover object-center">
-                            </div>
+                <div class="max-h-96 overflow-auto space-y-2 custom-scrollbar">
+                    <template x-if="filteredColleagues.length === 0">
+                        <div class="text-center py-4 text-gray-500">
+                            <p>Нет доступных сотрудников</p>
+                        </div>
+                    </template>
 
-                            <div>
-                                <div class="rounded-lg rounded-tl-sm bg-gray-100 px-3 py-2 dark:bg-white/5">
-                                    <p class="text-sm text-gray-800 dark:text-white/90">
-                                        I want to make an appointment tomorrow from 2:00 to 5:00pm?
-                                    </p>
+                    <template x-for="colleague in filteredColleagues" :key="colleague.id">
+                        <div @click="startPrivateChat(colleague)"
+                             class="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <div class="relative flex-shrink-0">
+                                <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
+                                    <template x-if="colleague.avatar">
+                                        <img :src="colleague.avatar" class="h-full w-full object-cover">
+                                    </template>
+                                    <template x-if="!colleague.avatar">
+                                        <div class="h-full w-full flex items-center justify-center text-sm font-medium text-white"
+                                             :class="'bg-' + (colleague.avatar_color || 'blue-500')">
+                                            <span x-text="colleague.initials"></span>
+                                        </div>
+                                    </template>
                                 </div>
-                                <p class="mt-2 text-theme-xs text-gray-500 dark:text-gray-400">
-                                    Lindsey, 2 hours ago
-                                </p>
+                                <span class="online-indicator w-2.5 h-2.5"
+                                      :class="colleague.is_online ? 'online' : 'offline'"></span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium" x-text="colleague.name"></p>
+                                <p class="text-sm text-gray-500" x-text="colleague.department || 'Без отдела'"></p>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="ml-auto max-w-[350px] text-right">
-                        <div class="ml-auto max-w-max rounded-lg rounded-tr-sm bg-green-500 px-3 py-2 dark:bg-green-500">
-                            <p class="text-sm text-white dark:text-white/90">
-                                If don’t like something, I’ll stay away from it.
-                            </p>
-                        </div>
-                        <p class="mt-2 text-theme-xs text-gray-500 dark:text-gray-400">
-                            2 hours ago
-                        </p>
-                    </div>
-
-                    <div class="max-w-[350px]">
-                        <div class="flex items-start gap-4">
-                            <div class="h-10 w-full max-w-10 rounded-full">
-                                <img src="src/images/user/user-17.jpg" alt="profile" class="h-full w-full overflow-hidden rounded-full object-cover object-center">
-                            </div>
-
-                            <div>
-                                <div class="rounded-lg rounded-tl-sm bg-gray-100 px-3 py-2 dark:bg-white/5">
-                                    <p class="text-sm text-gray-800 dark:text-white/90">
-                                        I want more detailed information.
-                                    </p>
-                                </div>
-
-                                <p class="mt-2 text-theme-xs text-gray-500 dark:text-gray-400">
-                                    Lindsey, 2 hours ago
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="ml-auto max-w-[350px] text-right">
-                        <div class="ml-auto max-w-max rounded-lg rounded-tr-sm bg-green-500 px-3 py-2 dark:bg-green-500 dark:text-white/90">
-                            <p class="text-sm text-white dark:text-white/90">
-                                If don’t like something, I’ll stay away from it.
-                            </p>
-                        </div>
-
-                        <div class="ml-auto mt-2 max-w-max rounded-lg rounded-tr-sm bg-green-500 px-3 py-2 dark:bg-green-500">
-                            <p class="text-sm text-white dark:text-white/90">
-                                They got there early, and got really good seats.
-                            </p>
-                        </div>
-
-                        <p class="mt-2 text-theme-xs text-gray-500 dark:text-gray-400">
-                            2 hours ago
-                        </p>
-                    </div>
-
-                    <div class="max-w-[350px]">
-                        <div class="flex items-start gap-4">
-                            <div class="h-10 w-full max-w-10 rounded-full">
-                                <img src="src/images/user/user-17.jpg" alt="profile" class="h-full w-full overflow-hidden rounded-full object-cover object-center">
-                            </div>
-
-                            <div>
-                                <div class="mb-2 w-full max-w-[270px] overflow-hidden rounded-lg">
-                                    <img src="src/images/chat/chat.jpg" alt="chat">
-                                </div>
-                                <div class="max-w-max rounded-lg rounded-tl-sm bg-gray-100 px-3 py-2 dark:bg-white/5">
-                                    <p class="text-sm text-gray-800 dark:text-white/90">
-                                        Please preview the image
-                                    </p>
-                                </div>
-
-                                <p class="mt-2 text-theme-xs text-gray-500 dark:text-gray-400">
-                                    Lindsey, 2 hours ago
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    </template>
                 </div>
-                <div class="sticky bottom-0 border-t border-gray-200 p-3 dark:border-gray-800">
-                    <form class="flex items-center justify-between">
-                        <div class="relative w-full">
-                            <button class="absolute left-1 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white/90 sm:left-3">
-                                <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM3.5 12C3.5 7.30558 7.30558 3.5 12 3.5C16.6944 3.5 20.5 7.30558 20.5 12C20.5 16.6944 16.6944 20.5 12 20.5C7.30558 20.5 3.5 16.6944 3.5 12ZM10.0001 9.23256C10.0001 8.5422 9.44042 7.98256 8.75007 7.98256C8.05971 7.98256 7.50007 8.5422 7.50007 9.23256V9.23266C7.50007 9.92301 8.05971 10.4827 8.75007 10.4827C9.44042 10.4827 10.0001 9.92301 10.0001 9.23266V9.23256ZM15.2499 7.98256C15.9403 7.98256 16.4999 8.5422 16.4999 9.23256V9.23266C16.4999 9.92301 15.9403 10.4827 15.2499 10.4827C14.5596 10.4827 13.9999 9.92301 13.9999 9.23266V9.23256C13.9999 8.5422 14.5596 7.98256 15.2499 7.98256ZM9.23014 13.7116C8.97215 13.3876 8.5003 13.334 8.17625 13.592C7.8522 13.85 7.79865 14.3219 8.05665 14.6459C8.97846 15.8037 10.4026 16.5481 12 16.5481C13.5975 16.5481 15.0216 15.8037 15.9434 14.6459C16.2014 14.3219 16.1479 13.85 15.8238 13.592C15.4998 13.334 15.0279 13.3876 14.7699 13.7116C14.1205 14.5274 13.1213 15.0481 12 15.0481C10.8788 15.0481 9.87961 14.5274 9.23014 13.7116Z" fill=""></path>
-                                </svg>
-                            </button>
 
-                            <input type="text" placeholder="Type a message" class="h-9 w-full border-none bg-transparent pl-12 pr-5 text-sm text-gray-800 outline-hidden placeholder:text-gray-400 focus:border-0 focus:ring-0 dark:text-white/90">
-                        </div>
-
-                        <div class="flex items-center">
-                            <button class="mr-2 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white/90">
-                                <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12.9522 14.4422C12.9522 14.452 12.9524 14.4618 12.9527 14.4714V16.1442C12.9527 16.6699 12.5265 17.0961 12.0008 17.0961C11.475 17.0961 11.0488 16.6699 11.0488 16.1442V6.15388C11.0488 5.73966 10.7131 5.40388 10.2988 5.40388C9.88463 5.40388 9.54885 5.73966 9.54885 6.15388V16.1442C9.54885 17.4984 10.6466 18.5961 12.0008 18.5961C13.355 18.5961 14.4527 17.4983 14.4527 16.1442V6.15388C14.4527 6.14308 14.4525 6.13235 14.452 6.12166C14.4347 3.84237 12.5817 2 10.2983 2C8.00416 2 6.14441 3.85976 6.14441 6.15388V14.4422C6.14441 14.4492 6.1445 14.4561 6.14469 14.463V16.1442C6.14469 19.3783 8.76643 22 12.0005 22C15.2346 22 17.8563 19.3783 17.8563 16.1442V9.55775C17.8563 9.14354 17.5205 8.80775 17.1063 8.80775C16.6921 8.80775 16.3563 9.14354 16.3563 9.55775V16.1442C16.3563 18.5498 14.4062 20.5 12.0005 20.5C9.59485 20.5 7.64469 18.5498 7.64469 16.1442V9.55775C7.64469 9.55083 7.6446 9.54393 7.64441 9.53706L7.64441 6.15388C7.64441 4.68818 8.83259 3.5 10.2983 3.5C11.764 3.5 12.9522 4.68818 12.9522 6.15388L12.9522 14.4422Z" fill=""></path>
-                                </svg>
-                            </button>
-
-                            <button class="text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white/90">
-                                <svg class="stroke-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="7" y="2.75" width="10" height="12.5" rx="5" stroke="" stroke-width="1.5"></rect>
-                                    <path d="M20 10.25C20 14.6683 16.4183 18.25 12 18.25C7.58172 18.25 4 14.6683 4 10.25" stroke="" stroke-width="1.5" stroke-linecap="round"></path>
-                                    <path d="M10 21.25H14" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <path d="M12 18.25L12 21.25" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <path d="M12 7.5L12 10.5" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <path d="M14.5 8.25L14.5 9.75" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <path d="M9.5 8.25L9.5 9.75" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                </svg>
-                            </button>
-
-                            <button class="ml-3 flex h-9 w-9 items-center justify-center rounded-lg bg-green-500 text-white hover:bg-green-600 xl:ml-5">
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M4.98481 2.44399C3.11333 1.57147 1.15325 3.46979 1.96543 5.36824L3.82086 9.70527C3.90146 9.89367 3.90146 10.1069 3.82086 10.2953L1.96543 14.6323C1.15326 16.5307 3.11332 18.4291 4.98481 17.5565L16.8184 12.0395C18.5508 11.2319 18.5508 8.76865 16.8184 7.961L4.98481 2.44399ZM3.34453 4.77824C3.0738 4.14543 3.72716 3.51266 4.35099 3.80349L16.1846 9.32051C16.762 9.58973 16.762 10.4108 16.1846 10.68L4.35098 16.197C3.72716 16.4879 3.0738 15.8551 3.34453 15.2223L5.19996 10.8853C5.21944 10.8397 5.23735 10.7937 5.2537 10.7473L9.11784 10.7473C9.53206 10.7473 9.86784 10.4115 9.86784 9.99726C9.86784 9.58304 9.53206 9.24726 9.11784 9.24726L5.25157 9.24726C5.2358 9.20287 5.2186 9.15885 5.19996 9.11528L3.34453 4.77824Z" fill="white"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </form>
+                <div class="flex justify-end mt-4">
+                    <button @click="showNewChatModal = false"
+                            class="px-4 py-2 text-gray-600 hover:text-gray-800 dark:text-gray-300">
+                        Отмена
+                    </button>
                 </div>
-                <!-- ====== Chat Box End -->
             </div>
-            <!-- Chat Box End -->
+        </div>
+
+        <!-- New Group Modal -->
+        <div x-show="showNewGroupModal" x-cloak
+             class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+             @click.self="showNewGroupModal = false">
+            <div class="bg-white rounded-2xl w-full max-w-md p-6 dark:bg-gray-800">
+                <h3 class="text-lg font-semibold mb-4">Создать группу</h3>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Название группы</label>
+                        <input type="text"
+                               x-model="newGroup.name"
+                               class="w-full rounded-lg border border-gray-300 px-4 py-2 dark:bg-gray-700 dark:border-gray-600">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Описание (необязательно)</label>
+                        <textarea x-model="newGroup.description"
+                                  rows="2"
+                                  class="w-full rounded-lg border border-gray-300 px-4 py-2 dark:bg-gray-700 dark:border-gray-600"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Участники (минимум 2)</label>
+                        <div class="relative mb-2">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="text"
+                                   x-model="groupSearch"
+                                   placeholder="Поиск..."
+                                   class="w-full rounded-lg border border-gray-300 px-4 py-2 pl-10 dark:bg-gray-700 dark:border-gray-600">
+                        </div>
+
+                        <div class="max-h-48 overflow-auto space-y-2 custom-scrollbar border rounded-lg p-2">
+                            <template x-if="filteredGroupColleagues.length === 0">
+                                <div class="text-center py-2 text-gray-500 text-sm">
+                                    Нет доступных сотрудников
+                                </div>
+                            </template>
+
+                            <template x-for="colleague in filteredGroupColleagues" :key="colleague.id">
+                                <label class="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <input type="checkbox"
+                                           :value="colleague.id"
+                                           x-model="newGroup.selectedUsers"
+                                           class="rounded border-gray-300 text-green-500 focus:ring-green-500">
+                                    <div class="flex-1">
+                                        <p class="font-medium text-sm" x-text="colleague.name"></p>
+                                        <p class="text-xs text-gray-500" x-text="colleague.department || 'Без отдела'"></p>
+                                    </div>
+                                </label>
+                            </template>
+                        </div>
+
+                        <div class="mt-2 text-sm text-gray-500" x-show="newGroup.selectedUsers.length > 0">
+                            Выбрано: <span x-text="newGroup.selectedUsers.length"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2 mt-6">
+                    <button @click="showNewGroupModal = false"
+                            class="px-4 py-2 text-gray-600 hover:text-gray-800 dark:text-gray-300">
+                        Отмена
+                    </button>
+                    <button @click="createGroupChat"
+                            :disabled="!newGroup.name || newGroup.selectedUsers.length < 2"
+                            class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Создать
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Users Modal -->
+        <div x-show="showAddUsersModal" x-cloak
+             class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+             @click.self="showAddUsersModal = false">
+            <div class="bg-white rounded-2xl w-full max-w-md p-6 dark:bg-gray-800">
+                <h3 class="text-lg font-semibold mb-4">Добавить участников</h3>
+
+                <div class="mb-4">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text"
+                               x-model="addUsersSearch"
+                               placeholder="Поиск..."
+                               class="w-full rounded-lg border border-gray-300 px-4 py-2 pl-10 dark:bg-gray-700 dark:border-gray-600">
+                    </div>
+                </div>
+
+                <div class="max-h-96 overflow-auto space-y-2 custom-scrollbar">
+                    <template x-for="colleague in filteredAddUsers" :key="colleague.id">
+                        <template x-if="!activeChat.users?.some(u => u.id === colleague.id)">
+                            <label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <input type="checkbox"
+                                       :value="colleague.id"
+                                       x-model="selectedUsersToAdd"
+                                       class="rounded border-gray-300 text-green-500 focus:ring-green-500">
+                                <div class="flex-1">
+                                    <p class="font-medium" x-text="colleague.name"></p>
+                                    <p class="text-sm text-gray-500" x-text="colleague.department || 'Без отдела'"></p>
+                                </div>
+                            </label>
+                        </template>
+                    </template>
+
+                    <template x-if="filteredAddUsers.filter(u => !activeChat.users?.some(au => au.id === u.id)).length === 0">
+                        <div class="text-center py-4 text-gray-500">
+                            <p>Нет доступных сотрудников для добавления</p>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="flex justify-end gap-2 mt-4">
+                    <button @click="showAddUsersModal = false"
+                            class="px-4 py-2 text-gray-600 hover:text-gray-800 dark:text-gray-300">
+                        Отмена
+                    </button>
+                    <button @click="addUsersToChat"
+                            :disabled="selectedUsersToAdd.length === 0"
+                            class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50">
+                        Добавить (<span x-text="selectedUsersToAdd.length"></span>)
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
 
-
 @push('scripts')
+    <script>
+        // Используем IIFE для изоляции переменных
+        (function() {
+            function chatApp() {
+                return {
+                    // Data
+                    userId: {{ auth()->id() ?? 0 }},
+                    isLeader: {{ auth()->user()?->isLeader() ? 'true' : 'false' }},
+                    isManager: {{ auth()->user()?->isManagerRole() ? 'true' : 'false' }},
+
+                    // UI State
+                    loading: true,
+                    loadingMessages: false,
+                    sending: false,
+                    activeChat: null,
+                    showChatInfo: false,
+                    showNewChatModal: false,
+                    showNewGroupModal: false,
+                    showAddUsersModal: false,
+                    showScrollButton: false,
+
+                    // Chat Data
+                    chats: [],
+                    messages: [],
+                    colleagues: [],
+
+                    // Search
+                    searchQuery: '',
+                    colleagueSearch: '',
+                    groupSearch: '',
+                    addUsersSearch: '',
+
+                    // Message
+                    newMessage: '',
+                    selectedFile: null,
+                    typingUsers: [],
+                    typingTimeout: null,
+
+                    // Group Creation
+                    newGroup: {
+                        name: '',
+                        description: '',
+                        selectedUsers: []
+                    },
+
+                    // Add Users
+                    selectedUsersToAdd: [],
+
+                    // Polling interval
+                    pollInterval: null,
+
+                    // Computed
+                    get unreadTotal() {
+                        return (this.chats || []).reduce((sum, chat) => sum + (chat.unread_count || 0), 0);
+                    },
+
+                    get filteredChats() {
+                        if (!this.searchQuery) return this.chats || [];
+                        const query = this.searchQuery.toLowerCase();
+                        return (this.chats || []).filter(chat =>
+                            (chat.display_name || chat.name || '').toLowerCase().includes(query) ||
+                            (chat.users || []).some(u => (u.name || '').toLowerCase().includes(query))
+                        );
+                    },
+
+                    get filteredColleagues() {
+                        if (!this.colleagueSearch) return this.colleagues || [];
+                        const query = this.colleagueSearch.toLowerCase();
+                        return (this.colleagues || []).filter(c =>
+                            (c.name || '').toLowerCase().includes(query) ||
+                            (c.department || '').toLowerCase().includes(query)
+                        );
+                    },
+
+                    get filteredGroupColleagues() {
+                        let filtered = this.colleagues || [];
+                        if (this.groupSearch) {
+                            const query = this.groupSearch.toLowerCase();
+                            filtered = filtered.filter(c =>
+                                (c.name || '').toLowerCase().includes(query) ||
+                                (c.department || '').toLowerCase().includes(query)
+                            );
+                        }
+                        return filtered.filter(c => !(this.newGroup.selectedUsers || []).includes(c.id));
+                    },
+
+                    get filteredAddUsers() {
+                        let filtered = this.colleagues || [];
+                        if (this.addUsersSearch) {
+                            const query = this.addUsersSearch.toLowerCase();
+                            filtered = filtered.filter(c =>
+                                (c.name || '').toLowerCase().includes(query) ||
+                                (c.department || '').toLowerCase().includes(query)
+                            );
+                        }
+                        return filtered;
+                    },
+
+                    // Methods
+                    init() {
+                        this.loadChats();
+                        this.loadColleagues();
+                        this.startPolling();
+                    },
+
+                    startPolling() {
+                        this.pollInterval = setInterval(() => {
+                            if (this.activeChat) {
+                                this.pollNewMessages();
+                            }
+                            this.loadChats();
+                        }, 5000);
+                    },
+
+                    stopPolling() {
+                        if (this.pollInterval) {
+                            clearInterval(this.pollInterval);
+                        }
+                    },
+
+                    loadChats() {
+                        this.loading = true;
+                        fetch('/chat/api/chats', {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    this.chats = data.chats || [];
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error loading chats:', error);
+                            })
+                            .finally(() => {
+                                this.loading = false;
+                            });
+                    },
+
+                    loadColleagues() {
+                        fetch('/chat/api/colleagues', {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    this.colleagues = data.colleagues || [];
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error loading colleagues:', error);
+                            });
+                    },
+
+                    selectChat(chat) {
+                        this.activeChat = chat;
+                        this.showChatInfo = false;
+                        this.loadMessages(chat);
+                    },
+
+                    loadMessages(chat) {
+                        this.loadingMessages = true;
+                        this.messages = [];
+
+                        fetch(`/chat/api/chats/${chat.id}/messages`, {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    this.messages = (data.messages?.data || []).reverse();
+                                    this.$nextTick(() => {
+                                        this.scrollToBottom();
+                                        this.markAsRead();
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error loading messages:', error);
+                            })
+                            .finally(() => {
+                                this.loadingMessages = false;
+                            });
+                    },
+
+                    pollNewMessages() {
+                        if (!this.activeChat) return;
+
+                        const lastMessageId = this.messages.length > 0 ? this.messages[this.messages.length - 1].id : 0;
+
+                        fetch(`/chat/api/chats/${this.activeChat.id}/messages?after=${lastMessageId}`, {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success && data.messages?.data?.length > 0) {
+                                    const newMessages = data.messages.data.reverse();
+                                    this.messages = [...this.messages, ...newMessages];
+                                    this.$nextTick(() => {
+                                        this.scrollToBottom();
+                                        this.markAsRead();
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error polling messages:', error);
+                            });
+                    },
+
+
+                    sendMessage() {
+                        if ((!this.newMessage.trim() && !this.selectedFile) || this.sending) return;
+
+                        this.sending = true;
+
+                        const formData = new FormData();
+                        if (this.selectedFile) {
+                            formData.append('file', this.selectedFile);
+                            var url = `/chat/api/chats/${this.activeChat.id}/upload`;
+                        } else {
+                            formData.append('content', this.newMessage);
+                            formData.append('type', 'text');
+                            var url = `/chat/api/chats/${this.activeChat.id}/send`;
+                        }
+
+                        fetch(url, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    this.messages.push(data.message);
+                                    this.newMessage = '';
+                                    this.selectedFile = null;
+                                    if (this.$refs.fileInput) {
+                                        this.$refs.fileInput.value = '';
+                                    }
+                                    this.$nextTick(() => {
+                                        this.scrollToBottom();
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error sending message:', error);
+                                alert('Ошибка при отправке сообщения');
+                            })
+                            .finally(() => {
+                                this.sending = false;
+                            });
+                    },
+
+                    uploadFile(event) {
+                        this.selectedFile = event.target.files[0];
+                        this.sendMessage();
+                    },
+
+                    triggerFileUpload() {
+                        if (this.$refs.fileInput) {
+                            this.$refs.fileInput.click();
+                        }
+                    },
+
+                    handleEnterKey(e) {
+                        if (e.shiftKey) {
+                            return;
+                        }
+                        e.preventDefault();
+                        this.sendMessage();
+                    },
+
+                    handleTyping() {
+                        clearTimeout(this.typingTimeout);
+                        this.typingTimeout = setTimeout(() => {
+                            // Implement typing stopped
+                        }, 1000);
+                    },
+
+                    startPrivateChat(colleague) {
+                        fetch('/chat/api/private-chat', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({ user_id: colleague.id })
+                        })
+                            .then(res => {
+                                if (!res.ok) {
+                                    throw new Error(`HTTP error! status: ${res.status}`);
+                                }
+                                return res.json();
+                            })
+                            .then(data => {
+                                if (data.success) {
+                                    this.showNewChatModal = false;
+                                    this.colleagueSearch = '';
+                                    this.loadChats();
+                                    this.selectChat(data.chat);
+                                } else {
+                                    alert(data.message || 'Ошибка при создании чата');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error creating private chat:', error);
+                                alert('Ошибка при создании чата: ' + error.message);
+                            });
+                    },
+
+                    createGroupChat() {
+                        if (!this.newGroup.name || (this.newGroup.selectedUsers || []).length < 2) return;
+
+                        fetch('/chat/api/group-chat', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({
+                                name: this.newGroup.name,
+                                description: this.newGroup.description,
+                                user_ids: this.newGroup.selectedUsers
+                            })
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    this.showNewGroupModal = false;
+                                    this.newGroup = { name: '', description: '', selectedUsers: [] };
+                                    this.groupSearch = '';
+                                    this.loadChats();
+                                    this.selectChat(data.chat);
+                                } else {
+                                    alert(data.message || 'Ошибка при создании группы');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error creating group chat:', error);
+                                alert('Ошибка при создании группы');
+                            });
+                    },
+
+                    addUsersToChat() {
+                        if (this.selectedUsersToAdd.length === 0) return;
+
+                        fetch(`/chat/api/chats/${this.activeChat.id}/add-users`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({ user_ids: this.selectedUsersToAdd })
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    this.showAddUsersModal = false;
+                                    this.selectedUsersToAdd = [];
+                                    this.addUsersSearch = '';
+                                    this.loadMessages(this.activeChat);
+                                    alert('Участники добавлены');
+                                } else {
+                                    alert(data.message || 'Ошибка при добавлении участников');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error adding users:', error);
+                                alert('Ошибка при добавлении участников');
+                            });
+                    },
+
+                    leaveChat(chat) {
+                        if (!confirm('Вы уверены, что хотите покинуть чат?')) return;
+
+                        fetch(`/chat/api/chats/${chat.id}/remove-user`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({ user_id: this.userId })
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    this.loadChats();
+                                    this.activeChat = null;
+                                    alert('Вы покинули чат');
+                                } else {
+                                    alert(data.message || 'Ошибка при выходе из чата');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error leaving chat:', error);
+                                alert('Ошибка при выходе из чата');
+                            });
+                    },
+
+                    removeUserFromChat(userId) {
+                        if (!confirm('Удалить пользователя из чата?')) return;
+
+                        fetch(`/chat/api/chats/${this.activeChat.id}/remove-user`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({ user_id: userId })
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    this.loadMessages(this.activeChat);
+                                    alert('Пользователь удален из чата');
+                                } else {
+                                    alert(data.message || 'Ошибка при удалении пользователя');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error removing user:', error);
+                                alert('Ошибка при удалении пользователя');
+                            });
+                    },
+
+                    deleteChat(chat) {
+                        if (!confirm('Удалить чат? Это действие нельзя отменить.')) return;
+
+                        fetch(`/chat/api/chats/${chat.id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    this.loadChats();
+                                    this.activeChat = null;
+                                    alert('Чат удален');
+                                } else {
+                                    alert(data.message || 'Ошибка при удалении чата');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error deleting chat:', error);
+                                alert('Ошибка при удалении чата');
+                            });
+                    },
+
+                    toggleMute(chat) {
+                        if (!chat.pivot) chat.pivot = {};
+                        chat.pivot.is_muted = !chat.pivot.is_muted;
+                        alert(chat.pivot.is_muted ? 'Чат заглушен' : 'Звук включен');
+                    },
+
+                    markAsRead() {
+                        if (!this.activeChat || !this.messages.length) return;
+
+                        const unreadMessages = this.messages
+                            .filter(m => m.user_id !== this.userId && (!m.statuses || !m.statuses[0]?.read_at))
+                            .map(m => m.id);
+
+                        if (unreadMessages.length) {
+                            fetch(`/chat/api/chats/${this.activeChat.id}/mark-read`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                    'Accept': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                },
+                                body: JSON.stringify({ message_ids: unreadMessages })
+                            })
+                                .catch(error => {
+                                    console.error('Error marking messages as read:', error);
+                                });
+                        }
+                    },
+
+                    downloadFile(message) {
+                        if (message.file_url) {
+                            window.open(message.file_url, '_blank');
+                        }
+                    },
+
+                    openImageViewer(message) {
+                        if (message.file_url) {
+                            window.open(message.file_url, '_blank');
+                        }
+                    },
+
+                    scrollToBottom() {
+                        const container = this.$refs.messagesContainer;
+                        if (container) {
+                            container.scrollTop = container.scrollHeight;
+                            this.showScrollButton = false;
+                        }
+                    },
+
+                    checkScroll() {
+                        const container = this.$refs.messagesContainer;
+                        if (!container) return;
+
+                        const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+                        this.showScrollButton = !isNearBottom;
+                    },
+
+                    filterChats() {
+                        // Computed property handles filtering
+                    },
+
+                    formatTime(timestamp) {
+                        if (!timestamp) return '';
+                        try {
+                            const date = new Date(timestamp);
+                            const now = new Date();
+                            const diff = now - date;
+
+                            if (diff < 24 * 60 * 60 * 1000) {
+                                return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                            }
+
+                            if (diff < 7 * 24 * 60 * 60 * 1000) {
+                                return date.toLocaleDateString('ru-RU', { weekday: 'short' });
+                            }
+
+                            return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+                        } catch (e) {
+                            return '';
+                        }
+                    },
+
+                    getInitials(name) {
+                        if (!name) return '?';
+                        return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                    },
+
+                    getTypingText() {
+                        if (this.typingUsers.length === 1) {
+                            return `${this.typingUsers[0]} печатает...`;
+                        }
+                        if (this.typingUsers.length === 2) {
+                            return `${this.typingUsers[0]} и ${this.typingUsers[1]} печатают...`;
+                        }
+                        if (this.typingUsers.length > 2) {
+                            return `${this.typingUsers[0]} и еще ${this.typingUsers.length - 1} печатают...`;
+                        }
+                        return '';
+                    },
+
+                    // Cleanup
+                    destroy() {
+                        this.stopPolling();
+                    }
+                }
+            }
+
+            // Register with Alpine
+            if (window.Alpine) {
+                Alpine.data('chatApp', chatApp);
+            } else {
+                document.addEventListener('alpine:init', () => {
+                    Alpine.data('chatApp', chatApp);
+                });
+            }
+        })();
+    </script>
 @endpush
