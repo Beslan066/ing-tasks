@@ -6,7 +6,7 @@
         <!-- Заголовок и кнопка -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
             <div>
-                <h1 class="text-2xl md:text-3xl font-bold" style="color: #16a34a;">Статистика компании</h1>
+                <h1 class="text-2xl md:text-3xl font-bold" style="color: #16a34a;">Задачи компании</h1>
                 <p class="text-gray-500 text-sm md:text-base">Обзор производительности и задач</p>
             </div>
 

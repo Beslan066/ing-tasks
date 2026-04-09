@@ -101,7 +101,11 @@ class Chat extends Model
      */
     public function hasUser($userId)
     {
-        return $this->users()->where('user_id', $userId)->exists();
+        return DB::table('chat_user')
+            ->where('chat_id', $this->id)
+            ->where('user_id', $userId)
+            ->whereNull('left_at')
+            ->exists();
     }
 
     /**

@@ -167,8 +167,8 @@
                         <a href="#" class="xf fj si sb xe gh hh wa sa">New</a> start tracking visitors
                     </h4>
                     <h2 class="h cj ej dm ri jr xa">
-                        Know More About Our
-                        <span class="pb h ik jk kk pk nk sk im before:-ud-z-1">Product.</span>
+                        Создавайте <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">компании</span> или
+                        <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">организации</span>
                     </h2>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ultricies lacus non fermentum
                         ultrices. Fusce consectetur le.</p>
@@ -204,14 +204,14 @@
                 <div class="animate_left vm/2">
                     <h4 class="ej dm bj dj">grow your business faster</h4>
                     <h2 class="h cj ej dm ri jr xa">
-                        Track Your Audience
-                        <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">Activities</span>
+                        Отслеживайте активность и
+                        <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">продуктивность</span>
                     </h2>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ultricies lacus non fermentum
                         ultrices. Fusce consectetur le.</p>
 
                     <a href="#" class="qb ee je ej dm ia">
-                        Know More
+                         Узнайте больше
                         <img class="nl" src="images/icon-arrow-light.svg" alt="Arrow" />
                         <img class="ub ml" src="images/icon-arrow-dark.svg" alt="Arrow" />
                     </a>
@@ -242,7 +242,7 @@
                         <p class="ej dm bj ui">01</p>
                     </div>
                     <div class="io xm/5">
-                        <h5 class="ej dm vi lr bj">Clean User Interface</h5>
+                        <h5 class="ej dm vi lr bj">Удобный и понятный интерфейс</h5>
                     </div>
                 </div>
                 <div class="h yd rc wm kf wk jn nf pl qb ee pe ch qq xg rq"
@@ -252,7 +252,7 @@
                         <p class="ej dm bj ui">02</p>
                     </div>
                     <div class="io xm/5">
-                        <h5 class="ej dm vi lr bj">Cloud Data Save Options</h5>
+                        <h5 class="ej dm vi lr bj">Полезные инструменты</h5>
                     </div>
                 </div>
                 <div class="h yd rc wm kf wk jn nf pl qb ee pe ch qq xg rq"
@@ -262,7 +262,7 @@
                         <p class="ej dm bj ui">03</p>
                     </div>
                     <div class="io xm/5">
-                        <h5 class="ej dm vi lr bj">Management And Collaboration</h5>
+                        <h5 class="ej dm vi lr bj">Безопасность и производительность</h5>
                     </div>
                 </div>
             </div>
@@ -331,7 +331,7 @@
             <img src="images/shape-dotted-dark-02.svg" alt="Dotted" class="g i l -ud-z-1 ub ml" />
 
             <div class="animate_top ba mi ym/5 ho/3 zp/2 ab yn _g on">
-                <h2 class="cj ej dm ri nr sa">Начните пользоваться уже сегодня</h2>
+                <h2 class="cj ej dm ri nr sa">О нас</h2>
                 <p class="jo/12 ba">МенеджерПлюс — это быстроразвивающийся отечественный продукт, разработанный на
                     основе передовых технологий.
                     Платформа предоставляет все необходимые инструменты для комфортной и продуктивной работы.
@@ -340,12 +340,12 @@
 
             <div class="qb de ge te ap">
                 <div class="animate_top mi">
-                    <h3 class="cj ej dm ri nr cb">100+</h3>
+                    <h3 class="cj ej dm ri nr cb">{{$usersCount}}</h3>
                     <p class="oi up">Пользователей</p>
                 </div>
                 <div class="animate_top mi">
-                    <h3 class="cj ej dm ri nr cb">4</h3>
-                    <p class="oi up">Крупные компании</p>
+                    <h3 class="cj ej dm ri nr cb">{{$usersCount}}</h3>
+                    <p class="oi up">2 компаний</p>
                 </div>
                 <div class="animate_top mi">
                     <h3 class="cj ej dm ri nr cb">30</h3>
@@ -385,7 +385,7 @@
                     <div class="qb ee ge ze wf sc xb">
                         <img src="images/icon-02.svg" alt="Icon" />
                     </div>
-                    <h3 class="aj qi kr ej dm ia ga">High-quality Design</h3>
+                    <h3 class="aj qi kr ej dm ia ga">Качественный дизайн</h3>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.</p>
                 </div>
                 <!-- Features item End -->
@@ -405,7 +405,7 @@
                     <div class="qb ee ge ze wf sc xb">
                         <img src="images/icon-04.svg" alt="Icon" />
                     </div>
-                    <h3 class="aj qi kr ej dm ia ga">Speed Optimized</h3>
+                    <h3 class="aj qi kr ej dm ia ga">Высокая скорость</h3>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.</p>
                 </div>
                 <!-- Features item End -->
@@ -425,7 +425,7 @@
                     <div class="qb ee ge ze wf sc xb">
                         <img src="images/icon-06.svg" alt="Icon" />
                     </div>
-                    <h3 class="aj qi kr ej dm ia ga">Regular Updates</h3>
+                    <h3 class="aj qi kr ej dm ia ga">Регулярные обновления</h3>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.</p>
                 </div>
                 <!-- Features item End -->
@@ -440,7 +440,7 @@
             <div class="qb de en fn gn te hn">
                 <div class="animate_left zm ko/2">
                     <h2 class="ej dm ri or cj sa xc/12">Начните уже сегодня чтобы повысить вашу продуктивность</h2>
-                    <p>Вам доступна бесплатная версия на 5 пользователей. Протестируйте и решите для себя, стоит ли пользоваться нашими инструментами.</p>
+                    <p>Вам доступна бесплатная версия до 5 пользователей. Протестируйте и решите для себя, стоит ли пользоваться нашими инструментами.</p>
                 </div>
                 <div class="animate_right lo">
                     <div class="qb ee fe cq">
@@ -473,7 +473,7 @@
                     </h2>
 
                     <a href="#" class="qb ee je ej dm eb">
-                        Know More
+                        Узнайте больше
                         <img class="nl" src="images/icon-arrow-light.svg" alt="Arrow" />
                         <img class="ub ml" src="images/icon-arrow-dark.svg" alt="Arrow" />
                     </a>
@@ -484,7 +484,7 @@
                         <div class="qb be kf nf pl">
                             <h4 @click="selected !== 0 ? selected = 0 : selected = null"
                                 class="yd qb he ee bj ui ej dm mh hp xg ip">
-                                Lorem ipsum dolor sit amet, consectetur.
+                                Подходит ли платформа для личного использования?
                                 <img src="images/icon-plus-light.svg" alt="plus" class="nl"
                                      :class="selected == 0 ? 'ub' : 'ob'" />
                                 <img src="images/icon-minus-light.svg" alt="minus" class="nl"
@@ -495,8 +495,7 @@
                                      :class="selected == 0 ? 'ml' : 'nl'" />
                             </h4>
                             <p x-show="selected == 0" class="mh hp xg ip lf nf pl">
-                                We provide digital experience services to startups and small businesses. We help our
-                                clients succeed by creating brand identities, digital experiences.
+                                Да, платформа идеально подходит для личного использования, просто создайте команду и начните работать.
                             </p>
                         </div>
                         <div class="qb be kf nf pl">
@@ -520,7 +519,7 @@
                         <div class="qb be">
                             <h4 @click="selected !== 2 ? selected = 2 : selected = null"
                                 :class="{'yd qb he ee bj ui ej dm mh hp xg ip': true, 'ef': selected != 2}">
-                                Lorem ipsum dolor sit amet, consectetur.
+                                Можно ли оплачивать подписку по договору?
                                 <img src="images/icon-plus-light.svg" alt="plus" class="nl"
                                      :class="selected == 2 ? 'ub' : 'ob'" />
                                 <img src="images/icon-minus-light.svg" alt="minus" class="nl"
@@ -531,8 +530,10 @@
                                      :class="selected == 2 ? 'ml' : 'nl'" />
                             </h4>
                             <p x-show="selected == 2" :class="{'mh hp xg ip lf nf pl': true, 'ef': selected == 2}">
-                                We provide digital experience services to startups and small businesses. We help our
-                                clients succeed by creating brand identities, digital experiences.
+                                Да! Мы предоставляем возможность оплаты счетов после составления договора. Свяжитесь с нашими специалистами, они составят необходимые документы.
+                                <span>
+                                    <input type="email"><strong>mail@managerplus.ru</strong>
+                                </span>
                             </p>
                         </div>
                     </div>
@@ -763,7 +764,7 @@
                             </div>
 
                             <button class="sb ee je tf xk hk ek rl bj fj xe xg yg">
-                                Отпрвить
+                                Отправить
                                 <svg class="ig" width="14" height="14" viewBox="0 0 14 14" fill="none"
                                      xmlns="http://www.w3.org/2000/svg">
                                     <path

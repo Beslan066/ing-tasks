@@ -723,8 +723,8 @@
 
                 <div class="max-h-96 overflow-auto space-y-2 custom-scrollbar">
                     <template x-for="colleague in filteredAddUsers" :key="colleague.id">
-                        <template x-if="!activeChat.users?.some(u => u.id === colleague.id)">
-                            <label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <template x-if="activeChat && activeChat.users && !activeChat.users.some(u => u.id === colleague.id)">
+                        <label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
                                 <input type="checkbox"
                                        :value="colleague.id"
                                        x-model="selectedUsersToAdd"
@@ -737,8 +737,8 @@
                         </template>
                     </template>
 
-                    <template x-if="filteredAddUsers.filter(u => !activeChat.users?.some(au => au.id === u.id)).length === 0">
-                        <div class="text-center py-4 text-gray-500">
+                    <template x-if="activeChat && activeChat.users && filteredAddUsers.filter(u => !activeChat.users.some(au => au.id === u.id)).length === 0">
+                    <div class="text-center py-4 text-gray-500">
                             <p>Нет доступных сотрудников для добавления</p>
                         </div>
                     </template>

@@ -79,7 +79,13 @@ class HomeController extends Controller
 
     public function home()
     {
-        return view('frontend.index');
+
+        $usersCount = User::count();
+        $companiesCount = Company::count();
+        return view('frontend.index', [
+            'companiesCount' => $companiesCount,
+            'usersCount' => $usersCount,
+        ]);
     }
 
     public function indexAdmin(Request $request)
