@@ -53,7 +53,7 @@
                     <label class="block text-gray-700 text-sm font-semibold">Отдел *</label>
                     <select name="department_id"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-transparent transition-all bg-white appearance-none cursor-pointer"
-                            required>
+                            >
                         <option value="" class="text-gray-400">Выберите отдел</option>
                         @foreach($departments as $department)
                             <option value="{{ $department->id }}">{{ $department->name }}</option>

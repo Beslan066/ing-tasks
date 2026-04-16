@@ -24,11 +24,14 @@ class HomeController extends Controller
             return $this->noCompanies();
         }
 
-        // Перенаправляем руководителей и менеджеров на админскую панель
-        if ($user->isLeader()) {
+        // Проверяем, хочет ли пользователь перейти в режим руководителя
+        $adminMode = $request->get('admin_mode', false);
+
+        // Если пользователь руководитель И не запросил режим руководителя - показываем личные задачи
+        // Если запросил admin_mode=1 - перенаправляем на админку
+        if ($user->isLeader() && $adminMode === '1') {
             return redirect()->route('tasks.admin');
         }
-
 
         // Получаем задачи пользователя по статусам
         $tasksByStatus = [
@@ -62,6 +65,15 @@ class HomeController extends Controller
             ->where('department_id', $user->department_id)
             ->whereNull('user_id')
             ->where('status', 'не назначена')
+            ->where('is_personal', 0) // Добавляем фильтр, чтобы не показывать личные задачи
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Личные задачи пользователя (если нужно отдельно)
+        $personalTasks = Task::with(['author', 'department', 'category', 'files'])
+            ->where('author_id', $user->id)
+            ->where('user_id', $user->id)
+            ->where('is_personal', true)
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -72,9 +84,10 @@ class HomeController extends Controller
             'review' => $tasksByStatus['review']->count(),
             'done' => $tasksByStatus['done']->count(),
             'available' => $availableTasks->count(),
+            'personal' => $personalTasks->count(),
         ];
 
-        return view('welcome', compact('user', 'tasksByStatus', 'availableTasks', 'stats'));
+        return view('welcome', compact('user', 'tasksByStatus', 'availableTasks', 'personalTasks', 'stats'));
     }
 
     public function home()

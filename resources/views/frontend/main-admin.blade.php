@@ -307,7 +307,7 @@
                                         @endif
                                     </td>
                                     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $task->department->name ?? '—' }}
+                                        {{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : 'Без отдела') }}
                                     </td>
                                     <td class="px-3 py-4 whitespace-nowrap">
                                         @php

@@ -34,6 +34,7 @@ return new class extends Migration
                 ->onDelete('set null'); // Установить NULL при удалении исполнителя
 
             $table->foreignId('department_id') // Отдел задачи
+            ->nullable()
             ->constrained()
                 ->onDelete('cascade'); // Каскадное удаление при удалении отдела
 

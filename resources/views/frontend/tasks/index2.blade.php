@@ -28,7 +28,7 @@
                         @if($task->department)
                             <div class="flex items-center">
                                 <i class="fas fa-building mr-2"></i>
-                                {{ $task->department->name }}
+                                {{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : 'Без отдела') }}
                             </div>
                         @endif
 

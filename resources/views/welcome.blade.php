@@ -50,7 +50,7 @@
                         <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}</p>
                         <div class="flex justify-between items-center">
                             <div class="flex space-x-1">
-                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">{{ $task->department->name }}</span>
+                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
                                 @if($task->priority === 'высокий')
                                     <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">‼️ Высокий</span>
                                 @elseif($task->priority === 'критический')
@@ -111,7 +111,7 @@
 
                         <div class="flex justify-between items-center">
                             <div class="flex space-x-1">
-                                <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">{{ $task->department->name }}</span>
+                                <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
                                 @if($task->category)
                                     <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->category->name }}</span>
                                 @endif
@@ -165,7 +165,7 @@
 
                         <div class="flex justify-between items-center">
                             <div class="flex space-x-1">
-                                <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">{{ $task->department->name }}</span>
+                                <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
                             </div>
                             <div class="text-sm text-gray-500">
                                 Ожидает проверки
@@ -208,7 +208,7 @@
                         @endif
 
                         <div class="flex justify-between items-center">
-                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->department->name }}</span>
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
                             <span class="text-xs text-gray-500">Завершено</span>
                         </div>
                     </div>
@@ -289,28 +289,41 @@
             modal.querySelector('h3').textContent = 'Новая личная задача';
             modal.querySelector('p').textContent = 'Создайте задачу для себя';
 
-            // Скрываем ненужные поля
-            const executorField = document.querySelector('select[name="user_id"]').closest('.space-y-2');
-            const departmentField = document.querySelector('select[name="department_id"]').closest('.space-y-2');
-            const statusField = document.querySelector('select[name="status"]').closest('.space-y-2');
+            // Находим поля
+            const executorField = document.querySelector('select[name="user_id"]')?.closest('.space-y-2');
+            const departmentField = document.querySelector('select[name="department_id"]')?.closest('.space-y-2');
+            const statusField = document.querySelector('select[name="status"]')?.closest('.space-y-2');
 
-            // Добавляем визуальные подсказки
+            // Получаем сами select элементы
+            const departmentSelect = document.querySelector('select[name="department_id"]');
+            const statusSelect = document.querySelector('select[name="status"]');
+
+            // Скрываем поле исполнителя
             if (executorField) {
                 executorField.style.display = 'none';
             }
 
-            if (departmentField) {
-                // Оставляем только отдел пользователя
-                const select = departmentField.querySelector('select');
-                select.innerHTML = `<option value="{{ $user->department_id }}" selected>{{ $user->department->name }}</option>`;
-                select.disabled = true;
+            // Обрабатываем поле отдела
+            if (departmentField && departmentSelect) {
+                @if($user->department_id && $user->department)
+                // Убираем required, так как поле будет скрыто
+                departmentSelect.removeAttribute('required');
+                // Устанавливаем значение
+                departmentSelect.innerHTML = `<option value="{{ $user->department_id }}" selected>{{ $user->department->name }}</option>`;
+                departmentSelect.disabled = true;
+                departmentField.style.display = 'block';
+                @else
+                // Если нет отдела, полностью скрываем поле
+                departmentSelect.removeAttribute('required');
+                departmentField.style.display = 'none';
+                @endif
             }
 
-            if (statusField) {
-                // Оставляем только "назначена"
-                const select = statusField.querySelector('select');
-                select.innerHTML = `<option value="назначена" selected>назначена</option>`;
-                select.disabled = true;
+            // Обрабатываем поле статуса
+            if (statusField && statusSelect) {
+                statusSelect.innerHTML = `<option value="назначена" selected>назначена</option>`;
+                statusSelect.disabled = true;
+                statusField.style.display = 'block';
             }
 
             // Меняем обработчик формы
@@ -327,11 +340,19 @@
             const form = e.target;
             const formData = new FormData(form);
 
+            // Получаем select элементы
+            const departmentSelect = document.querySelector('select[name="department_id"]');
+            const statusSelect = document.querySelector('select[name="status"]');
+
             // Добавляем скрытые поля для личной задачи
             formData.set('user_id', '{{ $user->id }}');
             formData.set('author_id', '{{ $user->id }}');
             formData.set('status', 'назначена');
+
+            // Устанавливаем отдел, если он есть у пользователя
+            @if($user->department_id)
             formData.set('department_id', '{{ $user->department_id }}');
+            @endif
 
             // Показываем индикатор загрузки
             const submitBtn = form.querySelector('button[type="submit"]');
@@ -351,9 +372,10 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alert('Личная задача успешно создана!');
+                    // Используем более современное уведомление вместо alert
+                    showNotification('Личная задача успешно создана!', 'success');
                     closeTaskModal();
-                    location.reload();
+                    setTimeout(() => location.reload(), 1500);
                 } else {
                     if (data.errors) {
                         let errorMessage = 'Ошибки при создании задачи:\n';
@@ -362,18 +384,24 @@
                                 errorMessage += `• ${error}\n`;
                             });
                         });
-                        alert(errorMessage);
+                        showNotification(errorMessage, 'error');
                     } else {
-                        alert(data.message || 'Ошибка при создании задачи');
+                        showNotification(data.message || 'Ошибка при создании задачи', 'error');
                     }
                 }
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('Ошибка при создании задачи');
+                showNotification('Ошибка при создании задачи', 'error');
             } finally {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             }
+        }
+
+        // Добавьте вспомогательную функцию для уведомлений
+        function showNotification(message, type = 'info') {
+            // Простое временное решение
+            alert(message);
         }
 
         // Закрыть модальное окно и сбросить поля
@@ -381,49 +409,63 @@
             const modal = document.getElementById('taskModal');
             const form = document.getElementById('taskForm');
 
-            // Восстанавливаем все поля
-            const executorField = document.querySelector('select[name="user_id"]').closest('.space-y-2');
-            const departmentField = document.querySelector('select[name="department_id"]').closest('.space-y-2');
-            const statusField = document.querySelector('select[name="status"]').closest('.space-y-2');
+            // Находим поля
+            const executorField = document.querySelector('select[name="user_id"]')?.closest('.space-y-2');
+            const departmentField = document.querySelector('select[name="department_id"]')?.closest('.space-y-2');
+            const statusField = document.querySelector('select[name="status"]')?.closest('.space-y-2');
 
-            if (executorField) executorField.style.display = 'block';
-            if (departmentField) {
-                const select = departmentField.querySelector('select');
-                select.disabled = false;
-                // Здесь нужно восстановить оригинальные опции отделов
-                @if(isset($departments))
-                    select.innerHTML = `
-            <option value="" class="text-gray-400">Выберите отдел</option>
-            @foreach($departments as $department)
-                <option value="{{ $department->id }}">{{ $department->name }}</option>
-            @endforeach
-                `;
-                @endif
+            const departmentSelect = document.querySelector('select[name="department_id"]');
+            const statusSelect = document.querySelector('select[name="status"]');
+
+            // Восстанавливаем поле исполнителя
+            if (executorField) {
+                executorField.style.display = 'block';
             }
-            if (statusField) {
-                const select = statusField.querySelector('select');
-                select.disabled = false;
+
+            // Восстанавливаем поле отдела
+            if (departmentField && departmentSelect) {
+                departmentSelect.disabled = false;
+                departmentSelect.setAttribute('required', 'required');
+
+                // Восстанавливаем оригинальные опции отделов
+                @if(isset($departments) && count($departments) > 0)
+                let departmentOptions = '<option value="" class="text-gray-400">Выберите отдел</option>';
+                @foreach($departments as $department)
+                    departmentOptions += `<option value="{{ $department->id }}">{{ $department->name }}</option>`;
+                @endforeach
+                    departmentSelect.innerHTML = departmentOptions;
+                @endif
+
+                    departmentField.style.display = 'block';
+            }
+
+            // Восстанавливаем поле статуса
+            if (statusField && statusSelect) {
+                statusSelect.disabled = false;
+
                 // Восстанавливаем оригинальные статусы
                 @php
                     $availableStatuses = array_filter(\App\Models\Task::getStatuses(), function($status) {
                         return $status !== 'в работе';
                     });
                 @endphp
-                    select.innerHTML = `
-            @foreach($availableStatuses as $status)
-                <option value="{{ $status }}" {{ $status == 'назначена' ? 'selected' : '' }}>
-                    {{ $status }}
-                </option>
-            @endforeach
-                `;
+                let statusOptions = '';
+                @foreach($availableStatuses as $status)
+                    statusOptions += `<option value="{{ $status }}" {{ $status == 'назначена' ? 'selected' : '' }}>{{ $status }}</option>`;
+                @endforeach
+                    statusSelect.innerHTML = statusOptions;
+
+                statusField.style.display = 'block';
             }
 
             // Восстанавливаем заголовки
-            modal.querySelector('h3').textContent = 'Новая задача';
-            modal.querySelector('p').textContent = 'Заполните информацию о задаче';
+            const modalTitle = modal.querySelector('h3');
+            const modalDesc = modal.querySelector('p');
+            if (modalTitle) modalTitle.textContent = 'Новая задача';
+            if (modalDesc) modalDesc.textContent = 'Заполните информацию о задаче';
 
-            // Восстанавливаем обработчик формы (если был другой)
-            form.onsubmit = null; // или исходный обработчик, если он есть
+            // Восстанавливаем обработчик формы
+            form.onsubmit = null;
 
             // Скрываем модальное окно
             modal.classList.add('hidden');
