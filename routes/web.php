@@ -7,9 +7,11 @@ use App\Http\Controllers\Frontend\DepartmentEmailController;
 use App\Http\Controllers\Frontend\EmailTemplateController;
 use App\Http\Controllers\Frontend\PersonalEmailController;
 use App\Http\Controllers\Frontend\TeamController;
+use App\Http\Controllers\Frontend\UserController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Frontend\SmtpSettingController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
@@ -43,6 +45,9 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
 
         return response()->json(['success' => false], 401);
     })->name('update.activity');
+
+    Route::post('/user/background', [UserController::class, 'updateBackground'])->name('user.updateBackground');
+
 
     Route::get('/get-online-users', function () {
         $user = auth()->user();

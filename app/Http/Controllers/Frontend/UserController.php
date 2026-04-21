@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -77,5 +78,20 @@ class UserController extends Controller
                 'message' => 'Ошибка при создании пользователя: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function updateBackground(Request $request)
+    {
+        $request->validate([
+            'background_image' => 'nullable|string',
+            'background_enabled' => 'boolean'
+        ]);
+
+        $user = Auth::user();
+        $user->background_image = $request->background_image;
+        $user->background_enabled = $request->background_enabled;
+        $user->save();
+
+        return response()->json(['success' => true]);
     }
 }

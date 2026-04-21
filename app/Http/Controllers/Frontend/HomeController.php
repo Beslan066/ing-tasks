@@ -17,18 +17,43 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $user = Auth::user()->load(['company', 'ownedCompanies']);
+        $user = Auth::user();
 
-        // Если у пользователя нет компании, показываем страницу no-companies
-        if (!$user->company && $user->ownedCompanies->isEmpty()) {
+        // Загружаем необходимые связи
+        $user->load(['company', 'ownedCompanies', 'department']);
+
+        // ДЕТАЛЬНАЯ ОТЛАДКА - временно, чтобы увидеть проблему
+        // \Log::info('User data:', [
+        //     'user_id' => $user->id,
+        //     'company_id' => $user->company_id,
+        //     'has_company' => (bool)$user->company,
+        //     'owned_companies_count' => $user->ownedCompanies->count()
+        // ]);
+
+        // ПРОВЕРКА 1: Есть ли у пользователя компания?
+        $hasCompany = $user->company_id && $user->company;
+
+        // ПРОВЕРКА 2: Является ли пользователь владельцем компании?
+        $isOwnerOfCompany = $user->ownedCompanies->isNotEmpty();
+
+        // Если у пользователя нет компании И он не владелец компании - показываем страницу no-companies
+        if (!$hasCompany && !$isOwnerOfCompany) {
             return $this->noCompanies();
+        }
+
+        // Если у пользователя есть компания, но нет company_id (он владелец)
+        // Нужно установить company_id для дальнейшей работы
+        if (!$user->company_id && $isOwnerOfCompany) {
+            // Берем первую компанию, которой владеет пользователь
+            $firstCompany = $user->ownedCompanies->first();
+            $user->company_id = $firstCompany->id;
+            $user->company = $firstCompany;
         }
 
         // Проверяем, хочет ли пользователь перейти в режим руководителя
         $adminMode = $request->get('admin_mode', false);
 
-        // Если пользователь руководитель И не запросил режим руководителя - показываем личные задачи
-        // Если запросил admin_mode=1 - перенаправляем на админку
+        // Если пользователь руководитель И запросил режим руководителя - перенаправляем на админку
         if ($user->isLeader() && $adminMode === '1') {
             return redirect()->route('tasks.admin');
         }
@@ -61,15 +86,19 @@ class HomeController extends Controller
         ];
 
         // Задачи отдела (доступные для взятия)
-        $availableTasks = Task::with(['author', 'department', 'category'])
-            ->where('department_id', $user->department_id)
-            ->whereNull('user_id')
-            ->where('status', 'не назначена')
-            ->where('is_personal', 0) // Добавляем фильтр, чтобы не показывать личные задачи
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Проверяем, есть ли у пользователя отдел
+        $availableTasks = collect();
+        if ($user->department_id) {
+            $availableTasks = Task::with(['author', 'department', 'category'])
+                ->where('department_id', $user->department_id)
+                ->whereNull('user_id')
+                ->where('status', 'не назначена')
+                ->where('is_personal', 0)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
 
-        // Личные задачи пользователя (если нужно отдельно)
+        // Личные задачи пользователя
         $personalTasks = Task::with(['author', 'department', 'category', 'files'])
             ->where('author_id', $user->id)
             ->where('user_id', $user->id)

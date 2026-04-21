@@ -75,238 +75,270 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .sidebar:hover {
-            box-shadow: 0 0 50px rgba(34, 197, 94, 0.1);
+        /* Стили sidebar когда фон выбран - убираем background */
+        .sidebar.no-background {
+            background: transparent !important;
+            backdrop-filter: none !important;
+            box-shadow: none !important;
         }
 
-        .nav-item {
-            position: relative;
-            transition: all 0.3s ease;
-            border-radius: 12px;
-            overflow: hidden;
+        /* Стиль main-container по умолчанию */
+        .main-container {
+            background-color: #f9fafb;
         }
 
-        .nav-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 3px;
-            background: linear-gradient(180deg, #22c55e, #16a34a);
-            transform: scaleY(0);
-            transition: transform 0.3s ease;
-        }
+        /* Стиль main-container с фоном */
+        .main-container.has-background {
+            background-size: cover;
+            background-position: center;
 
-        .nav-item:hover::before {
-            transform: scaleY(1);
-        }
 
-        .nav-item.active::before {
-            transform: scaleY(1);
-        }
-
-        .nav-item.active {
-            background: rgba(34, 197, 94, 0.1);
-        }
-
-        .avatar-container {
-            position: relative;
-            transition: transform 0.2s ease;
-        }
-
-        .avatar-container:hover {
-            transform: translateY(-2px);
-        }
-
-        .online-indicator {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 10px;
-            height: 10px;
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            border-radius: 50%;
-            border: 2px solid #1a1f2e;
-            animation: pulseGlow 2s infinite;
-        }
-
-        .progress-bar {
-            background: linear-gradient(90deg, #22c55e, #16a34a);
-            border-radius: 9999px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress-bar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% {
-                transform: translateX(-100%);
+            .sidebar:hover {
+                box-shadow: 0 0 50px rgba(34, 197, 94, 0.1);
             }
-            100% {
-                transform: translateX(100%);
+
+            .nav-item {
+                position: relative;
+                transition: all 0.3s ease;
+                border-radius: 12px;
+                overflow: hidden;
             }
-        }
 
-        .badge {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 9999px;
-            font-weight: 600;
-        }
+            .nav-item::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100%;
+                width: 3px;
+                background: linear-gradient(180deg, #22c55e, #16a34a);
+                transform: scaleY(0);
+                transition: transform 0.3s ease;
+            }
 
-        .category-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 10px;
-            transition: all 0.3s ease;
-        }
+            .nav-item:hover::before {
+                transform: scaleY(1);
+            }
 
-        .category-item:hover .category-dot {
-            transform: scale(1.3);
-        }
+            .nav-item.active::before {
+                transform: scaleY(1);
+            }
 
-        .scrollbar-thin {
-            scrollbar-width: thin;
-            scrollbar-color: #4b5563 transparent;
-        }
+            .nav-item.active {
+                background: rgba(34, 197, 94, 0.1);
+            }
 
-        .scrollbar-thin::-webkit-scrollbar {
-            width: 4px;
-        }
+            .avatar-container {
+                position: relative;
+                transition: transform 0.2s ease;
+            }
 
-        .scrollbar-thin::-webkit-scrollbar-track {
-            background: transparent;
-        }
+            .avatar-container:hover {
+                transform: translateY(-2px);
+            }
 
-        .scrollbar-thin::-webkit-scrollbar-thumb {
-            background: #4b5563;
-            border-radius: 2px;
-        }
+            .online-indicator {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 10px;
+                height: 10px;
+                background: linear-gradient(135deg, #22c55e, #16a34a);
+                border-radius: 50%;
+                border: 2px solid #1a1f2e;
+                animation: pulseGlow 2s infinite;
+            }
 
-        .dropdown-enter {
-            animation: dropdownEnter 0.2s ease-out;
-        }
+            .progress-bar {
+                background: linear-gradient(90deg, #22c55e, #16a34a);
+                border-radius: 9999px;
+                position: relative;
+                overflow: hidden;
+            }
 
-        .custom-scrollbar {
-            scrollbar-width: thin;
-            scrollbar-color: transparent transparent;
-        }
+            .progress-bar::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                animation: shimmer 2s infinite;
+            }
 
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
+            @keyframes shimmer {
+                0% {
+                    transform: translateX(-100%);
+                }
+                100% {
+                    transform: translateX(100%);
+                }
+            }
 
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-            border-radius: 10px;
-        }
+            .badge {
+                background: linear-gradient(135deg, #f59e0b, #d97706);
+                color: white;
+                font-size: 0.7rem;
+                padding: 2px 8px;
+                border-radius: 9999px;
+                font-weight: 600;
+            }
 
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: transparent;
-            border-radius: 10px;
-        }
+            .category-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                margin-right: 10px;
+                transition: all 0.3s ease;
+            }
 
-        .custom-scrollbar:hover::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.2);
-        }
+            .category-item:hover .category-dot {
+                transform: scale(1.3);
+            }
 
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 0, 0, 0.3);
-        }
+            .scrollbar-thin {
+                scrollbar-width: thin;
+                scrollbar-color: #4b5563 transparent;
+            }
 
-        @keyframes dropdownEnter {
-            from {
+            .scrollbar-thin::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            .scrollbar-thin::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            .scrollbar-thin::-webkit-scrollbar-thumb {
+                background: #4b5563;
+                border-radius: 2px;
+            }
+
+            .dropdown-enter {
+                animation: dropdownEnter 0.2s ease-out;
+            }
+
+            .custom-scrollbar {
+                scrollbar-width: thin;
+                scrollbar-color: transparent transparent;
+            }
+
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: transparent;
+                border-radius: 10px;
+            }
+
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: transparent;
+                border-radius: 10px;
+            }
+
+            .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+                background: rgba(0, 0, 0, 0.2);
+            }
+
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                background: rgba(0, 0, 0, 0.3);
+            }
+
+            @keyframes dropdownEnter {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover,
+            input:-webkit-autofill:focus {
+                -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset;
+                -webkit-text-fill-color: #111827;
+                transition: background-color 5000s ease-in-out 0s;
+            }
+
+            .dark input:-webkit-autofill,
+            .dark input:-webkit-autofill:hover,
+            .dark input:-webkit-autofill:focus {
+                -webkit-box-shadow: 0 0 0px 1000px #374151 inset;
+                -webkit-text-fill-color: white;
+            }
+
+
+            /* Стили для выпадающего меню почты */
+
+            .email-nav-container .absolute {
+                display: none;
                 opacity: 0;
                 transform: translateY(-10px);
+                transition: opacity 0.2s ease, transform 0.2s ease;
             }
-            to {
+
+            .email-nav-container:hover .absolute {
+                display: block;
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
 
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover,
-        input:-webkit-autofill:focus {
-            -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset;
-            -webkit-text-fill-color: #111827;
-            transition: background-color 5000s ease-in-out 0s;
-        }
+            /* Альтернативный вариант с visibility */
 
-        .dark input:-webkit-autofill,
-        .dark input:-webkit-autofill:hover,
-        .dark input:-webkit-autofill:focus {
-            -webkit-box-shadow: 0 0 0px 1000px #374151 inset;
-            -webkit-text-fill-color: white;
-        }
-
-
-        /* Стили для выпадающего меню почты */
-        .email-nav-container .absolute {
-            display: none;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-
-        .email-nav-container:hover .absolute {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Альтернативный вариант с visibility */
-        .email-nav-container .email-dropdown {
-            visibility: hidden;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: all 0.2s ease;
-            pointer-events: none;
-        }
-
-        .email-nav-container:hover .email-dropdown {
-            visibility: visible;
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
-        /* Для мобильных устройств */
-        @media (max-width: 768px) {
-            .email-nav-container .absolute {
-                position: static;
-                display: none;
-                width: 100%;
-                box-shadow: none;
-                border: none;
-                margin-top: 0.5rem;
+            .email-nav-container .email-dropdown {
+                visibility: hidden;
+                opacity: 0;
+                transform: translateY(-10px);
+                transition: all 0.2s ease;
+                pointer-events: none;
             }
 
-            .email-nav-container.active .absolute {
-                display: block;
+            .email-nav-container:hover .email-dropdown {
+                visibility: visible;
+                opacity: 1;
+                transform: translateY(0);
+                pointer-events: auto;
+            }
+
+            /* Для мобильных устройств */
+            @media (max-width: 768px) {
+                .email-nav-container .absolute {
+                    position: static;
+                    display: none;
+                    width: 100%;
+                    box-shadow: none;
+                    border: none;
+                    margin-top: 0.5rem;
+                }
+
+                .email-nav-container.active .absolute {
+                    display: block;
+                }
             }
         }
     </style>
 </head>
 <body class="bg-gray-50 font-sans">
 
-<div class="flex min-h-screen">
+<body class="bg-gray-50 font-sans">
+
+@php
+    $backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
+    $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
+@endphp
+
+<div class="flex min-h-screen main-container {{ $backgroundEnabled && $backgroundImage ? 'has-background' : '' }}"
+     @if($backgroundEnabled && $backgroundImage)
+         style="background-image: url('{{ $backgroundImage }}')"
+    @endif>
+
     <!-- Боковая панель -->
-    <div class="sidebar w-64 py-6 px-4 hidden sm:flex flex-col relative">
+    <div class="sidebar w-64 py-6 px-4 hidden sm:flex flex-col relative {{ $backgroundEnabled && $backgroundImage ? 'no-background' : '' }}">
         <!-- Логотип -->
         <div class="mb-8">
             <a href="{{route('welcome')}}" class="flex items-center space-x-3 group">
@@ -325,7 +357,11 @@
         <div class="space-y-2 flex-1 scrollbar-thin">
             <!-- Главное меню -->
             <div class="mb-6">
-                <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider mb-4 px-2">ГЛАВНОЕ</h3>
+                @if($backgroundEnabled)
+                    <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider mb-4 px-2 text-white">ГЛАВНОЕ</h3>
+                @else
+                    <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider mb-4 px-2">ГЛАВНОЕ</h3>
+                    @endif
 
                 <div class="space-y-1">
                     <a href="{{route('welcome')}}"
@@ -642,21 +678,27 @@
     </div>
 
     <!-- Основной контент -->
-    <div class="flex-1 min-h-[calc(100vh-80px)] "> <!-- Убрал p-6 и bg-gray-50 -->
-        <!-- Главная страница -->
-        <div id="home" class="page active-page p-6"> <!-- Добавил padding внутрь -->
+    <div class="flex-1 min-h-[calc(100vh-80px)]">
+        <div id="home" class="page active-page p-6">
             @yield('content')
+        </div>
+
+        <div class="setting-button" style="position: fixed; bottom: 10px; right: 60px;" title="Выберите фон">
+            <button onclick="openBackgroundSelector()"
+                    class="w-full text-left px-4 py-2 rounded-lg transition-colors">
+                <i class="fas fa-image mr-3"></i>
+            </button>
         </div>
 
         <div class="chat-button" style="position: fixed; bottom: 10px; right: 20px;">
             <a href="{{route('chat.index')}}">
-                <button class="bg-primary text-white p-2 rounded-full hover:bg-secondary transition-colors"
+                <button class="bg-primary  p-2 rounded-full hover:bg-secondary transition-colors"
                         style="width: 70px;">
                     <i class="fas fa-comment-dots"></i>
                 </button>
             </a>
-
         </div>
+
     </div>
 </div>
 
@@ -690,7 +732,58 @@
 <!-- Модальное окно подтверждения удаления категории -->
 @include('partials.modal.category.delete')
 
+@include('partials.modal.background-selector')
 
+<<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mainContainer = document.querySelector('.main-container');
+        const sidebar = document.querySelector('.sidebar');
+
+        function applyBackground(enabled, imagePath) {
+            if (enabled && imagePath) {
+                // Включаем фон на main-container
+                mainContainer.classList.add('has-background');
+                mainContainer.style.backgroundImage = `url(${imagePath})`;
+                // Убираем все стили у sidebar
+                sidebar.classList.add('no-background');
+            } else {
+                // Убираем фон с main-container
+                mainContainer.classList.remove('has-background');
+                mainContainer.style.backgroundImage = '';
+                // Возвращаем стили sidebar
+                sidebar.classList.remove('no-background');
+            }
+        }
+
+        // Применяем сохраненные настройки
+        @if($backgroundEnabled && $backgroundImage)
+        applyBackground(true, '{{ $backgroundImage }}');
+        @else
+        applyBackground(false, null);
+        @endif
+
+            window.updateBackground = function(imagePath, enabled) {
+            fetch('{{ route("user.updateBackground") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    background_image: imagePath,
+                    background_enabled: enabled
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        applyBackground(enabled, imagePath);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        };
+    });
+</script>
 <script>
     // Глобальные переменные
     let currentModalType = '';
