@@ -22,8 +22,8 @@ class TeamController extends Controller
             $authUser = auth()->user();
 
             $usersQuery = User::query()
-                ->where('company_id', $authUser->company_id) // ← ТОЛЬКО пользователи этой компании
-                ->with(['role', 'department']);
+                ->where('company_id', $authUser->company_id)
+                ->with(['role', 'departments']); // ← ИЗМЕНЕНО: было 'department'
 
             // Поиск
             if ($request->has('search') && $request->search != '') {
@@ -33,9 +33,11 @@ class TeamController extends Controller
                 });
             }
 
-            // Фильтрация по отделу
+            // Фильтрация по отделу (ИЗМЕНЕНО)
             if ($request->has('department') && $request->department != '') {
-                $usersQuery->where('department_id', $request->department);
+                $usersQuery->whereHas('departments', function($q) use ($request) {
+                    $q->where('department_id', $request->department);
+                });
             }
 
             // Фильтрация по роли
@@ -61,7 +63,6 @@ class TeamController extends Controller
 
             $users = $usersQuery->paginate(20);
 
-            // Получаем отделы и роли для фильтров
             $departments = Department::where('company_id', $authUser->company_id)->get();
             $roles = Role::where('company_id', $authUser->company_id)->get();
 
@@ -163,9 +164,8 @@ class TeamController extends Controller
 
                 // 5. СБРАСЫВАЕМ СВЯЗИ С КОМПАНИЕЙ И ОТДЕЛОМ
                 $updateData = [
-                    'company_id' => null,  // ← ОСНОВНОЕ: убираем из компании
-                    'department_id' => null, // убираем из отдела
-                    'role_id' => null,      // сбрасываем роль в компании
+                    'company_id' => null,
+                    'role_id' => null,
                 ];
 
                 \Log::info('Обновляемые данные:', $updateData);
@@ -235,7 +235,9 @@ class TeamController extends Controller
                 ->pluck('id')
                 ->toArray();
 
-            return in_array($userToRemove->department_id, $manageableDepartmentIds);
+            // Проверяем, есть ли у пользователя хотя бы один отдел из управляемых
+            $userDepartmentIds = $userToRemove->departments()->pluck('departments.id')->toArray();
+            return !empty(array_intersect($userDepartmentIds, $manageableDepartmentIds));
         }
 
         return false;
@@ -322,7 +324,6 @@ class TeamController extends Controller
                     $userToRemove->update([
                         'is_active' => false,
                         'company_id' => null,
-                        'department_id' => null,
                         'role_id' => null,
                     ]);
                 });
@@ -338,6 +339,81 @@ class TeamController extends Controller
         }
     }
 
+
+    /**
+     * Получить список всех отделов компании для выбора
+     */
+    public function getDepartmentsList()
+    {
+        try {
+            $authUser = auth()->user();
+            $departments = Department::where('company_id', $authUser->company_id)
+                ->select('id', 'name')
+                ->orderBy('name')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'departments' => $departments
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Обновить отделы пользователя
+     */
+    public function updateUserDepartments(Request $request, User $user)
+    {
+        try {
+            $authUser = auth()->user();
+
+            // Проверка прав
+            if ($user->company_id !== $authUser->company_id) {
+                return response()->json(['success' => false, 'error' => 'Нет доступа'], 403);
+            }
+
+            // Проверка, может ли пользователь редактировать
+            if (!$authUser->isLeader() && $authUser->id !== $user->id) {
+                return response()->json(['success' => false, 'error' => 'У вас нет прав для редактирования'], 403);
+            }
+
+            $request->validate([
+                'department_ids' => 'array',
+                'department_ids.*' => 'exists:departments,id'
+            ]);
+
+            $departmentIds = $request->get('department_ids', []);
+
+            // Проверяем, что все отделы принадлежат той же компании
+            $validDepartments = Department::where('company_id', $authUser->company_id)
+                ->whereIn('id', $departmentIds)
+                ->count();
+
+            if ($validDepartments !== count($departmentIds)) {
+                return response()->json(['success' => false, 'error' => 'Некорректные отделы'], 400);
+            }
+
+            // Синхронизируем отделы
+            $user->departments()->sync($departmentIds);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Отделы пользователя обновлены'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Update user departments error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Ошибка при обновлении отделов'
+            ], 500);
+        }
+    }
     public function exportTable(Request $request)
     {
         try {
@@ -346,7 +422,7 @@ class TeamController extends Controller
 
             $usersQuery = User::query()
                 ->where('company_id', $authUser->company_id)
-                ->with(['role', 'department']);
+                ->with(['role', 'departments']);
 
             // Применяем те же фильтры, что и в index
             if ($request->has('search') && $request->search != '') {
@@ -357,7 +433,9 @@ class TeamController extends Controller
             }
 
             if ($request->has('department') && $request->department != '') {
-                $usersQuery->where('department_id', $request->department);
+                $usersQuery->whereHas('departments', function($q) use ($request) {
+                    $q->where('department_id', $request->department);
+                });
             }
 
             if ($request->has('role') && $request->role != '') {
@@ -422,7 +500,7 @@ class TeamController extends Controller
                     $user->name,
                     $user->email,
                     $user->role ? $user->role->name : '',
-                    $user->department ? $user->department->name : '',
+                    $user->departments->pluck('name')->implode(', '),
                     $stats['total'],
                     $stats['completed'],
                     $stats['completion_rate'] . '%',
@@ -452,7 +530,7 @@ class TeamController extends Controller
 
             $usersQuery = User::query()
                 ->where('company_id', $authUser->company_id)
-                ->with(['role', 'department']);
+                ->with(['role', 'departments']);
 
             // Применяем фильтры
             if ($request->has('search') && $request->search != '') {
@@ -463,7 +541,9 @@ class TeamController extends Controller
             }
 
             if ($request->has('department') && $request->department != '') {
-                $usersQuery->where('department_id', $request->department);
+                $usersQuery->whereHas('departments', function($q) use ($request) {
+                    $q->where('department_id', $request->department);
+                });
             }
 
             if ($request->has('status') && $request->status != '') {
@@ -488,8 +568,8 @@ class TeamController extends Controller
         try {
             $authUser = auth()->user();
 
-            $user = User::with(['role', 'department', 'company'])
-                ->where('company_id', $authUser->company_id)
+            $user = User::with(['role', 'departments', 'company']) // ← ИЗМЕНЕНО: было 'department', стало 'departments'
+            ->where('company_id', $authUser->company_id)
                 ->withCount([
                     'assignedTasks as total_tasks_count',
                     'assignedTasks as completed_tasks_count' => function($query) {
@@ -520,7 +600,7 @@ class TeamController extends Controller
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
-                    'avatar_url' => $user->avatar_url, // Вот это важно!
+                    'avatar_url' => $user->avatar_url,
                     'avatar' => $user->avatar,
                     'is_active' => $user->is_active,
                     'created_at' => $user->created_at,
@@ -529,10 +609,12 @@ class TeamController extends Controller
                         'id' => $user->role->id,
                         'name' => $user->role->name,
                     ] : null,
-                    'department' => $user->department ? [
-                        'id' => $user->department->id,
-                        'name' => $user->department->name,
-                    ] : null,
+                    'departments' => $user->departments ? $user->departments->map(function($dept) { // ← ИЗМЕНЕНО
+                        return [
+                            'id' => $dept->id,
+                            'name' => $dept->name,
+                        ];
+                    }) : [],
                     'company' => $user->company ? [
                         'id' => $user->company->id,
                         'name' => $user->company->name,
@@ -561,7 +643,7 @@ class TeamController extends Controller
         try {
             $authUser = auth()->user();
 
-            $user = User::with(['role', 'department', 'company'])
+            $user = User::with(['role', 'departments', 'company'])
                 ->where('company_id', $authUser->company_id)
                 ->withCount([
                     'assignedTasks as total_tasks_count',

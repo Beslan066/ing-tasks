@@ -9,10 +9,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class PhotoCategory extends Model
 {
     use SoftDeletes;
+
+    protected $table = 'photo_categories';
+
     protected $fillable = ['name', 'slug'];
 
     public function photos(): HasMany
     {
-        return $this->hasMany(Photo::class);
+        // Явно указываем foreign key
+        return $this->hasMany(Photo::class, 'category_id');
     }
 }

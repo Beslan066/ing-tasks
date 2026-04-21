@@ -9,7 +9,6 @@
                 <p class="text-gray-600 dark:text-gray-400 mt-2" x-text="`${totalPhotos} фотографий`"></p>
             </div>
             <div class="flex gap-3">
-                <!-- Кнопка фильтров -->
                 <button @click="showFilters = !showFilters"
                         class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-4 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -22,7 +21,6 @@
                     </template>
                 </button>
 
-                <!-- Кнопка добавления фото -->
                 <button @click="showUploadModal = true"
                         class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,7 +41,6 @@
              x-transition:leave-end="opacity-0 transform -translate-y-4"
              class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- Поиск -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Поиск</label>
                     <input type="text" x-model="filters.search" @input.debounce.500ms="loadPhotos"
@@ -51,11 +48,10 @@
                            placeholder="Название, описание...">
                 </div>
 
-                <!-- Категория -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Категория</label>
                     <select x-model="filters.category" @change="loadPhotos"
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500  dark:text-white bg-white">
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:text-white bg-white">
                         <option value="">Все категории</option>
                         <template x-for="category in categories" :key="category.id">
                             <option :value="category.id" x-text="category.name"></option>
@@ -63,7 +59,6 @@
                     </select>
                 </div>
 
-                <!-- Теги -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Теги</label>
                     <select x-model="filters.tags" @change="loadPhotos"
@@ -76,7 +71,6 @@
                 </div>
             </div>
 
-            <!-- Активные фильтры -->
             <div x-show="hasActiveFilters" class="mt-4 flex flex-wrap gap-2">
                 <template x-if="filters.search">
                 <span class="inline-flex items-center gap-1 bg-blue-100 text-green-800 px-3 py-1 rounded-full text-sm">
@@ -120,7 +114,6 @@
 
         <!-- Галерея фотографий -->
         <div class="relative">
-            <!-- Индикатор загрузки -->
             <div x-show="loading" class="absolute inset-0 bg-white dark:bg-gray-900 bg-opacity-80 flex items-center justify-center z-10 rounded-lg">
                 <div class="flex items-center gap-3 text-gray-600 dark:text-gray-400">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
@@ -128,19 +121,17 @@
                 </div>
             </div>
 
-            <!-- Сетка фотографий -->
             <template x-if="photos.length > 0">
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     <template x-for="photo in photos" :key="photo.id">
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden group relative transition-all duration-300 hover:shadow-lg">
-                            <img class="w-full h-48 object-cover"
+                        <div @click="openFullscreen(photo)"
+                             class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden group relative transition-all duration-300 hover:shadow-lg cursor-pointer"><img class="w-full h-48 object-cover"
                                  :src="getImageUrl(photo.file_path)"
                                  :alt="photo.title"
                                  loading="lazy">
 
-                            <!-- Наложение с информацией -->
-                            <div class="absolute inset-0 bg-black bg-opacity-60 group-hover:bg-opacity-60 transition-all duration-300 flex items-end p-3 w-100">
-                                <div class="text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 mb-4 w-100 pointer">
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-end p-3">
+                                <div class="text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 mb-4 w-full">
                                     <h3 class="font-semibold text-sm mb-1" x-text="photo.title"></h3>
                                     <p class="text-xs opacity-90 mb-2" x-text="photo.category.name"></p>
                                     <div class="flex flex-wrap gap-1">
@@ -155,7 +146,6 @@
                 </div>
             </template>
 
-            <!-- Пустое состояние -->
             <template x-if="!loading && photos.length === 0">
                 <div class="text-center py-12">
                     <div class="max-w-md mx-auto">
@@ -175,7 +165,6 @@
             </template>
         </div>
 
-        <!-- Кнопка "Загрузить еще" -->
         <div x-show="hasMorePages && photos.length > 0" class="text-center mt-8">
             <button @click="loadMore" :disabled="loadingMore"
                     class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50">
@@ -208,7 +197,6 @@
                     <form @submit.prevent="uploadPhoto" class="space-y-6">
                         @csrf
 
-                        <!-- Название -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Название *</label>
                             <input type="text" x-model="uploadForm.title"
@@ -217,14 +205,12 @@
                             <span x-show="uploadErrors.title" x-text="uploadErrors.title" class="text-red-500 text-sm mt-1"></span>
                         </div>
 
-                        <!-- Описание -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Описание</label>
                             <textarea x-model="uploadForm.description" rows="3"
                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"></textarea>
                         </div>
 
-                        <!-- Категория -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Категория *</label>
                             <div class="flex gap-2">
@@ -254,7 +240,6 @@
                             <span x-show="uploadErrors.category_id" x-text="uploadErrors.category_id" class="text-red-500 text-sm"></span>
                         </div>
 
-                        <!-- Теги -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Теги</label>
                             <select x-model="uploadForm.tags" multiple
@@ -266,7 +251,6 @@
                             <p class="text-sm text-gray-500 mt-2">Для выбора нескольких тегов удерживайте Ctrl</p>
                         </div>
 
-                        <!-- Фотография -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Фотография *</label>
                             <input type="file" @change="handleFileSelect"
@@ -276,20 +260,17 @@
                             <p class="text-sm text-gray-500 mt-2">Поддерживаемые форматы: JPEG, PNG, GIF, WebP. Максимальный размер: 20MB</p>
                         </div>
 
-                        <!-- Предпросмотр -->
                         <div x-show="previewUrl">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Предпросмотр</label>
                             <img :src="previewUrl" class="max-w-full h-48 object-cover rounded-lg border border-gray-300 dark:border-gray-600">
                         </div>
 
-                        <!-- Сообщения -->
                         <div x-show="uploadMessage"
                              :class="{'bg-green-100 border-green-400 text-green-700': uploadMessageType === 'success', 'bg-red-100 border-red-400 text-red-700': uploadMessageType === 'error'}"
                              class="px-4 py-3 rounded border">
                             <span x-text="uploadMessage"></span>
                         </div>
 
-                        <!-- Кнопки -->
                         <div class="flex gap-4 pt-4">
                             <button type="submit"
                                     :disabled="uploadLoading"
@@ -308,13 +289,144 @@
         </div>
     </div>
 
+    <!-- Полноэкранный просмотр (отдельный div вне Alpine) -->
+    <!-- Полноэкранный просмотр -->
+    <div id="fullscreenViewer" class="fixed inset-0 bg-black bg-opacity-95 z-50 hidden items-center justify-center" style="display: none;">
+        <button id="closeFullscreen" class="absolute top-4 right-4 text-white hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full p-2 transition-colors">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <button id="prevPhoto" class="absolute left-4 text-white hover:text-gray-300 bg-black bg-opacity-50 rounded-full p-3 transition-colors hover:bg-opacity-75">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </button>
+
+        <button id="nextPhoto" class="absolute right-4 text-white hover:text-gray-300 bg-black bg-opacity-50 rounded-full p-3 transition-colors hover:bg-opacity-75">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
+
+        <div class="max-w-7xl max-h-screen p-4">
+            <img id="fullscreenImage" src="" alt="" class="max-w-full max-h-screen object-contain mx-auto">
+        </div>
+
+        <div id="fullscreenInfo" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent text-white p-6">
+            <div class="container mx-auto">
+                <h2 id="infoTitle" class="text-2xl font-bold mb-2"></h2>
+                <p id="infoDescription" class="text-gray-300 mb-2"></p>
+                <p id="infoCategory" class="text-sm text-gray-400 mb-2"></p>
+                <div id="infoTags" class="flex flex-wrap gap-2"></div>
+                <p id="infoId" class="text-xs text-gray-500 mt-2"></p>
+            </div>
+        </div>
+
+        <div id="photoCounter" class="absolute top-4 left-4 text-white bg-black bg-opacity-50 rounded-lg px-3 py-1 text-sm"></div>
+    </div>
     <script>
+        // Полноэкранный просмотр через отдельный объект
+        const FullscreenViewer = {
+            photos: [],
+            currentIndex: 0,
+
+            init() {
+                this.viewer = document.getElementById('fullscreenViewer');
+                this.image = document.getElementById('fullscreenImage');
+                this.info = document.getElementById('fullscreenInfo');
+                this.counter = document.getElementById('photoCounter');
+                this.titleEl = document.getElementById('infoTitle');
+                this.descriptionEl = document.getElementById('infoDescription');
+                this.categoryEl = document.getElementById('infoCategory');
+                this.tagsEl = document.getElementById('infoTags');
+                this.idEl = document.getElementById('infoId');
+
+                document.getElementById('closeFullscreen').onclick = () => this.close();
+                document.getElementById('prevPhoto').onclick = () => this.prev();
+                document.getElementById('nextPhoto').onclick = () => this.next();
+
+                document.addEventListener('keydown', (e) => {
+                    if (!this.isOpen()) return;
+                    if (e.key === 'Escape') this.close();
+                    if (e.key === 'ArrowLeft') this.prev();
+                    if (e.key === 'ArrowRight') this.next();
+                });
+            },
+
+            isOpen() {
+                return this.viewer && this.viewer.classList.contains('flex');
+            },
+
+            open(photos, index) {
+                this.photos = photos;
+                this.currentIndex = index;
+                this.updateContent();
+                this.viewer.classList.remove('hidden');
+                this.viewer.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            },
+
+            close() {
+                this.viewer.classList.add('hidden');
+                this.viewer.classList.remove('flex');
+                document.body.style.overflow = '';
+            },
+
+            next() {
+                if (this.currentIndex < this.photos.length - 1) {
+                    this.currentIndex++;
+                    this.updateContent();
+                }
+            },
+
+            prev() {
+                if (this.currentIndex > 0) {
+                    this.currentIndex--;
+                    this.updateContent();
+                }
+            },
+
+            updateContent() {
+                const photo = this.photos[this.currentIndex];
+                if (!photo) return;
+
+                this.image.src = '/storage/' + photo.file_path;
+                this.titleEl.textContent = photo.title;
+                this.descriptionEl.textContent = photo.description || '';
+                this.categoryEl.textContent = photo.category.name;
+                this.idEl.textContent = 'ID: ' + photo.id;
+
+                // Теги
+                this.tagsEl.innerHTML = '';
+                if (photo.tags && photo.tags.length) {
+                    photo.tags.forEach(tag => {
+                        const span = document.createElement('span');
+                        span.className = 'bg-green-500 bg-opacity-80 px-3 py-1 rounded-full text-sm';
+                        span.textContent = tag.name;
+                        this.tagsEl.appendChild(span);
+                    });
+                }
+
+                // Счетчик
+                if (this.photos.length > 1) {
+                    this.counter.classList.remove('hidden');
+                    this.counter.textContent = (this.currentIndex + 1) + ' / ' + this.photos.length;
+                } else {
+                    this.counter.classList.add('hidden');
+                }
+
+                // Информация
+                this.info.classList.remove('hidden');
+            }
+        };
+
         function photobankApp() {
             return {
-                // Состояние
                 showUploadModal: false,
                 showNewCategory: false,
-                showFilters: false, // Новое состояние для показа/скрытия фильтров
+                showFilters: false,
                 loading: false,
                 loadingMore: false,
                 uploadLoading: false,
@@ -324,14 +436,12 @@
                 totalPhotos: 0,
                 nextPageUrl: null,
 
-                // Фильтры
                 filters: {
                     search: '',
                     category: '',
                     tags: ''
                 },
 
-                // Форма загрузки
                 uploadForm: {
                     title: '',
                     description: '',
@@ -345,7 +455,6 @@
                 previewUrl: '',
                 newCategory: { name: '' },
 
-                // Вычисляемые свойства
                 get hasActiveFilters() {
                     return this.filters.search || this.filters.category || this.filters.tags;
                 },
@@ -362,23 +471,17 @@
                     return count;
                 },
 
-                // Методы
                 init() {
+                    FullscreenViewer.init();
                     this.loadPhotos();
                 },
 
                 getImageUrl(filePath) {
-                    return `/storage/${filePath}`;
-                },
-
-                handleImageError(event) {
-                    console.error('Error loading image:', event.target.src);
-                    event.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YzZjRmNiIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5YzljOWMiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==';
+                    return '/storage/' + filePath;
                 },
 
                 async loadPhotos() {
                     this.loading = true;
-
                     try {
                         const params = new URLSearchParams();
                         if (this.filters.search) params.append('search', this.filters.search);
@@ -386,23 +489,17 @@
                         if (this.filters.tags) params.append('tags', this.filters.tags);
                         params.append('ajax', 'true');
 
-                        const response = await fetch(`/photobank?${params}`, {
+                        const response = await fetch('/photobank?' + params.toString(), {
                             headers: {
                                 'X-Requested-With': 'XMLHttpRequest',
                                 'Accept': 'application/json'
                             }
                         });
 
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-
                         const data = await response.json();
-
                         this.photos = data.photos || [];
                         this.totalPhotos = data.total || 0;
                         this.nextPageUrl = data.next_page_url;
-
                     } catch (error) {
                         console.error('Error loading photos:', error);
                         this.photos = [];
@@ -414,9 +511,7 @@
 
                 async loadMore() {
                     if (!this.nextPageUrl) return;
-
                     this.loadingMore = true;
-
                     try {
                         const response = await fetch(this.nextPageUrl, {
                             headers: {
@@ -424,13 +519,7 @@
                                 'Accept': 'application/json'
                             }
                         });
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-
                         const data = await response.json();
-
                         this.photos = [...this.photos, ...(data.photos || [])];
                         this.nextPageUrl = data.next_page_url;
                     } catch (error) {
@@ -464,11 +553,35 @@
                     return tag ? tag.name : '';
                 },
 
-                // Методы для модального окна
+                openFullscreen(photo) {
+                    const modalHtml = `
+        <div id="tempFullscreen" class="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center" style="z-index: 9999;">
+            <button onclick="document.getElementById('tempFullscreen').remove()" class="absolute top-4 right-4 text-white hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full p-2 transition-colors">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="max-w-7xl max-h-screen p-4">
+                <img src="/storage/${photo.file_path}" alt="${photo.title}" class="max-w-full max-h-screen object-contain mx-auto">
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent text-white p-6">
+                <div class="container mx-auto">
+                    <h2 class="text-2xl font-bold mb-2">${photo.title}</h2>
+                    <p class="text-gray-300 mb-2">${photo.description || ''}</p>
+                    <p class="text-sm text-gray-400 mb-2">${photo.category.name}</p>
+                </div>
+            </div>
+        </div>
+    `;
+                    document.body.insertAdjacentHTML('beforeend', modalHtml);
+                    document.body.style.overflow = 'hidden';
+
+                    document.getElementById('tempFullscreen').addEventListener('click', function(e) {
+                        if (e.target === this) this.remove();
+                    });
+                },
+
                 handleFileSelect(event) {
                     const file = event.target.files[0];
                     this.uploadForm.photo = file;
-
                     if (file) {
                         this.previewUrl = URL.createObjectURL(file);
                     } else {
@@ -487,15 +600,11 @@
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
                                 'X-Requested-With': 'XMLHttpRequest'
                             },
                             body: JSON.stringify(this.newCategory)
                         });
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
 
                         const data = await response.json();
 
@@ -519,7 +628,6 @@
                     this.uploadErrors = {};
                     this.uploadMessage = '';
 
-                    // Базовая валидация
                     if (!this.uploadForm.title.trim()) {
                         this.uploadErrors.title = 'Введите название';
                         this.uploadLoading = false;
@@ -554,15 +662,11 @@
                         const response = await fetch('/photobank/photos', {
                             method: 'POST',
                             headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
                                 'X-Requested-With': 'XMLHttpRequest'
                             },
                             body: formData
                         });
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
 
                         const data = await response.json();
 
@@ -611,7 +715,6 @@
             }
         }
 
-        // Инициализация Alpine.js
         document.addEventListener('alpine:init', () => {
             Alpine.data('photobankApp', photobankApp);
         });

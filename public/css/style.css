@@ -1,3 +1,5 @@
+@plugin "@tailwindcss/forms";
+
 .file-upload-area {
     transition: all 0.3s ease;
 }

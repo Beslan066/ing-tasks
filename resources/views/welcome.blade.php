@@ -1,10 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
+
+@php
+    $backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
+    $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
+@endphp
     <!-- Заголовок и статистика -->
     <div class="flex justify-between items-center mb-8">
         <div>
-            <h1 class="text-3xl font-bold text-dark">Мои задачи</h1>
+            @if($backgroundEnabled && $backgroundImage)
+            <h2 class="text-3xl font-bold text-white">Мои задачи</h2>
+            @else
+                <h2 class="text-3xl font-bold text-[#16a34a]">Мои задачи</h2>
+            @endif
             <p class="text-gray-500">{{ $user->company->name }} • {{ $stats['in_progress'] }} активных задач</p>
         </div>
         <!-- В блоке с заголовком и статистикой -->
@@ -13,7 +22,7 @@
             <button onclick="openPersonalTaskModal()"
                     class=" text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-900-700 transition" style="background-color: #16a34a;">
                 <i class="fas fa-plus"></i>
-                <span>Создать задачу</span>
+                <span>Добавить</span>
             </button>
 
             <button
@@ -28,9 +37,13 @@
     <!-- Доска с задачами -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <!-- Колонка "Новые" -->
-        <div class="bg-gray-100 rounded-lg p-4 board-column bg-transparent" data-status="new">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-semibold text-gray-700">Новые</h3>
+        <div class=" rounded-lg p-4 board-column bg-transparent" data-status="new">
+            <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2">
+                @if($backgroundEnabled && $backgroundImage)
+                    <h3 class="font-semibold text-white">Новые</h3>
+                @else
+                    <h3 class="font-semibold text-gray-700">Новые</h3>
+                @endif
                 <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded">{{ $stats['new'] }}</span>
             </div>
 
@@ -76,9 +89,13 @@
         </div>
 
         <!-- Колонка "В работе" -->
-        <div class="bg-gray-100 rounded-lg p-4 board-column" data-status="in-progress">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-semibold text-gray-700">В работе</h3>
+        <div class="rounded-lg p-4 board-column" data-status="in-progress">
+            <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2">
+                @if($backgroundEnabled && $backgroundImage)
+                    <h3 class="font-semibold text-white">В работе</h3>
+                @else
+                    <h3 class="font-semibold text-gray-700">В работе</h3>
+                @endif
                 <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">{{ $stats['in_progress'] }}</span>
             </div>
 
@@ -133,9 +150,13 @@
         </div>
 
         <!-- Колонка "На проверке" -->
-        <div class="bg-gray-100 rounded-lg p-4 board-column" data-status="review">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-semibold text-gray-700">На проверке</h3>
+        <div class="rounded-lg p-4 board-column" data-status="review">
+            <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2">
+            @if($backgroundEnabled && $backgroundImage)
+                    <h3 class="font-semibold text-white shadow-2xs">На проверке</h3>
+            @else
+                    <h3 class="font-semibold text-gray-700">На проверке</h3>
+            @endif
                 <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded">{{ $stats['review'] }}</span>
             </div>
 
@@ -177,9 +198,13 @@
         </div>
 
         <!-- Колонка "Завершено" -->
-        <div class="bg-gray-100 rounded-lg p-4 board-column bg-transparent" data-status="done" style="border: 1px solid #fff">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-semibold text-gray-700">Завершено</h3>
+        <div class="rounded-lg p-4 board-column bg-transparent" data-status="done">
+            <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2">
+                @if($backgroundEnabled && $backgroundImage)
+                    <h3 class="font-semibold text-white">Завершено</h3>
+                @else
+                    <h3 class="font-semibold text-gray-700">Завершено</h3>
+                @endif
                 <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">{{ $stats['done'] }}</span>
             </div>
 

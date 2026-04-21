@@ -28,7 +28,7 @@ class ViewServiceProvider extends ServiceProvider
     public function boot()
     {
         View::composer('*', function ($view) {
-            $user = auth::user();
+            $user = Auth::user();
 
             if (!$user) {
                 return $this->shareGuestData($view);
@@ -72,7 +72,7 @@ class ViewServiceProvider extends ServiceProvider
     private function getUserViewData($user)
     {
         // Предзагружаем данные
-        $user->load(['company', 'role']);
+        $user->load(['company', 'role', 'departments']); // ← ДОБАВИЛ departments
 
         // ====== КОМПАНИИ ======
         $ownedCompanies = $this->getUserCompanies($user);
@@ -120,10 +120,10 @@ class ViewServiceProvider extends ServiceProvider
                 'name' => $member->name,
                 'initials' => $this->generateInitials($member->name),
                 'color' => $this->generateColorFromName($member->name),
-                'is_online' => $member->isOnline(), // Используем метод isOnline() модели
+                'is_online' => $member->isOnline(),
                 'last_activity_text' => $member->getLastActivityText(),
                 'avatar_url' => $member->avatar_url,
-                'department' => $member->department,
+                'departments' => $member->departments,
                 'role' => $member->role,
             ];
         });
@@ -187,7 +187,7 @@ class ViewServiceProvider extends ServiceProvider
 
         $team = User::where('company_id', $user->company_id)
             ->where('is_active', true)
-            ->with('department', 'role')
+            ->with('departments', 'role')
             ->get();
 
         $assignableUsers = $user->getAssignableUsers();
@@ -268,12 +268,16 @@ class ViewServiceProvider extends ServiceProvider
 
     private function getUnreadEmailsCount($user)
     {
-        if (!$user->company_id || !$user->department_id) {
+        if (!$user->company_id) {
             return 0;
         }
 
-        // Для простоты используем счетчик отдела
-        $department = Department::find($user->department_id);
-        return $department ? $department->unread_emails_count : 0;
+        // Получаем общее количество непрочитанных писем из всех отделов пользователя
+        $totalUnread = 0;
+        foreach ($user->departments as $department) {
+            $totalUnread += $department->unread_emails_count ?? 0;
+        }
+
+        return $totalUnread;
     }
 }

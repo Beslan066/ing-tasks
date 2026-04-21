@@ -406,133 +406,6 @@
                         <span class="font-medium">Мессенджер</span>
                     </a>
 
-                    @php
-                        $user = auth()->user();
-
-                        // Считаем непрочитанные письма пользователя
-                        $personalUnreadCount = $user ? $user->getUnreadEmails() : 0;
-
-                        // Считаем непрочитанные письма в отделах, где состоит пользователь
-                        $departmentUnreadCount = 0;
-                        if ($user && $user->departments) {
-                            foreach ($user->departments as $department) {
-                                if ($department->email) {
-                                    $departmentUnreadCount += $department->getUnreadEmails();
-                                }
-                            }
-                        }
-
-                        $totalUnreadCount = $personalUnreadCount + $departmentUnreadCount;
-                    @endphp
-
-                        <!-- Основная кнопка почты -->
-                    <div class="relative email-nav-container group">
-                        <a href="{{ route('personal.emails.index') }}"
-                           class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover email-nav-button">
-                            <div
-                                class="relative w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center mr-3 group-hover:bg-yellow-500/20">
-                                <i class="fas fa-envelope text-yellow-500 text-sm"></i>
-                                @if($totalUnreadCount > 0)
-                                    <span
-                                        class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {{ $totalUnreadCount }}
-                </span>
-                                @endif
-                            </div>
-                            <span class="font-medium">Почта</span>
-
-                            <!-- Стрелочка для индикации выпадающего меню -->
-                            <svg
-                                class="w-4 h-4 ml-2 text-gray-400 group-hover:text-gray-300 transition-transform duration-200 group-hover:rotate-180"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </a>
-
-                        <!-- Выпадающее меню при наведении -->
-                        <div
-                            class="absolute left-0 top-full mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform -translate-x-1/2 left-1/2">
-                            <div class="py-2">
-                                <!-- Личная почта -->
-                                <a href="{{ route('personal.emails.index') }}"
-                                   class="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors">
-                                    <div class="flex items-center">
-                                        <div
-                                            class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                                            <i class="fas fa-user text-blue-500 text-xs"></i>
-                                        </div>
-                                        <span>Моя почта</span>
-                                    </div>
-                                    @if($personalUnreadCount > 0)
-                                        <span
-                                            class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
-                        {{ $personalUnreadCount }}
-                    </span>
-                                    @endif
-                                </a>
-
-                                <!-- Почта отделов -->
-                                @if($user && $user->departments->whereNotNull('email')->count() > 0)
-                                    <div class="border-t border-gray-100 my-1"></div>
-                                    <div class="px-4 py-1 text-xs text-gray-500 font-medium uppercase tracking-wider">
-                                        Почта отделов
-                                    </div>
-
-                                    @foreach($user->departments->whereNotNull('email')->take(3) as $department)
-                                        @php
-                                            $deptUnread = $department->getUnreadEmails();
-                                        @endphp
-                                        <a href="{{ route('departments.emails.index', $department) }}"
-                                           class="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors">
-                                            <div class="flex items-center">
-                                                <div
-                                                    class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
-                                                    <i class="fas fa-building text-indigo-500 text-xs"></i>
-                                                </div>
-                                                <span class="truncate">{{ $department->name }}</span>
-                                            </div>
-                                            @if($deptUnread > 0)
-                                                <span
-                                                    class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full font-medium">
-                                {{ $deptUnread }}
-                            </span>
-                                            @else
-                                                <span class="text-gray-400 text-xs">
-                                <i class="fas fa-check"></i>
-                            </span>
-                                            @endif
-                                        </a>
-                                    @endforeach
-
-                                    @if($user->departments->whereNotNull('email')->count() > 3)
-                                        <a href="{{ route('departments.index') }}"
-                                           class="flex items-center px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700">
-                                            <div class="w-8 h-8 flex items-center justify-center mr-3">
-                                                <i class="fas fa-ellipsis-h text-gray-400"></i>
-                                            </div>
-                                            <span>Все отделы...</span>
-                                        </a>
-                                    @endif
-                                @endif
-
-                                <!-- Быстрые действия -->
-                                <div class="border-t border-gray-100 my-1"></div>
-                                <a href="{{ route('personal.emails.create') }}"
-                                   class="flex items-center px-4 py-2 text-sm text-green-600 hover:bg-green-50 hover:text-green-700 transition-colors">
-                                    <div
-                                        class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                                        <i class="fas fa-pen text-green-500 text-xs"></i>
-                                    </div>
-                                    <span>Написать письмо</span>
-                                    <span class="ml-auto text-green-400">
-                    <i class="fas fa-arrow-right text-xs"></i>
-                </span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
                     <a href="{{route('files.index')}}"
                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
                         <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
@@ -734,7 +607,7 @@
 
 @include('partials.modal.background-selector')
 
-<<script>
+<script>
     document.addEventListener('DOMContentLoaded', function() {
         const mainContainer = document.querySelector('.main-container');
         const sidebar = document.querySelector('.sidebar');

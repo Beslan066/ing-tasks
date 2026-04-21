@@ -32,7 +32,8 @@ class Photo extends Model
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        // Явно указываем foreign key
+        return $this->belongsTo(PhotoCategory::class, 'category_id');
     }
 
     public function user(): BelongsTo
@@ -42,7 +43,8 @@ class Photo extends Model
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class);
+        // Явно указываем таблицу связи, если она отличается от стандартной
+        return $this->belongsToMany(Tag::class, 'photo_tag', 'photo_id', 'tag_id');
     }
 
     protected function fileSize(): Attribute

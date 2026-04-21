@@ -66,26 +66,16 @@ class Department extends Model
     }
 
     /**
-     * Пользователи отдела (ВСЕ пользователи - и через department_id, и через многие-ко-многим)
-     * @return \Illuminate\Database\Eloquent\Collection - возвращает всех пользователей отдела
+     * Получить ВСЕХ пользователей отдела
      */
     public function getAllUsersAttribute()
     {
-        // Получаем пользователей через поле department_id
-        $directUsers = User::where('department_id', $this->id)
-            ->where('company_id', $this->company_id)
-            ->get();
-
-        // Получаем пользователей через связь многие-ко-многим
-        $manyToManyUsers = $this->users()->get();
-
-        // Объединяем и убираем дубликаты
-        return $directUsers->merge($manyToManyUsers)->unique('id');
+        return $this->users()->get();
     }
 
     /**
      * Пользователи отдела через многие-ко-многим
-     * @return BelongsToMany - возвращает пользователей через промежуточную таблицу
+     * @return BelongsToMany
      */
     public function users(): BelongsToMany
     {

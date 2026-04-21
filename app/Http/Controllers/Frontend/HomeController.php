@@ -20,7 +20,7 @@ class HomeController extends Controller
         $user = Auth::user();
 
         // Загружаем необходимые связи
-        $user->load(['company', 'ownedCompanies', 'department']);
+        $user->load(['company', 'ownedCompanies', 'departments']);
 
         // ДЕТАЛЬНАЯ ОТЛАДКА - временно, чтобы увидеть проблему
         // \Log::info('User data:', [
@@ -85,12 +85,12 @@ class HomeController extends Controller
                 ->get(),
         ];
 
-        // Задачи отдела (доступные для взятия)
-        // Проверяем, есть ли у пользователя отдел
+        // Задачи отделов (доступные для взятия) - ИСПРАВЛЕНО
         $availableTasks = collect();
-        if ($user->department_id) {
-            $availableTasks = Task::with(['author', 'department', 'category'])
-                ->where('department_id', $user->department_id)
+        if ($user->departments()->count() > 0) {
+            $departmentIds = $user->departments()->pluck('departments.id')->toArray();
+            $availableTasks = Task::with(['author', 'departments', 'category'])
+                ->whereIn('department_id', $departmentIds)
                 ->whereNull('user_id')
                 ->where('status', 'не назначена')
                 ->where('is_personal', 0)
@@ -140,16 +140,17 @@ class HomeController extends Controller
         }
 
         // Оптимизируем запросы
-        $user->load(['company', 'role']);
+        $user->load(['company', 'role', 'departments']); // ИСПРАВЛЕНО: добавил departments
 
         // Определяем видимость задач в зависимости от роли
         if ($user->isManagerRole() && !$user->isLeader()) {
-            // Менеджер видит только задачи своего отдела и где он автор
+            // Менеджер видит только задачи своих отделов и где он автор - ИСПРАВЛЕНО
+            $departmentIds = $user->departments()->pluck('departments.id')->toArray();
             $tasksQuery = Task::with(['author', 'user', 'department', 'category'])
                 ->withCount('rejections')
                 ->where('company_id', $user->company_id)
-                ->where(function($query) use ($user) {
-                    $query->where('department_id', $user->department_id)
+                ->where(function($query) use ($user, $departmentIds) {
+                    $query->whereIn('department_id', $departmentIds)
                         ->orWhere('author_id', $user->id);
                 });
         } else {
@@ -159,11 +160,8 @@ class HomeController extends Controller
                 ->where('company_id', $user->company_id);
         }
 
-        // Базовый запрос - ВСЕ задачи компании пользователя
-        $tasksQuery = Task::with(['author', 'user', 'department', 'category'])
-            ->withCount('rejections') // Добавляем подсчет отказов
-            ->where('is_personal', 0)
-            ->where('company_id', $user->company_id);
+        // Базовый запрос - ВСЕ задачи компании пользователя (НЕ дублируем, убираем лишний)
+        // Удаляем этот дублирующий блок, так как выше уже есть $tasksQuery
 
         // Поиск
         if ($request->has('search') && $request->search) {
@@ -281,5 +279,4 @@ class HomeController extends Controller
 
         return view('frontend.no-companies', compact('user', 'activeInvitations'));
     }
-
 }

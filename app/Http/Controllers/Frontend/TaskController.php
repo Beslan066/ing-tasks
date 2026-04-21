@@ -79,9 +79,6 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         \Log::info('=== START TASK STORE ===');
@@ -194,12 +191,10 @@ class TaskController extends Controller
                     ->get();
 
                 foreach ($selectedFiles as $file) {
-                    // Если используете связь многие-ко-многим
                     if (method_exists($task, 'files')) {
                         $task->files()->attach($file->id);
                         \Log::info('File attached:', ['file_id' => $file->id, 'task_id' => $task->id]);
                     } else {
-                        // Если храните task_id в таблице files
                         $file->update(['task_id' => $task->id]);
                     }
                 }
@@ -227,7 +222,6 @@ class TaskController extends Controller
                         'is_public' => false,
                     ]);
 
-                    // Привязываем новый файл к задаче
                     if (method_exists($task, 'files')) {
                         $task->files()->attach($fileRecord->id);
                     }
@@ -262,13 +256,11 @@ class TaskController extends Controller
         }
     }
 
-
     public function view(Task $task)
     {
         $user = Auth::user();
 
         try {
-            // Проверяем доступ к задаче
             if (!$this->canAccessTask($user, $task)) {
                 return response()->json([
                     'success' => false,
@@ -276,10 +268,7 @@ class TaskController extends Controller
                 ], 403);
             }
 
-            // Загружаем все необходимые отношения
             $task->load(['author', 'user', 'department', 'category', 'files']);
-
-            // Добавляем иконку статуса для отображения
             $task->status_icon = $task->getStatusIcon();
 
             return response()->json([
@@ -296,14 +285,10 @@ class TaskController extends Controller
         }
     }
 
-    /**
-     * Получить данные задачи для редактирования (админ)
-     */
     public function getTask(Task $task)
     {
         $user = Auth::user();
 
-        // Проверяем права доступа
         if (!$user->canViewAllCompanyTasks()) {
             return response()->json([
                 'success' => false,
@@ -311,7 +296,6 @@ class TaskController extends Controller
             ], 403);
         }
 
-        // Проверяем, что задача принадлежит компании пользователя
         if ($task->company_id !== $user->company_id) {
             return response()->json([
                 'success' => false,
@@ -319,7 +303,6 @@ class TaskController extends Controller
             ], 403);
         }
 
-        // Загружаем отказы с пользователями
         $task->load(['author', 'user', 'department', 'category', 'files', 'rejections.user']);
 
         return response()->json([
@@ -330,6 +313,7 @@ class TaskController extends Controller
             'users' => User::where('company_id', $user->company_id)->get()
         ]);
     }
+
     /**
      * Take available task (for employees)
      */
@@ -338,7 +322,6 @@ class TaskController extends Controller
         $user = Auth::user();
 
         try {
-            // Проверяем, что задача доступна для взятия
             if ($task->user_id !== null || $task->status !== 'не назначена') {
                 return response()->json([
                     'success' => false,
@@ -346,15 +329,14 @@ class TaskController extends Controller
                 ], 422);
             }
 
-            // Проверяем, что пользователь из того же отдела
-            if ($task->department_id !== $user->department_id) {
+            // ИСПРАВЛЕНО: проверяем, состоит ли пользователь в отделе задачи
+            if (!$user->isInDepartment($task->department_id)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Вы не можете взять задачу из другого отдела'
                 ], 422);
             }
 
-            // Назначаем задачу пользователю
             $task->update([
                 'user_id' => $user->id,
                 'status' => 'в работе'
@@ -375,15 +357,11 @@ class TaskController extends Controller
         }
     }
 
-    /**
-     * Update task status (for employees)
-     */
     public function updateTaskStatus(Request $request, Task $task)
     {
         $user = Auth::user();
 
         try {
-            // Проверяем, что пользователь является исполнителем задачи
             if ($task->user_id !== $user->id) {
                 return response()->json([
                     'success' => false,
@@ -398,12 +376,10 @@ class TaskController extends Controller
 
             $updateData = ['status' => $request->status];
 
-            // Если отправляется на проверку, обновляем фактическое время
             if ($request->status === 'на проверке' && $request->has('actual_hours')) {
                 $updateData['actual_hours'] = $request->actual_hours;
             }
 
-            // Если задача выполняется, обновляем время выполнения
             if ($request->status === 'выполнена') {
                 $updateData['completed_at'] = now();
             }
@@ -425,17 +401,11 @@ class TaskController extends Controller
         }
     }
 
-
-
-    /**
-     * Reject task (for employees)
-     */
     public function rejectTask(Request $request, Task $task)
     {
         $user = Auth::user();
 
         try {
-            // Проверяем, что пользователь является исполнителем задачи
             if ($task->user_id !== $user->id) {
                 return response()->json([
                     'success' => false,
@@ -447,7 +417,6 @@ class TaskController extends Controller
                 'reason' => 'required|string|max:1000'
             ]);
 
-            // Создаем запись об отказе
             TaskRejection::create([
                 'reason' => $request->reason,
                 'task_id' => $task->id,
@@ -455,13 +424,11 @@ class TaskController extends Controller
                 'company_id' => $user->company_id
             ]);
 
-            // Освобождаем задачу и меняем статус
             $task->update([
                 'user_id' => null,
                 'status' => 'не назначена'
             ]);
 
-            // Логируем отказ
             \Log::info("Пользователь {$user->name} отказался от задачи #{$task->id}. Причина: {$request->reason}");
 
             return response()->json([
@@ -479,15 +446,11 @@ class TaskController extends Controller
         }
     }
 
-    /**
-     * Attach file to task (for employees)
-     */
     public function attachFile(Request $request, Task $task)
     {
         $user = Auth::user();
 
         try {
-            // Проверяем, что пользователь имеет доступ к задаче
             if ($task->user_id !== $user->id && !$user->canViewAllCompanyTasks()) {
                 return response()->json([
                     'success' => false,
@@ -535,14 +498,10 @@ class TaskController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Task $task)
     {
         $user = Auth::user();
 
-        // Проверяем доступ к задаче
         if (!$this->canAccessTask($user, $task)) {
             abort(403, 'У вас нет доступа к этой задаче');
         }
@@ -552,9 +511,6 @@ class TaskController extends Controller
         return view('frontend.tasks.show', compact('task', 'user'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Task $task)
     {
         $user = Auth::user();
@@ -573,7 +529,6 @@ class TaskController extends Controller
             ], 403);
         }
 
-        // Загружаем все необходимые отношения
         $task->load(['author', 'user', 'department', 'category', 'files']);
 
         return response()->json([
@@ -585,12 +540,6 @@ class TaskController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Task $task)
     {
         $user = Auth::user();
@@ -609,7 +558,6 @@ class TaskController extends Controller
             ], 403);
         }
 
-        // Валидация
         $validator = \Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -633,7 +581,6 @@ class TaskController extends Controller
         }
 
         try {
-            // Проверяем, что отдел принадлежит компании
             $department = Department::find($request->department_id);
             if (!$department || $department->company_id !== $user->company_id) {
                 return response()->json([
@@ -642,7 +589,6 @@ class TaskController extends Controller
                 ], 422);
             }
 
-            // Проверяем исполнителя
             $oldUserId = $task->user_id;
             $newAssignedUser = null;
 
@@ -656,7 +602,6 @@ class TaskController extends Controller
                 }
             }
 
-            // Обновляем задачу
             $updateData = [
                 'name' => $request->name,
                 'description' => $request->description,
@@ -670,19 +615,16 @@ class TaskController extends Controller
                 'actual_hours' => $request->actual_hours,
             ];
 
-            // Если задача завершена, устанавливаем время завершения
             if ($request->status === 'выполнена' && $task->status !== 'выполнена') {
                 $updateData['completed_at'] = now();
             }
 
-            // Если задача больше не выполнена, сбрасываем время завершения
             if ($request->status !== 'выполнена' && $task->status === 'выполнена') {
                 $updateData['completed_at'] = null;
             }
 
             $task->update($updateData);
 
-            // Отправляем уведомление, если изменился исполнитель
             if ($newAssignedUser && $oldUserId !== $newAssignedUser->id) {
                 try {
                     $newAssignedUser->notify(new TaskAssignedNotification($task));
@@ -692,8 +634,6 @@ class TaskController extends Controller
                 }
             }
 
-            \Log::info('Task updated successfully', ['task_id' => $task->id, 'updated_fields' => array_keys($updateData)]);
-
             return response()->json([
                 'success' => true,
                 'message' => 'Задача успешно обновлена',
@@ -702,7 +642,6 @@ class TaskController extends Controller
 
         } catch (\Exception $e) {
             \Log::error('Ошибка при обновлении задачи: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
                 'message' => 'Ошибка при обновлении задачи: ' . $e->getMessage()
@@ -710,15 +649,11 @@ class TaskController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Request $request, Task $task)
     {
         $user = Auth::user();
 
         try {
-            // Проверяем, что пользователь является автором задачи
             if (!$task->canBeDeletedBy($user)) {
                 return response()->json([
                     'success' => false,
@@ -726,7 +661,6 @@ class TaskController extends Controller
                 ], 403);
             }
 
-            // Проверяем, можно ли удалить задачу
             if (!$task->canBeDeleted()) {
                 return response()->json([
                     'success' => false,
@@ -734,7 +668,6 @@ class TaskController extends Controller
                 ], 422);
             }
 
-            // Выполняем мягкое удаление с сохранением информации о том, кто удалил
             $task->update(['deleted_by' => $user->id]);
             $task->delete();
 
@@ -757,14 +690,13 @@ class TaskController extends Controller
      */
     private function canAccessTask(User $user, Task $task): bool
     {
-        // Руководители видят все задачи компании
         if ($user->canViewAllCompanyTasks()) {
             return $task->company_id === $user->company_id;
         }
 
-        // Обычные пользователи видят только свои задачи и задачи своего отдела
+        // ИСПРАВЛЕНО: проверяем, состоит ли пользователь в отделе задачи
         return $task->company_id === $user->company_id &&
-            ($task->user_id === $user->id || $task->department_id === $user->department_id);
+            ($task->user_id === $user->id || $user->isInDepartment($task->department_id));
     }
 
     public function storePersonal(Request $request)
@@ -773,7 +705,6 @@ class TaskController extends Controller
 
         \Log::info('Creating personal task for user:', ['user_id' => $user->id]);
 
-        // Валидация для личных задач (более простая)
         $validator = \Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -794,7 +725,6 @@ class TaskController extends Controller
         }
 
         try {
-            // Проверяем категорию, если указана
             if ($request->category_id) {
                 $category = Category::find($request->category_id);
                 if (!$category || $category->company_id !== $user->company_id) {
@@ -805,26 +735,28 @@ class TaskController extends Controller
                 }
             }
 
-            // Создаем личную задачу
+            // ИСПРАВЛЕНО: берем первый отдел пользователя для личной задачи
+            $primaryDepartment = $user->departments()->first();
+            $departmentId = $primaryDepartment ? $primaryDepartment->id : null;
+
             $taskData = [
                 'name' => $request->name,
                 'description' => $request->description,
-                'department_id' => $user->department_id, // Отдел пользователя
+                'department_id' => $departmentId,
                 'category_id' => $request->category_id,
-                'user_id' => $user->id, // Назначаем на себя
+                'user_id' => $user->id,
                 'priority' => $request->priority,
-                'status' => 'назначена', // Начинаем с назначенной
+                'status' => 'назначена',
                 'deadline' => $request->deadline,
                 'estimated_hours' => $request->estimated_hours,
                 'company_id' => $user->company_id,
-                'author_id' => $user->id, // Автор - сам пользователь
-                'is_personal' => true, // Флаг личной задачи
+                'author_id' => $user->id,
+                'is_personal' => true,
             ];
 
             $task = Task::create($taskData);
             \Log::info('Personal task created:', ['task_id' => $task->id]);
 
-            // Обрабатываем файлы
             if ($request->hasFile('files')) {
                 foreach ($request->file('files') as $file) {
                     $path = $file->store('tasks/' . $task->id, 'public');
@@ -837,7 +769,7 @@ class TaskController extends Controller
                         'mime_type' => $file->getMimeType(),
                         'task_id' => $task->id,
                         'user_id' => $user->id,
-                        'department_id' => $user->department_id,
+                        'department_id' => $departmentId,
                     ]);
                 }
             }
@@ -850,7 +782,6 @@ class TaskController extends Controller
 
         } catch (\Exception $e) {
             \Log::error('Error creating personal task: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
                 'message' => 'Ошибка при создании задачи: ' . $e->getMessage()
@@ -858,30 +789,26 @@ class TaskController extends Controller
         }
     }
 
-    /**
-     * Получение списка файлов для выбора
-     */
     public function getFiles(Request $request)
     {
         $user = Auth::user();
 
-        // Получаем файлы компании
         $files = File::where('company_id', $user->company_id)
             ->where(function($query) {
-                // Если используете связь многие-ко-многим
                 if (method_exists(File::class, 'tasks')) {
                     $query->whereDoesntHave('tasks');
                 }
             })
             ->where(function($query) use ($user) {
-                // Разные права доступа в зависимости от роли
                 if ($user->role->name === 'Руководитель') {
                     return $query->where('company_id', $user->company_id);
                 }
                 if ($user->role->name === 'Менеджер') {
+                    // ИСПРАВЛЕНО: берем ID отделов пользователя
+                    $departmentIds = $user->departments()->pluck('departments.id')->toArray();
                     return $query->where('company_id', $user->company_id)
-                        ->where(function($q) use ($user) {
-                            $q->where('department_id', $user->department_id)
+                        ->where(function($q) use ($user, $departmentIds) {
+                            $q->whereIn('department_id', $departmentIds)
                                 ->orWhere('uploaded_by', $user->id)
                                 ->orWhere('is_public', true);
                         });

@@ -24,7 +24,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'role_id',
         'company_id',
-        'department_id',
         'is_active',
         'last_login_at',
         'avatar',
@@ -70,11 +69,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(Company::class);
     }
 
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class);
-    }
-
     /**
      * Задачи, которые пользователь создал (автор задач)
      * @return HasMany - возвращает коллекцию задач, где пользователь является автором
@@ -101,6 +95,32 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Department::class, 'department_user')
             ->withTimestamps();
+    }
+
+    /**
+     * Получить основной отдел пользователя (первый или помеченный is_primary)
+     */
+    public function primaryDepartment(): ?Department
+    {
+        return $this->departments()
+            ->wherePivot('is_primary', true)
+            ->first();
+    }
+
+    /**
+     * Получить названия всех отделов пользователя в виде строки
+     */
+    public function getDepartmentsListAttribute(): string
+    {
+        return $this->departments->pluck('name')->implode(', ');
+    }
+
+    /**
+     * Проверить, состоит ли пользователь в указанном отделе
+     */
+    public function isInDepartment(int $departmentId): bool
+    {
+        return $this->departments()->where('department_id', $departmentId)->exists();
     }
 
     /**

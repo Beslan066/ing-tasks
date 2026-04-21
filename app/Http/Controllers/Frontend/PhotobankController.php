@@ -4,14 +4,12 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Photo;
-use App\Models\Category;
 use App\Models\PhotoCategory;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
 
 class PhotobankController extends Controller
 {
@@ -19,8 +17,14 @@ class PhotobankController extends Controller
     {
         // Для первоначальной загрузки страницы
         if (!$request->ajax()) {
-            $categories = PhotoCategory::all();
-            $tags = Tag::all();
+            $categories = PhotoCategory::orderBy('name')->get();
+            $tags = Tag::orderBy('name')->get();
+
+            // Отладка
+            \Log::info('Categories loaded: ' . $categories->count());
+            \Log::info('Categories data: ' . $categories->toJson());
+            \Log::info('Tags loaded: ' . $tags->count());
+
             return view('frontend.photobank.index', compact('categories', 'tags'));
         }
 
@@ -45,25 +49,25 @@ class PhotobankController extends Controller
         }
 
         // Фильтрация по тегам
-        if ($request->has('tags') && is_array($request->tags)) {
+        if ($request->has('tags') && $request->tags) {
             $query->whereHas('tags', function($q) use ($request) {
-                $q->whereIn('tags.id', $request->tags);
+                $q->where('tags.id', $request->tags);
             });
         }
 
         $photos = $query->latest()->paginate(20);
 
-        // Правильно формируем JSON ответ
+        // Формируем JSON ответ
         $photosData = $photos->map(function($photo) {
             return [
                 'id' => $photo->id,
                 'title' => $photo->title,
                 'description' => $photo->description,
                 'file_path' => $photo->file_path,
-                'category' => [
+                'category' => $photo->category ? [
                     'id' => $photo->category->id,
                     'name' => $photo->category->name
-                ],
+                ] : null,
                 'tags' => $photo->tags->map(function($tag) {
                     return [
                         'id' => $tag->id,
@@ -85,7 +89,7 @@ class PhotobankController extends Controller
     public function createCategory(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name'
+            'name' => 'required|string|max:255|unique:photo_categories,name' // Исправлено: categories -> photo_categories
         ]);
 
         $category = PhotoCategory::create([
@@ -124,7 +128,7 @@ class PhotobankController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:20480',
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => 'required|exists:photo_categories,id', // Исправлено: categories -> photo_categories
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id'
         ]);
@@ -149,6 +153,7 @@ class PhotobankController extends Controller
                 'mime_type' => $image->getMimeType(),
                 'category_id' => $request->category_id,
                 'user_id' => auth()->id(),
+                'is_approved' => false, // По умолчанию не одобрено
                 'metadata' => [
                     'original_name' => $image->getClientOriginalName(),
                     'original_extension' => $image->getClientOriginalExtension(),
@@ -176,14 +181,15 @@ class PhotobankController extends Controller
 
     public function getCategories()
     {
-        $categories = Category::all();
+        $categories = PhotoCategory::orderBy('name')->get();
         return response()->json($categories);
     }
 
     public function getTags()
     {
-        $tags = Tag::all();
+        $tags = Tag::orderBy('name')->get();
         return response()->json($tags);
     }
+
 
 }

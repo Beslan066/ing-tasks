@@ -428,6 +428,9 @@ Route::middleware(['auth', 'verified', 'isLeader'])->group(function () {
         Route::get('/export', [TeamController::class, 'exportTable'])->name('export-table');
         Route::get('/print', [TeamController::class, 'printTable'])->name('print-table');
 
+        Route::get('/departments/list', [TeamController::class, 'getDepartmentsList'])->name('team.departments.list');
+        Route::put('/user/{user}/departments', [TeamController::class, 'updateUserDepartments'])->name('team.user.departments.update');
+
         // Маршруты для работы с пользователями
         Route::get('/user/{user}', [TeamController::class, 'getUserDetails'])->name('user.details');
         Route::get('/user/{user}/print', [TeamController::class, 'printUserDetails'])->name('user.print');

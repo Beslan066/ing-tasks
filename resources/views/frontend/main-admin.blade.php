@@ -23,7 +23,7 @@
         </div>
 
         <!-- Фильтры и поиск -->
-        <div id="filtersPanel" class="bg-white border-b border-gray-200 hidden">
+        <div id="filtersPanel" class="bg-white rounded-lg border-b border-gray-200 hidden mb-[20px]">
             <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <form method="GET" action="{{ route('tasks.admin') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                     <!-- Поиск -->
@@ -37,8 +37,8 @@
                     <!-- Статус -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                        <select name="status" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
-                            <option value="">Все статусы</option>
+                        <select name="status" class="w-full border border-gray-300 rounded-lg appearance-none px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                            <option value="" class="appearance-none">Все статусы</option>
                             @foreach($filterData['statuses'] as $status)
                                 <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
                                     {{ $status }}
