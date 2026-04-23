@@ -12,7 +12,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <meta http-equiv="Content-Security-Policy" content="frame-src https://telemost.yandex.ru;">
+    <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://meet.jit.si https://jitsi.org;
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: https:;
+    font-src 'self' data:;
+    connect-src 'self' https://meet.jit.si wss://meet.jit.si;
+    frame-src https://meet.jit.si https://jitsi.org;
+    media-src https://meet.jit.si https:;
+    ">
 
     <script>
         tailwind.config = {
