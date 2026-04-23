@@ -10,6 +10,9 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withProviders([
+        App\Providers\EventServiceProvider::class,
+    ])
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'haveCompanies' => \App\Http\Middleware\CheckUserCompanies::class,
@@ -18,7 +21,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'isManager' => \App\Http\Middleware\ManagerMiddleware::class,
             'trackUserActivity' => \App\Http\Middleware\TrackUserActivity::class,
         ]);
+
+        // Добавляем trackUserActivity во все веб-запросы
+        $middleware->web(append: [
+            'trackUserActivity',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->create();

@@ -140,14 +140,15 @@ class HomeController extends Controller
         }
 
         // Оптимизируем запросы
-        $user->load(['company', 'role', 'departments']); // ИСПРАВЛЕНО: добавил departments
+        $user->load(['company', 'role', 'departments']);
 
         // Определяем видимость задач в зависимости от роли
         if ($user->isManagerRole() && !$user->isLeader()) {
-            // Менеджер видит только задачи своих отделов и где он автор - ИСПРАВЛЕНО
+            // Менеджер видит только задачи своих отделов и где он автор
             $departmentIds = $user->departments()->pluck('departments.id')->toArray();
             $tasksQuery = Task::with(['author', 'user', 'department', 'category'])
                 ->withCount('rejections')
+                ->where('is_personal', '!=', true)
                 ->where('company_id', $user->company_id)
                 ->where(function($query) use ($user, $departmentIds) {
                     $query->whereIn('department_id', $departmentIds)
@@ -157,6 +158,7 @@ class HomeController extends Controller
             // Руководитель видит все задачи компании
             $tasksQuery = Task::with(['author', 'user', 'department', 'category'])
                 ->withCount('rejections')
+                ->where('is_personal', '!=', true)
                 ->where('company_id', $user->company_id);
         }
 

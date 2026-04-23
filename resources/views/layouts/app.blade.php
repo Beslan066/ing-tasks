@@ -334,7 +334,6 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 font-sans">
 
 <body class="bg-gray-50 font-sans">
 
@@ -625,7 +624,150 @@
 @include('partials.modal.category.delete')
 
 @include('partials.modal.background-selector')
+<script>
+    let workStartTime = null;
+    let workTotalSeconds = 0;
+    let workIsActive = true;
+    let workLastActivity = Date.now();
+    let sendInterval = null;
+    let activityInterval = null;
 
+    function sendWorkTimeToServer(seconds, isFinal = false) {
+        if (seconds <= 0) return;
+
+        fetch('/track-work-time', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ work_seconds: seconds })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && !isFinal) {
+                    workTotalSeconds = 0;
+                }
+            })
+            .catch(error => console.error('Ошибка отправки времени:', error));
+    }
+
+    function startWorkTimer() {
+        if (workStartTime === null) {
+            workStartTime = Date.now();
+            console.log('🚀 Трекинг времени начат');
+        }
+    }
+
+    function stopWorkTimer() {
+        if (workStartTime !== null && workIsActive) {
+            const elapsed = Math.floor((Date.now() - workStartTime) / 1000);
+            workTotalSeconds += elapsed;
+            workStartTime = null;
+            console.log(`⏸ Пауза. Добавлено: ${elapsed} сек.`);
+        }
+        workIsActive = false;
+    }
+
+    function resumeWorkTimer() {
+        if (!workIsActive) {
+            workStartTime = Date.now();
+            workIsActive = true;
+            console.log('▶ Возобновлен трекинг');
+        }
+    }
+
+    function resetWorkActivity() {
+        workLastActivity = Date.now();
+        if (!workIsActive) {
+            resumeWorkTimer();
+        }
+    }
+
+    function sendAccumulatedTime() {
+        let toSend = workTotalSeconds;
+
+        if (workIsActive && workStartTime !== null) {
+            toSend += Math.floor((Date.now() - workStartTime) / 1000);
+            workStartTime = Date.now();
+        }
+
+        if (toSend > 0) {
+            console.log(`📤 Отправка времени на сервер: ${toSend} сек.`);
+            sendWorkTimeToServer(toSend);
+        }
+    }
+
+    function sendOnUnload() {
+        let toSend = workTotalSeconds;
+        if (workIsActive && workStartTime !== null) {
+            toSend += Math.floor((Date.now() - workStartTime) / 1000);
+        }
+        if (toSend > 0) {
+            const data = new FormData();
+            data.append('work_seconds', toSend);
+            data.append('_token', document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '');
+            navigator.sendBeacon('/track-work-time', data);
+        }
+    }
+
+    function initWorkTracking() {
+        startWorkTimer();
+
+        const events = ['mousemove', 'mousedown', 'keypress', 'scroll', 'click', 'touchstart'];
+        events.forEach(event => {
+            document.addEventListener(event, resetWorkActivity);
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                console.log('📱 Вкладка скрыта - пауза');
+                stopWorkTimer();
+            } else {
+                console.log('📱 Вкладка видима - возобновление');
+                resetWorkActivity();
+            }
+        });
+
+        // Отправка каждые 30 секунд
+        sendInterval = setInterval(sendAccumulatedTime, 30000);
+
+        // Проверка активности каждые 10 секунд
+        activityInterval = setInterval(() => {
+            const now = Date.now();
+            if (now - workLastActivity > 30000 && workIsActive) {
+                stopWorkTimer();
+            } else if (now - workLastActivity <= 30000 && !workIsActive) {
+                resumeWorkTimer();
+            }
+        }, 10000);
+
+        window.addEventListener('beforeunload', sendOnUnload);
+        window.addEventListener('pagehide', sendOnUnload);
+    }
+
+    // Запуск
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initWorkTracking);
+    } else {
+        initWorkTracking();
+    }
+
+    // Для отладки
+    window.getMyWorkTime = () => {
+        let total = workTotalSeconds;
+        if (workIsActive && workStartTime !== null) {
+            total += Math.floor((Date.now() - workStartTime) / 1000);
+        }
+        const minutes = Math.floor(total / 60);
+        const seconds = total % 60;
+        console.log(`📊 Рабочее время: ${minutes} мин. ${seconds} сек. (${total} сек.)`);
+        return total;
+    };
+
+    console.log('🎯 Трекинг времени загружен');
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const mainContainer = document.querySelector('.main-container');
@@ -816,6 +958,8 @@
 
                 // Показываем модальное окно
                 document.getElementById('taskModal').classList.remove('hidden');
+
+                window.location.reload();
             } else {
                 showNotification(data.message || 'Ошибка при загрузке задачи', 'error');
             }
@@ -1636,6 +1780,7 @@
                 } else {
                     window.location.reload();
                 }
+                window.location.reload();
             } else {
                 showNotification(data.message || 'Ошибка при сохранении задачи', 'error');
             }
@@ -2317,13 +2462,13 @@
     });
 
 
-    // Обработка формы создания задачи
-    document.getElementById('taskForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        alert('Задача успешно создана!');
-        document.getElementById('taskModal').classList.add('hidden');
-        // Здесь будет код для добавления задачи на доску
-    });
+    // // Обработка формы создания задачи
+    // document.getElementById('taskForm').addEventListener('submit', function (e) {
+    //     e.preventDefault();
+    //     alert('Задача успешно создана!');
+    //     document.getElementById('taskModal').classList.add('hidden');
+    //     // Здесь будет код для добавления задачи на доску
+    // });
 
     // Перетаскивание задач
     let draggedTask = null;
@@ -2414,135 +2559,7 @@
     });
 
 
-    function updateUserActivity() {
-        fetch('/update-activity', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Активность обновлена:', data);
 
-                // После обновления активности, обновляем список онлайн пользователей
-                updateOnlineUsers();
-            })
-            .catch(error => console.error('Ошибка обновления активности:', error));
-    }
-
-    // Функция для обновления списка онлайн пользователей через AJAX
-    function updateOnlineUsers() {
-        fetch('/get-online-users', {
-            method: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                // Обновляем только блок с онлайн пользователями
-                updateOnlineUsersUI(data);
-            })
-            .catch(error => console.error('Ошибка получения онлайн пользователей:', error));
-    }
-
-    // Обновление интерфейса
-    function updateOnlineUsersUI(data) {
-        // Обновляем аватары онлайн пользователей
-        const onlineUsersContainer = document.querySelector('.online-users-avatars');
-        if (onlineUsersContainer && data.onlineUsers) {
-            onlineUsersContainer.innerHTML = data.onlineUsers.map(user => `
-            <div class="avatar-container group relative">
-                <div class="avatar ${user.color}"
-                     title="${user.name} - ${user.last_activity_text}">
-                    ${user.initials}
-                </div>
-                <div class="online-indicator"></div>
-            </div>
-        `).join('');
-        }
-
-        // Обновляем счетчик
-        const counterElement = document.querySelector('.online-users-count');
-        if (counterElement && data.onlineUsersCount !== undefined) {
-            counterElement.textContent = data.onlineUsersCount;
-        }
-    }
-
-    // Обновлять активность каждые 30 секунд
-    setInterval(updateUserActivity, 30000);
-
-    // Обновлять список онлайн пользователей каждые 10 секунд
-    setInterval(updateOnlineUsers, 10000);
-
-    // При загрузке страницы
-    document.addEventListener('DOMContentLoaded', function () {
-        updateUserActivity();
-        // Запускаем первый раз через 2 секунды
-        setTimeout(updateOnlineUsers, 2000);
-    });
-
-    // Отправляем запрос при закрытии вкладки
-    window.addEventListener('beforeunload', function (event) {
-        // Используем navigator.sendBeacon для надежной отправки при закрытии
-        const data = new FormData();
-        data.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-
-        navigator.sendBeacon('/user-leaving', data);
-
-        // Альтернатива: синхронный AJAX (менее надежно)
-        // const xhr = new XMLHttpRequest();
-        // xhr.open('POST', '/user-leaving', false);
-        // xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-        // xhr.send();
-    });
-
-    // Также отслеживаем видимость вкладки
-    document.addEventListener('visibilitychange', function () {
-        if (document.hidden) {
-            // Вкладка стала невидимой (пользователь переключился на другую вкладку)
-            fetch('/user-hidden', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({hidden: true})
-            });
-        } else {
-            // Вкладка снова стала видимой
-            updateUserActivity();
-        }
-    });
-
-    // Heartbeat - периодическая проверка активности
-    let lastActivity = Date.now();
-    const INACTIVITY_TIMEOUT = 30000; // 30 секунд неактивности
-
-    // Отслеживаем любую активность пользователя
-    ['mousemove', 'keydown', 'click', 'scroll'].forEach(eventName => {
-        document.addEventListener(eventName, function () {
-            lastActivity = Date.now();
-        });
-    });
-
-    // Проверяем неактивность каждые 10 секунд
-    setInterval(function () {
-        const now = Date.now();
-        if (now - lastActivity > INACTIVITY_TIMEOUT) {
-            // Пользователь неактивен более 30 секунд
-            fetch('/user-inactive', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({inactive: true})
-            });
-        }
-    }, 10000);
 </script>
 
 

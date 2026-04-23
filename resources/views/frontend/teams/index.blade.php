@@ -121,6 +121,7 @@
             </div>
         </div>
 
+
         <!-- Основной контейнер с таблицей -->
         <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
 
@@ -771,37 +772,240 @@
                         </div>
                     </div>
                     <div class="lg:col-span-2">
-                        <div class="mb-6">
-                            <h4 class="text-lg font-semibold mb-4">Статистика выполнения задач</h4>
-                            <div class="flex space-x-2 mb-4">
-                                <button class="period-filter-btn px-3 py-1 text-white rounded text-sm" data-period="week" style="background-color: #16a34a">Неделя</button>
-                                <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
-                                <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="year">Год</button>
-                                <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="all">Все время</button>
+                        <!-- Вкладки -->
+                        <div class="border-b border-gray-200 mb-4">
+                            <nav class="flex space-x-4">
+                                <button class="tab-btn px-4 py-2 text-sm font-medium text-green-600 border-b-2 border-green-600" data-tab="tasks">
+                                    Задачи
+                                </button>
+                                <button class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700" data-tab="visits">
+                                    Посещения
+                                </button>
+                            </nav>
+                        </div>
+
+                        <!-- Вкладка Задачи -->
+                        <div id="tab-tasks" class="tab-content">
+                            <div class="mb-6">
+                                <h4 class="text-lg font-semibold mb-4">Статистика выполнения задач</h4>
+                                <div class="flex space-x-2 mb-4">
+                                    <button class="period-filter-btn px-3 py-1 text-white rounded text-sm" data-period="week" style="background-color: #16a34a">Неделя</button>
+                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
+                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="year">Год</button>
+                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="all">Все время</button>
+                                </div>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold text-blue-600">${stats.total_tasks}</div><div class="text-sm text-gray-600">Всего задач</div></div>
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold text-green-600">${stats.completed_tasks}</div><div class="text-sm text-gray-600">Выполнено</div></div>
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</div><div class="text-sm text-gray-600">Средний % выполнения</div></div>
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold ${stats.overdue_tasks > 0 ? 'text-red-600' : 'text-green-600'}">${stats.overdue_tasks}</div><div class="text-sm text-gray-600">Просрочено</div></div>
+                                </div>
+                                <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+                                    <div class="flex justify-between items-center mb-2"><span class="font-medium text-gray-700">Средний процент выполнения задач</span><span class="font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</span></div>
+                                    <div class="w-full bg-gray-200 rounded-full h-3"><div class="h-3 rounded-full transition-all duration-500 ${getCompletionRateColor(data.completion_rate).replace('text-', 'bg-')}" style="width: ${Math.min(data.completion_rate, 100)}%"></div></div>
+                                    <div class="flex justify-between text-xs text-gray-500 mt-1"><span>0%</span><span>50%</span><span>100%</span></div>
+                                </div>
                             </div>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                                <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold text-blue-600">${stats.total_tasks}</div><div class="text-sm text-gray-600">Всего задач</div></div>
-                                <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold text-green-600">${stats.completed_tasks}</div><div class="text-sm text-gray-600">Выполнено</div></div>
-                                <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</div><div class="text-sm text-gray-600">Средний % выполнения</div></div>
-                                <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold ${stats.overdue_tasks > 0 ? 'text-red-600' : 'text-green-600'}">${stats.overdue_tasks}</div><div class="text-sm text-gray-600">Просрочено</div></div>
+                            <div class="flex space-x-2 mb-6">
+                                <a href="/team/user/${user.id}/export?type=excel&period=all" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center space-x-2"><i class="fas fa-file-excel"></i><span>Excel</span></a>
+                                <a href="/team/user/${user.id}/export?type=pdf&period=all" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center space-x-2"><i class="fas fa-file-pdf"></i><span>PDF</span></a>
+                                <a href="/team/user/${user.id}/print" target="_blank" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center space-x-2"><i class="fas fa-print"></i><span>Печать</span></a>
                             </div>
-                            <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
-                                <div class="flex justify-between items-center mb-2"><span class="font-medium text-gray-700">Средний процент выполнения задач</span><span class="font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</span></div>
-                                <div class="w-full bg-gray-200 rounded-full h-3"><div class="h-3 rounded-full transition-all duration-500 ${getCompletionRateColor(data.completion_rate).replace('text-', 'bg-')}" style="width: ${Math.min(data.completion_rate, 100)}%"></div></div>
-                                <div class="flex justify-between text-xs text-gray-500 mt-1"><span>0%</span><span>50%</span><span>100%</span></div>
+                            <div><h4 class="text-lg font-semibold mb-4">Задачи</h4><div id="userTasksList"><div class="flex justify-center items-center py-4"><div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div><span class="ml-2 text-gray-600">Загрузка задач...</span></div></div></div>
+                        </div>
+
+                        <!-- Вкладка Посещения -->
+                        <div id="tab-visits" class="tab-content hidden">
+                            <div class="mb-4">
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <button class="visit-period-btn px-3 py-1 rounded text-sm" data-period="today" style="background-color: #16a34a; color: white;">Сегодня</button>
+                                    <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="yesterday">Вчера</button>
+                                    <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="week">Неделя</button>
+                                    <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
+                                    <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="custom" id="customPeriodBtn">Выбрать период</button>
+                                    <a href="#" class="export-visits-btn px-3 py-1 bg-blue-600 text-white rounded text-sm flex items-center ml-auto">
+                                        <i class="fas fa-download mr-1"></i> CSV
+                                    </a>
+                                </div>
+                                <div id="customDateRange" class="hidden mb-4 flex gap-2">
+                                    <input type="date" id="startDate" class="px-3 py-1 border rounded text-sm">
+                                    <input type="date" id="endDate" class="px-3 py-1 border rounded text-sm">
+                                    <button id="applyCustomRange" class="px-3 py-1 bg-green-600 text-white rounded text-sm">Применить</button>
+                                </div>
+                            </div>
+                            <div id="visitStatsContent">
+                                <div class="flex justify-center items-center py-8">
+                                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                                    <span class="ml-2 text-gray-600">Загрузка статистики...</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="flex space-x-2 mb-6">
-                            <a href="/team/user/${user.id}/export?type=excel&period=all" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center space-x-2"><i class="fas fa-file-excel"></i><span>Excel</span></a>
-                            <a href="/team/user/${user.id}/export?type=pdf&period=all" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center space-x-2"><i class="fas fa-file-pdf"></i><span>PDF</span></a>
-                            <a href="/team/user/${user.id}/print" target="_blank" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center space-x-2"><i class="fas fa-print"></i><span>Печать</span></a>
-                        </div>
-                        <div><h4 class="text-lg font-semibold mb-4">Задачи</h4><div id="userTasksList"><div class="flex justify-center items-center py-4"><div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div><span class="ml-2 text-gray-600">Загрузка задач...</span></div></div></div>
                     </div>
                 </div>`;
 
+                // Обработчики вкладок
+                modalContent.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const tab = this.dataset.tab;
+
+                        modalContent.querySelectorAll('.tab-btn').forEach(b => {
+                            b.classList.remove('text-green-600', 'border-b-2', 'border-green-600');
+                            b.classList.add('text-gray-500');
+                        });
+                        this.classList.remove('text-gray-500');
+                        this.classList.add('text-green-600', 'border-b-2', 'border-green-600');
+
+                        modalContent.querySelectorAll('.tab-content').forEach(content => {
+                            content.classList.add('hidden');
+                        });
+                        modalContent.querySelector(`#tab-${tab}`).classList.remove('hidden');
+
+                        if (tab === 'visits') {
+                            loadVisitStats(user.id, 'today');
+                        }
+                    });
+                });
+
+                // Загружаем задачи
                 loadUserTasks(user.id);
 
+                // Функция загрузки статистики посещений
+                function loadVisitStats(userId, period, startDate = null, endDate = null) {
+                    const container = document.getElementById('visitStatsContent');
+                    if (!container) return;
+
+                    container.innerHTML = `<div class="flex justify-center items-center py-8">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <span class="ml-2 text-gray-600">Загрузка статистики...</span>
+                    </div>`;
+
+                    let url = `/team/user/${userId}/detailed-stats?period=${period}`;
+                    if (startDate && endDate) {
+                        url += `&start_date=${startDate}&end_date=${endDate}`;
+                    }
+
+                    fetch(url)
+                        .then(res => res.json())
+                        .then(result => {
+                            if (result.success) {
+                                renderVisitStats(result, period);
+                            } else {
+                                container.innerHTML = `<div class="text-center py-8 text-red-600">${result.error || 'Ошибка загрузки'}</div>`;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            container.innerHTML = `<div class="text-center py-8 text-red-600">Ошибка загрузки статистики</div>`;
+                        });
+                }
+
+                // Функция рендеринга статистики посещений
+                function renderVisitStats(data, currentPeriod) {
+                    const container = document.getElementById('visitStatsContent');
+                    const stats = data.visit_stats;
+
+                    container.innerHTML = `
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-blue-50 rounded-lg p-4 text-center">
+                <div class="text-2xl font-bold text-blue-600">${stats.total_visits}</div>
+                <div class="text-sm text-gray-600">Рабочих дней</div>
+            </div>
+            <div class="bg-purple-50 rounded-lg p-4 text-center">
+                <div class="text-2xl font-bold text-purple-600">${formatDurationTotal(stats.total_time_seconds)}</div>
+                <div class="text-sm text-gray-600">Общее время работы</div>
+            </div>
+            <div class="bg-orange-50 rounded-lg p-4 text-center">
+                <div class="text-2xl font-bold text-orange-600">${formatDurationTotal(stats.average_time_per_visit)}</div>
+                <div class="text-sm text-gray-600">Среднее в день</div>
+            </div>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg p-4">
+            <h5 class="font-semibold mb-3">Время работы по дням</h5>
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="text-left py-2">Дата</th>
+                            <th class="text-left py-2">Время работы</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${stats.daily_stats.map(day => `
+                            <tr class="border-b">
+                                <td class="py-2">${day.date}</td>
+                                <td class="py-2 font-medium ${day.seconds > 0 ? 'text-green-600' : 'text-gray-400'}">${day.time}</td>
+                            </tr>
+                        `).join('')}
+                        ${stats.daily_stats.length === 0 ? `
+                            <tr>
+                                <td colspan="2" class="text-center py-4 text-gray-500">Нет данных</td>
+                            </tr>
+                        ` : ''}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+
+                    // Обновляем ссылку на экспорт
+                    const exportBtn = modalContent.querySelector('.export-visits-btn');
+                    if (exportBtn) {
+                        exportBtn.href = `/team/user/${user.id}/export-stats?period=${currentPeriod}`;
+                    }
+                }
+
+                function formatDurationTotal(seconds) {
+                    if (!seconds) return '0 мин.';
+                    const hours = Math.floor(seconds / 3600);
+                    const minutes = Math.floor((seconds % 3600) / 60);
+                    if (hours > 0) {
+                        return `${hours} ч. ${minutes} мин.`;
+                    }
+                    return `${minutes} мин.`;
+                }
+
+                // Обработчики кнопок периода посещений
+                const customDateRange = document.getElementById('customDateRange');
+                const customPeriodBtn = document.getElementById('customPeriodBtn');
+
+                modalContent.querySelectorAll('.visit-period-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const period = this.dataset.period;
+
+                        // Обновляем стили
+                        modalContent.querySelectorAll('.visit-period-btn').forEach(b => {
+                            b.classList.remove('bg-green-600', 'text-white');
+                            b.classList.add('bg-gray-200', 'text-gray-700');
+                        });
+                        this.classList.remove('bg-gray-200', 'text-gray-700');
+                        this.classList.add('bg-green-600', 'text-white');
+
+                        // Показываем/скрываем кастомный выбор даты
+                        if (period === 'custom') {
+                            customDateRange.classList.remove('hidden');
+                        } else {
+                            customDateRange.classList.add('hidden');
+                            loadVisitStats(user.id, period);
+                        }
+                    });
+                });
+
+                // Обработчик применения кастомного периода
+                const applyCustomRange = document.getElementById('applyCustomRange');
+                if (applyCustomRange) {
+                    applyCustomRange.addEventListener('click', function() {
+                        const startDate = document.getElementById('startDate').value;
+                        const endDate = document.getElementById('endDate').value;
+                        if (startDate && endDate) {
+                            loadVisitStats(user.id, 'custom', startDate, endDate);
+                        } else {
+                            showNotification('error', 'Выберите обе даты');
+                        }
+                    });
+                }
+
+                // Обработчики кнопок периода задач
                 modalContent.querySelectorAll('.period-filter-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         modalContent.querySelectorAll('.period-filter-btn').forEach(b => {
@@ -864,6 +1068,8 @@
             function loadUserTasks(userId, period = 'month') {
                 const tasksList = document.getElementById('userTasksList');
                 if (!tasksList) return;
+                tasksList.innerHTML = `<div class="flex justify-center items-center py-4"><div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div><span class="ml-2 text-gray-600">Загрузка задач...</span></div>`;
+
                 fetch(`/team/user/${userId}/tasks?period=${period}`).then(res => res.json()).then(data => {
                     if (data.success) {
                         let tasksHtml = '';
@@ -928,7 +1134,7 @@
             });
         });
 
-        // Логика приглашений
+        // Логика приглашений (оставляем как было)
         const inviteModal = document.getElementById('inviteModal');
         const closeInviteModal = document.getElementById('closeInviteModal');
         const cancelInvite = document.getElementById('cancelInvite');

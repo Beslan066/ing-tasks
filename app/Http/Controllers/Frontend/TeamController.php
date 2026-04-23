@@ -18,12 +18,32 @@ class TeamController extends Controller
 {
     public function index(Request $request)
     {
+        // ОТЛАДКА - посмотрим что происходит
+        \Log::info('TeamController@index START', [
+            'user_id' => auth()->id(),
+            'url' => $request->fullUrl(),
+            'method' => $request->method()
+        ]);
+
         try {
             $authUser = auth()->user();
 
+            // Проверка авторизации
+            if (!$authUser) {
+                \Log::error('TeamController: Пользователь не авторизован');
+                return redirect()->route('login');
+            }
+
+            \Log::info('TeamController: Пользователь найден', [
+                'id' => $authUser->id,
+                'name' => $authUser->name,
+                'company_id' => $authUser->company_id
+            ]);
+
+            // ВРЕМЕННО - убираем добавление онлайн статуса для проверки
             $usersQuery = User::query()
                 ->where('company_id', $authUser->company_id)
-                ->with(['role', 'departments']); // ← ИЗМЕНЕНО: было 'department'
+                ->with(['role', 'departments']);
 
             // Поиск
             if ($request->has('search') && $request->search != '') {
@@ -62,6 +82,13 @@ class TeamController extends Controller
             }
 
             $users = $usersQuery->paginate(20);
+
+            // Для каждого пользователя добавим онлайн статус
+            $users->getCollection()->transform(function ($user) {
+                $user->is_online = $user->isOnline();
+                $user->online_status_text = $user->getOnlineStatusText();
+                return $user;
+            });
 
             $departments = Department::where('company_id', $authUser->company_id)->get();
             $roles = Role::where('company_id', $authUser->company_id)->get();
@@ -837,6 +864,188 @@ class TeamController extends Controller
         return $this->exportToExcel($user, $stats, $period);
     }
 
+    /**
+     * Получить детальную статистику пользователя (включая время на сайте)
+     */
+    public function getUserDetailedStats($userId, Request $request)
+    {
+        try {
+            $authUser = auth()->user();
+
+            $user = User::where('company_id', $authUser->company_id)
+                ->findOrFail($userId);
+
+            $period = $request->get('period', 'month');
+
+            $query = $user->visits();
+
+            switch ($period) {
+                case 'today':
+                    $query->whereDate('date', today());
+                    break;
+                case 'yesterday':
+                    $query->whereDate('date', today()->subDay());
+                    break;
+                case 'week':
+                    $query->where('date', '>=', now()->startOfWeek());
+                    break;
+                case 'month':
+                    $query->where('date', '>=', now()->startOfMonth());
+                    break;
+                case 'year':
+                    $query->where('date', '>=', now()->startOfYear());
+                    break;
+                case 'custom':
+                    if ($request->has('start_date') && $request->has('end_date')) {
+                        $startDate = Carbon::parse($request->start_date);
+                        $endDate = Carbon::parse($request->end_date);
+                        $query->whereBetween('date', [$startDate, $endDate]);
+                    }
+                    break;
+            }
+
+            $visits = $query->orderBy('date', 'desc')->get();
+
+            // Используем total_work_seconds для рабочего времени
+            $totalWorkSeconds = $visits->sum('total_work_seconds');
+            $totalPageViews = $visits->sum('page_views');
+
+            $visitStats = [
+                'total_visits' => $visits->count(),
+                'total_page_views' => $totalPageViews,
+                'total_time_seconds' => $totalWorkSeconds, // Используем рабочее время
+                'average_time_per_visit' => $visits->count() > 0 ? round($totalWorkSeconds / $visits->count()) : 0,
+                'daily_stats' => $visits->map(function($visit) {
+                    return [
+                        'date' => $visit->date->format('d.m.Y'),
+                        'page_views' => $visit->page_views,
+                        'time' => $this->formatDuration($visit->total_work_seconds), // Используем рабочее время
+                        'seconds' => $visit->total_work_seconds,
+                    ];
+                }),
+            ];
+
+            $sessions = $user->onlineSessions()
+                ->orderBy('login_at', 'desc')
+                ->limit(20)
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'visit_stats' => $visitStats,
+                'sessions' => $sessions->map(function($session) {
+                    return [
+                        'date' => $session->date->format('d.m.Y'),
+                        'login_at' => $session->login_at?->format('H:i') ?? '—',
+                        'logout_at' => $session->logout_at ? $session->logout_at->format('H:i') : 'Активен',
+                        'duration' => $session->formatted_duration,
+                        'ip' => $session->ip_address ?? '—',
+                    ];
+                }),
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Get user detailed stats error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Ошибка при загрузке статистики: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    /**
+     * Экспорт статистики пользователя в CSV
+     */
+    public function exportUserStatsToCsv($userId, Request $request)
+    {
+        try {
+            $authUser = auth()->user();
+
+            $user = User::where('company_id', $authUser->company_id)
+                ->findOrFail($userId);
+
+            $period = $request->get('period', 'month');
+            $visitStats = $user->getVisitStats($period);
+            $taskStats = $user->getTaskCompletionStats($period);
+
+            $fileName = "статистика_{$user->name}_" . now()->format('Y-m-d') . ".csv";
+
+            $headers = [
+                'Content-Type' => 'text/csv; charset=utf-8',
+                'Content-Disposition' => "attachment; filename=\"$fileName\"",
+            ];
+
+            $callback = function() use ($user, $visitStats, $taskStats, $period) {
+                $file = fopen('php://output', 'w');
+                fwrite($file, "\xEF\xBB\xBF");
+
+                // Основная информация
+                fputcsv($file, ['Статистика пользователя'], ';');
+                fputcsv($file, ['Имя', $user->name], ';');
+                fputcsv($file, ['Email', $user->email], ';');
+                fputcsv($file, ['Период', $this->getPeriodName($period)], ';');
+                fputcsv($file, ['Дата экспорта', now()->format('d.m.Y H:i')], ';');
+                fputcsv($file, [], ';');
+
+                // Статистика посещений
+                fputcsv($file, ['ПОСЕЩЕНИЯ И ВРЕМЯ'], ';');
+                fputcsv($file, ['Всего визитов', $visitStats['total_visits']], ';');
+                fputcsv($file, ['Всего просмотров страниц', $visitStats['total_page_views']], ';');
+                fputcsv($file, ['Общее время на сайте', $this->formatDuration($visitStats['total_time_seconds'])], ';');
+                fputcsv($file, ['Среднее время за визит', $this->formatDuration($visitStats['average_time_per_visit'])], ';');
+                fputcsv($file, ['Среднее страниц за визит', round($visitStats['average_pages_per_visit'], 1)], ';');
+                fputcsv($file, [], ';');
+
+                // Статистика задач
+                fputcsv($file, ['ЗАДАЧИ'], ';');
+                fputcsv($file, ['Всего задач', $taskStats['total']], ';');
+                fputcsv($file, ['Выполнено задач', $taskStats['completed']], ';');
+                fputcsv($file, ['Процент выполнения', $taskStats['completion_rate'] . '%'], ';');
+                fputcsv($file, [], ';');
+
+                // Ежедневная статистика
+                fputcsv($file, ['ЕЖЕДНЕВНАЯ СТАТИСТИКА'], ';');
+                fputcsv($file, ['Дата', 'Просмотры', 'Время на сайте'], ';');
+
+                foreach ($visitStats['daily_stats'] as $daily) {
+                    fputcsv($file, [
+                        $daily['date'],
+                        $daily['page_views'],
+                        $daily['time'],
+                    ], ';');
+                }
+
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
+
+        } catch (\Exception $e) {
+            \Log::error('Export user stats error: ' . $e->getMessage());
+            return back()->with('error', 'Ошибка при экспорте статистики');
+        }
+    }
+
+    /**
+     * Форматирование длительности
+     */
+    private function formatDuration($seconds)
+    {
+        if (!$seconds) return '0 мин.';
+
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+
+        if ($hours > 0) {
+            return sprintf('%d ч. %d мин.', $hours, $minutes);
+        }
+        return sprintf('%d мин.', $minutes);
+    }
+
+    /**
+     * Получить название периода
+     */
     private function getPeriodName($period)
     {
         return match($period) {
@@ -844,7 +1053,7 @@ class TeamController extends Controller
             'month' => 'Месяц',
             'year' => 'Год',
             'all' => 'Все время',
-            default => 'Произвольный период'
+            default => 'Месяц'
         };
     }
 }

@@ -2,43 +2,43 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\UserOnlineSession;
+use App\Models\UserVisit;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class TrackUserActivity
 {
-    /**
-     * Handle an incoming request.
-     */
     public function handle(Request $request, Closure $next): Response
     {
-        // Сначала выполняем запрос
         $response = $next($request);
 
-        // Если пользователь авторизован
         if (Auth::check()) {
             $user = Auth::user();
 
-            // Пропускаем определенные маршруты (API, ассеты и т.д.)
             if ($this->shouldTrack($request)) {
                 $this->updateUserActivity($user);
+                $this->trackSession($user);
+
+                // Только для GET запросов и не AJAX
+                if ($request->isMethod('get') && !$request->ajax() && !$request->wantsJson()) {
+                    $this->trackVisit($request, $user);
+                }
             }
         }
 
         return $response;
     }
 
-    /**
-     * Определяем, нужно ли отслеживать активность для этого запроса
-     */
     private function shouldTrack(Request $request): bool
     {
         $path = $request->path();
 
-        // Исключаем маршруты, которые не должны обновлять активность
+        // Исключаем маршруты, которые не должны трекаться
         $excludedPaths = [
             'api/',
             'broadcasting/',
@@ -50,12 +50,27 @@ class TrackUserActivity
             'js/',
             'fonts/',
             'images/',
+            'livewire/',
+            'debugbar/',
+            'team/user/*/detailed-stats',  // Исключаем API статистики
+            'team/user/*/tasks',           // Исключаем API задач
+            'team/user/*/export-stats',    // Исключаем экспорт
+            'team/departments/list',       // Исключаем API отделов
+            'team/invitations/search',     // Исключаем поиск приглашений
+            'chat/api/',                   // Исключаем API чата
+            'get-online-users',            // Исключаем API онлайн пользователей
+            'update-activity',             // Исключаем обновление активности
         ];
 
         foreach ($excludedPaths as $excluded) {
-            if (str_starts_with($path, $excluded)) {
+            if ($request->is($excluded)) {
                 return false;
             }
+        }
+
+        // Исключаем AJAX запросы
+        if ($request->ajax() || $request->wantsJson()) {
+            return false;
         }
 
         // Исключаем определенные методы
@@ -63,37 +78,94 @@ class TrackUserActivity
             return false;
         }
 
+        // Исключаем POST, PUT, PATCH, DELETE запросы (только GET для просмотров)
+        if (!$request->isMethod('get')) {
+            return false;
+        }
+
         return true;
     }
 
-    /**
-     * Обновляем активность пользователя с кэшированием
-     */
     private function updateUserActivity($user): void
     {
         $cacheKey = 'user_activity_' . $user->id;
 
-        // Обновляем только если прошло больше 30 секунд с последнего обновления
         if (!Cache::has($cacheKey)) {
             try {
-                // Используем update без событий для оптимизации
-                \DB::table('users')
+                DB::table('users')
                     ->where('id', $user->id)
                     ->update([
                         'last_activity_at' => now(),
                         'updated_at' => now(),
                     ]);
 
-                // Обновляем объект пользователя в памяти
                 $user->last_activity_at = now();
-
-                // Кэшируем на 30 секунд
                 Cache::put($cacheKey, true, 30);
 
             } catch (\Exception $e) {
-                // Логируем ошибку, но не прерываем выполнение
                 \Log::error('Failed to update user activity: ' . $e->getMessage());
             }
+        }
+    }
+
+    private function trackSession($user): void
+    {
+        try {
+            $today = now()->toDateString();
+            $sessionId = session()->getId();
+
+            $session = UserOnlineSession::where('user_id', $user->id)
+                ->whereDate('date', $today)
+                ->whereNull('logout_at')
+                ->first();
+
+            if (!$session) {
+                UserOnlineSession::create([
+                    'user_id' => $user->id,
+                    'login_at' => now(),
+                    'session_id' => $sessionId,
+                    'date' => $today,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                    'last_activity_at' => now(),
+                ]);
+            } else {
+                $session->update([
+                    'last_activity_at' => now(),
+                ]);
+
+                if ($session->ip_address !== request()->ip()) {
+                    $session->update(['ip_address' => request()->ip()]);
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to track session: ' . $e->getMessage());
+        }
+    }
+
+    private function trackVisit(Request $request, $user): void
+    {
+        try {
+            $today = now()->toDateString();
+
+            $visit = UserVisit::firstOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'date' => $today,
+                ],
+                [
+                    'first_visit_at' => now(),
+                    'last_visit_at' => now(),
+                    'page_views' => 0,
+                    'total_time_seconds' => 0,
+                ]
+            );
+
+            $visit->increment('page_views');
+            $visit->update(['last_visit_at' => now()]);
+
+        } catch (\Exception $e) {
+            \Log::error('Failed to track visit: ' . $e->getMessage());
         }
     }
 }

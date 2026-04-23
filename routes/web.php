@@ -16,10 +16,59 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/check-overdue-tasks', function() {
-    Artisan::call('tasks:check-overdue');
-    return response()->json(['message' => 'Checked overdue tasks']);
-});
+Route::middleware(['auth', 'verified'])->post('/track-work-time', function (Request $request) {
+    $user = auth()->user();
+    $workSeconds = (int)$request->input('work_seconds', 0);
+
+    \Log::info('Track work time', [
+        'user_id' => $user->id,
+        'user_name' => $user->name,
+        'work_seconds' => $workSeconds,
+        'datetime' => now()->toDateTimeString()
+    ]);
+
+    if ($workSeconds > 0) {
+        $today = now()->toDateString();
+
+        // Находим или создаем запись за сегодня
+        $visit = \App\Models\UserVisit::firstOrCreate(
+            [
+                'user_id' => $user->id,
+                'date' => $today,
+            ],
+            [
+                'first_visit_at' => now(),
+                'last_visit_at' => now(),
+                'page_views' => 0,
+                'total_time_seconds' => 0,
+                'total_work_seconds' => 0,
+            ]
+        );
+
+        // Добавляем время работы
+        $visit->increment('total_work_seconds', $workSeconds);
+
+        // Также для обратной совместимости обновляем total_time_seconds
+        $visit->increment('total_time_seconds', $workSeconds);
+        $visit->update(['last_visit_at' => now()]);
+
+        \Log::info('Work time saved', [
+            'user_id' => $user->id,
+            'added' => $workSeconds,
+            'total_today' => $visit->total_work_seconds
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'added' => $workSeconds,
+            'total_today' => $visit->total_work_seconds
+        ]);
+    }
+
+    return response()->json(['success' => false, 'message' => 'No time to save']);
+})->name('track.work.time');
+
+
 
 Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class, 'home'])->name('index');
 // Домашняя страница
@@ -360,7 +409,7 @@ Route::get('/invitation/{token}', [InvitationController::class, 'showInvitationF
 Route::post('/invitation/{token}/accept', [InvitationController::class, 'acceptInvitation'])->name('invitation.process');
 
 // ВСЕ МАРШРУТЫ ДЛЯ ЗАДАЧ ПЕРЕНЕСЕМ В TaskController
-Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified']], function () {
+Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified', 'trackUserActivity']], function () {
     // Основные CRUD маршруты
     Route::get('/', [App\Http\Controllers\Frontend\TaskController::class, 'index'])->name('tasks.index');
     Route::get('/create', [App\Http\Controllers\Frontend\TaskController::class, 'create'])->name('tasks.create');
@@ -396,7 +445,7 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified']], functi
 Route::delete('/files/{file}', [App\Http\Controllers\Frontend\TaskController::class, 'deleteFile'])->name('files.delete');
 
 // Остальные маршруты остаются без изменений
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () {
     Route::get('/photobank', [\App\Http\Controllers\Frontend\PhotobankController::class, 'index'])->name('photobank');
     Route::post('/photobank/categories', [\App\Http\Controllers\Frontend\PhotobankController::class, 'createCategory'])->name('photobank.categories.store');
     Route::post('/photobank/tags', [\App\Http\Controllers\Frontend\PhotobankController::class, 'createTag'])->name('photobank.tags.store');
@@ -412,7 +461,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
 
-Route::group(['prefix' => 'departments', 'middleware' => ['auth', 'verified']], function () {
+Route::group(['prefix' => 'departments', 'middleware' => ['auth', 'verified', 'trackUserActivity']], function () {
     Route::get('/', [App\Http\Controllers\Frontend\DepartmentController::class, 'index'])->name('departments.index');
     Route::post('/store', [App\Http\Controllers\Frontend\DepartmentController::class, 'store'])->name('departments.store');
     Route::get('/{id}/edit', [App\Http\Controllers\Frontend\DepartmentController::class, 'edit'])->name('departments.edit');
@@ -420,7 +469,7 @@ Route::group(['prefix' => 'departments', 'middleware' => ['auth', 'verified']], 
 });
 
 // Маршруты для команды с системой приглашений
-Route::middleware(['auth', 'verified', 'isLeader'])->group(function () {
+Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () {
     Route::prefix('team')->name('team.')->group(function () {
         // Основные маршруты команды
         Route::get('/', [TeamController::class, 'index'])->name('index');
@@ -438,6 +487,10 @@ Route::middleware(['auth', 'verified', 'isLeader'])->group(function () {
         Route::get('/user/{user}/tasks', [TeamController::class, 'getUserTasks'])->name('user.tasks');
         Route::get('/user/{user}/export', [TeamController::class, 'exportUserStats'])->name('user.export');
 
+        // Новые маршруты для статистики
+        Route::get('/user/{userId}/detailed-stats', [TeamController::class, 'getUserDetailedStats'])->name('team.user.detailed-stats');
+        Route::get('/user/{userId}/export-stats', [TeamController::class, 'exportUserStatsToCsv'])->name('team.user.export-stats');
+
         // Маршруты для системы приглашений
         Route::post('/invite', [InvitationController::class, 'invite'])->name('invite');
         Route::get('/invitations', [InvitationController::class, 'getInvitations'])->name('invitations');
@@ -446,13 +499,13 @@ Route::middleware(['auth', 'verified', 'isLeader'])->group(function () {
     });
 });
 
-Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'verified']], function () {
+Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'verified', 'trackUserActivity']], function () {
     Route::get('/', [App\Http\Controllers\Frontend\CompanyController::class, 'index'])->name('companies.index');
     Route::get('/create', [App\Http\Controllers\Frontend\CompanyController::class, 'create'])->name('companies.create');
     Route::post('/store', [App\Http\Controllers\Frontend\CompanyController::class, 'store'])->name('companies.store');
 });
 
-Route::group(['prefix' => 'users', 'middleware' => ['auth', 'verified']], function () {
+Route::group(['prefix' => 'users', 'middleware' => ['auth', 'verified', 'trackUserActivity']], function () {
     Route::get('/', [App\Http\Controllers\Frontend\UserController::class, 'index'])->name('users.index');
     Route::get('/create', [App\Http\Controllers\Frontend\UserController::class, 'create'])->name('users.create');
     Route::post('/store', [App\Http\Controllers\Frontend\UserController::class, 'store'])->name('users.store');
@@ -460,9 +513,9 @@ Route::group(['prefix' => 'users', 'middleware' => ['auth', 'verified']], functi
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified', 'trackUserActivity'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'trackUserActivity'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

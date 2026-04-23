@@ -614,32 +614,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return "https://ui-avatars.com/api/?name={$name}&color=7F9CF5&background=EBF4FF";
     }
 
-    // В модели User
-    /**
-     * Проверяет, онлайн ли пользователь
-     * @param int $minutesThreshold - порог времени в минутах для определения онлайн статуса
-     * @return bool
-     */
-    public function isOnline(int $minutesThreshold = 2): bool
-    {
-        // Если пользователь не активен
-        if (!$this->is_active) {
-            return false;
-        }
-
-        // Если нет времени последней активности
-        if (!$this->last_activity_at) {
-            // Но если он залогинился недавно
-            if ($this->last_login_at && $this->last_login_at->diffInMinutes(now()) < 2) {
-                return true;
-            }
-            return false;
-        }
-
-        // Основная проверка по last_activity_at
-        return $this->last_activity_at->diffInMinutes(now()) < $minutesThreshold;
-    }
-
     /**
      * Пометить пользователя как вышедшего
      */
@@ -682,21 +656,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->last_activity_at->format('d.m.Y H:i');
     }
 
-    /**
-     * Получает цвет статуса онлайн
-     */
-    public function getOnlineStatusColor(): string
-    {
-        if ($this->isOnline()) {
-            return 'success'; // зеленый для онлайн
-        }
-
-        if ($this->isOnline(60)) { // Был в сети в течение часа
-            return 'warning'; // желтый для недавней активности
-        }
-
-        return 'secondary'; // серый для оффлайн
-    }
 
     /**
      * Получает иконку статуса онлайн
@@ -1003,4 +962,134 @@ class User extends Authenticatable implements MustVerifyEmail
             throw $e;
         }
     }
+
+    /**
+     * Связь с визитами
+     */
+    public function visits()
+    {
+        return $this->hasMany(UserVisit::class);
+    }
+
+    /**
+     * Связь с сессиями
+     */
+    public function onlineSessions()
+    {
+        return $this->hasMany(UserOnlineSession::class);
+    }
+
+    /**
+     * Получить статистику посещений за период
+     */
+    public function getVisitStats($period = 'month')
+    {
+        $query = $this->visits();
+
+        switch ($period) {
+            case 'week':
+                $query->where('date', '>=', Carbon::now()->startOfWeek());
+                break;
+            case 'month':
+                $query->where('date', '>=', Carbon::now()->startOfMonth());
+                break;
+            case 'year':
+                $query->where('date', '>=', Carbon::now()->startOfYear());
+                break;
+        }
+
+        $visits = $query->orderBy('date')->get();
+
+        return [
+            'total_visits' => $visits->count(),
+            'total_page_views' => $visits->sum('page_views'),
+            'total_time_seconds' => $visits->sum('total_time_seconds'),
+            'average_time_per_visit' => $visits->avg('total_time_seconds') ?: 0,
+            'average_pages_per_visit' => $visits->avg('page_views') ?: 0,
+            'daily_stats' => $visits->map(function($visit) {
+                return [
+                    'date' => $visit->formatted_date,
+                    'page_views' => $visit->page_views,
+                    'time' => $visit->formatted_total_time,
+                ];
+            }),
+        ];
+    }
+
+    /**
+     * Получить общее время на сайте (всего)
+     */
+    public function getTotalTimeOnSite(): int
+    {
+        return $this->visits()->sum('total_time_seconds');
+    }
+
+    /**
+     * Получить форматированное общее время
+     */
+    public function getFormattedTotalTimeAttribute(): string
+    {
+        $totalSeconds = $this->getTotalTimeOnSite();
+        $hours = floor($totalSeconds / 3600);
+        $minutes = floor(($totalSeconds % 3600) / 60);
+
+        if ($hours > 0) {
+            return sprintf('%d ч. %d мин.', $hours, $minutes);
+        }
+        return sprintf('%d мин.', $minutes);
+    }
+
+    /**
+     * Проверяет, онлайн ли пользователь
+     */
+    public function isOnline(): bool
+    {
+        if (!$this->is_active) {
+            return false;
+        }
+
+        if (!$this->last_activity_at) {
+            return false;
+        }
+
+        return $this->last_activity_at->diffInMinutes(now()) < 5;
+    }
+
+    /**
+     * Получает текст статуса онлайн
+     */
+    public function getOnlineStatusText(): string
+    {
+        if ($this->isOnline()) {
+            return 'Онлайн';
+        }
+
+        if ($this->last_activity_at) {
+            $minutes = $this->last_activity_at->diffInMinutes(now());
+            if ($minutes < 60) {
+                return "Был(а) {$minutes} мин. назад";
+            }
+            $hours = floor($minutes / 60);
+            return "Был(а) {$hours} ч. назад";
+        }
+
+        return 'Не в сети';
+    }
+
+    /**
+     * Получает цвет статуса онлайн
+     */
+    public function getOnlineStatusColor(): string
+    {
+        if ($this->isOnline()) {
+            return 'green';
+        }
+
+        if ($this->last_activity_at && $this->last_activity_at->diffInMinutes(now()) < 30) {
+            return 'yellow';
+        }
+
+        return 'gray';
+    }
+
 }

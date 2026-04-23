@@ -15,26 +15,38 @@ class UserOnlineSession extends Model
         'login_at',
         'logout_at',
         'duration_seconds',
-        'date'
+        'date',
+        'session_id',
+        'ip_address',
+        'user_agent',
+        'last_activity_at',
     ];
 
     protected $casts = [
         'login_at' => 'datetime',
         'logout_at' => 'datetime',
+        'last_activity_at' => 'datetime',
         'date' => 'date',
     ];
 
-    /**
-     * Связь с пользователем
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Форматирует длительность в читаемый вид
-     */
+    public function endSession(): void
+    {
+        if (!$this->logout_at) {
+            $logoutTime = now();
+            $duration = $this->login_at->diffInSeconds($logoutTime);
+
+            $this->update([
+                'logout_at' => $logoutTime,
+                'duration_seconds' => $duration,
+            ]);
+        }
+    }
+
     public function getFormattedDurationAttribute(): string
     {
         $hours = floor($this->duration_seconds / 3600);
@@ -48,5 +60,15 @@ class UserOnlineSession extends Model
         } else {
             return sprintf('%d сек.', $seconds);
         }
+    }
+
+    public function getSessionInfoAttribute(): array
+    {
+        return [
+            'start' => $this->login_at?->format('d.m.Y H:i') ?? '—',
+            'end' => $this->logout_at ? $this->logout_at->format('d.m.Y H:i') : 'Активна',
+            'duration' => $this->formatted_duration,
+            'ip' => $this->ip_address ?? '—',
+        ];
     }
 }
