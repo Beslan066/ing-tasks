@@ -36,8 +36,8 @@
                     </div>
                 </div>
 
-                <!-- Видеоконференции (Jitsi Meet) -->
-                <div onclick="openVideoConference()"
+                <!-- Видеоконференции -->
+                <div onclick="openConferenceManager()"
                      class="group cursor-pointer bg-white border border-gray-200 rounded-xl p-4 md:p-6 transition-all duration-300 hover:shadow-lg hover:border-green-300 hover:-translate-y-1">
                     <div class="flex items-start gap-4">
                         <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
@@ -47,71 +47,165 @@
                         </div>
                         <div class="flex-1">
                             <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors">Видеоконференции</h3>
-                            <p class="text-gray-500 text-sm mt-1">Проводите онлайн-встречи на сайте</p>
+                            <p class="text-gray-500 text-sm mt-1">Создайте комнату и пригласите коллег</p>
                         </div>
                     </div>
                 </div>
-
-                <!-- Создание видеоконференций - неограниченное количество
-
-                До 75-100 участников в одной конференции (зависит от качества связи)
-
-                Неограниченная длительность вызовов (важно: см. нюансы ниже)
-
-                Демонстрация экрана
-
-                Чат в конференции
-
-                Запись конференции (на локальный диск)
-
-                Поднятие руки
-
-                Видеофон (размытие фона)
-
-                Трансляция YouTube
-
-                Совместный просмотр видео
-
-                Совместная работа с документами (Etherpad)
-
-                -->
-
-                <!-- Дополнительные карточки можно добавить -->
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно для видеоконференции -->
-    <div id="conferenceModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden items-center justify-center p-4" style="display: none;">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-6xl h-[90vh] flex flex-col">
+    <!-- Менеджер комнаты -->
+    <div id="conferenceManager" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl">
             <div class="flex justify-between items-center p-4 border-b">
-                <div>
-                    <h2 class="text-xl font-semibold text-gray-800">Видеоконференция</h2>
-                    <p class="text-sm text-gray-500">Комната: <span id="roomName"></span></p>
-                </div>
-                <button onclick="closeConference()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                <h2 class="text-xl font-semibold text-gray-800">Видеоконференция</h2>
+                <button onclick="closeConferenceManager()" class="text-gray-500 hover:text-gray-700">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
             </div>
-            <div class="flex-1 p-4">
-                <div id="jitsiContainer" class="w-full h-full"></div>
+
+            <div class="p-6 space-y-4">
+                <!-- Создание новой комнаты -->
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-3">Создать новую комнату</h3>
+                    <button onclick="createNewRoom()"
+                            class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                        + Создать комнату
+                    </button>
+                </div>
+
+                <!-- Войти в существующую комнату -->
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-3">Войти в комнату</h3>
+                    <input type="text" id="roomIdInput"
+                           placeholder="Введите ID комнаты"
+                           class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 focus:outline-none focus:border-green-500">
+                    <button onclick="joinRoom()"
+                            class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        Войти
+                    </button>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Окно конференции -->
+    <div id="conferenceModal" class="fixed inset-0 bg-black bg-opacity-95 z-50 hidden flex flex-col">
+        <div class="bg-gray-900 text-white p-3 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <span class="font-semibold">Комната: <span id="currentRoomId" class="text-green-400"></span></span>
+                <button onclick="copyRoomLink()"
+                        class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition-colors">
+                    📋 Копировать ссылку
+                </button>
+            </div>
+            <button onclick="closeConference()" class="text-red-400 hover:text-red-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="flex-1">
+            <div id="jitsiContainer" class="w-full h-full"></div>
         </div>
     </div>
 @endsection
 
 @push('scripts')
     <script>
-        // Загрузка Jitsi API динамически
+        let currentRoomId = null;
+        let jitsiApi = null;
+
+        // Открыть менеджер комнат
+        function openConferenceManager() {
+            document.getElementById('conferenceManager').style.display = 'flex';
+            document.getElementById('roomIdInput').value = '';
+        }
+
+        function closeConferenceManager() {
+            document.getElementById('conferenceManager').style.display = 'none';
+        }
+
+        // Создать новую комнату
+        function createNewRoom() {
+            const roomId = 'team_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+            startConference(roomId);
+            closeConferenceManager();
+        }
+
+        // Войти в существующую комнату
+        function joinRoom() {
+            const roomId = document.getElementById('roomIdInput').value.trim();
+            if (!roomId) {
+                alert('Введите ID комнаты');
+                return;
+            }
+            startConference(roomId);
+            closeConferenceManager();
+        }
+
+        // Запустить конференцию
+        async function startConference(roomId) {
+            currentRoomId = roomId;
+            document.getElementById('currentRoomId').textContent = roomId;
+
+            const modal = document.getElementById('conferenceModal');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            // Загружаем Jitsi API если нужно
+            if (!window.JitsiMeetExternalAPI) {
+                await loadJitsiAPI();
+            }
+
+            // Создаем конференцию
+            const domain = 'meet.jit.si';
+            const options = {
+                roomName: roomId,
+                width: '100%',
+                height: '100%',
+                parentNode: document.getElementById('jitsiContainer'),
+                userInfo: {
+                    displayName: 'Участник ' + Math.floor(Math.random() * 1000)
+                },
+                configOverwrite: {
+                    startWithVideoMuted: true,
+                    startWithAudioMuted: false,
+                    disableDeepLinking: true,
+                    enableWelcomePage: false,
+                    prejoinPageEnabled: false
+                }
+            };
+
+            jitsiApi = new JitsiMeetExternalAPI(domain, options);
+        }
+
+        // Скопировать ссылку на комнату
+        function copyRoomLink() {
+            if (!currentRoomId) return;
+
+            // Ссылка для приглашения
+            const inviteLink = `https://meet.jit.si/${currentRoomId}`;
+
+            navigator.clipboard.writeText(inviteLink).then(() => {
+                // Показываем уведомление
+                const btn = event.target;
+                const originalText = btn.innerText;
+                btn.innerText = '✅ Скопировано!';
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                }, 2000);
+            }).catch(() => {
+                alert('Ссылка для приглашения: ' + inviteLink);
+            });
+        }
+
+        // Загрузка Jitsi API
         function loadJitsiAPI() {
             return new Promise((resolve, reject) => {
-                if (window.JitsiMeetExternalAPI) {
-                    resolve();
-                    return;
-                }
-
                 const script = document.createElement('script');
                 script.src = 'https://meet.jit.si/external_api.js';
                 script.async = true;
@@ -121,75 +215,19 @@
             });
         }
 
-        async function openVideoConference() {
-            try {
-                // Показываем модальное окно
-                const modal = document.getElementById('conferenceModal');
-                modal.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-
-                // Генерируем уникальное имя комнаты
-                const roomName = 'team_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
-                document.getElementById('roomName').textContent = roomName;
-
-                // Загружаем Jitsi API
-                await loadJitsiAPI();
-
-                // Создаем конференцию
-                const domain = 'meet.jit.si';
-                const options = {
-                    roomName: roomName,
-                    width: '100%',
-                    height: '100%',
-                    parentNode: document.getElementById('jitsiContainer'),
-                    userInfo: {
-                        displayName: 'Участник ' + Math.floor(Math.random() * 1000)
-                    },
-                    configOverwrite: {
-                        startWithVideoMuted: true,
-                        startWithAudioMuted: false,
-                        disableDeepLinking: true,
-                        enableWelcomePage: false,
-                        prejoinPageEnabled: false
-                    },
-                    interfaceConfigOverwrite: {
-                        TOOLBAR_BUTTONS: [
-                            'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-                            'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-                            'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-                            'videoquality', 'filmstrip', 'feedback', 'stats', 'shortcuts',
-                            'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone'
-                        ]
-                    }
-                };
-
-                // Сохраняем API для закрытия
-                window.jitsiApi = new JitsiMeetExternalAPI(domain, options);
-
-            } catch (error) {
-                console.error('Ошибка загрузки видеоконференции:', error);
-                alert('Не удалось загрузить видеоконференцию. Проверьте подключение к интернету.');
-                closeConference();
-            }
-        }
-
+        // Закрыть конференцию
         function closeConference() {
             const modal = document.getElementById('conferenceModal');
             modal.style.display = 'none';
             document.body.style.overflow = '';
 
-            // Закрываем конференцию
-            if (window.jitsiApi) {
-                window.jitsiApi.dispose();
-                window.jitsiApi = null;
+            if (jitsiApi) {
+                jitsiApi.dispose();
+                jitsiApi = null;
             }
 
-            // Очищаем контейнер
-            const container = document.getElementById('jitsiContainer');
-            container.innerHTML = '';
-
-            // Сбрасываем имя комнаты
-            document.getElementById('roomName').textContent = '';
+            document.getElementById('jitsiContainer').innerHTML = '';
+            currentRoomId = null;
         }
 
         // Закрытие по Escape
@@ -199,6 +237,7 @@
                 if (modal.style.display === 'flex') {
                     closeConference();
                 }
+                closeConferenceManager();
             }
         });
     </script>
