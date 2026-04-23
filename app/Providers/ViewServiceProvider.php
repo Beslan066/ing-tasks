@@ -227,7 +227,7 @@ class ViewServiceProvider extends ServiceProvider
         return $onlineUsers;
     }
 
-    private function generateInitials(string $name): string
+    public function generateInitials(string $name): string
     {
         $words = explode(' ', trim($name));
         $initials = '';

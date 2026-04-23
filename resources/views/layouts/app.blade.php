@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta http-equiv="Content-Security-Policy" content="frame-src https://telemost.yandex.ru;">
 
     <script>
         tailwind.config = {
@@ -412,6 +413,14 @@
                             <i class="fas fa-hard-drive text-brown-500 text-sm"></i>
                         </div>
                         <span class="font-medium">Хранилище</span>
+                    </a>
+
+                    <a href="{{route('tools.index')}}"
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                        <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
+                            <i class="fas fa-tools text-yellow-500 text-sm"></i>
+                        </div>
+                        <span class="font-medium">Инструменты</span>
                     </a>
                 </div>
             </div>
