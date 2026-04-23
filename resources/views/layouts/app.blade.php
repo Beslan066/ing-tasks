@@ -14,12 +14,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://meet.jit.si https://jitsi.org;
-    style-src 'self' 'unsafe-inline';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://meet.jit.si https://cdnjs.cloudflare.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
+    style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
+    font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com;
     img-src 'self' data: https:;
-    font-src 'self' data:;
     connect-src 'self' https://meet.jit.si wss://meet.jit.si;
-    frame-src https://meet.jit.si https://jitsi.org;
+    frame-src https://meet.jit.si;
     media-src https://meet.jit.si https:;
     ">
 
