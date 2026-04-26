@@ -12,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -323,6 +324,22 @@ class User extends Authenticatable implements MustVerifyEmail
         // Упрощаем: сравниваем как есть, без приведения к нижнему регистру
         return trim($this->role->name) === trim($roleName);
     }
+
+    /**
+     * Проверяет, является ли пользователь администратором
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        // Проверяем по роли
+        if (!$this->role) {
+            return false;
+        }
+
+        // Администратор - это пользователь с ролью "Администратор"
+        return trim($this->role->name) === 'Администратор';
+    }
+
 
 
     /**
@@ -1092,4 +1109,51 @@ class User extends Authenticatable implements MustVerifyEmail
         return 'gray';
     }
 
+
+    public function getPreviewUrl(): string
+    {
+        if ($this->variants && isset($this->variants['thumb'])) {
+            return Storage::url($this->variants['thumb']);
+        }
+
+        return $this->url;
+    }
+
+    public function getMediumUrl(): string
+    {
+        if ($this->variants && isset($this->variants['medium'])) {
+            return Storage::url($this->variants['medium']);
+        }
+
+        return $this->url;
+    }
+
+    protected function url(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->file_path ? Storage::url($this->file_path) : null,
+        );
+    }
+
+    protected function fileSizeFormatted(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->formatFileSize($this->file_size),
+        );
+    }
+
+    private function formatFileSize($bytes)
+    {
+        if (!$bytes) return '0 bytes';
+
+        $units = ['bytes', 'KB', 'MB', 'GB', 'TB'];
+        $i = 0;
+
+        while ($bytes >= 1024 && $i < count($units) - 1) {
+            $bytes /= 1024;
+            $i++;
+        }
+
+        return round($bytes, 2) . ' ' . $units[$i];
+    }
 }

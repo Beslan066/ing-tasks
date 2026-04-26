@@ -8,9 +8,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
+
 class Photo extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+
+    protected $table = 'photos';
 
     protected $fillable = [
         'title',
@@ -22,17 +27,24 @@ class Photo extends Model
         'metadata',
         'category_id',
         'user_id',
-        'is_approved'
+        'is_approved',
+        'width',
+        'height',
+        'optimized_path',
+        'variants'
     ];
 
     protected $casts = [
         'metadata' => 'array',
-        'is_approved' => 'boolean'
+        'is_approved' => 'boolean',
+        'variants' => 'array',
+        'deleted_at' => 'datetime'
     ];
+
+    protected $appends = ['file_size_formatted', 'url'];
 
     public function category(): BelongsTo
     {
-        // Явно указываем foreign key
         return $this->belongsTo(PhotoCategory::class, 'category_id');
     }
 
@@ -43,27 +55,59 @@ class Photo extends Model
 
     public function tags(): BelongsToMany
     {
-        // Явно указываем таблицу связи, если она отличается от стандартной
         return $this->belongsToMany(Tag::class, 'photo_tag', 'photo_id', 'tag_id');
     }
 
-    protected function fileSize(): Attribute
+    protected function fileSizeFormatted(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $this->formatFileSize($value),
+            get: fn () => $this->formatFileSize($this->file_size),
+        );
+    }
+
+    protected function url(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->file_path ? Storage::url($this->file_path) : null,
         );
     }
 
     private function formatFileSize($bytes)
     {
-        if ($bytes >= 1073741824) {
-            return number_format($bytes / 1073741824, 2) . ' GB';
-        } elseif ($bytes >= 1048576) {
-            return number_format($bytes / 1048576, 2) . ' MB';
-        } elseif ($bytes >= 1024) {
-            return number_format($bytes / 1024, 2) . ' KB';
-        } else {
-            return $bytes . ' bytes';
+        if (!$bytes) return '0 bytes';
+
+        $units = ['bytes', 'KB', 'MB', 'GB', 'TB'];
+        $i = 0;
+
+        while ($bytes >= 1024 && $i < count($units) - 1) {
+            $bytes /= 1024;
+            $i++;
         }
+
+        return round($bytes, 2) . ' ' . $units[$i];
+    }
+
+    /**
+     * Получить превью изображения
+     */
+    public function getPreviewUrl(): string
+    {
+        if ($this->variants && isset($this->variants['thumb'])) {
+            return Storage::url($this->variants['thumb']);
+        }
+
+        return $this->url;
+    }
+
+    /**
+     * Получить среднюю версию
+     */
+    public function getMediumUrl(): string
+    {
+        if ($this->variants && isset($this->variants['medium'])) {
+            return Storage::url($this->variants['medium']);
+        }
+
+        return $this->url;
     }
 }

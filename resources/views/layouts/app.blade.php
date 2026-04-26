@@ -156,7 +156,6 @@
                 height: 10px;
                 background: linear-gradient(135deg, #22c55e, #16a34a);
                 border-radius: 50%;
-                border: 2px solid #1a1f2e;
                 animation: pulseGlow 2s infinite;
             }
 
@@ -375,18 +374,15 @@
 
                 <div class="space-y-1">
                     <a href="{{route('welcome')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover active">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white @if($backgroundEnabled && $backgroundImage)hover:bg-[#16a34a] @else hover:bg-sidebar-hover @endif active">
                         <div class="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-check text-primary-500 text-sm"></i>
                         </div>
                         <span class="font-medium">Мои задачи</span>
-                        <div class="ml-auto">
-                            <span class="badge">5</span>
-                        </div>
                     </a>
 
                     <a href="{{route('tasks.admin')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white @if($backgroundEnabled && $backgroundImage)hover:bg-[#22c55e1a] @else hover:bg-sidebar-hover @endif">
                         <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-landmark text-purple-500 text-sm"></i>
                         </div>

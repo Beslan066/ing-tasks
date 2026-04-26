@@ -452,6 +452,31 @@ Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () 
     Route::post('/photobank/photos', [\App\Http\Controllers\Frontend\PhotobankController::class, 'storePhoto'])->name('photobank.photos.store');
     Route::get('/photobank/categories', [\App\Http\Controllers\Frontend\PhotobankController::class, 'getCategories'])->name('photobank.categories.index');
     Route::get('/photobank/tags', [\App\Http\Controllers\Frontend\PhotobankController::class, 'getTags'])->name('photobank.tags.index');
+    Route::post('/photobank/photos/{photo}/convert', [\App\Http\Controllers\Frontend\PhotobankController::class, 'convertImage'])
+        ->name('photobank.photos.convert');
+
+    Route::put('/photobank/photos/{photo}', [\App\Http\Controllers\Frontend\PhotobankController::class, 'update'])
+        ->name('photobank.photos.update');
+
+    // Изменение размера
+    Route::post('/photobank/photos/{photo}/resize', [\App\Http\Controllers\Frontend\PhotobankController::class, 'resizeImage'])
+        ->name('photobank.photos.resize');
+
+    // Изменение соотношения сторон
+    Route::post('/photobank/photos/{photo}/aspect-ratio', [\App\Http\Controllers\Frontend\PhotobankController::class, 'changeAspectRatio'])
+        ->name('photobank.photos.aspect');
+
+    // Удаление фото
+    Route::delete('/photobank/photos/{photo}', [\App\Http\Controllers\Frontend\PhotobankController::class, 'destroy'])
+        ->name('photobank.photos.destroy');
+
+    // Восстановление фото
+    Route::patch('/photobank/photos/{id}/restore', [\App\Http\Controllers\Frontend\PhotobankController::class, 'restore'])
+        ->name('photobank.photos.restore');
+
+    // Полное удаление (только админ)
+    Route::delete('/photobank/photos/{id}/force', [\App\Http\Controllers\Frontend\PhotobankController::class, 'forceDelete'])
+        ->name('photobank.photos.force');
 
     Route::post('/category/create', [App\Http\Controllers\Frontend\CategoryController::class, 'store'])->name('category.store');
     Route::get('/category/{id}/edit', [App\Http\Controllers\Frontend\CategoryController::class, 'edit'])->name('category.edit');
