@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>МенеджерПлюс - современная система управления командами</title>
-    <link rel="icon" href="favicon.ico">
-    <link href="css/main.css" rel="stylesheet">
+    <link rel="shortcut icon" href="{{asset('img/favicon.ico')}}" type="image/x-icon">
+    <link href="{{asset('css/main.css')}}" rel="stylesheet">
 </head>
 
 <body
@@ -356,83 +356,115 @@
     </section>
     <!-- ===== Funfact End ===== -->
 
-    <!-- ===== Features Start ===== -->
-    <section id="features" class="zg ep oq">
+    <!-- ===== Pricing Table Start ===== -->
+    <section class="bi sp fr uh pp cr">
         <div class="ba nd _g nn pq">
             <!-- Section Title Start -->
-            <div class="animate_top mi ba"
-                 x-data="{ sectionTitle: ``, sectionSubtitle: `Почему выбирают нас`, sectionTitlePara: ` `}">
+            <div class="animate_top mi ba" x-data="{ sectionTitle: ``, sectionSubtitle: `Тарифы`}">
 
                 <h2 x-text="sectionSubtitle" class="cj ri nr ej dm ym/5 zp/2 ba sa"></h2>
                 <p class="ba ym/5 mo/5 aq" x-text="sectionTitlePara"></p>
 
             </div>
             <!-- Section Title End -->
+        </div>
 
-            <div class="tb _d bn oo le eq ua xn vp">
-                <!-- Features item Start -->
-                <div class="animate_top hf of rj ye ug lq yj el km pl sl">
-                    <div class="qb ee ge ze wf sc xb">
-                        <img src="images/icon-01.svg" alt="Icon" />
-                    </div>
-                    <h3 class="aj qi kr ej dm ia ga">Crafted for SaaS</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.</p>
-                </div>
-                <!-- Features item End -->
+        <div class="ba qd _g nn pq h ha vp">
+            <div class="g -ud-bottom-15 -ud-z-1">
+                <img src="images/shape-dotted-light.svg" alt="Dotted" class="nl" />
+            </div>
+            <div class="qb de qo ge le eq">
+                <!-- Pricing Item -->
+                <div class="animate_top an ko/3 b h uf sl ye vj gm hf nf pl ug lq">
+                    <h3 class="ej dm cj ri nr ea">
+                        0₽<span class="wi gj fm">/мес</span>
+                    </h3>
+                    <h4 class="ej dm bj xi cb">Базовый</h4>
+                    <p>Lorem ipsum dolor sit amet, consec adipisicing elit.</p>
 
-                <!-- Features item Start -->
-                <div class="animate_top hf of rj ye ug lq yj el km pl sl">
-                    <div class="qb ee ge ze wf sc xb">
-                        <img src="images/icon-02.svg" alt="Icon" />
+                    <div class="lf nf pl hb ci di">
+                        <ul>
+                            <li class="ej fm sa vk">300 GB Storage</li>
+                            <li class="ej fm sa vk">Unlimited Photos and Videos</li>
+                            <li class="ej fm sa vk opacity-40">Exclusive Support</li>
+                            <li class="ej fm sa vk kj">Custom Branding Strategy</li>
+                        </ul>
                     </div>
-                    <h3 class="aj qi kr ej dm ia ga">Качественный дизайн</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.</p>
-                </div>
-                <!-- Features item End -->
 
-                <!-- Features item Start -->
-                <div class="animate_top hf of rj ye ug lq yj el km pl sl">
-                    <div class="qb ee ge ze wf sc xb">
-                        <img src="images/icon-03.svg" alt="Icon" />
-                    </div>
-                    <h3 class="aj qi kr ej dm ia ga">All Essential Sections</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.</p>
+                    <a href="#" class="sb ee je hj dm om bj yj ek">
+                        Get the Plan
+                        <svg class="lg bm nm yj ek" width="14" height="14" viewBox="0 0 14 14" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10.4767 6.17348L6.00668 1.70348L7.18501 0.525146L13.6667 7.00681L7.18501 13.4885L6.00668 12.3101L10.4767 7.84015H0.333344V6.17348H10.4767Z"
+                                fill="" />
+                        </svg>
+                    </a>
                 </div>
-                <!-- Features item End -->
 
-                <!-- Features item Start -->
-                <div class="animate_top hf of rj ye ug lq yj el km pl sl">
-                    <div class="qb ee ge ze wf sc xb">
-                        <img src="images/icon-04.svg" alt="Icon" />
+                <!-- Pricing Item -->
+                <div class="animate_top an ko/3 b h uf sl ye vj gm hf nf pl ug lq">
+                    <div class="g m -ud-right-3.5 -ud-rotate-90 ff gf wf bj fj si dj oh hh">
+                        Популярный
                     </div>
-                    <h3 class="aj qi kr ej dm ia ga">Высокая скорость</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.</p>
-                </div>
-                <!-- Features item End -->
 
-                <!-- Features item Start -->
-                <div class="animate_top hf of rj ye ug lq yj el km pl sl">
-                    <div class="qb ee ge ze wf sc xb">
-                        <img src="images/icon-05.svg" alt="Icon" />
-                    </div>
-                    <h3 class="aj qi kr ej dm ia ga">Fully Customizable</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.</p>
-                </div>
-                <!-- Features item End -->
+                    <h3 class="ej dm cj ri nr ea">
+                        350₽ <span class="wi gj fm">/month</span>
+                    </h3>
+                    <h4 class="ej dm bj xi cb">Оптимальный</h4>
+                    <p>Lorem ipsum dolor sit amet, consec adipisicing elit.</p>
 
-                <!-- Features item Start -->
-                <div class="animate_top hf of rj ye ug lq yj el km pl sl">
-                    <div class="qb ee ge ze wf sc xb">
-                        <img src="images/icon-06.svg" alt="Icon" />
+                    <div class="lf nf pl hb ci di">
+                        <ul>
+                            <li class="ej fm sa vk">300 GB Storage</li>
+                            <li class="ej fm sa vk">Unlimited Photos and Videos</li>
+                            <li class="ej fm sa vk">Exclusive Support</li>
+                            <li class="ej fm sa vk kj">Custom Branding Strategy</li>
+                        </ul>
                     </div>
-                    <h3 class="aj qi kr ej dm ia ga">Регулярные обновления</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.</p>
+
+                    <a href="#" class="sb ee je hj dm om bj yj ek">
+                        Get the Plan
+                        <svg class="lg bm nm yj ek" width="14" height="14" viewBox="0 0 14 14" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10.4767 6.17348L6.00668 1.70348L7.18501 0.525146L13.6667 7.00681L7.18501 13.4885L6.00668 12.3101L10.4767 7.84015H0.333344V6.17348H10.4767Z"
+                                fill="" />
+                        </svg>
+                    </a>
                 </div>
-                <!-- Features item End -->
+
+                <!-- Pricing Item -->
+                <div class="animate_top an ko/3 b h uf sl ye vj gm hf nf pl ug lq">
+                    <h3 class="ej dm cj ri nr ea">
+                        ₽<span class="wi gj fm">/month</span>
+                    </h3>
+                    <h4 class="ej dm bj xi cb">Премиум</h4>
+                    <p>Lorem ipsum dolor sit amet, consec adipisicing elit.</p>
+
+                    <div class="lf nf pl hb ci di">
+                        <ul>
+                            <li class="ej fm sa vk">300 GB Storage</li>
+                            <li class="ej fm sa vk">Unlimited Photos and Videos</li>
+                            <li class="ej fm sa vk">Exclusive Support</li>
+                            <li class="ej fm sa vk">Custom Branding Strategy</li>
+                        </ul>
+                    </div>
+
+                    <a href="#" class="sb ee je hj dm om bj yj ek">
+                        Get the Plan
+                        <svg class="lg bm nm yj ek" width="14" height="14" viewBox="0 0 14 14" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10.4767 6.17348L6.00668 1.70348L7.18501 0.525146L13.6667 7.00681L7.18501 13.4885L6.00668 12.3101L10.4767 7.84015H0.333344V6.17348H10.4767Z"
+                                fill="" />
+                        </svg>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
-    <!-- ===== Features End ===== -->
+    <!-- ===== Pricing Table End ===== -->
 
     <!-- ===== CTA Start ===== -->
     <section class="zg ep oq _g nn 2xl:ud-px-0 ve">
@@ -599,116 +631,6 @@
         </div>
     </section>
     <!-- ===== Testimonials End ===== -->
-
-    <!-- ===== Pricing Table Start ===== -->
-    <section class="bi sp fr uh pp cr">
-        <div class="ba nd _g nn pq">
-            <!-- Section Title Start -->
-            <div class="animate_top mi ba" x-data="{ sectionTitle: ``, sectionSubtitle: `Тарифы`}">
-
-                <h2 x-text="sectionSubtitle" class="cj ri nr ej dm ym/5 zp/2 ba sa"></h2>
-                <p class="ba ym/5 mo/5 aq" x-text="sectionTitlePara"></p>
-
-            </div>
-            <!-- Section Title End -->
-        </div>
-
-        <div class="ba qd _g nn pq h ha vp">
-            <div class="g -ud-bottom-15 -ud-z-1">
-                <img src="images/shape-dotted-light.svg" alt="Dotted" class="nl" />
-            </div>
-            <div class="qb de qo ge le eq">
-                <!-- Pricing Item -->
-                <div class="animate_top an ko/3 b h uf sl ye vj gm hf nf pl ug lq">
-                    <h3 class="ej dm cj ri nr ea">
-                        0₽<span class="wi gj fm">/мес</span>
-                    </h3>
-                    <h4 class="ej dm bj xi cb">Базовый</h4>
-                    <p>Lorem ipsum dolor sit amet, consec adipisicing elit.</p>
-
-                    <div class="lf nf pl hb ci di">
-                        <ul>
-                            <li class="ej fm sa vk">300 GB Storage</li>
-                            <li class="ej fm sa vk">Unlimited Photos and Videos</li>
-                            <li class="ej fm sa vk opacity-40">Exclusive Support</li>
-                            <li class="ej fm sa vk kj">Custom Branding Strategy</li>
-                        </ul>
-                    </div>
-
-                    <a href="#" class="sb ee je hj dm om bj yj ek">
-                        Get the Plan
-                        <svg class="lg bm nm yj ek" width="14" height="14" viewBox="0 0 14 14" fill="none"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M10.4767 6.17348L6.00668 1.70348L7.18501 0.525146L13.6667 7.00681L7.18501 13.4885L6.00668 12.3101L10.4767 7.84015H0.333344V6.17348H10.4767Z"
-                                fill="" />
-                        </svg>
-                    </a>
-                </div>
-
-                <!-- Pricing Item -->
-                <div class="animate_top an ko/3 b h uf sl ye vj gm hf nf pl ug lq">
-                    <div class="g m -ud-right-3.5 -ud-rotate-90 ff gf wf bj fj si dj oh hh">
-                        Популярный
-                    </div>
-
-                    <h3 class="ej dm cj ri nr ea">
-                        350₽ <span class="wi gj fm">/month</span>
-                    </h3>
-                    <h4 class="ej dm bj xi cb">Оптимальный</h4>
-                    <p>Lorem ipsum dolor sit amet, consec adipisicing elit.</p>
-
-                    <div class="lf nf pl hb ci di">
-                        <ul>
-                            <li class="ej fm sa vk">300 GB Storage</li>
-                            <li class="ej fm sa vk">Unlimited Photos and Videos</li>
-                            <li class="ej fm sa vk">Exclusive Support</li>
-                            <li class="ej fm sa vk kj">Custom Branding Strategy</li>
-                        </ul>
-                    </div>
-
-                    <a href="#" class="sb ee je hj dm om bj yj ek">
-                        Get the Plan
-                        <svg class="lg bm nm yj ek" width="14" height="14" viewBox="0 0 14 14" fill="none"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M10.4767 6.17348L6.00668 1.70348L7.18501 0.525146L13.6667 7.00681L7.18501 13.4885L6.00668 12.3101L10.4767 7.84015H0.333344V6.17348H10.4767Z"
-                                fill="" />
-                        </svg>
-                    </a>
-                </div>
-
-                <!-- Pricing Item -->
-                <div class="animate_top an ko/3 b h uf sl ye vj gm hf nf pl ug lq">
-                    <h3 class="ej dm cj ri nr ea">
-                        ₽<span class="wi gj fm">/month</span>
-                    </h3>
-                    <h4 class="ej dm bj xi cb">Премиум</h4>
-                    <p>Lorem ipsum dolor sit amet, consec adipisicing elit.</p>
-
-                    <div class="lf nf pl hb ci di">
-                        <ul>
-                            <li class="ej fm sa vk">300 GB Storage</li>
-                            <li class="ej fm sa vk">Unlimited Photos and Videos</li>
-                            <li class="ej fm sa vk">Exclusive Support</li>
-                            <li class="ej fm sa vk">Custom Branding Strategy</li>
-                        </ul>
-                    </div>
-
-                    <a href="#" class="sb ee je hj dm om bj yj ek">
-                        Get the Plan
-                        <svg class="lg bm nm yj ek" width="14" height="14" viewBox="0 0 14 14" fill="none"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M10.4767 6.17348L6.00668 1.70348L7.18501 0.525146L13.6667 7.00681L7.18501 13.4885L6.00668 12.3101L10.4767 7.84015H0.333344V6.17348H10.4767Z"
-                                fill="" />
-                        </svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- ===== Pricing Table End ===== -->
 
     <!-- ===== Contact Start ===== -->
     <section id="support" class="_g nn 2xl:ud-px-0">
