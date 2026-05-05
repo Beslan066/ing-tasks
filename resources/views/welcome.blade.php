@@ -539,10 +539,12 @@
                             </div>
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
-                            <p class="text-gray-900">${task.department.name}</p>
-                        </div>
+                        ${task.department ? `
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
+                                <p class="text-gray-900">${task.department.name}</p>
+                            </div>
+                        ` : ''}
 
                         ${task.category ? `
                         <div>

@@ -377,14 +377,14 @@
                 <!-- Pricing Item -->
                 <div class="animate_top an ko/3 b h uf sl ye vj gm hf nf pl ug lq">
                     <h3 class="ej dm cj ri nr ea">
-                        0₽<span class="wi gj fm">/мес</span>
+                        0₽<span class="wi gj fm">/месяц</span>
                     </h3>
                     <h4 class="ej dm bj xi cb">Базовый</h4>
                     <p>Lorem ipsum dolor sit amet, consec adipisicing elit.</p>
 
                     <div class="lf nf pl hb ci di">
                         <ul>
-                            <li class="ej fm sa vk">300 GB Storage</li>
+                            <li class="ej fm sa vk">До 3 бесплатных пользователей</li>
                             <li class="ej fm sa vk">Unlimited Photos and Videos</li>
                             <li class="ej fm sa vk opacity-40">Exclusive Support</li>
                             <li class="ej fm sa vk kj">Custom Branding Strategy</li>
@@ -392,7 +392,7 @@
                     </div>
 
                     <a href="#" class="sb ee je hj dm om bj yj ek">
-                        Get the Plan
+                        Попробовать
                         <svg class="lg bm nm yj ek" width="14" height="14" viewBox="0 0 14 14" fill="none"
                              xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -409,22 +409,22 @@
                     </div>
 
                     <h3 class="ej dm cj ri nr ea">
-                        350₽ <span class="wi gj fm">/month</span>
+                        350₽ <span class="wi gj fm">/месяц</span>
                     </h3>
                     <h4 class="ej dm bj xi cb">Оптимальный</h4>
                     <p>Lorem ipsum dolor sit amet, consec adipisicing elit.</p>
 
                     <div class="lf nf pl hb ci di">
                         <ul>
-                            <li class="ej fm sa vk">300 GB Storage</li>
-                            <li class="ej fm sa vk">Unlimited Photos and Videos</li>
-                            <li class="ej fm sa vk">Exclusive Support</li>
-                            <li class="ej fm sa vk kj">Custom Branding Strategy</li>
+                            <li class="ej fm sa vk">До 2ГБ хранилище</li>
+                            <li class="ej fm sa vk">Мессенджер</li>
+                            <li class="ej fm sa vk">Видеоконференции</li>
+                            <li class="ej fm sa vk">Полный набор инструментов </li>
                         </ul>
                     </div>
 
                     <a href="#" class="sb ee je hj dm om bj yj ek">
-                        Get the Plan
+                        Попробовать
                         <svg class="lg bm nm yj ek" width="14" height="14" viewBox="0 0 14 14" fill="none"
                              xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -437,22 +437,20 @@
                 <!-- Pricing Item -->
                 <div class="animate_top an ko/3 b h uf sl ye vj gm hf nf pl ug lq">
                     <h3 class="ej dm cj ri nr ea">
-                        ₽<span class="wi gj fm">/month</span>
+                        ₽<span class="wi gj fm">/месяц</span>
                     </h3>
                     <h4 class="ej dm bj xi cb">Премиум</h4>
                     <p>Lorem ipsum dolor sit amet, consec adipisicing elit.</p>
 
                     <div class="lf nf pl hb ci di">
                         <ul>
-                            <li class="ej fm sa vk">300 GB Storage</li>
-                            <li class="ej fm sa vk">Unlimited Photos and Videos</li>
-                            <li class="ej fm sa vk">Exclusive Support</li>
-                            <li class="ej fm sa vk">Custom Branding Strategy</li>
+                            <li class="ej fm sa vk">До 10ГБ хранилище</li>
+                            <li class="ej fm sa vk kj">Корпоративная почта(скоро)</li>
                         </ul>
                     </div>
 
                     <a href="#" class="sb ee je hj dm om bj yj ek">
-                        Get the Plan
+                        Попробовать
                         <svg class="lg bm nm yj ek" width="14" height="14" viewBox="0 0 14 14" fill="none"
                              xmlns="http://www.w3.org/2000/svg">
                             <path

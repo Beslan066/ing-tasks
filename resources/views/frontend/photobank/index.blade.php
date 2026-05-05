@@ -5,7 +5,7 @@
         <!-- Заголовок и кнопки -->
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
             <div>
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Фотобанк</h1>
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Фотобанк</h2>
                 <p class="text-gray-600 dark:text-gray-400 mt-2" x-text="`${totalPhotos} фотографий`"></p>
             </div>
             <div class="flex gap-3">
