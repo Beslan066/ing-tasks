@@ -257,7 +257,7 @@
             </div>
         </div>
     </div>
-
+<span>test</span>
     <!-- Модальное окно для отказа от задачи -->
     <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
