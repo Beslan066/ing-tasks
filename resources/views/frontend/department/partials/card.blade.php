@@ -52,7 +52,7 @@
                                             <i class="fas fa-edit mr-3 text-primary"></i>
                                             Редактировать
                                         </a>
-                                        <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                                        <a href="javascript:void(0);" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                                            onclick="deleteDepartment({{ $department->id }})">
                                             <i class="fas fa-trash mr-3"></i>
                                             Удалить отдел
