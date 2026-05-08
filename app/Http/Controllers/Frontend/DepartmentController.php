@@ -41,36 +41,65 @@ class DepartmentController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'company_id' => 'required|exists:companies,id',
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'company_id' => 'required|exists:companies,id',
+    //     ]);
+    //     try {
+    //         $department = Department::create([
+    //             'name' => $request->name,
+    //             'company_id' => $request->company_id,
+    //             'supervisor_id' => Auth::id(), // Назначаем текущего пользователя руководителем
+    //             'status' => 'active',
+    //         ]);
+
+    //         // Добавляем текущего пользователя в отдел
+    //         $department->users()->attach(Auth::id());
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'department' => $department,
+    //             'message' => 'Отдел успешно создан'
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Ошибка при создании отдела: ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'company_id' => 'required|exists:companies,id',
+    ]);
+
+    try {
+        $department = Department::create([
+            'name' => $request->name,
+            'company_id' => $request->company_id,
+            'supervisor_id' => Auth::id(),
+            'status' => 'active',
         ]);
-        try {
-            $department = Department::create([
-                'name' => $request->name,
-                'company_id' => $request->company_id,
-                'supervisor_id' => Auth::id(), // Назначаем текущего пользователя руководителем
-                'status' => 'active',
-            ]);
 
-            // Добавляем текущего пользователя в отдел
-            $department->users()->attach(Auth::id());
+        $department->users()->attach(Auth::id());
 
-            return response()->json([
-                'success' => true,
-                'department' => $department,
-                'message' => 'Отдел успешно создан'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибка при создании отдела: ' . $e->getMessage()
-            ], 500);
-        }
+        $department->load(['company', 'supervisor']);
+
+        $html = view('frontend.department.partials.card', compact('department'))->render();
+
+        return response()->json([
+            'success' => true,
+            'html' => $html,
+            'message' => 'Отдел успешно создан'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
     }
-
+}
     public function edit($id)
     {
         try {
@@ -117,4 +146,18 @@ class DepartmentController extends Controller
             ], 500);
         }
     }
+
+
+     // удаление V
+    public function destroy($id)
+{
+    try {
+        $department = Department::where('supervisor_id', Auth::id())->findOrFail($id);
+        $department->delete();
+
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => 'Ошибка удаления'], 500);
+    }
+}
 }
