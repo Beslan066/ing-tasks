@@ -120,9 +120,7 @@
         </div>
 
     </div>
-<<<<<<< HEAD
     @include('partials.modal.department.create')
-=======
 
     <!-- Модальное окно создания отдела -->
     <div id="departmentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
@@ -216,7 +214,7 @@
             </div>
         </div>
     </div>
->>>>>>> change/styles
+
 @endsection
 
 @push('scripts')

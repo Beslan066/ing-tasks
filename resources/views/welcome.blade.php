@@ -14,7 +14,7 @@
             @else
                 <h2 class="text-3xl font-bold text-[#16a34a]">Мои задачи</h2>
             @endif
-            <p class="text-gray-500">{{ $user->company->name }} • {{ $stats['in_progress'] }} активных задач</p>
+            <p class="text-white text-sm" >Ваши личные задачи не видны на странице Команда</p>
         </div>
         <!-- В блоке с заголовком и статистикой -->
         <div class="flex space-x-4">

@@ -167,7 +167,7 @@
                         <a href="#" class="xf fj si sb xe gh hh wa sa">New</a> start tracking visitors
                     </h4>
                     <h2 class="h cj ej dm ri jr xa">
-                        Создавайте <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">компании</span> или
+                        Создавайте <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">команды</span> или
                         <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">организации</span>
                     </h2>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ultricies lacus non fermentum
