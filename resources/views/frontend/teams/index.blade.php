@@ -34,12 +34,12 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
                     <input type="text" id="searchInput" placeholder="Поиск по имени или email..."
                            value="{{ request('search') }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
+                           class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
                     <select id="departmentFilter"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 bg-transparent text-sm md:text-base">
+                            class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-transparent text-sm md:text-base">
                         <option value="">Все отделы</option>
                         @foreach($departments as $department)
                             <option value="{{ $department->id }}"
@@ -52,7 +52,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Роль</label>
                     <select id="roleFilter"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 bg-transparent text-sm md:text-base">
+                            class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-transparent text-sm md:text-base">
                         <option value="">Все роли</option>
                         @foreach($roles as $role)
                             <option value="{{ $role->id }}" {{ request('role') == $role->id ? 'selected' : '' }}>
@@ -64,7 +64,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
                     <select id="statusFilter"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 bg-transparent text-sm md:text-base">
+                            class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-transparent text-sm md:text-base">
                         <option value="">Все</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Активные</option>
                         <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Неактивные</option>
@@ -77,22 +77,22 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Дата регистрации от</label>
                     <input type="date" id="dateFrom"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 text-sm md:text-base">
+                           class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Дата регистрации до</label>
                     <input type="date" id="dateTo"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 text-sm md:text-base">
+                           class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Мин. % выполнения</label>
                     <input type="number" id="completionMin" min="0" max="100" placeholder="0"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 text-sm md:text-base">
+                           class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 text-sm md:text-base">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Макс. % выполнения</label>
                     <input type="number" id="completionMax" min="0" max="100" placeholder="100"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 text-sm md:text-base">
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
                 </div>
             </div>
 
@@ -470,7 +470,7 @@
                             </label>
                             <div class="relative">
                                 <input type="text" id="userSearch" placeholder="Введите имя или email пользователя..."
-                                       class="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base"
+                                       class="w-full px-3 py-2 md:px-4 md:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base"
                                        autocomplete="off">
                                 <div class="absolute inset-y-0 right-0 flex items-center pr-3">
                                     <i class="fas fa-search text-gray-400"></i>
@@ -484,7 +484,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1 md:mb-2">Роль</label>
                                 <select id="inviteRole" name="role_id"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base bg-white">
+                                        class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base bg-white">
                                     <option value="">Выберите роль</option>
                                     @foreach($roles as $role)
                                         <option value="{{ $role->id }}">{{ $role->name }}</option>
@@ -494,7 +494,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1 md:mb-2">Отдел</label>
                                 <select id="inviteDepartment" name="department_id"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base bg-white">
+                                        class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base bg-white">
                                     <option value="">Выберите отдел</option>
                                     @foreach($departments as $department)
                                         <option value="{{ $department->id }}">{{ $department->name }}</option>

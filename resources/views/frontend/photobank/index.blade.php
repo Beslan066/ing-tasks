@@ -240,7 +240,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Название *</label>
                             <input type="text" x-model="uploadForm.title"
-                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
+                                   class="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white"
                                    required>
                             <span x-show="uploadErrors.title" x-text="uploadErrors.title" class="text-red-500 text-sm mt-1"></span>
                         </div>
@@ -248,14 +248,14 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Описание</label>
                             <textarea x-model="uploadForm.description" rows="3"
-                                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"></textarea>
+                                      class="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white"></textarea>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Категория *</label>
                             <div class="flex gap-2">
                                 <select x-model="uploadForm.category_id"
-                                        class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 bg-white"
+                                        class="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 bg-white"
                                         required>
                                     <option value="">Выберите категорию</option>
                                     <template x-for="category in categoriesData" :key="category.id">
@@ -271,7 +271,7 @@
                             <div x-show="showNewCategory" class="flex gap-2 mt-2">
                                 <input type="text" x-model="newCategory.name"
                                        placeholder="Новая категория"
-                                       class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white">
+                                       class="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white">
                                 <button type="button" @click="createCategory"
                                         class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg">
                                     Создать
@@ -283,7 +283,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Теги</label>
                             <select x-model="uploadForm.tags" multiple
-                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white h-32">
+                                    class="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white h-32">
                                 <template x-for="tag in tagsData" :key="tag.id">
                                     <option :value="tag.id" x-text="tag.name"></option>
                                 </template>
@@ -294,7 +294,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Фотография *</label>
                             <input type="file" @change="handleFileSelect"
-                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
+                                   class="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white"
                                    accept="image/*" required>
                             <span x-show="uploadErrors.photo" x-text="uploadErrors.photo" class="text-red-500 text-sm mt-1"></span>
                             <p class="text-sm text-gray-500 mt-2">Поддерживаемые форматы: JPEG, PNG, GIF, WebP. Максимальный размер: 20MB</p>

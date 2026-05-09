@@ -138,7 +138,7 @@
                                x-model="searchQuery"
                                @input="filterChats()"
                                placeholder="Поиск..."
-                               class="w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+                               class="w-full rounded-lg border-2 border-gray-300 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 outline-none placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 focus:border-green-400 focus:ring-4 focus:ring-green-100">
                     </div>
                 </div>
 
@@ -585,7 +585,7 @@
                         <input type="text"
                                x-model="colleagueSearch"
                                placeholder="Поиск сотрудников..."
-                               class="w-full rounded-lg border border-gray-300 px-4 py-2 pl-10 dark:bg-gray-700 dark:border-gray-600">
+                               class="w-full rounded-lg border-2 border-gray-300 px-4 py-2 pl-10 dark:bg-gray-700 dark:border-gray-600 outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100">
                     </div>
                 </div>
 
@@ -643,14 +643,14 @@
                         <label class="block text-sm font-medium mb-1">Название группы</label>
                         <input type="text"
                                x-model="newGroup.name"
-                               class="w-full rounded-lg border border-gray-300 px-4 py-2 dark:bg-gray-700 dark:border-gray-600">
+                               class="w-full rounded-lg border-2 border-gray-300 px-4 py-2 dark:bg-gray-700 dark:border-gray-600 outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium mb-1">Описание (необязательно)</label>
                         <textarea x-model="newGroup.description"
                                   rows="2"
-                                  class="w-full rounded-lg border border-gray-300 px-4 py-2 dark:bg-gray-700 dark:border-gray-600"></textarea>
+                                  class="w-full rounded-lg border-2 border-gray-300 px-4 py-2 dark:bg-gray-700 dark:border-gray-600 outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100"></textarea>
                     </div>
 
                     <div>
@@ -660,7 +660,7 @@
                             <input type="text"
                                    x-model="groupSearch"
                                    placeholder="Поиск..."
-                                   class="w-full rounded-lg border border-gray-300 px-4 py-2 pl-10 dark:bg-gray-700 dark:border-gray-600">
+                                   class="w-full rounded-lg border-2 border-gray-300 px-4 py-2 pl-10 dark:bg-gray-700 dark:border-gray-600 outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100">
                         </div>
 
                         <div class="max-h-48 overflow-auto space-y-2 custom-scrollbar border rounded-lg p-2">
@@ -675,7 +675,7 @@
                                     <input type="checkbox"
                                            :value="colleague.id"
                                            x-model="newGroup.selectedUsers"
-                                           class="rounded border-gray-300 text-green-500 focus:ring-green-500">
+                                           class="rounded border-gray-300 text-green-500 border-2 outline-nonefocus:border-green-400 focus:ring-4 focus:ring-green-100">
                                     <div class="flex-1">
                                         <p class="font-medium text-sm" x-text="colleague.name"></p>
                                         <p class="text-xs text-gray-500" x-text="colleague.department || 'Без отдела'"></p>
@@ -717,7 +717,7 @@
                         <input type="text"
                                x-model="addUsersSearch"
                                placeholder="Поиск..."
-                               class="w-full rounded-lg border border-gray-300 px-4 py-2 pl-10 dark:bg-gray-700 dark:border-gray-600">
+                               class="w-full rounded-lg border-2 border-gray-300 px-4 py-2 pl-10 dark:bg-gray-700 dark:border-gray-600 outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100">
                     </div>
                 </div>
 
@@ -728,7 +728,7 @@
                                 <input type="checkbox"
                                        :value="colleague.id"
                                        x-model="selectedUsersToAdd"
-                                       class="rounded border-gray-300 text-green-500 focus:ring-green-500">
+                                       class="rounded border-2 border-gray-300 text-green-500 focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none">
                                 <div class="flex-1">
                                     <p class="font-medium" x-text="colleague.name"></p>
                                     <p class="text-sm text-gray-500" x-text="colleague.department || 'Без отдела'"></p>

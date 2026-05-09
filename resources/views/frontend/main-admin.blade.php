@@ -584,7 +584,7 @@
                     <!-- Название задачи -->
                     <div class="md:col-span-2 space-y-2">
                         <label class="block text-gray-700 text-sm font-semibold mb-1">
-                            <i class="fas fa-tag text-green-500 mr-2 text-xs"></i>Название задачи *
+                            <i class="fas fa-tag text-green-500 mr-2 text-xs focus:border-green-400 focus:ring-4 focus:ring-green-100"></i>Название задачи *
                         </label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

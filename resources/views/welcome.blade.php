@@ -302,8 +302,6 @@
     <script>
         let currentTaskId = null;
 
-
-
         // Открыть модальное окно для личной задачи
         function openPersonalTaskModal() {
             // Используем существующую модалку

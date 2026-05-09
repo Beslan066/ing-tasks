@@ -29,7 +29,7 @@
                             <i class="fas fa-tasks text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
                         </div>
                         <input type="text" name="name"
-                               class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400 hover:border-gray-300"
+                               class="w-full pl-10 pr-4 py-3 border-2 border-gray-200  rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400 hover:border-gray-300 outline-none"
                                placeholder="Введите название задачи" required>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                     </label>
                     <div class="relative group">
                         <select name="priority"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
                             <option value="низкий" class="priority-option">Низкий</option>
                             <option value="средний" selected class="priority-option">Средний</option>
                             <option value="высокий" class="priority-option">Высокий</option>
@@ -60,7 +60,7 @@
                 </label>
                 <div class="relative group">
                     <textarea name="description"
-                              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 resize-none bg-white placeholder-gray-400"
+                              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl outline-none focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 resize-none bg-white placeholder-gray-400"
                               rows="4" placeholder="Подробное описание задачи..."></textarea>
                 </div>
             </div>
@@ -73,7 +73,7 @@
                     </label>
                     <div class="relative group">
                         <select name="department_id"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
+                                class="w-full px-4 py-3 border-2 outline-none border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
                             <option value="" class="text-gray-400">Выберите отдел</option>
                             @foreach($departments as $department)
                                 <option value="{{ $department->id }}">{{ $department->name }}</option>
@@ -91,7 +91,7 @@
                     </label>
                     <div class="relative group">
                         <select name="category_id"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
+                                class="w-full px-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
                             <option value="" class="text-gray-400">Выберите категорию</option>
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -112,7 +112,7 @@
                     </label>
                     <div class="relative group">
                         <select name="user_id"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
+                                class="w-full px-4 py-3 border-2 outline-none border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
                             <option value="" class="text-gray-400">Не назначено</option>
                             @foreach($assignableUsers as $user)
                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
@@ -133,7 +133,7 @@
                             <i class="fas fa-clock text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
                         </div>
                         <input type="datetime-local" name="deadline"
-                               class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white cursor-pointer hover:border-gray-300">
+                               class="w-full pl-10 pr-4 py-3 border-2 outline-none border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white cursor-pointer hover:border-gray-300">
                     </div>
                 </div>
             </div>
@@ -149,7 +149,7 @@
                             <i class="fas fa-stopwatch text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
                         </div>
                         <input type="number" name="estimated_hours" min="0" step="0.5"
-                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
+                               class="w-full px-4 py-3 border-2 outline-none border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
                                placeholder="0.0">
                         <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium text-sm">часов</span>
                     </div>
@@ -161,7 +161,7 @@
                     </label>
                     <div class="relative group">
                         <select name="status"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
+                                class="w-full px-4 py-3 border-2 outline-none border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
                                 required>
                             @php
                                 $availableStatuses = array_filter(\App\Models\Task::getStatuses(), function($status) {
@@ -188,14 +188,14 @@
                         <button type="button"
                                 onclick="switchFileTab('storage')"
                                 id="storageTab"
-                                class="py-2 px-1 border-b-2 font-medium text-sm focus:outline-none tab-button active transition-all duration-200"
+                                class="py-2 px-1 border-b-2 outline-none font-medium text-sm focus:outline-none tab-button active transition-all duration-200"
                                 data-tab="storage">
                             <i class="fas fa-database mr-2"></i>Из хранилища
                         </button>
                         <button type="button"
                                 onclick="switchFileTab('upload')"
                                 id="uploadTab"
-                                class="py-2 px-1 border-b-2 font-medium text-sm focus:outline-none tab-button transition-all duration-200"
+                                class="py-2 px-1 border-b-2 outline-none font-medium text-sm focus:outline-none tab-button transition-all duration-200"
                                 data-tab="upload">
                             <i class="fas fa-cloud-upload-alt mr-2"></i>Новая загрузка
                         </button>

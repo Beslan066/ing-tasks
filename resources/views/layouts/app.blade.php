@@ -374,7 +374,7 @@
 
                 <div class="space-y-1">
                     <a href="{{route('welcome')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white @if($backgroundEnabled && $backgroundImage)hover:bg-[#16a34a] @else hover:bg-sidebar-hover @endif active">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg active">
                         <div class="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-check text-primary-500 text-sm"></i>
                         </div>
@@ -382,14 +382,14 @@
                     </a>
 
                     <a href="{{route('tasks.admin')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white @if($backgroundEnabled && $backgroundImage)hover:bg-[#22c55e1a] @else hover:bg-sidebar-hover @endif">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:rounded-lg hover:bg-sidebar-hover">
                         <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-landmark text-purple-500 text-sm"></i>
                         </div>
                         <span class="font-medium">Моя компания</span>
                     </a>
                     <a href="{{route('departments.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg">
                         <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-building text-orange-500 text-sm"></i>
                         </div>
@@ -397,7 +397,7 @@
                     </a>
 
                     <a href="{{route('team.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg">
                         <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-users text-blue-500 text-sm"></i>
                         </div>
@@ -405,7 +405,7 @@
                     </a>
 
                     <a href="{{route('chat.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg">
                         <div class="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-comments text-pink-500 text-sm"></i>
                         </div>
@@ -413,7 +413,7 @@
                     </a>
 
                     <a href="{{route('files.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg">
                         <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-hard-drive text-brown-500 text-sm"></i>
                         </div>
@@ -421,7 +421,7 @@
                     </a>
 
                     <a href="{{route('tools.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg">
                         <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-tools text-yellow-500 text-sm"></i>
                         </div>
@@ -818,30 +818,24 @@
     // Глобальные переменные
     let currentModalType = '';
     let currentEditingTaskId = null;
-    let selectedFiles = []; // Файлы, выбранные из хранилища
-    let allFiles = []; // Все файлы из хранилища
-    let currentPreviewFile = null; // Файл в предпросмотре
-
+    let selectedFiles = [];
+    let allFiles = [];
+    let currentPreviewFile = null;
+    let draggedTaskCard = null;
 
     // Добавим интерактивности для сайдбара
     document.addEventListener('DOMContentLoaded', function () {
-
-        // При клике на письмо в выпадающем меню
         document.querySelectorAll('.email-dropdown-item').forEach(item => {
             item.addEventListener('click', function (e) {
                 const url = this.getAttribute('href');
                 const badge = this.querySelector('.unread-badge');
-
-                // Если есть непрочитанные, сбрасываем счетчик
                 if (badge && badge.textContent > 0) {
                     updateUnreadCount();
                 }
-
                 window.location.href = url;
             });
         });
 
-        // Открытие меню при клике (для мобильных)
         const emailButton = document.querySelector('.email-nav-button');
         if (emailButton) {
             emailButton.addEventListener('click', function (e) {
@@ -853,8 +847,6 @@
             });
         }
 
-
-        // Добавляем анимацию при наведении на элементы
         const navItems = document.querySelectorAll('.nav-item');
         navItems.forEach(item => {
             item.addEventListener('mouseenter', function () {
@@ -865,16 +857,18 @@
             });
         });
 
-        // Индикатор активного элемента
         const currentPath = window.location.pathname;
         navItems.forEach(item => {
             if (item.getAttribute('href') === currentPath) {
                 item.classList.add('active');
             }
         });
+
+        // Инициализация drag and drop после загрузки
+        initTaskDragAndDrop();
+        updateTaskCounters();
     });
 
-    // Добавим плавное появление элементов
     setTimeout(() => {
         const elements = document.querySelectorAll('.sidebar > *');
         elements.forEach((el, index) => {
@@ -884,78 +878,82 @@
 
     // ==================== ФУНКЦИИ ДЛЯ МОДАЛЬНЫХ ОКОН ====================
 
-    // Открытие модальных окон
     function openTaskModal() {
         currentModalType = 'task';
-        document.getElementById('taskModal').classList.remove('hidden');
+        const modal = document.getElementById('taskModal');
+        if (modal) modal.classList.remove('hidden');
         resetTaskForm();
     }
 
-    // Функция для открытия редактирования задачи
     async function openEditTaskModal(taskId) {
         currentModalType = 'task';
         currentEditingTaskId = taskId;
 
         try {
-            // Загружаем данные задачи
             const response = await fetch(`/tasks/${taskId}/get`);
-
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-
             const data = await response.json();
 
             if (data.success) {
-                // Заполняем форму данными
                 const task = data.task;
-
-                // Установить ID задачи
                 let taskIdField = document.getElementById('task_id');
                 if (!taskIdField) {
                     taskIdField = document.createElement('input');
                     taskIdField.type = 'hidden';
                     taskIdField.name = 'task_id';
                     taskIdField.id = 'task_id';
-                    document.getElementById('taskForm').appendChild(taskIdField);
+                    const form = document.getElementById('taskForm');
+                    if (form) form.appendChild(taskIdField);
                 }
                 taskIdField.value = task.id;
 
-                // Заполняем основные поля
-                document.querySelector('input[name="name"]').value = task.name || '';
-                document.querySelector('textarea[name="description"]').value = task.description || '';
-                document.querySelector('select[name="priority"]').value = task.priority || 'средний';
-                document.querySelector('select[name="department_id"]').value = task.department_id || '';
-                document.querySelector('select[name="category_id"]').value = task.category_id || '';
-                document.querySelector('select[name="user_id"]').value = task.user_id || '';
-                document.querySelector('input[name="estimated_hours"]').value = task.estimated_hours || '';
+                const nameInput = document.querySelector('input[name="name"]');
+                if (nameInput) nameInput.value = task.name || '';
 
-                // Форматируем дату для datetime-local
+                const descTextarea = document.querySelector('textarea[name="description"]');
+                if (descTextarea) descTextarea.value = task.description || '';
+
+                const prioritySelect = document.querySelector('select[name="priority"]');
+                if (prioritySelect) prioritySelect.value = task.priority || 'средний';
+
+                const deptSelect = document.querySelector('select[name="department_id"]');
+                if (deptSelect) deptSelect.value = task.department_id || '';
+
+                const catSelect = document.querySelector('select[name="category_id"]');
+                if (catSelect) catSelect.value = task.category_id || '';
+
+                const userSelect = document.querySelector('select[name="user_id"]');
+                if (userSelect) userSelect.value = task.user_id || '';
+
+                const hoursInput = document.querySelector('input[name="estimated_hours"]');
+                if (hoursInput) hoursInput.value = task.estimated_hours || '';
+
                 if (task.deadline) {
                     const deadlineDate = new Date(task.deadline);
                     const formattedDate = deadlineDate.toISOString().slice(0, 16);
-                    document.querySelector('input[name="deadline"]').value = formattedDate;
+                    const deadlineInput = document.querySelector('input[name="deadline"]');
+                    if (deadlineInput) deadlineInput.value = formattedDate;
                 } else {
-                    document.querySelector('input[name="deadline"]').value = '';
+                    const deadlineInput = document.querySelector('input[name="deadline"]');
+                    if (deadlineInput) deadlineInput.value = '';
                 }
 
-                document.querySelector('select[name="status"]').value = task.status || 'назначена';
+                const statusSelect = document.querySelector('select[name="status"]');
+                if (statusSelect) statusSelect.value = task.status || 'назначена';
 
-                // Загружаем прикрепленные файлы (если есть)
-                if (task.files && task.files.length > 0) {
-                    // Можно реализовать загрузку уже прикрепленных файлов
-                    // для редактирования задачи
-                }
+                const modalTitle = document.querySelector('#taskModal h3');
+                if (modalTitle) modalTitle.textContent = 'Редактировать задачу';
 
-                // Обновляем заголовок и кнопку
-                document.querySelector('#taskModal h3').textContent = 'Редактировать задачу';
-                document.querySelector('#taskModal p').textContent = 'Редактирование информации о задаче';
-                document.querySelector('#taskModal button[type="submit"]').innerHTML = '<i class="fas fa-save mr-2"></i>Сохранить изменения';
+                const modalDesc = document.querySelector('#taskModal p');
+                if (modalDesc) modalDesc.textContent = 'Редактирование информации о задаче';
 
-                // Показываем модальное окно
-                document.getElementById('taskModal').classList.remove('hidden');
+                const submitBtn = document.querySelector('#taskModal button[type="submit"]');
+                if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-save mr-2"></i>Сохранить изменения';
 
-                window.location.reload();
+                const modal = document.getElementById('taskModal');
+                if (modal) modal.classList.remove('hidden');
             } else {
                 showNotification(data.message || 'Ошибка при загрузке задачи', 'error');
             }
@@ -965,104 +963,108 @@
         }
     }
 
-    // Функция для сброса формы задачи
     function resetTaskForm() {
-        document.getElementById('taskForm').reset();
-        // Сбрасываем выбранные файлы
+        const form = document.getElementById('taskForm');
+        if (form) form.reset();
+
         selectedFiles = [];
         updateSelectedFilesDisplay();
 
-        // Сбрасываем загруженные файлы
         const uploadInput = document.getElementById('uploadNewFilesInput');
-        if (uploadInput) {
-            uploadInput.value = '';
-        }
+        if (uploadInput) uploadInput.value = '';
+
         const uploadContainer = document.getElementById('uploadFilesContainer');
-        if (uploadContainer) {
-            uploadContainer.innerHTML = '';
-        }
+        if (uploadContainer) uploadContainer.innerHTML = '';
+
         const uploadList = document.getElementById('uploadFilesList');
-        if (uploadList) {
-            uploadList.classList.add('hidden');
-        }
+        if (uploadList) uploadList.classList.add('hidden');
 
-        // Установить заголовок для создания
-        document.querySelector('#taskModal h3').textContent = 'Новая задача';
-        document.querySelector('#taskModal p').textContent = 'Заполните информацию о задаче';
-        document.querySelector('#taskModal button[type="submit"]').innerHTML = '<i class="fas fa-plus mr-2"></i>Создать задачу';
+        const modalTitle = document.querySelector('#taskModal h3');
+        if (modalTitle) modalTitle.textContent = 'Новая задача';
 
-        // Удалить поле ID если есть
+        const modalDesc = document.querySelector('#taskModal p');
+        if (modalDesc) modalDesc.textContent = 'Заполните информацию о задаче';
+
+        const submitBtn = document.querySelector('#taskModal button[type="submit"]');
+        if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-plus mr-2"></i>Создать задачу';
+
         const taskIdField = document.getElementById('task_id');
-        if (taskIdField) {
-            taskIdField.remove();
-        }
+        if (taskIdField) taskIdField.remove();
+
         currentEditingTaskId = null;
     }
 
-
-    // Закрытие модальных окон
     function closeTaskModal() {
-        document.getElementById('taskModal').classList.add('hidden');
+        const modal = document.getElementById('taskModal');
+        if (modal) modal.classList.add('hidden');
         resetTaskForm();
     }
 
     function userProfileModal() {
         currentModalType = 'user';
-        document.getElementById('userProfileModal').classList.remove('hidden');
+        const modal = document.getElementById('userProfileModal');
+        if (modal) modal.classList.remove('hidden');
     }
 
     function createUserModal() {
         currentModalType = 'user';
-        document.getElementById('newUserModal').classList.remove('hidden');
+        const modal = document.getElementById('newUserModal');
+        if (modal) modal.classList.remove('hidden');
     }
 
     function openCategoryModal() {
         currentModalType = 'category';
-        document.getElementById('categoryModal').classList.remove('hidden');
+        const modal = document.getElementById('categoryModal');
+        if (modal) modal.classList.remove('hidden');
     }
 
     function openDepartmentModal() {
         currentModalType = 'department';
-        document.getElementById('departmentModal').classList.remove('hidden');
+        const modal = document.getElementById('departmentModal');
+        if (modal) modal.classList.remove('hidden');
     }
 
     function closeUserModal() {
-        document.getElementById('newUserModal').classList.add('hidden');
-        document.getElementById('userForm').reset();
+        const modal = document.getElementById('newUserModal');
+        if (modal) modal.classList.add('hidden');
+        const form = document.getElementById('userForm');
+        if (form) form.reset();
     }
 
     function closeUserProfileModal() {
-        document.getElementById('userProfileModal').classList.add('hidden');
-        document.getElementById('userForm').reset();
+        const modal = document.getElementById('userProfileModal');
+        if (modal) modal.classList.add('hidden');
+        const form = document.getElementById('userForm');
+        if (form) form.reset();
     }
 
     function closeCategoryModal() {
-        document.getElementById('categoryModal').classList.add('hidden');
-        document.getElementById('categoryForm').reset();
+        const modal = document.getElementById('categoryModal');
+        if (modal) modal.classList.add('hidden');
+        const form = document.getElementById('categoryForm');
+        if (form) form.reset();
     }
 
     function closeDepartmentModal() {
-        document.getElementById('departmentModal').classList.add('hidden');
-        document.getElementById('departmentForm').reset();
+        const modal = document.getElementById('departmentModal');
+        if (modal) modal.classList.add('hidden');
+        const form = document.getElementById('departmentForm');
+        if (form) form.reset();
     }
 
-    // ==================== УПРАВЛЕНИЕ ФАЙЛАМИ И ФАЙЛОВЫЙ МЕНЕДЖЕР ====================
+    // ==================== УПРАВЛЕНИЕ ФАЙЛАМИ ====================
 
-    // Управление вкладками файлов
     function switchFileTab(tabName) {
-        // Обновляем активные вкладки
         document.querySelectorAll('.tab-button').forEach(btn => {
             btn.classList.remove('active');
             if (btn.dataset.tab === tabName) {
                 btn.classList.add('active');
             }
         });
-
         document.querySelectorAll('.tab-content').forEach(content => {
             content.classList.remove('active');
             content.classList.add('hidden');
         });
-
         const activeContent = document.getElementById(tabName + 'TabContent');
         if (activeContent) {
             activeContent.classList.remove('hidden');
@@ -1070,127 +1072,58 @@
         }
     }
 
-    // Файловый менеджер
     async function openFileManager() {
         const modal = document.getElementById('fileManagerModal');
-        modal.classList.remove('hidden');
-        document.body.classList.add('overflow-hidden');
-        await loadFiles();
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+            await loadFiles();
+        }
     }
 
     function closeFileManager() {
-        document.getElementById('fileManagerModal').classList.add('hidden');
+        const modal = document.getElementById('fileManagerModal');
+        if (modal) modal.classList.add('hidden');
         document.body.classList.remove('overflow-hidden');
     }
 
     async function loadFiles() {
         const contentDiv = document.getElementById('fileManagerContent');
-        contentDiv.innerHTML = `
-            <div class="col-span-full text-center py-12">
-                <i class="fas fa-spinner fa-spin text-3xl text-gray-400 mb-4"></i>
-                <p class="text-gray-600">Загрузка файлов...</p>
-            </div>
-        `;
+        if (!contentDiv) return;
 
+        contentDiv.innerHTML = `<div class="col-span-full text-center py-12"><i class="fas fa-spinner fa-spin text-3xl text-gray-400 mb-4"></i><p class="text-gray-600">Загрузка файлов...</p></div>`;
         try {
             const response = await fetch('/tasks/file-storage/get-files', {
                 headers: {
                     'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
                 }
             });
-
             if (!response.ok) throw new Error('Ошибка загрузки файлов');
-
             const files = await response.json();
             allFiles = files;
-
             renderFiles(files);
             updateSelectedCount();
-
         } catch (error) {
-            contentDiv.innerHTML = `
-                <div class="col-span-full text-center py-12 text-red-600">
-                    <i class="fas fa-exclamation-triangle text-3xl mb-4"></i>
-                    <p class="text-lg font-medium">Ошибка загрузки файлов</p>
-                    <p class="text-sm mt-2">${error.message}</p>
-                    <button onclick="loadFiles()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                        <i class="fas fa-redo mr-2"></i>Повторить
-                    </button>
-                </div>
-            `;
+            contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600"><i class="fas fa-exclamation-triangle text-3xl mb-4"></i><p class="text-lg font-medium">Ошибка загрузки файлов</p><p class="text-sm mt-2">${error.message}</p><button onclick="loadFiles()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"><i class="fas fa-redo mr-2"></i>Повторить</button></div>`;
         }
     }
 
     function renderFiles(files) {
         const contentDiv = document.getElementById('fileManagerContent');
+        if (!contentDiv) return;
 
         if (files.length === 0) {
-            contentDiv.innerHTML = `
-                <div class="col-span-full text-center py-12 text-gray-600">
-                    <i class="fas fa-folder-open text-3xl mb-4"></i>
-                    <p class="text-lg font-medium">Файлы не найдены</p>
-                    <p class="text-sm mt-2">В хранилище нет доступных файлов</p>
-                </div>
-            `;
+            contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-gray-600"><i class="fas fa-folder-open text-3xl mb-4"></i><p class="text-lg font-medium">Файлы не найдены</p><p class="text-sm mt-2">В хранилище нет доступных файлов</p></div>`;
             return;
         }
-
         let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">';
-
         files.forEach(file => {
             const isSelected = selectedFiles.some(f => f.id === file.id);
             const fileIcon = getFileIcon(file.extension);
             const fileType = getFileTypeClass(file.extension);
-
-            html += `
-                <div class="file-card bg-white border ${isSelected ? 'border-blue-500 shadow-md' : 'border-gray-200'} rounded-lg p-4 cursor-pointer transition-all hover:shadow-lg"
-                     onclick="toggleFileSelection(${file.id})">
-                    <div class="flex flex-col h-full">
-                        <!-- Checkbox -->
-                        <div class="flex justify-end mb-2">
-                            <div class="w-5 h-5 rounded border ${isSelected ? 'bg-blue-500 border-blue-500' : 'border-gray-300'} flex items-center justify-center"
-                                 onclick="event.stopPropagation(); toggleFileSelection(${file.id})">
-                                ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
-                            </div>
-                        </div>
-
-                        <!-- Icon -->
-                        <div class="flex justify-center mb-3">
-                            <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center">
-                                <span class="text-2xl">${fileIcon}</span>
-                            </div>
-                        </div>
-
-                        <!-- File info -->
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-800 truncate text-center mb-1" title="${file.name}">
-                                ${file.name}
-                            </p>
-                            <p class="text-xs text-gray-500 text-center">${formatFileSize(file.size)}</p>
-                            <p class="text-xs text-gray-400 text-center mt-1">
-                                ${formatDate(file.created_at)}
-                            </p>
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="flex justify-center space-x-2 mt-3 pt-3 border-t border-gray-100">
-                            <button onclick="event.stopPropagation(); previewFile(${file.id})"
-                                    class="text-gray-400 hover:text-blue-600 p-1"
-                                    title="Предпросмотр">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button onclick="event.stopPropagation(); downloadFile(${file.id})"
-                                    class="text-gray-400 hover:text-green-600 p-1"
-                                    title="Скачать">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
+            html += `<div class="file-card bg-white border ${isSelected ? 'border-blue-500 shadow-md' : 'border-gray-200'} rounded-lg p-4 cursor-pointer transition-all hover:shadow-lg" onclick="toggleFileSelection(${file.id})"><div class="flex flex-col h-full"><div class="flex justify-end mb-2"><div class="w-5 h-5 rounded border ${isSelected ? 'bg-blue-500 border-blue-500' : 'border-gray-300'} flex items-center justify-center" onclick="event.stopPropagation(); toggleFileSelection(${file.id})">${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}</div></div><div class="flex justify-center mb-3"><div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center"><span class="text-2xl">${fileIcon}</span></div></div><div class="flex-1"><p class="text-sm font-medium text-gray-800 truncate text-center mb-1" title="${file.name}">${file.name}</p><p class="text-xs text-gray-500 text-center">${formatFileSize(file.size)}</p><p class="text-xs text-gray-400 text-center mt-1">${formatDate(file.created_at)}</p></div><div class="flex justify-center space-x-2 mt-3 pt-3 border-t border-gray-100"><button onclick="event.stopPropagation(); previewFile(${file.id})" class="text-gray-400 hover:text-blue-600 p-1" title="Предпросмотр"><i class="fas fa-eye"></i></button><button onclick="event.stopPropagation(); downloadFile(${file.id})" class="text-gray-400 hover:text-green-600 p-1" title="Скачать"><i class="fas fa-download"></i></button></div></div></div>`;
         });
-
         html += '</div>';
         contentDiv.innerHTML = html;
     }
@@ -1198,15 +1131,12 @@
     function toggleFileSelection(fileId) {
         const file = allFiles.find(f => f.id === fileId);
         if (!file) return;
-
         const index = selectedFiles.findIndex(f => f.id === fileId);
-
         if (index === -1) {
             selectedFiles.push(file);
         } else {
             selectedFiles.splice(index, 1);
         }
-
         renderFiles(allFiles);
         updateSelectedCount();
     }
@@ -1214,13 +1144,8 @@
     function updateSelectedCount() {
         const selectedCount = document.getElementById('selectedCount');
         const confirmCount = document.getElementById('confirmCount');
-
-        if (selectedCount) {
-            selectedCount.textContent = selectedFiles.length;
-        }
-        if (confirmCount) {
-            confirmCount.textContent = selectedFiles.length;
-        }
+        if (selectedCount) selectedCount.textContent = selectedFiles.length;
+        if (confirmCount) confirmCount.textContent = selectedFiles.length;
     }
 
     function confirmFileSelection() {
@@ -1228,16 +1153,10 @@
             showNotification('Выберите хотя бы один файл', 'warning');
             return;
         }
-
-        // Обновляем скрытое поле
-        document.getElementById('selectedFiles').value = JSON.stringify(selectedFiles);
-
-        // Обновляем отображение выбранных файлов
+        const selectedFilesInput = document.getElementById('selectedFiles');
+        if (selectedFilesInput) selectedFilesInput.value = JSON.stringify(selectedFiles);
         updateSelectedFilesDisplay();
-
-        // Переключаемся на вкладку хранилища
         switchFileTab('storage');
-
         closeFileManager();
     }
 
@@ -1246,50 +1165,17 @@
         const fileCounter = document.getElementById('fileCounter');
         const fileCount = document.getElementById('fileCount');
 
+        if (!container) return;
+
         if (selectedFiles.length === 0) {
-            container.innerHTML = `
-                <div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg">
-                    <i class="fas fa-folder-open text-3xl text-gray-300 mb-3"></i>
-                    <p class="text-sm text-gray-500">Файлы не выбраны</p>
-                    <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
-                </div>
-            `;
+            container.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg"><i class="fas fa-folder-open text-3xl text-gray-300 mb-3"></i><p class="text-sm text-gray-500">Файлы не выбраны</p><p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p></div>`;
             if (fileCounter) fileCounter.classList.add('hidden');
         } else {
             let html = '';
             selectedFiles.forEach(file => {
                 const fileIcon = getFileIcon(file.extension);
                 const fileType = getFileTypeClass(file.extension);
-
-                html += `
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-white transition-colors">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
-                                <span class="text-lg">${fileIcon}</span>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-800 truncate">${file.name}</p>
-                                <div class="flex items-center space-x-3 mt-1">
-                                    <span class="text-xs text-gray-500">${formatFileSize(file.size)}</span>
-                                    <span class="text-xs text-gray-400">•</span>
-                                    <span class="text-xs text-gray-400">${formatDate(file.created_at)}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="previewSelectedFile(${file.id})"
-                                    class="text-gray-400 hover:text-blue-600 p-1"
-                                    title="Предпросмотр">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button onclick="removeSelectedFile(${file.id})"
-                                    class="text-gray-400 hover:text-red-600 p-1"
-                                    title="Удалить">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
+                html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-white transition-colors"><div class="flex items-center space-x-3"><div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center"><span class="text-lg">${fileIcon}</span></div><div class="flex-1 min-w-0"><p class="text-sm font-medium text-gray-800 truncate">${file.name}</p><div class="flex items-center space-x-3 mt-1"><span class="text-xs text-gray-500">${formatFileSize(file.size)}</span><span class="text-xs text-gray-400">•</span><span class="text-xs text-gray-400">${formatDate(file.created_at)}</span></div></div></div><div class="flex items-center space-x-2"><button onclick="previewSelectedFile(${file.id})" class="text-gray-400 hover:text-blue-600 p-1" title="Предпросмотр"><i class="fas fa-eye"></i></button><button onclick="removeSelectedFile(${file.id})" class="text-gray-400 hover:text-red-600 p-1" title="Удалить"><i class="fas fa-times"></i></button></div></div>`;
             });
             container.innerHTML = html;
             if (fileCount) fileCount.textContent = selectedFiles.length;
@@ -1305,7 +1191,6 @@
 
     function clearSelectedFiles() {
         if (selectedFiles.length === 0) return;
-
         if (confirm(`Удалить все выбранные файлы (${selectedFiles.length})?`)) {
             selectedFiles = [];
             updateSelectedFilesDisplay();
@@ -1313,176 +1198,64 @@
         }
     }
 
-    // Предпросмотр файлов
     function previewFile(fileId) {
         const file = allFiles.find(f => f.id === fileId);
         if (!file) return;
-
         currentPreviewFile = file;
         const previewPanel = document.getElementById('fileManagerPreviewPanel');
         const content = document.getElementById('filePreviewContent');
+        if (!previewPanel || !content) return;
 
         const fileIcon = getFileIcon(file.extension);
         const fileType = getFileTypeClass(file.extension);
-
-        content.innerHTML = `
-            <div class="bg-white rounded-lg p-4 shadow-sm">
-                <!-- Header -->
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-12 h-12 ${fileType.bg} rounded-lg flex items-center justify-center">
-                            <span class="text-2xl">${fileIcon}</span>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold text-gray-800 truncate max-w-xs">${file.name}</h4>
-                            <p class="text-sm text-gray-500">${formatFileSize(file.size)}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="downloadFile(${file.id})"
-                                class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
-                            <i class="fas fa-download mr-1"></i>Скачать
-                        </button>
-                        <button onclick="toggleFileSelection(${file.id})"
-                                class="px-3 py-1 ${selectedFiles.some(f => f.id === file.id) ? 'bg-gray-200 text-gray-700' : 'bg-green-600 text-white'} rounded-lg hover:opacity-90 text-sm">
-                            ${selectedFiles.some(f => f.id === file.id) ? '✓ Выбран' : 'Выбрать'}
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Details -->
-                <div class="space-y-3 border-t border-gray-100 pt-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <p class="text-xs text-gray-500 mb-1">Тип файла</p>
-                            <p class="text-sm font-medium">${file.extension ? file.extension.toUpperCase() : 'Неизвестно'}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 mb-1">Дата загрузки</p>
-                            <p class="text-sm font-medium">${formatDate(file.created_at, true)}</p>
-                        </div>
-                    </div>
-
-                    <!-- Preview content -->
-                    <div id="filePreviewContainer" class="mt-4">
-                        <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                            ${getFilePreview(file)}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-
+        content.innerHTML = `<div class="bg-white rounded-lg p-4 shadow-sm"><div class="flex items-center justify-between mb-4"><div class="flex items-center space-x-3"><div class="w-12 h-12 ${fileType.bg} rounded-lg flex items-center justify-center"><span class="text-2xl">${fileIcon}</span></div><div><h4 class="font-semibold text-gray-800 truncate max-w-xs">${file.name}</h4><p class="text-sm text-gray-500">${formatFileSize(file.size)}</p></div></div><div class="flex items-center space-x-2"><button onclick="downloadFile(${file.id})" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"><i class="fas fa-download mr-1"></i>Скачать</button><button onclick="toggleFileSelection(${file.id})" class="px-3 py-1 ${selectedFiles.some(f => f.id === file.id) ? 'bg-gray-200 text-gray-700' : 'bg-green-600 text-white'} rounded-lg hover:opacity-90 text-sm">${selectedFiles.some(f => f.id === file.id) ? '✓ Выбран' : 'Выбрать'}</button></div></div><div class="space-y-3 border-t border-gray-100 pt-4"><div class="grid grid-cols-2 gap-4"><div><p class="text-xs text-gray-500 mb-1">Тип файла</p><p class="text-sm font-medium">${file.extension ? file.extension.toUpperCase() : 'Неизвестно'}</p></div><div><p class="text-xs text-gray-500 mb-1">Дата загрузки</p><p class="text-sm font-medium">${formatDate(file.created_at, true)}</p></div></div><div id="filePreviewContainer" class="mt-4"><div class="border border-gray-200 rounded-lg p-4 bg-gray-50">${getFilePreview(file)}</div></div></div></div>`;
         previewPanel.classList.remove('hidden');
     }
 
     function previewSelectedFile(fileId) {
         const file = selectedFiles.find(f => f.id === fileId);
-        if (file) {
-            previewFile(fileId);
-        }
+        if (file) previewFile(fileId);
     }
 
     function closeFilePreview() {
         const previewPanel = document.getElementById('fileManagerPreviewPanel');
-        if (previewPanel) {
-            previewPanel.classList.add('hidden');
-        }
+        if (previewPanel) previewPanel.classList.add('hidden');
     }
 
     function getFilePreview(file) {
         const extension = file.extension ? file.extension.toLowerCase() : '';
-
         if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
-            return `
-                <div class="text-center">
-                    <p class="text-sm text-gray-600 mb-2">Изображение</p>
-                    <div class="bg-gray-200 rounded p-2 inline-block">
-                        <i class="fas fa-image text-4xl text-gray-400"></i>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p>
-                </div>
-            `;
+            return `<div class="text-center"><p class="text-sm text-gray-600 mb-2">Изображение</p><div class="bg-gray-200 rounded p-2 inline-block"><i class="fas fa-image text-4xl text-gray-400"></i></div><p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p></div>`;
         } else if (['pdf'].includes(extension)) {
-            return `
-                <div class="text-center">
-                    <p class="text-sm text-gray-600 mb-2">PDF документ</p>
-                    <div class="bg-red-100 rounded p-2 inline-block">
-                        <i class="fas fa-file-pdf text-4xl text-red-400"></i>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p>
-                </div>
-            `;
+            return `<div class="text-center"><p class="text-sm text-gray-600 mb-2">PDF документ</p><div class="bg-red-100 rounded p-2 inline-block"><i class="fas fa-file-pdf text-4xl text-red-400"></i></div><p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p></div>`;
         } else if (['doc', 'docx'].includes(extension)) {
-            return `
-                <div class="text-center">
-                    <p class="text-sm text-gray-600 mb-2">Word документ</p>
-                    <div class="bg-blue-100 rounded p-2 inline-block">
-                        <i class="fas fa-file-word text-4xl text-blue-400"></i>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p>
-                </div>
-            `;
+            return `<div class="text-center"><p class="text-sm text-gray-600 mb-2">Word документ</p><div class="bg-blue-100 rounded p-2 inline-block"><i class="fas fa-file-word text-4xl text-blue-400"></i></div><p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p></div>`;
         } else if (['xls', 'xlsx'].includes(extension)) {
-            return `
-                <div class="text-center">
-                    <p class="text-sm text-gray-600 mb-2">Excel таблица</p>
-                    <div class="bg-green-100 rounded p-2 inline-block">
-                        <i class="fas fa-file-excel text-4xl text-green-400"></i>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p>
-                </div>
-            `;
+            return `<div class="text-center"><p class="text-sm text-gray-600 mb-2">Excel таблица</p><div class="bg-green-100 rounded p-2 inline-block"><i class="fas fa-file-excel text-4xl text-green-400"></i></div><p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p></div>`;
         } else {
-            return `
-                <div class="text-center">
-                    <p class="text-sm text-gray-600 mb-2">Файл ${extension.toUpperCase()}</p>
-                    <div class="bg-gray-200 rounded p-2 inline-block">
-                        <i class="fas fa-file text-4xl text-gray-400"></i>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p>
-                </div>
-            `;
+            return `<div class="text-center"><p class="text-sm text-gray-600 mb-2">Файл ${extension.toUpperCase()}</p><div class="bg-gray-200 rounded p-2 inline-block"><i class="fas fa-file text-4xl text-gray-400"></i></div><p class="text-xs text-gray-500 mt-2">Для просмотра скачайте файл</p></div>`;
         }
     }
 
-    // Загрузка новых файлов
     const uploadInput = document.getElementById('uploadNewFilesInput');
     if (uploadInput) {
         uploadInput.addEventListener('change', function (e) {
             const container = document.getElementById('uploadFilesContainer');
             const list = document.getElementById('uploadFilesList');
+            if (!container) return;
 
             container.innerHTML = '';
-
-            if (this.files.length > 0) {
+            if (this.files.length > 0 && list) {
                 list.classList.remove('hidden');
-
                 Array.from(this.files).forEach((file, index) => {
                     const div = document.createElement('div');
                     div.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200';
-
                     const fileIcon = getFileIcon(file.name.split('.').pop());
                     const fileType = getFileTypeClass(file.name.split('.').pop());
-
-                    div.innerHTML = `
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
-                                <span class="text-lg">${fileIcon}</span>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-800 truncate max-w-[200px]">${file.name}</p>
-                                <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                            </div>
-                        </div>
-                        <button type="button" onclick="removeUploadedFile(${index})"
-                                class="text-red-500 hover:text-red-700 p-1">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    `;
+                    div.innerHTML = `<div class="flex items-center space-x-3"><div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center"><span class="text-lg">${fileIcon}</span></div><div><p class="text-sm font-medium text-gray-800 truncate max-w-[200px]">${file.name}</p><p class="text-xs text-gray-500">${formatFileSize(file.size)}</p></div></div><button type="button" onclick="removeUploadedFile(${index})" class="text-red-500 hover:text-red-700 p-1"><i class="fas fa-times"></i></button>`;
                     container.appendChild(div);
                 });
-            } else {
+            } else if (list) {
                 list.classList.add('hidden');
             }
         });
@@ -1490,33 +1263,29 @@
 
     function removeUploadedFile(index) {
         const input = document.getElementById('uploadNewFilesInput');
-        const dt = new DataTransfer();
+        if (!input) return;
 
+        const dt = new DataTransfer();
         Array.from(input.files).forEach((file, i) => {
             if (i !== index) dt.items.add(file);
         });
-
         input.files = dt.files;
         input.dispatchEvent(new Event('change'));
     }
 
-    // Drag and drop для загрузки файлов
     const uploadArea = document.querySelector('.file-upload-area');
     if (uploadArea) {
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
             uploadArea.classList.add('border-blue-400', 'bg-blue-50');
         });
-
         uploadArea.addEventListener('dragleave', (e) => {
             e.preventDefault();
             uploadArea.classList.remove('border-blue-400', 'bg-blue-50');
         });
-
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.classList.remove('border-blue-400', 'bg-blue-50');
-
             const input = document.getElementById('uploadNewFilesInput');
             if (input && e.dataTransfer.files.length > 0) {
                 input.files = e.dataTransfer.files;
@@ -1525,54 +1294,22 @@
         });
     }
 
-    // Вспомогательные функции для файлов
     function getFileIcon(extension) {
         const ext = (extension || '').toLowerCase();
-        const icons = {
-            'pdf': '📄',
-            'doc': '📝',
-            'docx': '📝',
-            'xls': '📊',
-            'xlsx': '📊',
-            'jpg': '🖼️',
-            'jpeg': '🖼️',
-            'png': '🖼️',
-            'gif': '🖼️',
-            'zip': '📦',
-            'rar': '📦',
-            '7z': '📦',
-            'txt': '📃',
-            'mp3': '🎵',
-            'mp4': '🎬',
-            'avi': '🎬',
-            'mov': '🎬',
-            'wav': '🎵',
-            'ppt': '📊',
-            'pptx': '📊'
-        };
+        const icons = { 'pdf': '📄', 'doc': '📝', 'docx': '📝', 'xls': '📊', 'xlsx': '📊', 'jpg': '🖼️', 'jpeg': '🖼️', 'png': '🖼️', 'gif': '🖼️', 'zip': '📦', 'rar': '📦', '7z': '📦', 'txt': '📃', 'mp3': '🎵', 'mp4': '🎬', 'avi': '🎬', 'mov': '🎬', 'wav': '🎵', 'ppt': '📊', 'pptx': '📊' };
         return icons[ext] || '📎';
     }
 
     function getFileTypeClass(extension) {
         const ext = (extension || '').toLowerCase();
-
-        if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) {
-            return {bg: 'bg-pink-100', text: 'text-pink-600'};
-        } else if (['pdf'].includes(ext)) {
-            return {bg: 'bg-red-100', text: 'text-red-600'};
-        } else if (['doc', 'docx', 'txt', 'rtf'].includes(ext)) {
-            return {bg: 'bg-blue-100', text: 'text-blue-600'};
-        } else if (['xls', 'xlsx', 'csv'].includes(ext)) {
-            return {bg: 'bg-green-100', text: 'text-green-600'};
-        } else if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) {
-            return {bg: 'bg-yellow-100', text: 'text-yellow-600'};
-        } else if (['mp3', 'wav', 'ogg', 'flac'].includes(ext)) {
-            return {bg: 'bg-purple-100', text: 'text-purple-600'};
-        } else if (['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(ext)) {
-            return {bg: 'bg-indigo-100', text: 'text-indigo-600'};
-        } else {
-            return {bg: 'bg-gray-100', text: 'text-gray-600'};
-        }
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) return {bg: 'bg-pink-100', text: 'text-pink-600'};
+        else if (['pdf'].includes(ext)) return {bg: 'bg-red-100', text: 'text-red-600'};
+        else if (['doc', 'docx', 'txt', 'rtf'].includes(ext)) return {bg: 'bg-blue-100', text: 'text-blue-600'};
+        else if (['xls', 'xlsx', 'csv'].includes(ext)) return {bg: 'bg-green-100', text: 'text-green-600'};
+        else if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return {bg: 'bg-yellow-100', text: 'text-yellow-600'};
+        else if (['mp3', 'wav', 'ogg', 'flac'].includes(ext)) return {bg: 'bg-purple-100', text: 'text-purple-600'};
+        else if (['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(ext)) return {bg: 'bg-indigo-100', text: 'text-indigo-600'};
+        else return {bg: 'bg-gray-100', text: 'text-gray-600'};
     }
 
     function formatFileSize(bytes) {
@@ -1585,29 +1322,17 @@
 
     function formatDate(dateString, full = false) {
         const date = new Date(dateString);
-        if (full) {
-            return date.toLocaleDateString('ru-RU', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
+        if (full) return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         return date.toLocaleDateString('ru-RU');
     }
 
     async function downloadFile(fileId) {
         const file = allFiles.find(f => f.id === fileId);
         if (!file) return;
-
         try {
             const response = await fetch(`/file-storage/download/${fileId}`, {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                }
+                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' }
             });
-
             if (response.ok) {
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
@@ -1624,293 +1349,212 @@
         }
     }
 
-    // Поиск и фильтрация в файловом менеджере
     const fileSearch = document.getElementById('fileManagerSearch');
-    const typeFilter = document.getElementById('fileManagerTypeFilter');
-    const sortBy = document.getElementById('fileManagerSortBy');
+    const typeFilterEl = document.getElementById('fileManagerTypeFilter');
+    const sortByEl = document.getElementById('fileManagerSortBy');
 
-    if (fileSearch && typeFilter && sortBy) {
-        fileSearch.addEventListener('input', function (e) {
-            filterAndRenderFiles();
-        });
-
-        typeFilter.addEventListener('change', function (e) {
-            filterAndRenderFiles();
-        });
-
-        sortBy.addEventListener('change', function (e) {
-            filterAndRenderFiles();
-        });
+    if (fileSearch && typeFilterEl && sortByEl) {
+        fileSearch.addEventListener('input', function () { filterAndRenderFiles(); });
+        typeFilterEl.addEventListener('change', function () { filterAndRenderFiles(); });
+        sortByEl.addEventListener('change', function () { filterAndRenderFiles(); });
     }
 
     function filterAndRenderFiles() {
         const searchTerm = document.getElementById('fileManagerSearch')?.value.toLowerCase() || '';
-        const typeFilter = document.getElementById('fileManagerTypeFilter')?.value || '';
-        const sortBy = document.getElementById('fileManagerSortBy')?.value || 'newest';
-
+        const typeFilterVal = document.getElementById('fileManagerTypeFilter')?.value || '';
+        const sortByVal = document.getElementById('fileManagerSortBy')?.value || 'newest';
         let filteredFiles = [...allFiles];
-
-        // Фильтрация по поиску
-        if (searchTerm) {
-            filteredFiles = filteredFiles.filter(file =>
-                file.name.toLowerCase().includes(searchTerm)
-            );
-        }
-
-        // Фильтрация по типу
-        if (typeFilter) {
+        if (searchTerm) filteredFiles = filteredFiles.filter(file => file.name.toLowerCase().includes(searchTerm));
+        if (typeFilterVal) {
             filteredFiles = filteredFiles.filter(file => {
                 const ext = (file.extension || '').toLowerCase();
-                switch (typeFilter) {
-                    case 'image':
-                        return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext);
-                    case 'document':
-                        return ['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(ext);
-                    case 'video':
-                        return ['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(ext);
-                    case 'audio':
-                        return ['mp3', 'wav', 'ogg', 'flac'].includes(ext);
-                    case 'archive':
-                        return ['zip', 'rar', '7z', 'tar', 'gz'].includes(ext);
-                    default:
-                        return true;
+                switch (typeFilterVal) {
+                    case 'image': return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext);
+                    case 'document': return ['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(ext);
+                    case 'video': return ['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(ext);
+                    case 'audio': return ['mp3', 'wav', 'ogg', 'flac'].includes(ext);
+                    case 'archive': return ['zip', 'rar', '7z', 'tar', 'gz'].includes(ext);
+                    default: return true;
                 }
             });
         }
-
-        // Сортировка
         filteredFiles.sort((a, b) => {
-            switch (sortBy) {
-                case 'oldest':
-                    return new Date(a.created_at) - new Date(b.created_at);
-                case 'name_asc':
-                    return a.name.localeCompare(b.name);
-                case 'name_desc':
-                    return b.name.localeCompare(a.name);
-                case 'size_asc':
-                    return a.size - b.size;
-                case 'size_desc':
-                    return b.size - a.size;
-                case 'newest':
-                default:
-                    return new Date(b.created_at) - new Date(a.created_at);
+            switch (sortByVal) {
+                case 'oldest': return new Date(a.created_at) - new Date(b.created_at);
+                case 'name_asc': return a.name.localeCompare(b.name);
+                case 'name_desc': return b.name.localeCompare(a.name);
+                case 'size_asc': return a.size - b.size;
+                case 'size_desc': return b.size - a.size;
+                default: return new Date(b.created_at) - new Date(a.created_at);
             }
         });
-
         renderFiles(filteredFiles);
     }
 
     // ==================== ОБРАБОТКА ФОРМ ====================
 
-    // Обработка формы задачи
-    document.getElementById('taskForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const selectedFilesData = JSON.parse(document.getElementById('selectedFiles').value || '[]');
-
-        // Добавляем ID выбранных файлов в FormData
-        selectedFilesData.forEach(file => {
-            formData.append('selected_file_ids[]', file.id);
-        });
-
-        const submitButton = this.querySelector('button[type="submit"]');
-        const originalText = submitButton.innerHTML;
-
-        // Валидация обязательных полей
-        const name = formData.get('name');
-        const departmentId = formData.get('department_id');
-
-        if (!name || !departmentId) {
-            showNotification('Заполните обязательные поля: название задачи и отдел', 'error');
-            return;
-        }
-
-        const isEditMode = !!formData.get('task_id');
-        submitButton.innerHTML = isEditMode ? '<i class="fas fa-spinner fa-spin mr-2"></i>Сохранение...' : '<i class="fas fa-spinner fa-spin mr-2"></i>Создание...';
-        submitButton.disabled = true;
-
-        try {
-            const taskId = formData.get('task_id');
-            let url, method;
-
-            if (taskId) {
-                url = `/tasks/${taskId}/update`;
-                method = 'POST';
-                formData.append('_method', 'PUT');
-            } else {
-                url = '/tasks/store';
-                method = 'POST';
+    const taskForm = document.getElementById('taskForm');
+    if (taskForm) {
+        taskForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const selectedFilesData = JSON.parse(document.getElementById('selectedFiles')?.value || '[]');
+            selectedFilesData.forEach(file => { formData.append('selected_file_ids[]', file.id); });
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton ? submitButton.innerHTML : '';
+            const name = formData.get('name');
+            const departmentId = formData.get('department_id');
+            if (!name || !departmentId) {
+                showNotification('Заполните обязательные поля: название задачи и отдел', 'error');
+                return;
             }
-
-            const response = await fetch(url, {
-                method: method,
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                    'Accept': 'application/json'
-                }
-            });
-
-            const contentType = response.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                const text = await response.text();
-                throw new Error(`Ожидался JSON, но получили: ${text.substring(0, 100)}`);
+            const isEditMode = !!formData.get('task_id');
+            if (submitButton) {
+                submitButton.innerHTML = isEditMode ? '<i class="fas fa-spinner fa-spin mr-2"></i>Сохранение...' : '<i class="fas fa-spinner fa-spin mr-2"></i>Создание...';
+                submitButton.disabled = true;
             }
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || `HTTP error! status: ${response.status}`);
-            }
-
-            if (data.success) {
-                closeTaskModal();
-                showNotification(
-                    isEditMode ? 'Задача успешно обновлена!' : 'Задача успешно создана!',
-                    'success'
-                );
-
-                if (typeof refreshTasks === 'function') {
-                    refreshTasks();
+            try {
+                const taskId = formData.get('task_id');
+                let url, method;
+                if (taskId) {
+                    url = `/tasks/${taskId}/update`;
+                    method = 'POST';
+                    formData.append('_method', 'PUT');
                 } else {
+                    url = '/tasks/store';
+                    method = 'POST';
+                }
+                const response = await fetch(url, {
+                    method: method,
+                    body: formData,
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '', 'Accept': 'application/json' }
+                });
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    throw new Error(`Ожидался JSON, но получили: ${text.substring(0, 100)}`);
+                }
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || `HTTP error! status: ${response.status}`);
+                if (data.success) {
+                    closeTaskModal();
+                    showNotification(isEditMode ? 'Задача успешно обновлена!' : 'Задача успешно создана!', 'success');
                     window.location.reload();
+                } else {
+                    showNotification(data.message || 'Ошибка при сохранении задачи', 'error');
                 }
-                window.location.reload();
-            } else {
-                showNotification(data.message || 'Ошибка при сохранении задачи', 'error');
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification(error.message || 'Произошла ошибка при сохранении задачи', 'error');
+            } finally {
+                if (submitButton) {
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                }
             }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showNotification(error.message || 'Произошла ошибка при сохранении задачи', 'error');
-        } finally {
-            submitButton.innerHTML = originalText;
-            submitButton.disabled = false;
-        }
-    });
+        });
+    }
 
-    // Обработка формы пользователя
-    document.getElementById('userForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const submitButton = this.querySelector('button[type="submit"]');
-        const originalText = submitButton.textContent;
-
-        // Валидация пароля
-        const password = formData.get('password');
-        const passwordConfirmation = formData.get('password_confirmation');
-
-        if (password !== passwordConfirmation) {
-            showNotification('Пароли не совпадают', 'error');
-            return;
-        }
-
-        if (password.length < 8) {
-            showNotification('Пароль должен содержать минимум 8 символов', 'error');
-            return;
-        }
-
-        submitButton.textContent = 'Создание...';
-        submitButton.disabled = true;
-
-        try {
-            const response = await fetch('/users/store', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                    'Accept': 'application/json'
-                }
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                closeUserModal();
-                showNotification('Пользователь успешно создан!', 'success');
-                // Обновить список пользователей на странице
-                if (typeof refreshUsers === 'function') {
-                    refreshUsers();
-                }
-            } else {
-                showNotification(data.message, 'error');
+    const userForm = document.getElementById('userForm');
+    if (userForm) {
+        userForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton ? submitButton.textContent : '';
+            const password = formData.get('password');
+            const passwordConfirmation = formData.get('password_confirmation');
+            if (password !== passwordConfirmation) {
+                showNotification('Пароли не совпадают', 'error');
+                return;
             }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showNotification('Произошла ошибка при создании пользователя', 'error');
-        } finally {
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
-        }
-    });
-
-    // Обработка формы категории
-    document.getElementById('categoryForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const submitButton = this.querySelector('button[type="submit"]');
-        const originalText = submitButton.textContent;
-
-        submitButton.textContent = 'Создание...';
-        submitButton.disabled = true;
-
-        try {
-            const response = await fetch('/category/create', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                    'Accept': 'application/json'
-                }
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                closeCategoryModal();
-                showNotification('Категория успешно создана!', 'success');
-                // Обновить список категорий на странице
-                if (typeof refreshCategories === 'function') {
-                    refreshCategories();
-                }
-            } else {
-                showNotification(data.message, 'error');
+            if (password.length < 8) {
+                showNotification('Пароль должен содержать минимум 8 символов', 'error');
+                return;
             }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showNotification('Произошла ошибка при создании категории', 'error');
-        } finally {
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
-        }
-    });
+            if (submitButton) {
+                submitButton.textContent = 'Создание...';
+                submitButton.disabled = true;
+            }
+            try {
+                const response = await fetch('/users/store', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '', 'Accept': 'application/json' }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    closeUserModal();
+                    showNotification('Пользователь успешно создан!', 'success');
+                    window.location.reload();
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('Произошла ошибка при создании пользователя', 'error');
+            } finally {
+                if (submitButton) {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }
+            }
+        });
+    }
+
+    const categoryForm = document.getElementById('categoryForm');
+    if (categoryForm) {
+        categoryForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton ? submitButton.textContent : '';
+            if (submitButton) {
+                submitButton.textContent = 'Создание...';
+                submitButton.disabled = true;
+            }
+            try {
+                const response = await fetch('/category/create', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '', 'Accept': 'application/json' }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    closeCategoryModal();
+                    showNotification('Категория успешно создана!', 'success');
+                    window.location.reload();
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('Произошла ошибка при создании категории', 'error');
+            } finally {
+                if (submitButton) {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }
+            }
+        });
+    }
 
     let currentEditingCategoryId = null;
 
-    // Функция для открытия модального окна редактирования
     async function openEditCategoryModal(categoryId) {
         currentEditingCategoryId = categoryId;
-
         try {
-            // Загружаем данные категории
             const response = await fetch(`/category/${categoryId}/edit`);
             const category = await response.json();
-
             if (category) {
-                // Заполняем форму данными
-                document.getElementById('edit_category_id').value = category.id;
-                document.getElementById('edit_category_name').value = category.name;
-
-                // Устанавливаем выбранный цвет
+                const editIdField = document.getElementById('edit_category_id');
+                if (editIdField) editIdField.value = category.id;
+                const editNameField = document.getElementById('edit_category_name');
+                if (editNameField) editNameField.value = category.name;
                 const colorInput = document.querySelector(`input[name="color"][value="${category.color}"]`);
-                if (colorInput) {
-                    colorInput.checked = true;
-                }
-
-                // Показываем модальное окно
-                document.getElementById('editCategoryModal').classList.remove('hidden');
+                if (colorInput) colorInput.checked = true;
+                const modal = document.getElementById('editCategoryModal');
+                if (modal) modal.classList.remove('hidden');
             }
         } catch (error) {
             console.error('Ошибка при загрузке категории:', error);
@@ -1918,118 +1562,104 @@
         }
     }
 
-    // Функция для закрытия модального окна редактирования
     function closeEditCategoryModal() {
-        document.getElementById('editCategoryModal').classList.add('hidden');
-        document.getElementById('editCategoryForm').reset();
+        const modal = document.getElementById('editCategoryModal');
+        if (modal) modal.classList.add('hidden');
+        const form = document.getElementById('editCategoryForm');
+        if (form) form.reset();
         currentEditingCategoryId = null;
     }
 
-    // Обработчик отправки формы редактирования
-    document.getElementById('editCategoryForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const submitButton = this.querySelector('button[type="submit"]');
-        const originalText = submitButton.textContent;
-
-        submitButton.textContent = 'Сохранение...';
-        submitButton.disabled = true;
-
-        try {
-            const response = await fetch('/category/update', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                    'Accept': 'application/json',
-                    'X-HTTP-Method-Override': 'patch'
-                }
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                closeEditCategoryModal();
-                showNotification('Категория успешно обновлена!', 'success');
-                // Обновить список категорий на странице
-                if (typeof refreshCategories === 'function') {
-                    refreshCategories();
-                }
-            } else {
-                showNotification(data.message, 'error');
+    const editCategoryForm = document.getElementById('editCategoryForm');
+    if (editCategoryForm) {
+        editCategoryForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton ? submitButton.textContent : '';
+            if (submitButton) {
+                submitButton.textContent = 'Сохранение...';
+                submitButton.disabled = true;
             }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showNotification('Произошла ошибка при обновлении категории', 'error');
-        } finally {
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
-        }
-    });
-
-    // Обработка формы отдела
-    document.getElementById('departmentForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const submitButton = this.querySelector('button[type="submit"]');
-        const originalText = submitButton.textContent;
-
-        submitButton.textContent = 'Создание...';
-        submitButton.disabled = true;
-
-        try {
-            const response = await fetch('/departments/store', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                    'Accept': 'application/json'
+            try {
+                const response = await fetch('/category/update', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '', 'Accept': 'application/json', 'X-HTTP-Method-Override': 'patch' }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    closeEditCategoryModal();
+                    showNotification('Категория успешно обновлена!', 'success');
+                    window.location.reload();
+                } else {
+                    showNotification(data.message, 'error');
                 }
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                closeDepartmentModal();
-                showNotification('Отдел успешно создан!', 'success');
-                // Обновить список отделов на странице
-                if (typeof refreshDepartments === 'function') {
-                    refreshDepartments();
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('Произошла ошибка при обновлении категории', 'error');
+            } finally {
+                if (submitButton) {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
                 }
-            } else {
-                showNotification(data.message, 'error');
             }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showNotification('Произошла ошибка при создании отдела', 'error');
-        } finally {
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
-        }
-    });
+        });
+    }
 
-    // Редактирование отдела
+    const departmentForm = document.getElementById('departmentForm');
+    if (departmentForm) {
+        departmentForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton ? submitButton.textContent : '';
+            if (submitButton) {
+                submitButton.textContent = 'Создание...';
+                submitButton.disabled = true;
+            }
+            try {
+                const response = await fetch('/departments/store', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '', 'Accept': 'application/json' }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    closeDepartmentModal();
+                    showNotification('Отдел успешно создан!', 'success');
+                    window.location.reload();
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('Произошла ошибка при создании отдела', 'error');
+            } finally {
+                if (submitButton) {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }
+            }
+        });
+    }
+
     let currentEditingDepartmentId = null;
 
-    // Функция для открытия модального окна редактирования отдела
     async function openEditDepartmentModal(departmentId) {
         currentEditingDepartmentId = departmentId;
-
         try {
-            // Загружаем данные отдела
             const response = await fetch(`/departments/${departmentId}/edit`);
             const department = await response.json();
-
             if (department) {
-                // Заполняем форму данными
-                document.getElementById('edit_department_id').value = department.id;
-                document.getElementById('edit_department_name').value = department.name;
-                document.getElementById('edit_department_company').value = department.company_id;
-
-                // Показываем модальное окно
-                document.getElementById('editDepartmentModal').classList.remove('hidden');
+                const editIdField = document.getElementById('edit_department_id');
+                if (editIdField) editIdField.value = department.id;
+                const editNameField = document.getElementById('edit_department_name');
+                if (editNameField) editNameField.value = department.name;
+                const editCompanyField = document.getElementById('edit_department_company');
+                if (editCompanyField) editCompanyField.value = department.company_id;
+                const modal = document.getElementById('editDepartmentModal');
+                if (modal) modal.classList.remove('hidden');
             }
         } catch (error) {
             console.error('Ошибка при загрузке отдела:', error);
@@ -2037,403 +1667,261 @@
         }
     }
 
-    // Функция для закрытия модального окна редактирования отдела
     function closeEditDepartmentModal() {
-        document.getElementById('editDepartmentModal').classList.add('hidden');
-        document.getElementById('editDepartmentForm').reset();
+        const modal = document.getElementById('editDepartmentModal');
+        if (modal) modal.classList.add('hidden');
+        const form = document.getElementById('editDepartmentForm');
+        if (form) form.reset();
         currentEditingDepartmentId = null;
     }
 
-    document.getElementById('editDepartmentForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const submitButton = this.querySelector('button[type="submit"]');
-        const originalText = submitButton.textContent;
-
-        submitButton.textContent = 'Сохранение...';
-        submitButton.disabled = true;
-
-        try {
-            const response = await fetch('{{ route("departments.update") }}', {
-                method: 'POST', // Используем POST
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                    'Accept': 'application/json'
+    const editDepartmentForm = document.getElementById('editDepartmentForm');
+    if (editDepartmentForm) {
+        editDepartmentForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton ? submitButton.textContent : '';
+            if (submitButton) {
+                submitButton.textContent = 'Сохранение...';
+                submitButton.disabled = true;
+            }
+            try {
+                const response = await fetch('/departments/update', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '', 'Accept': 'application/json' }
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+                if (data.success) {
+                    closeEditDepartmentModal();
+                    showNotification('Отдел успешно обновлен!', 'success');
+                    window.location.reload();
+                } else {
+                    showNotification(data.message, 'error');
                 }
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('Произошла ошибка при обновлении отдела: ' + error.message, 'error');
+            } finally {
+                if (submitButton) {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }
             }
-
-            const data = await response.json();
-
-            if (data.success) {
-                closeEditDepartmentModal();
-                showNotification('Отдел успешно обновлен!', 'success');
-                window.location.reload();
-            } else {
-                showNotification(data.message, 'error');
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showNotification('Произошла ошибка при обновлении отдела: ' + error.message, 'error');
-        } finally {
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
-        }
-    });
+        });
+    }
 
     // ==================== УВЕДОМЛЕНИЯ ====================
 
     function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
-        notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${
-            type === 'success' ? 'bg-green-500 text-white' :
-                type === 'error' ? 'bg-red-500 text-white' :
-                    type === 'warning' ? 'bg-yellow-500 text-white' :
-                        'bg-blue-500 text-white'
-        }`;
-        notification.innerHTML = `
-        <div class="flex items-center">
-            <i class="fas ${
-            type === 'success' ? 'fa-check-circle' :
-                type === 'error' ? 'fa-exclamation-circle' :
-                    type === 'warning' ? 'fa-exclamation-triangle' :
-                        'fa-info-circle'
-        } mr-2"></i>
-            <span>${message}</span>
-        </div>
-    `;
-
+        notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${type === 'success' ? 'bg-green-500 text-white' : type === 'error' ? 'bg-red-500 text-white' : type === 'warning' ? 'bg-yellow-500 text-white' : 'bg-blue-500 text-white'}`;
+        notification.innerHTML = `<div class="flex items-center"><i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} mr-2"></i><span>${message}</span></div>`;
         document.body.appendChild(notification);
-
-        // Анимация появления
-        setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
-        }, 100);
-
-        // Автоматическое удаление через 5 секунд
+        setTimeout(() => { notification.style.transform = 'translateX(0)'; }, 100);
         setTimeout(() => {
             notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
+            setTimeout(() => { if (notification.parentNode) notification.parentNode.removeChild(notification); }, 300);
         }, 5000);
     }
 
-    // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
+    // ==================== DRAG AND DROP ДЛЯ ЗАДАЧ (ИСПРАВЛЕННАЯ ВЕРСИЯ) ====================
 
-    // Форматирование даты
-    function formatDate(dateString) {
-        if (!dateString) return 'Не указано';
-
-        const date = new Date(dateString);
-        return date.toLocaleDateString('ru-RU', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    }
-
-    // Получение приоритета в виде цвета
-    function getPriorityColor(priority) {
-        const colors = {
-            'низкий': 'bg-gray-100 text-gray-800',
-            'средний': 'bg-blue-100 text-blue-800',
-            'высокий': 'bg-orange-100 text-orange-800',
-            'критический': 'bg-red-100 text-red-800'
+    function mapStatusForServer(status) {
+        const statusMap = {
+            'new': 'назначена',
+            'in-progress': 'в работе',
+            'review': 'на проверке',
+            'done': 'выполнена'
         };
-        return colors[priority] || colors['средний'];
+        return statusMap[status] || status;
     }
-
-    // Получение статуса в виде цвета
-    function getStatusColor(status) {
-        const colors = {
-            'не назначена': 'bg-gray-100 text-gray-800',
-            'в работе': 'bg-blue-100 text-blue-800',
-            'просрочена': 'bg-red-100 text-red-800',
-            'на проверке': 'bg-yellow-100 text-yellow-800',
-            'выполнена': 'bg-green-100 text-green-800'
-        };
-        return colors[status] || colors['не назначена'];
-    }
-
-    // ==================== DRAG AND DROP ДЛЯ ЗАДАЧ ====================
-
-    let draggedTask = null;
 
     function initTaskDragAndDrop() {
-        document.querySelectorAll('.task-card').forEach(task => {
+        const taskCards = document.querySelectorAll('.task-card');
+        taskCards.forEach(task => {
             task.setAttribute('draggable', 'true');
-
-            task.addEventListener('dragstart', function () {
-                draggedTask = this;
-                setTimeout(() => {
-                    this.style.opacity = '0.5';
-                }, 0);
-            });
-
-            task.addEventListener('dragend', function () {
-                setTimeout(() => {
-                    this.style.opacity = '1';
-                    draggedTask = null;
-                }, 0);
-            });
+            task.removeEventListener('dragstart', handleDragStart);
+            task.removeEventListener('dragend', handleDragEnd);
+            task.addEventListener('dragstart', handleDragStart);
+            task.addEventListener('dragend', handleDragEnd);
         });
 
+        const columns = document.querySelectorAll('.board-column');
+        columns.forEach(column => {
+            column.removeEventListener('dragover', handleDragOver);
+            column.removeEventListener('dragleave', handleDragLeave);
+            column.removeEventListener('drop', handleDrop);
+            column.addEventListener('dragover', handleDragOver);
+            column.addEventListener('dragleave', handleDragLeave);
+            column.addEventListener('drop', handleDrop);
+        });
+    }
+
+    function handleDragStart(e) {
+        draggedTaskCard = this;
+        const taskId = this.getAttribute('data-task');
+        e.dataTransfer.setData('text/plain', taskId);
+        e.dataTransfer.effectAllowed = 'move';
+        this.style.opacity = '0.5';
+    }
+
+    function handleDragEnd(e) {
+        if (draggedTaskCard) {
+            draggedTaskCard.style.opacity = '1';
+        }
+        draggedTaskCard = null;
         document.querySelectorAll('.board-column').forEach(column => {
-            column.addEventListener('dragover', function (e) {
-                e.preventDefault();
-                this.style.backgroundColor = '#e5e7eb';
-            });
-
-            column.addEventListener('dragleave', function () {
-                this.style.backgroundColor = '#f3f4f6';
-            });
-
-            column.addEventListener('drop', async function (e) {
-                e.preventDefault();
-                this.style.backgroundColor = '#f3f4f6';
-
-                if (draggedTask) {
-                    const newStatus = this.getAttribute('data-status');
-                    const taskId = draggedTask.getAttribute('data-task-id');
-
-                    try {
-                        const response = await fetch(`/tasks/${taskId}/status`, {
-                            method: 'patch',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                status: newStatus
-                            })
-                        });
-
-                        const data = await response.json();
-
-                        if (data.success) {
-                            const taskContainer = this.querySelector('.task-container');
-                            taskContainer.appendChild(draggedTask);
-                            showNotification('Статус задачи обновлен', 'success');
-                            updateTaskCounters();
-                        } else {
-                            showNotification('Ошибка при обновлении статуса', 'error');
-                        }
-                    } catch (error) {
-                        console.error('Ошибка:', error);
-                        showNotification('Ошибка при обновлении статуса', 'error');
-                    }
-                }
-            });
+            column.style.backgroundColor = '';
         });
     }
 
-    // Обновление счетчиков задач
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        this.style.backgroundColor = '#e5e7eb';
+    }
+
+    function handleDragLeave(e) {
+        this.style.backgroundColor = '';
+    }
+
+    async function handleDrop(e) {
+        e.preventDefault();
+        this.style.backgroundColor = '';
+
+        if (!draggedTaskCard) return;
+
+        const newStatus = this.getAttribute('data-status');
+        const taskId = draggedTaskCard.getAttribute('data-task');
+        const currentColumn = draggedTaskCard.closest('.board-column');
+        const currentStatus = currentColumn ? currentColumn.getAttribute('data-status') : null;
+
+        if (currentStatus === newStatus) {
+            draggedTaskCard.style.opacity = '1';
+            draggedTaskCard = null;
+            return;
+        }
+
+        const taskCard = draggedTaskCard;
+        const serverStatus = mapStatusForServer(newStatus);
+
+        taskCard.style.opacity = '0.5';
+        taskCard.style.cursor = 'wait';
+
+        try {
+            // ИСПРАВЛЕНО: используем правильный URL из маршрутов
+            const response = await fetch(`/tasks/${taskId}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ status: serverStatus })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const taskContainer = this.querySelector('.task-container');
+                if (taskContainer) {
+                    taskContainer.appendChild(taskCard);
+                }
+                taskCard.style.opacity = '1';
+                taskCard.style.cursor = 'move';
+                updateTaskCounters();
+                showNotification('Статус задачи обновлен', 'success');
+            } else {
+                taskCard.style.opacity = '1';
+                taskCard.style.cursor = 'move';
+                showNotification(data.message || 'Ошибка при обновлении статуса', 'error');
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+            taskCard.style.opacity = '1';
+            taskCard.style.cursor = 'move';
+            showNotification('Ошибка при обновлении статуса', 'error');
+        } finally {
+            draggedTaskCard = null;
+        }
+    }
+
     function updateTaskCounters() {
-        const statuses = ['не назначена', 'в работе', 'на проверке', 'выполнена'];
+        const columns = [
+            { selector: '[data-status="new"]', counterSelector: '.board-column[data-status="new"] span:first-child' },
+            { selector: '[data-status="in-progress"]', counterSelector: '.board-column[data-status="in-progress"] span:first-child' },
+            { selector: '[data-status="review"]', counterSelector: '.board-column[data-status="review"] span:first-child' },
+            { selector: '[data-status="done"]', counterSelector: '.board-column[data-status="done"] span:first-child' }
+        ];
 
-        statuses.forEach(status => {
-            const container = document.querySelector(`.task-container[data-status="${status}"]`);
-            const counter = document.querySelector(`.board-column[data-status="${status}"] .task-counter`);
-
+        columns.forEach(column => {
+            const container = document.querySelector(`.task-container${column.selector}`);
+            const counter = document.querySelector(column.counterSelector);
             if (container && counter) {
-                const count = container.querySelectorAll('.task-card').length;
-                counter.textContent = count;
+                counter.textContent = container.querySelectorAll('.task-card').length;
             }
         });
     }
 
-    // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+    // ==================== ФУНКЦИИ ДЛЯ УДАЛЕНИЯ КАТЕГОРИИ ====================
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // Инициализация drag and drop
-        initTaskDragAndDrop();
-
-        // Обновление счетчиков
-        updateTaskCounters();
-
-        // Обработчики для кнопок создания
-        const newTaskBtn = document.getElementById('newTaskBtn');
-        if (newTaskBtn) {
-            newTaskBtn.addEventListener('click', openTaskModal);
-        }
-
-        const newUserBtn = document.getElementById('newUserBtn');
-        if (newUserBtn) {
-            newUserBtn.addEventListener('click', createUserModal);
-        }
-
-        // Закрытие модальных окон при клике вне их
-        document.addEventListener('click', function (e) {
-            if (e.target.classList.contains('fixed')) {
-                if (currentModalType === 'task') {
-                    closeTaskModal();
-                } else if (currentModalType === 'user') {
-                    closeUserModal();
-                } else if (currentModalType === 'category') {
-                    closeCategoryModal();
-                } else if (currentModalType === 'department') {
-                    closeDepartmentModal();
-                }
-            }
-        });
-
-        // Закрытие модальных окон по ESC
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                if (currentModalType === 'task') {
-                    closeTaskModal();
-                } else if (currentModalType === 'user') {
-                    closeUserModal();
-                } else if (currentModalType === 'category') {
-                    closeCategoryModal();
-                } else if (currentModalType === 'department') {
-                    closeDepartmentModal();
-                }
-            }
-        });
-
-        // Обработчики для элементов боковой панели
-        document.querySelectorAll('.workspace-item, .board-item, .user-item').forEach(item => {
-            item.addEventListener('click', function () {
-                const type = this.classList.contains('workspace-item') ? 'workspace' :
-                    this.classList.contains('board-item') ? 'board' : 'user';
-                const id = this.getAttribute(`data-${type}`);
-
-                console.log(`Выбран ${type}: ${id}`);
-                // Здесь можно добавить загрузку данных для выбранного элемента
-            });
-        });
-    });
-
-    // ==================== ФУНКЦИИ ДЛЯ ОБНОВЛЕНИЯ ДАННЫХ ====================
-
-    // Функция для обновления списка задач (должна быть реализована в конкретных представлениях)
-    function refreshTasks() {
-        // Эта функция должна быть переопределена в представлениях
-        console.log('Обновление списка задач...');
-        // location.reload(); // или AJAX запрос для обновления данных
-    }
-
-    // Функция для обновления списка пользователей
-    function refreshUsers() {
-        console.log('Обновление списка пользователей...');
-        // location.reload(); // или AJAX запрос
-    }
-
-    // Функция для обновления списка категорий
-    function refreshCategories() {
-        // Простой способ - перезагрузка страницы
-        window.location.reload();
-
-        // Или более сложный - AJAX загрузка категорий
-        // fetch('/categories/list')
-        //     .then(response => response.text())
-        //     .then(html => {
-        //         document.querySelector('.mb-8').innerHTML = html;
-        //     });
-    }
-
-    // Функция для обновления списка отделов
-    function refreshDepartments() {
-        console.log('Обновление списка отделов...');
-        // location.reload(); // или AJAX запрос
-    }
-
-
-    // Модальное окно удаления категории
     let currentDeletingCategoryId = null;
 
     function openDeleteCategoryModal(categoryId, categoryName) {
         currentDeletingCategoryId = categoryId;
-
-        // Устанавливаем название категории
-        document.getElementById('deleteCategoryName').textContent = categoryName;
-
-        // Устанавливаем ID категории в скрытое поле формы
-        const categoryIdField = document.getElementById('delete_category_id');
-        if (categoryIdField) {
-            categoryIdField.value = categoryId;
-        }
-
-        // Показываем модальное окно
-        document.getElementById('deleteCategoryModal').classList.remove('hidden');
+        const nameSpan = document.getElementById('deleteCategoryName');
+        if (nameSpan) nameSpan.textContent = categoryName;
+        const idField = document.getElementById('delete_category_id');
+        if (idField) idField.value = categoryId;
+        const modal = document.getElementById('deleteCategoryModal');
+        if (modal) modal.classList.remove('hidden');
     }
 
     function closeDeleteCategoryModal() {
-        document.getElementById('deleteCategoryModal').classList.add('hidden');
+        const modal = document.getElementById('deleteCategoryModal');
+        if (modal) modal.classList.add('hidden');
         currentDeletingCategoryId = null;
     }
 
-    // Обработчик отправки формы удаления
-    document.getElementById('deleteCategoryForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const submitButton = this.querySelector('button[type="submit"]');
-        const originalText = submitButton.innerHTML;
-
-        // Проверка, что category_id установлен
-        const categoryId = document.getElementById('delete_category_id').value;
-        if (!categoryId) {
-            showNotification('Ошибка: ID категории не указан', 'error');
-            return;
-        }
-
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Удаление...';
-        submitButton.disabled = true;
-
-        try {
-            // Для отладки: посмотреть, что отправляется
-            console.log('Отправляемые данные:', Object.fromEntries(formData));
-
-            const response = await fetch('/category/delete', {
-                method: 'POST', // Laravel требует POST для DELETE через метод-переопределение
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json'
-                }
-            });
-
-            // Для отладки
-            console.log('Статус ответа:', response.status);
-            console.log('Заголовки:', response.headers);
-
-            const data = await response.json();
-            console.log('Ответ сервера:', data);
-
-            if (data.success) {
-                closeDeleteCategoryModal();
-                showNotification('Категория успешно удалена!', 'success');
-
-                // Обновить список категорий на странице
-                if (typeof refreshCategories === 'function') {
-                    refreshCategories();
-                } else {
-                    window.location.reload();
-                }
-            } else {
-                showNotification(data.message, 'error');
+    const deleteCategoryForm = document.getElementById('deleteCategoryForm');
+    if (deleteCategoryForm) {
+        deleteCategoryForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton ? submitButton.innerHTML : '';
+            if (submitButton) {
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Удаление...';
+                submitButton.disabled = true;
             }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showNotification('Произошла ошибка при удалении категории: ' + error.message, 'error');
-        } finally {
-            submitButton.innerHTML = originalText;
-            submitButton.disabled = false;
-        }
-    });
+            try {
+                const response = await fetch('/category/delete', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '', 'Accept': 'application/json' }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    closeDeleteCategoryModal();
+                    showNotification('Категория успешно удалена!', 'success');
+                    window.location.reload();
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('Произошла ошибка при удалении категории: ' + error.message, 'error');
+            } finally {
+                if (submitButton) {
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                }
+            }
+        });
+    }
 </script>
 
 <script>
