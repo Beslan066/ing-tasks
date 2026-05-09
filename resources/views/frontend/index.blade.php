@@ -69,7 +69,7 @@
             </nav>
 
             <div class="qb ee se ka bo">
-                <a href="{{route('welcome')}}" class="qb ee ge wf zk hk ek fj wi xe bh dh">Начать</a>
+                <a href="{{route('welcome')}}" class="qb ee ge wf zk hk ek fj wi xe bh dh bg-gradient">Начать</a>
             </div>
         </div>
     </div>
@@ -663,7 +663,7 @@
                                           class="rc bg kf nf pl jl gl qm il rm"></textarea>
                         </div>
 
-                        <div class="qb de cq re kq">
+                        <div class="qb de cq re kq flex-v-center">
                             <div>
                                 <label for="supportCheckbox" class="rd qb yd zd bl">
                                     <div class="h">
@@ -948,7 +948,7 @@
 <!-- ===== Footer End ===== -->
 
 <!-- ====== Back To Top Start ===== -->
-<button class="ub ee ge jd nc ze sj wf zk f u v _" @click="window.scrollTo({top: 0, behavior: 'smooth'})"
+<button class="ub ee ge jd nc ze sj wf zk f u v _ bg-gradient" @click="window.scrollTo({top: 0, behavior: 'smooth'})"
         @scroll.window="scrollTop = (window.pageYOffset > 50) ? true : false" :class="{ 'rb' : scrollTop }">
     <svg class="ig bd fc" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
         <path

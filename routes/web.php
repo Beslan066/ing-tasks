@@ -491,6 +491,8 @@ Route::group(['prefix' => 'departments', 'middleware' => ['auth', 'verified', 't
     Route::post('/store', [App\Http\Controllers\Frontend\DepartmentController::class, 'store'])->name('departments.store');
     Route::get('/{id}/edit', [App\Http\Controllers\Frontend\DepartmentController::class, 'edit'])->name('departments.edit');
     Route::patch('/update', [App\Http\Controllers\Frontend\DepartmentController::class, 'update'])->name('departments.update');
+    // удаление V
+    Route::delete('/{id}/delete', [App\Http\Controllers\Frontend\DepartmentController::class, 'destroy'])->name('departments.destroy');
 });
 
 // Маршруты для команды с системой приглашений

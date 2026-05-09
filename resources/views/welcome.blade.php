@@ -19,16 +19,17 @@
         <!-- В блоке с заголовком и статистикой -->
         <div class="flex space-x-4">
             <!-- Кнопка создания задачи -->
-            <button onclick="openPersonalTaskModal()"
-                    class=" text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-900-700 transition" style="background-color: #16a34a;">
-                <i class="fas fa-plus"></i>
-                <span>Добавить</span>
-            </button>
+
 
             <button
                 class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-50 transition">
                 <i class="fas fa-filter"></i>
                 <span>Фильтр</span>
+            </button>
+            <button onclick="openPersonalTaskModal()"
+                    class=" text-white px-4 py-2 rounded-lg flex items-center space-x-2 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 transition">
+                <i class="fas fa-plus"></i>
+                <span>Добавить</span>
             </button>
         </div>
 
@@ -257,7 +258,6 @@
             </div>
         </div>
     </div>
-
     <!-- Модальное окно для отказа от задачи -->
     <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">

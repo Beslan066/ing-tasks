@@ -15,7 +15,7 @@
                     <i class="fas fa-filter"></i>
                     <span>Фильтры</span>
                 </button>
-                <button id="newTaskBtn" class="flex-1 md:flex-none bg-primary-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-secondary transition text-sm md:text-base">
+                <button id="newTaskBtn" class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base">
                     <i class="fas fa-plus"></i>
                     <span>Новая задача</span>
                 </button>
