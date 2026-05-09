@@ -9,7 +9,7 @@
                 <p class="text-gray-600 mt-2">Управляйте отделами, задачами и почтовой системой</p>
             </div>
             <button onclick="openDepartmentModal()"
-                    class="bg-primary-500 text-white px-6 py-3 rounded-lg hover:bg-primary-600 transition-colors flex items-center space-x-2">
+                    class="bg-primary-500 text-white px-6 py-3 rounded-lg bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 transition-colors flex items-center space-x-2">
                 <i class="fas fa-plus"></i>
                 <span>Новый отдел</span>
             </button>
@@ -377,5 +377,6 @@ function submitDepartment(button) {
             display: inline-block;
             margin-right: 4px;
         }
+        
     </style>
 @endpush

@@ -101,7 +101,14 @@ media-src https://meet.jit.si https:;
             backdrop-filter: none !important;
             box-shadow: none !important;
         }
-
+        /* ------v */
+        .sidebar.glass {
+            backdrop-filter: blur(10px) saturate(160%);
+            background:none;
+            -webkit-backdrop-filter: blur(10px) saturate(160%);
+            box-shadow: 10px 0 15px -3px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
         /* Стиль main-container по умолчанию */
         .main-container {
             background-color: #f9fafb;
@@ -356,7 +363,7 @@ media-src https://meet.jit.si https:;
     @endif>
 
     <!-- Боковая панель -->
-    <div class="sidebar w-64 py-6 px-4 hidden sm:flex flex-col relative {{ $backgroundEnabled && $backgroundImage ? 'no-background' : '' }}">
+    <div class="sidebar glass w-64 py-6 px-4 hidden sm:flex flex-col relative {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
         <!-- Логотип -->
         <div class="mb-8">
             <a href="{{route('welcome')}}" class="flex items-center space-x-3 group">
@@ -588,8 +595,7 @@ media-src https://meet.jit.si https:;
 
         <div class="chat-button" style="position: fixed; bottom: 10px; right: 20px;">
             <a href="{{route('chat.index')}}">
-                <button class="bg-primary  p-2 rounded-full hover:bg-secondary transition-colors"
-                        style="width: 70px;">
+                <button class="bg-primary  p-2 rounded-full hover:bg-secondary transition-colors">
                     <i class="fas fa-comment-dots"></i>
                 </button>
             </a>
@@ -784,7 +790,7 @@ media-src https://meet.jit.si https:;
                 mainContainer.classList.add('has-background');
                 mainContainer.style.backgroundImage = `url(${imagePath})`;
                 // Убираем все стили у sidebar
-                sidebar.classList.add('no-background');
+                // sidebar.classList.add('no-background');
             } else {
                 // Убираем фон с main-container
                 mainContainer.classList.remove('has-background');
