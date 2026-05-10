@@ -595,19 +595,24 @@ class TeamController extends Controller
         try {
             $authUser = auth()->user();
 
-            $user = User::with(['role', 'departments', 'company']) // ← ИЗМЕНЕНО: было 'department', стало 'departments'
-            ->where('company_id', $authUser->company_id)
+            $user = User::with(['role', 'departments', 'company'])
+                ->where('company_id', $authUser->company_id)
                 ->withCount([
-                    'assignedTasks as total_tasks_count',
+                    'assignedTasks as total_tasks_count' => function($query) {
+                        $query->where('is_personal', '!=', true); // или where('is_personal', false)
+                    },
                     'assignedTasks as completed_tasks_count' => function($query) {
-                        $query->where('status', 'выполнена');
+                        $query->where('is_personal', '!=', true)
+                            ->where('status', 'выполнена');
                     },
                     'assignedTasks as overdue_tasks_count' => function($query) {
-                        $query->where('status', '!=', 'выполнена')
+                        $query->where('is_personal', '!=', true)
+                            ->where('status', '!=', 'выполнена')
                             ->where('deadline', '<', now());
                     },
                     'assignedTasks as in_progress_tasks_count' => function($query) {
-                        $query->where('status', 'в работе');
+                        $query->where('is_personal', '!=', true)
+                            ->where('status', 'в работе');
                     }
                 ])
                 ->findOrFail($userId);
