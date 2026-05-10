@@ -4,9 +4,6 @@
             {{ __('Информация профиля') }}
         </h2>
 
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __("Обновите информацию вашего профиля и email.") }}
-        </p>
     </header>
 
     <form id="send-verification" method="post" action="{{ route('verification.send') }}">

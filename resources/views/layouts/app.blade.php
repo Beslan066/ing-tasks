@@ -555,24 +555,25 @@ media-src https://meet.jit.si https:;
             {{--            </div>--}}
 
             <!-- Профиль пользователя -->
-            <div
-                class="flex items-center justify-between p-2 rounded-lg hover:bg-sidebar-hover transition-colors cursor-pointer"
-                onclick="userProfileModal()">
-                <div class="flex items-center">
-                    <div
-                        class="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-bold shadow-lg">
-                        <img class="rounded" src="{{auth()->user()->getAvatarUrlAttribute()}}" alt="">
-                    </div>
-                    <div class="ml-3">
+            <a href="{{route('profile.edit')}}">
+                <div
+                    class="flex items-center justify-between p-2 rounded-lg hover:bg-sidebar-hover transition-colors cursor-pointer">
+                    <div class="flex items-center">
                         <div
-                            class="text-white font-medium text-sm">{{ auth()->user()->name }} {{ auth()->user()->surname }}</div>
-                        @if(auth()->user()->role)
-                            <div class="text-sidebar-text text-xs">{{ auth()->user()->role->name }}</div>
-                        @endif
+                            class="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-bold shadow-lg">
+                            <img class="rounded" src="{{auth()->user()->getAvatarUrlAttribute()}}" alt="">
+                        </div>
+                        <div class="ml-3">
+                            <div
+                                class="text-white font-medium text-sm">{{ auth()->user()->name }} {{ auth()->user()->surname }}</div>
+                            @if(auth()->user()->role)
+                                <div class="text-sidebar-text text-xs">{{ auth()->user()->role->name }}</div>
+                            @endif
+                        </div>
                     </div>
+                    <i class="fas fa-chevron-right text-sidebar-text text-sm"></i>
                 </div>
-                <i class="fas fa-chevron-right text-sidebar-text text-sm"></i>
-            </div>
+            </a>
         </div>
 
         <!-- Индикатор активности -->
@@ -1015,11 +1016,6 @@ media-src https://meet.jit.si https:;
         resetTaskForm();
     }
 
-    function userProfileModal() {
-        currentModalType = 'user';
-        const modal = document.getElementById('userProfileModal');
-        if (modal) modal.classList.remove('hidden');
-    }
 
     function createUserModal() {
         currentModalType = 'user';
@@ -1041,13 +1037,6 @@ media-src https://meet.jit.si https:;
 
     function closeUserModal() {
         const modal = document.getElementById('newUserModal');
-        if (modal) modal.classList.add('hidden');
-        const form = document.getElementById('userForm');
-        if (form) form.reset();
-    }
-
-    function closeUserProfileModal() {
-        const modal = document.getElementById('userProfileModal');
         if (modal) modal.classList.add('hidden');
         const form = document.getElementById('userForm');
         if (form) form.reset();

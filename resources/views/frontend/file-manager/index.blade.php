@@ -1,12 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="mx-auto max-w-(--breakpoint-2xl) p-4 pb-20 md:p-6 md:pb-6">
+    @php
+        $backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
+        $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
+    @endphp
+    <div class="">
         <!-- Breadcrumb Start -->
         <div x-data="{ pageName: `Хранилище`}">
             <div class="flex flex-wrap items-center justify-between gap-3 pb-6">
                 <div>
-                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Хранилище</h2>
+                    @if($backgroundEnabled && $backgroundImage)
+                        <h2 class="text-3xl font-bold text-white">Хранилище</h2>
+                    @else
+                        <h2 class="text-3xl font-bold text-[#16a34a]">Хранилище</h2>
+                    @endif
                 </div>
                 <nav>
                     <ol class="flex items-center gap-1.5">
@@ -21,7 +29,7 @@
                                 </svg>
                             </a>
                         </li>
-                        <li class="text-sm text-gray-800 dark:text-white/90" x-text="pageName">File Manager</li>
+                        <li class="text-sm text-gray-800 dark:text-white/90" x-text="pageName">Хранилище</li>
                     </ol>
                 </nav>
             </div>

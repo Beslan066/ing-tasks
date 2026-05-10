@@ -1,12 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
+        $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
+    @endphp
     <div id="team">
         <!-- Заголовок и кнопка -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
             <div>
-                <h1 class="text-2xl md:text-3xl font-bold" style="color: #16a34a;">Команда</h1>
-                <p class="text-gray-500 text-sm md:text-base">Участники вашей организации</p>
+                @if($backgroundEnabled && $backgroundImage)
+                    <h2 class="text-3xl font-bold text-white">Инструменты</h2>
+                @else
+                    <h2 class="text-3xl font-bold text-[#16a34a]">Инструменты</h2>
+                @endif
+                <p class="text-white text-sm" >Инструменты для продуктивной работы</p>
             </div>
         </div>
 

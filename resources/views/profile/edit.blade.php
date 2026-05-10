@@ -1,169 +1,254 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="min-h-screen bg-gray-50">
-        <!-- Заголовок и статистика -->
-        <div class="bg-white shadow">
-            <div class="mx-auto px-4">
-                <div class="flex justify-between items-center py-6">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900">Панель управления задачами</h1>
-                        <p class="text-gray-500 mt-1">Обзор всех задач компании</p>
+    <div>
+        <div class="max-w-7xl mx-auto sm:px-4 lg:px-6">
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Боковая панель с аватаром и удалением аккаунта -->
+                <!-- Основные настройки -->
+                <div class="lg:col-span-3 space-y-2">
+                    <!-- Информация профиля -->
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                        <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                <h3 class="text-lg font-semibold text-gray-800">Личная информация</h3>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            @include('profile.partials.update-profile-information-form')
+                        </div>
                     </div>
-                    <div class="flex space-x-4">
-                        <button id="newTaskBtn"
-                                class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700 transition">
-                            <i class="fas fa-plus"></i>
-                            <span>Новая задача</span>
-                        </button>
-                        <button id="filterToggle" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-50 transition">
-                            <i class="fas fa-filter"></i>
-                            <span>Фильтры</span>
-                        </button>
+
+                    <!-- Смена пароля -->
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                        <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                                <h3 class="text-lg font-semibold text-gray-800">Безопасность</h3>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            @include('profile.partials.update-password-form')
+                        </div>
                     </div>
                 </div>
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                        <!-- Блок с аватаром -->
+                        <div class="p-6 text-center" style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100% 100%);">
+                            <div class="relative inline-block">
+                                <!-- Аватар -->
+                                <div class="relative group">
+                                    <div
+                                        class="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white mx-auto">
+                                        @if(Auth::user()->avatar)
+                                            <img src="{{ Storage::url(Auth::user()->avatar) }}"
+                                                 alt="Avatar"
+                                                 class="w-full h-full object-cover">
+                                        @else
+                                            <div
+                                                class="w-full h-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center">
+                                            <span class="text-white text-4xl font-bold">
+                                                {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                                            </span>
+                                            </div>
+                                        @endif
+                                    </div>
 
-                <!-- Статистика -->
-                <div class="grid grid-cols-2 md:grid-cols-6 gap-4 pb-6">
-                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
-                        <div class="text-2xl font-bold text-gray-900">{{ $stats['total'] }}</div>
-                        <div class="text-gray-500 text-sm">Всего задач</div>
-                    </div>
+                                    <!-- Кнопка изменения аватара -->
+                                    <button onclick="document.getElementById('avatar-upload').click()"
+                                            class="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition duration-200">
+                                        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
 
-                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
-                        <div class="text-2xl font-bold text-yellow-700">{{ $stats['assigned'] }}</div>
-                        <div class="text-yellow-600 text-sm">Назначены</div>
-                    </div>
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-                        <div class="text-2xl font-bold text-blue-700">{{ $stats['in_progress'] }}</div>
-                        <div class="text-blue-600 text-sm">В работе</div>
-                    </div>
-                    <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 text-center">
-                        <div class="text-2xl font-bold text-orange-700">{{ $stats['review'] }}</div>
-                        <div class="text-orange-600 text-sm">На проверке</div>
-                    </div>
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-                        <div class="text-2xl font-bold text-red-700">{{ $stats['overdue'] }}</div>
-                        <div class="text-red-600 text-sm">Просрочено</div>
-                    </div>
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                        <div class="text-2xl font-bold text-green-700">{{ $stats['completed'] }}</div>
-                        <div class="text-green-600 text-sm">Выполнено</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                                <form id="avatar-form" action="{{ route('profile.avatar.update') }}" method="POST"
+                                      enctype="multipart/form-data" class="hidden">
+                                    @csrf
+                                    @method('PATCH')
+                                    <input type="file" name="avatar" id="avatar-upload" accept="image/*"
+                                           onchange="this.form.submit()">
+                                </form>
+                            </div>
 
-        <!-- Фильтры и поиск -->
-        <div id="filtersPanel" class="bg-white border-b border-gray-200 hidden">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <form method="GET" action="{{ route('tasks.admin') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <!-- Поиск -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="Название или описание...">
+                            <div class="mt-4">
+                                <h3 class="text-white font-semibold text-lg">{{ Auth::user()->name }}</h3>
+                                <p class="text-blue-100 text-sm">{{ Auth::user()->email }}</p>
+                            </div>
+
+                            <!-- Кнопка удаления аватара -->
+                            @if(Auth::user()->avatar)
+                                <div class="mt-3">
+                                    <button type="button"
+                                            onclick="confirmAvatarDelete()"
+                                            class="text-sm text-blue-100 hover:text-white transition duration-200 flex items-center justify-center gap-1">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                        Удалить аватар
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Статистика -->
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600">Роль:</span>
+                                    <span class="font-semibold text-gray-800">
+                                    @if(isset(Auth::user()->role))
+                                            <span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs">{{auth()->user()->role->name}}</span>
+                                        @endif
+                                </span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600">Дата регистрации:</span>
+                                    <span
+                                        class="font-semibold text-gray-800">{{ Auth::user()->created_at->format('d.m.Y') }}</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600">Статус:</span>
+                                    <span class="flex items-center">
+                                    <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                                    <span class="text-gray-800">Активен</span>
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+
+
                     </div>
-
-                    <!-- Статус -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                        <select name="status" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">Все статусы</option>
-                            @foreach($filterData['statuses'] as $status)
-                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
-                                    {{ $status }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <!-- Блок удаления аккаунта (под аватаром) -->
+                    <div class=" mt-2">
+                        <div class="bg-red-50 rounded-xl p-4 border border-red-200">
+                            <div class="flex items-center mb-3">
+                                <svg class="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                <h4 class="font-semibold text-red-800">Удаление аккаунта</h4>
+                            </div>
+                            <p class="text-sm text-red-600 mb-4">Удалите свою учетную запись и все данные</p>
+                            <button type="button"
+                                    onclick="confirmAccountDeletion()"
+                                    class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition duration-200 flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                Удалить аккаунт
+                            </button>
+                        </div>
                     </div>
-
-                    <!-- Исполнитель -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Исполнитель</label>
-                        <select name="user_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">Все исполнители</option>
-                            @foreach($filterData['users'] as $user)
-                                <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Отдел -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
-                        <select name="department_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">Все отделы</option>
-                            @foreach($filterData['departments'] as $department)
-                                <option value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
-                                    {{ $department->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Приоритет -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
-                        <select name="priority" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">Все приоритеты</option>
-                            @foreach($filterData['priorities'] as $priority)
-                                <option value="{{ $priority }}" {{ request('priority') == $priority ? 'selected' : '' }}>
-                                    {{ $priority }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Категория -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
-                        <select name="category_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">Все категории</option>
-                            @foreach($filterData['categories'] as $category)
-                                <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Кнопки фильтра -->
-                    <div class="md:col-span-4 flex space-x-4">
-                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-                            Применить фильтры
-                        </button>
-                        <a href="{{ route('tasks.admin') }}" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition">
-                            Сбросить
-                        </a>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Основной контент -->
-        <div class="mx-auto py-8">
-
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg mb-2">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg mb-2">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg mb-2">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Форма удаления аватара -->
+    <form id="delete-avatar-form" action="{{ route('profile.avatar.delete') }}" method="POST" class="hidden">
+        @csrf
+        @method('DELETE')
+    </form>
+
+    <!-- Форма удаления аккаунта -->
+    <form id="delete-account-form" action="{{ route('profile.destroy') }}" method="POST" class="hidden">
+        @csrf
+        @method('DELETE')
+        <input type="password" name="password" id="delete-password">
+    </form>
+
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            // Показываем уведомление об успешном обновлении аватара
+            @if(session('avatar-status'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Успешно!',
+                text: '{{ session("avatar-status") }}',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            @endif
+
+            @if(session('avatar-deleted'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Успешно!',
+                text: '{{ session("avatar-deleted") }}',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            @endif
+
+            function confirmAvatarDelete() {
+                Swal.fire({
+                    title: 'Удалить аватар?',
+                    text: 'Вы уверены, что хотите удалить свой аватар?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Да, удалить',
+                    cancelButtonText: 'Отмена'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('delete-avatar-form').submit();
+                    }
+                });
+            }
+
+            function confirmAccountDeletion() {
+                Swal.fire({
+                    title: 'Удалить аккаунт?',
+                    html: `
+                <p class="mb-3">Вы уверены, что хотите удалить свой аккаунт?</p>
+                <p class="text-sm text-red-600">Это действие необратимо! Все ваши данные будут удалены.</p>
+                <div class="mt-4">
+                    <input type="password" id="password-confirm" class="swal2-input w-full px-3 py-2 border rounded-lg" placeholder="Введите ваш пароль" required>
+                </div>
+            `,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Да, удалить аккаунт',
+                    cancelButtonText: 'Отмена',
+                    preConfirm: () => {
+                        const password = Swal.getPopup().querySelector('#password-confirm').value;
+                        if (!password) {
+                            Swal.showValidationMessage('Пожалуйста, введите пароль');
+                        }
+                        return {password: password};
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const passwordInput = document.getElementById('delete-password');
+                        passwordInput.value = result.value.password;
+                        document.getElementById('delete-account-form').submit();
+                    }
+                });
+            }
+        </script>
+    @endpush
 @endsection

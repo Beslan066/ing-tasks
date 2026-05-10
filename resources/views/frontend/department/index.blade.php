@@ -1,12 +1,23 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
+        $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
+    @endphp
     <div>
         <!-- Заголовок и кнопки -->
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-gray-800">Мои отделы</h1>
-                <p class="text-gray-600 mt-2">Управляйте отделами, задачами и почтовой системой</p>
+
+                <div>
+                    @if($backgroundEnabled && $backgroundImage)
+                        <h2 class="text-3xl font-bold text-white">Мои отделы</h2>
+                    @else
+                        <h2 class="text-3xl font-bold text-[#16a34a]">Мои отделы</h2>
+                    @endif
+                        <p class="text-white text-sm">Управляйте отделами, задачами и почтовой системой</p>
+                </div>
             </div>
             <button onclick="openDepartmentModal()"
                 class="bg-primary-500 text-white px-6 py-3 rounded-lg bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 transition-colors flex items-center space-x-2">
