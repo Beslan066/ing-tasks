@@ -18,12 +18,6 @@ class TeamController extends Controller
 {
     public function index(Request $request)
     {
-        // ОТЛАДКА - посмотрим что происходит
-        \Log::info('TeamController@index START', [
-            'user_id' => auth()->id(),
-            'url' => $request->fullUrl(),
-            'method' => $request->method()
-        ]);
 
         try {
             $authUser = auth()->user();
@@ -40,7 +34,7 @@ class TeamController extends Controller
                 'company_id' => $authUser->company_id
             ]);
 
-            // ВРЕМЕННО - убираем добавление онлайн статуса для проверки
+            //  убираем добавление онлайн статуса для проверки
             $usersQuery = User::query()
                 ->where('company_id', $authUser->company_id)
                 ->with(['role', 'departments']);
@@ -503,8 +497,6 @@ class TeamController extends Controller
 
         $callback = function() use ($users) {
             $file = fopen('php://output', 'w');
-
-            // Добавляем BOM для корректного отображения кириллицы в Excel
             fwrite($file, "\xEF\xBB\xBF");
 
             // Заголовки
@@ -517,7 +509,10 @@ class TeamController extends Controller
             // Данные
             foreach ($users as $user) {
                 $stats = $user->getTaskCompletionStats();
+
+                // ИСПРАВЛЕНО: добавляем условие is_personal
                 $overdue = $user->assignedTasks()
+                    ->where('is_personal', '!=', true)
                     ->where('status', '!=', 'выполнена')
                     ->where('deadline', '<', now())
                     ->count();
@@ -678,10 +673,22 @@ class TeamController extends Controller
             $user = User::with(['role', 'departments', 'company'])
                 ->where('company_id', $authUser->company_id)
                 ->withCount([
-                    'assignedTasks as total_tasks_count',
-                    'assignedTasks as completed_tasks_count',
-                    'assignedTasks as overdue_tasks_count',
-                    'assignedTasks as in_progress_tasks_count'
+                    'assignedTasks as total_tasks_count' => function($query) {
+                        $query->where('is_personal', '!=', true);
+                    },
+                    'assignedTasks as completed_tasks_count' => function($query) { // ИСПРАВЛЕНО
+                        $query->where('is_personal', '!=', true)
+                            ->where('status', 'выполнена');
+                    },
+                    'assignedTasks as overdue_tasks_count' => function($query) { // ИСПРАВЛЕНО
+                        $query->where('is_personal', '!=', true)
+                            ->where('status', '!=', 'выполнена')
+                            ->where('deadline', '<', now());
+                    },
+                    'assignedTasks as in_progress_tasks_count' => function($query) { // ИСПРАВЛЕНО
+                        $query->where('is_personal', '!=', true)
+                            ->where('status', 'в работе');
+                    }
                 ])
                 ->findOrFail($userId);
 
@@ -715,6 +722,7 @@ class TeamController extends Controller
 
             $query = Task::where('user_id', $userId)
                 ->with(['category', 'department', 'author'])
+                ->where('is_personal', '=', false)
                 ->where('company_id', $authUser->company_id);
 
             switch ($period) {
@@ -791,7 +799,8 @@ class TeamController extends Controller
 
     private function calculateUserStats($user, $period)
     {
-        $query = $user->assignedTasks();
+        // ИСПРАВЛЕНО: добавляем условие is_personal везде
+        $query = $user->assignedTasks()->where('is_personal', '!=', true);
 
         switch ($period) {
             case 'week':
@@ -809,27 +818,33 @@ class TeamController extends Controller
         $completedTasks = $query->where('status', 'выполнена')->count();
         $completionRate = $user->getAverageCompletionRate($period);
 
+        // ИСПРАВЛЕНО: добавляем условие is_personal для просроченных задач
+        $overdueQuery = $user->assignedTasks()
+            ->where('is_personal', '!=', true)
+            ->where('status', '!=', 'выполнена')
+            ->where('deadline', '<', now());
+
+        if ($period !== 'all') {
+            switch ($period) {
+                case 'week':
+                    $overdueQuery->where('created_at', '>=', Carbon::now()->startOfWeek());
+                    break;
+                case 'month':
+                    $overdueQuery->where('created_at', '>=', Carbon::now()->startOfMonth());
+                    break;
+                case 'year':
+                    $overdueQuery->where('created_at', '>=', Carbon::now()->startOfYear());
+                    break;
+            }
+        }
+
+        $overdueTasks = $overdueQuery->count();
+
         return [
             'total_tasks' => $totalTasks,
             'completed_tasks' => $completedTasks,
             'completion_rate' => $completionRate,
-            'overdue_tasks' => $user->assignedTasks()
-                ->where('status', '!=', 'выполнена')
-                ->where('deadline', '<', now())
-                ->when($period !== 'all', function($q) use ($period) {
-                    switch ($period) {
-                        case 'week':
-                            $q->where('created_at', '>=', Carbon::now()->startOfWeek());
-                            break;
-                        case 'month':
-                            $q->where('created_at', '>=', Carbon::now()->startOfMonth());
-                            break;
-                        case 'year':
-                            $q->where('created_at', '>=', Carbon::now()->startOfYear());
-                            break;
-                    }
-                })
-                ->count(),
+            'overdue_tasks' => $overdueTasks,
         ];
     }
 

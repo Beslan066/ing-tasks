@@ -420,7 +420,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getAverageCompletionRate($period = null): float
     {
-        $query = $this->assignedTasks();
+        $query = $this->assignedTasks()->where('is_personal', '!=', true);;
 
         if ($period && $period !== 'all') {
             switch ($period) {
@@ -472,21 +472,25 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getTaskCompletionStats($period = null)
     {
-        $total = $this->assignedTasks()->when($period && $period !== 'all', function($query) use ($period) {
-            switch ($period) {
-                case 'week':
-                    $query->where('created_at', '>=', Carbon::now()->startOfWeek());
-                    break;
-                case 'month':
-                    $query->where('created_at', '>=', Carbon::now()->startOfMonth());
-                    break;
-                case 'year':
-                    $query->where('created_at', '>=', Carbon::now()->startOfYear());
-                    break;
-            }
-        })->count();
+        $total = $this->assignedTasks()
+            ->where('is_personal', '!=', true) // ДОБАВИТЬ ЭТУ СТРОКУ
+            ->when($period && $period !== 'all', function($query) use ($period) {
+                switch ($period) {
+                    case 'week':
+                        $query->where('created_at', '>=', Carbon::now()->startOfWeek());
+                        break;
+                    case 'month':
+                        $query->where('created_at', '>=', Carbon::now()->startOfMonth());
+                        break;
+                    case 'year':
+                        $query->where('created_at', '>=', Carbon::now()->startOfYear());
+                        break;
+                }
+            })->count();
 
-        $completed = $this->assignedTasks()->where('status', 'выполнена')
+        $completed = $this->assignedTasks()
+            ->where('is_personal', '!=', true) // ДОБАВИТЬ ЭТУ СТРОКУ
+            ->where('status', 'выполнена')
             ->when($period && $period !== 'all', function($query) use ($period) {
                 switch ($period) {
                     case 'week':
