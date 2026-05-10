@@ -2750,13 +2750,6 @@ section.uh.pp.cr.ve {
 }
 
 /* ------v */
-.bg-gradient {
-  background-image: linear-gradient(to right, #16a34a, #22c55e);
-}
-
-.bg-gradient:hover {
-  background-image: linear-gradient(to right, #15803d, #16a34a);
-}
 .flex-v-center {
     display: flex;
     align-items: center;
