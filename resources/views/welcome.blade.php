@@ -243,6 +243,10 @@
         </div>
     </div>
 
+    <div class="fixed bottom-6 text-white">
+        <p><a href="" class="underline">Все задачи</a></p>
+    </div>
+
     <!-- Модальное окно для просмотра задачи -->
     <div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
