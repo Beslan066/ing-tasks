@@ -390,7 +390,7 @@ media-src https://meet.jit.si https:;
 
                 <div class="space-y-1">
                     <a href="{{route('welcome')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg active">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg {{request()->routeIs('welcome*') ? 'active' : ''}}">
                         <div class="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-check text-primary-500 text-sm"></i>
                         </div>
@@ -398,14 +398,14 @@ media-src https://meet.jit.si https:;
                     </a>
 
                     <a href="{{route('tasks.admin')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:rounded-lg hover:bg-sidebar-hover">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:rounded-lg hover:bg-sidebar-hover {{request()->routeIs('tasks.admin*') ? 'active' : ''}}">
                         <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-landmark text-purple-500 text-sm"></i>
                         </div>
                         <span class="font-medium">Моя компания</span>
                     </a>
                     <a href="{{route('departments.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg {{request()->routeIs('departments.index*') ? 'active' : ''}}">
                         <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-building text-orange-500 text-sm"></i>
                         </div>
@@ -413,7 +413,7 @@ media-src https://meet.jit.si https:;
                     </a>
 
                     <a href="{{route('team.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg {{request()->routeIs('team.index*') ? 'active' : ''}}">
                         <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-users text-blue-500 text-sm"></i>
                         </div>
@@ -421,7 +421,7 @@ media-src https://meet.jit.si https:;
                     </a>
 
                     <a href="{{route('chat.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg {{request()->routeIs('chat.index*') ? 'active' : ''}}">
                         <div class="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-comments text-pink-500 text-sm"></i>
                         </div>
@@ -429,7 +429,7 @@ media-src https://meet.jit.si https:;
                     </a>
 
                     <a href="{{route('files.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg {{request()->routeIs('files.index*') ? 'active' : ''}}">
                         <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-hard-drive text-brown-500 text-sm"></i>
                         </div>
@@ -437,7 +437,7 @@ media-src https://meet.jit.si https:;
                     </a>
 
                     <a href="{{route('tools.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg {{request()->routeIs('tools.index*') ? 'active' : ''}}">
                         <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-tools text-yellow-500 text-sm"></i>
                         </div>
