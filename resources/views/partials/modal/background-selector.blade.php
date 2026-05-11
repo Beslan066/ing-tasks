@@ -16,9 +16,9 @@
                 <!-- Опция без фона -->
             <div class="mb-6">
                 <label class="flex items-center cursor-pointer p-3 border rounded-lg hover:bg-gray-50 transition-colors">
-                    <input type="radio" name="background" value=""
+                    <input type="radio" name="background" value="none"
                            onchange="selectBackground('', false)"
-                        {{ !$backgroundEnabled ? 'checked' : '' }}>
+                        {{ !$backgroundEnabled && !$backgroundImage ? 'checked' : '' }} id="reset-background-input">
                     <div class="ml-3">
                         <span class="font-medium">Без фона</span>
                         <p class="text-sm text-gray-500">Sidebar будет с белым фоном и тенью</p>

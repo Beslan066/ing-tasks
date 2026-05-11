@@ -363,7 +363,7 @@ media-src https://meet.jit.si https:;
     @endif>
 
     <!-- Боковая панель -->
-    <div class="sidebar glass w-64 py-6 px-4 hidden sm:flex flex-col relative {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
+    <div class="sidebar w-64 py-6 px-4 hidden sm:flex flex-col relative {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
         <!-- Логотип -->
         <div class="mb-8">
             <a href="{{route('welcome')}}" class="flex items-center space-x-3 group">
@@ -784,7 +784,7 @@ media-src https://meet.jit.si https:;
     document.addEventListener('DOMContentLoaded', function() {
         const mainContainer = document.querySelector('.main-container');
         const sidebar = document.querySelector('.sidebar');
-
+        const resetInput = document.getElementById('reset-background-input');
         function applyBackground(enabled, imagePath) {
             if (enabled && imagePath) {
                 // Включаем фон на main-container
@@ -792,12 +792,16 @@ media-src https://meet.jit.si https:;
                 mainContainer.style.backgroundImage = `url(${imagePath})`;
                 // Убираем все стили у sidebar
                 // sidebar.classList.add('no-background');
+                  sidebar.classList.add('glass');
+                  resetInput.checked = false;
             } else {
                 // Убираем фон с main-container
                 mainContainer.classList.remove('has-background');
                 mainContainer.style.backgroundImage = '';
                 // Возвращаем стили sidebar
                 sidebar.classList.remove('no-background');
+                sidebar.classList.remove('glass');
+                resetInput.checked = true;
             }
         }
 
