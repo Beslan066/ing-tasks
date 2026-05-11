@@ -25,6 +25,7 @@
                 class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-50 transition">
                 <i class="fas fa-filter"></i>
                 <span>Фильтр</span>
+                <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform"></i>
             </button>
             <button onclick="openPersonalTaskModal()"
                     class=" text-white px-4 py-2 rounded-lg flex items-center space-x-2 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 transition">
@@ -244,7 +245,7 @@
     </div>
 
     <div class="fixed bottom-6 text-white">
-        <p><a href="" class="underline">Все задачи</a></p>
+        <p><a href="{{route('allTasks')}}" class="underline">Все задачи</a></p>
     </div>
 
     <!-- Модальное окно для просмотра задачи -->
@@ -670,7 +671,7 @@ ${task.rejections && task.rejections.length > 0 ? `
                     ` : ''}
 
                     <button onclick="closeTaskViewModal()"
-                            class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition">
+                            class="text-white px-4 py-2 rounded-lg hover:bg-gray-400 transition" style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);">
                         Закрыть
                     </button>
                 </div>
