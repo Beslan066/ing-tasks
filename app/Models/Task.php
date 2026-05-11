@@ -231,11 +231,61 @@ class Task extends Model
             return 'Без дедлайна';
         }
 
-        if ($this->isOverdue()) {
-            return 'Просрочено: ' . $this->deadline->diffForHumans();
+        $now = now();
+        $deadline = clone $this->deadline;
+
+        // Если дедлайн уже прошёл
+        if ($deadline->isPast()) {
+            $diff = $deadline->diff($now);
+
+            if ($diff->d > 0) {
+                $days = $diff->d;
+                return "Просрочено на {$days} " . $this->pluralForm($days, 'день', 'дня', 'дней');
+            } elseif ($diff->h > 0) {
+                $hours = $diff->h;
+                return "Просрочено на {$hours} " . $this->pluralForm($hours, 'час', 'часа', 'часов');
+            } elseif ($diff->i > 0) {
+                $minutes = $diff->i;
+                return "Просрочено на {$minutes} " . $this->pluralForm($minutes, 'минуту', 'минуты', 'минут');
+            } else {
+                return 'Просрочено менее минуты назад';
+            }
         }
 
-        return 'Осталось: ' . $this->deadline->diffForHumans();
+        // Если дедлайн в будущем
+        $diff = $now->diff($deadline);
+
+        if ($diff->d > 0) {
+            $days = $diff->d;
+            return "Осталось: {$days} " . $this->pluralForm($days, 'день', 'дня', 'дней');
+        } elseif ($diff->h > 0) {
+            $hours = $diff->h;
+            return "Осталось: {$hours} " . $this->pluralForm($hours, 'час', 'часа', 'часов');
+        } elseif ($diff->i > 0) {
+            $minutes = $diff->i;
+            return "Осталось: {$minutes} " . $this->pluralForm($minutes, 'минуту', 'минуты', 'минут');
+        } else {
+            return 'Осталось: менее минуты';
+        }
+    }
+
+    /**
+     * Вспомогательный метод для склонения слов
+     */
+    private function pluralForm($number, $one, $two, $many): string
+    {
+        $number = abs($number) % 100;
+        if ($number > 10 && $number < 20) {
+            return $many;
+        }
+        $number %= 10;
+        if ($number == 1) {
+            return $one;
+        }
+        if ($number >= 2 && $number <= 4) {
+            return $two;
+        }
+        return $many;
     }
 
     /**
