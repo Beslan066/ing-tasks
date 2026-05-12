@@ -13,10 +13,11 @@
                 <div>
                     @if($backgroundEnabled && $backgroundImage)
                         <h2 class="text-3xl font-bold text-white">Мои отделы</h2>
+                        <p class="text-white text-sm">Управляйте отделами, задачами и почтовой системой</p>
                     @else
                         <h2 class="text-3xl font-bold text-[#16a34a]">Мои отделы</h2>
+                        <p class="text-gray-700 text-sm">Управляйте отделами, задачами и почтовой системой</p>
                     @endif
-                        <p class="text-white text-sm">Управляйте отделами, задачами и почтовой системой</p>
                 </div>
             </div>
             <button onclick="openDepartmentModal()"

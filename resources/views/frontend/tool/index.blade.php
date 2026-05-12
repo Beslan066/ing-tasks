@@ -11,10 +11,11 @@
             <div>
                 @if($backgroundEnabled && $backgroundImage)
                     <h2 class="text-3xl font-bold text-white">Инструменты</h2>
+                    <p class="text-white text-sm">Инструменты для продуктивной работы</p>
                 @else
                     <h2 class="text-3xl font-bold text-[#16a34a]">Инструменты</h2>
+                    <p class="text-gray-700 text-sm">Инструменты для продуктивной работы</p>
                 @endif
-                <p class="text-white text-sm" >Инструменты для продуктивной работы</p>
             </div>
         </div>
 
@@ -30,15 +31,19 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 <!-- Фотобанк -->
                 <div onclick="window.location.href='{{ route('photobank') }}'"
-                     class="group cursor-pointer bg-white border border-gray-200 rounded-xl p-4 md:p-6 transition-all duration-300 hover:shadow-lg hover:border-green-300 hover:-translate-y-1">
+                    class="group cursor-pointer bg-white border border-gray-200 rounded-xl p-4 md:p-6 transition-all duration-300 hover:shadow-lg hover:border-green-300 hover:-translate-y-1">
                     <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                        <div
+                            class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
                             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
                             </svg>
                         </div>
                         <div class="flex-1">
-                            <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors">Фотобанк</h3>
+                            <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors">
+                                Фотобанк</h3>
                             <p class="text-gray-500 text-sm mt-1">Хранилище изображений и медиафайлов</p>
                         </div>
                     </div>
@@ -46,15 +51,19 @@
 
                 <!-- Видеоконференции -->
                 <div onclick="openConferenceManager()"
-                     class="group cursor-pointer bg-white border border-gray-200 rounded-xl p-4 md:p-6 transition-all duration-300 hover:shadow-lg hover:border-green-300 hover:-translate-y-1">
+                    class="group cursor-pointer bg-white border border-gray-200 rounded-xl p-4 md:p-6 transition-all duration-300 hover:shadow-lg hover:border-green-300 hover:-translate-y-1">
                     <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                        <div
+                            class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
                             <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                                </path>
                             </svg>
                         </div>
                         <div class="flex-1">
-                            <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors">Видеоконференции</h3>
+                            <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors">
+                                Видеоконференции</h3>
                             <p class="text-gray-500 text-sm mt-1">Создайте комнату и пригласите коллег</p>
                         </div>
                     </div>
@@ -70,7 +79,8 @@
                 <h2 class="text-xl font-semibold text-gray-800">Видеоконференция</h2>
                 <button onclick="closeConferenceManager()" class="text-gray-500 hover:text-gray-700">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
                     </svg>
                 </button>
             </div>
@@ -80,7 +90,7 @@
                 <div class="border rounded-lg p-4">
                     <h3 class="font-semibold text-gray-800 mb-3">Создать новую комнату</h3>
                     <button onclick="createNewRoom()"
-                            class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                        class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
                         + Создать комнату
                     </button>
                 </div>
@@ -88,11 +98,10 @@
                 <!-- Войти в существующую комнату -->
                 <div class="border rounded-lg p-4">
                     <h3 class="font-semibold text-gray-800 mb-3">Войти в комнату</h3>
-                    <input type="text" id="roomIdInput"
-                           placeholder="Введите ID комнаты"
-                           class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 focus:outline-none focus:border-green-500">
+                    <input type="text" id="roomIdInput" placeholder="Введите ID комнаты"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 focus:outline-none focus:border-green-500">
                     <button onclick="joinRoom()"
-                            class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                         Войти
                     </button>
                 </div>
@@ -106,7 +115,7 @@
             <div class="flex items-center gap-4">
                 <span class="font-semibold">Комната: <span id="currentRoomId" class="text-green-400"></span></span>
                 <button onclick="copyRoomLink()"
-                        class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition-colors">
+                    class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition-colors">
                     📋 Копировать ссылку
                 </button>
             </div>
@@ -239,7 +248,7 @@
         }
 
         // Закрытие по Escape
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 const modal = document.getElementById('conferenceModal');
                 if (modal.style.display === 'flex') {

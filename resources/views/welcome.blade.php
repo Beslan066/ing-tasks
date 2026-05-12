@@ -11,10 +11,11 @@
         <div>
             @if($backgroundEnabled && $backgroundImage)
             <h2 class="text-3xl font-bold text-white">Мои задачи</h2>
+               <p class="text-white text-sm" >Ваши личные задачи не видны на странице Команда</p>
             @else
                 <h2 class="text-3xl font-bold text-[#16a34a]">Мои задачи</h2>
+                <p class="text-gray-700 text-sm" >Ваши личные задачи не видны на странице Команда</p>
             @endif
-            <p class="text-white text-sm" >Ваши личные задачи не видны на странице Команда</p>
         </div>
         <!-- В блоке с заголовком и статистикой -->
         <div class="flex space-x-4">
@@ -244,8 +245,12 @@
         </div>
     </div>
 
-    <div class="fixed bottom-6 text-white">
-        <p><a href="{{route('allTasks')}}" class="underline">Все задачи</a></p>
+    <div class="fixed bottom-6">
+          @if($backgroundEnabled && $backgroundImage)
+                    <p><a href="{{route('allTasks')}}" class="underline text-white">Все задачи</a></p>
+                @else
+                      <p><a href="{{route('allTasks')}}" class="underline text-gray-700">Все задачи</a></p>
+                @endif
     </div>
 
     <!-- Модальное окно для просмотра задачи -->

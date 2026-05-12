@@ -11,10 +11,11 @@
             <div>
                 @if($backgroundEnabled && $backgroundImage)
                     <h2 class="text-3xl font-bold text-white">Команда</h2>
+                    <p class="text-white text-sm">Участники вашей организации</p>
                 @else
                     <h2 class="text-3xl font-bold text-[#16a34a]">Команда</h2>
+                    <p class="text-gray-700 text-sm">Участники вашей организации</p>
                 @endif
-                <p class="text-white text-sm">Участники вашей организации</p>
             </div>
 
             <div class="flex flex-wrap gap-2 w-full md:w-auto">

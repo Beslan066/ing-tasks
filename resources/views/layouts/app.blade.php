@@ -119,7 +119,12 @@ media-src https://meet.jit.si https:;
             background-size: cover;
             background-position: center;
 
-
+            .chat-button {
+            color:#fff;
+            }
+            .setting-button {
+                color:#fff;
+            }
             .sidebar:hover {
                 box-shadow: 0 0 50px rgba(34, 197, 94, 0.1);
             }
@@ -785,6 +790,8 @@ media-src https://meet.jit.si https:;
         const mainContainer = document.querySelector('.main-container');
         const sidebar = document.querySelector('.sidebar');
         const resetInput = document.getElementById('reset-background-input');
+        // const settingBtn = document.querySelector('.setting-button');
+        // const chatBtn = document.querySelector('.chat-button');
         function applyBackground(enabled, imagePath) {
             if (enabled && imagePath) {
                 // Включаем фон на main-container
