@@ -1,5 +1,6 @@
 <div id="taskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-    <div class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
+    <div class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl
+            scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         <!-- Заголовок -->
         <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-100">
             <div class="flex justify-between items-center p-6">

@@ -382,11 +382,6 @@ media-src https://meet.jit.si https:;
         <div class="space-y-2 flex-1 scrollbar-thin">
             <!-- Главное меню -->
             <div class="mb-6">
-                @if($backgroundEnabled)
-                    <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider mb-4 px-2 text-white">ГЛАВНОЕ</h3>
-                @else
-                    <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider mb-4 px-2">ГЛАВНОЕ</h3>
-                    @endif
 
                 <div class="space-y-1">
                     <a href="{{route('welcome')}}"
@@ -394,7 +389,7 @@ media-src https://meet.jit.si https:;
                         <div class="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-check text-primary-500 text-sm"></i>
                         </div>
-                        <span class="font-medium">Мои задачи</span>
+                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Мои задачи</span>
                     </a>
 
                     <a href="{{route('tasks.admin')}}"
@@ -402,14 +397,14 @@ media-src https://meet.jit.si https:;
                         <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-landmark text-purple-500 text-sm"></i>
                         </div>
-                        <span class="font-medium">Моя компания</span>
+                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Моя компания</span>
                     </a>
                     <a href="{{route('departments.index')}}"
                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-sidebar-hover hover:rounded-lg {{request()->routeIs('departments.index*') ? 'active' : ''}}">
                         <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-building text-orange-500 text-sm"></i>
                         </div>
-                        <span class="font-medium">Отделы</span>
+                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Отделы</span>
                     </a>
 
                     <a href="{{route('team.index')}}"
@@ -417,7 +412,7 @@ media-src https://meet.jit.si https:;
                         <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-users text-blue-500 text-sm"></i>
                         </div>
-                        <span class="font-medium">Пользователи</span>
+                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Пользователи</span>
                     </a>
 
                     <a href="{{route('chat.index')}}"
@@ -425,7 +420,7 @@ media-src https://meet.jit.si https:;
                         <div class="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-comments text-pink-500 text-sm"></i>
                         </div>
-                        <span class="font-medium">Мессенджер</span>
+                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Мессенджер</span>
                     </a>
 
                     <a href="{{route('files.index')}}"
@@ -433,7 +428,7 @@ media-src https://meet.jit.si https:;
                         <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-hard-drive text-brown-500 text-sm"></i>
                         </div>
-                        <span class="font-medium">Хранилище</span>
+                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Хранилище</span>
                     </a>
 
                     <a href="{{route('tools.index')}}"
@@ -441,7 +436,7 @@ media-src https://meet.jit.si https:;
                         <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
                             <i class="fas fa-tools text-yellow-500 text-sm"></i>
                         </div>
-                        <span class="font-medium">Инструменты</span>
+                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Инструменты</span>
                     </a>
                 </div>
             </div>
@@ -1427,7 +1422,7 @@ media-src https://meet.jit.si https:;
                 if (taskId) {
                     url = `/tasks/${taskId}/update`;
                     method = 'POST';
-                    formData.append('_method', 'PUT');
+                    formData.append('_method', 'patch');
                 } else {
                     url = '/tasks/store';
                     method = 'POST';

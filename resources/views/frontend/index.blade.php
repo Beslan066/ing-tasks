@@ -6,6 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>МенеджерПлюс - современная система управления командами</title>
+    <meta name="description" content="Современное проектное управление. Agile-доски, корпоративный чат, все в онлайн и мобильных приложениях. Безопасное коробочное решение для управления большими проектами и бесплатная версия для начинающих проектов.">
+    <meta name="keywords" content="МенеджерПлюс, ManagerPlus, Менеджер Плюс, управление проектами, agile, система управления проектами, управление командами, управление проектами программа, онлайн управление командами, система управления организацией">
     <link rel="shortcut icon" href="{{asset('img/favicon.ico')}}" type="image/x-icon">
     <link href="{{asset('css/main.css')}}" rel="stylesheet">
 </head>
