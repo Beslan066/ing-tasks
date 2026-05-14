@@ -16,12 +16,12 @@
                 <div class="mb-4 w-1/2">
                     <label class="block text-gray-700 text-sm font-medium mb-2">Название</label>
                     <input type="text"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600"
-                           placeholder="Введите название" name="name">
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600"
+                        placeholder="Введите название" name="name">
                 </div>
 
                 @error('name')
-                <div class="text-danger">{{ $message }}</div>
+                    <div class="text-danger">{{ $message }}</div>
                 @enderror
 
                 <div class="mb-4 w-1/2">
@@ -30,21 +30,21 @@
                     <div class="relative">
                         <div class="absolute inset-y-0 start-0 top-0 flex items-center ps-3.5 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 19 18">
+                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 19 18">
                                 <path
-                                    d="M18 13.446a3.02 3.02 0 0 0-.946-1.985l-1.4-1.4a3.054 3.054 0 0 0-4.218 0l-.7.7a.983.983 0 0 1-1.39 0l-2.1-2.1a.983.983 0 0 1 0-1.389l.7-.7a2.98 2.98 0 0 0 0-4.217l-1.4-1.4a2.824 2.824 0 0 0-4.218 0c-3.619 3.619-3 8.229 1.752 12.979C6.785 16.639 9.45 18 11.912 18a7.175 7.175 0 0 0 5.139-2.325A2.9 2.9 0 0 0 18 13.446Z"/>
+                                    d="M18 13.446a3.02 3.02 0 0 0-.946-1.985l-1.4-1.4a3.054 3.054 0 0 0-4.218 0l-.7.7a.983.983 0 0 1-1.39 0l-2.1-2.1a.983.983 0 0 1 0-1.389l.7-.7a2.98 2.98 0 0 0 0-4.217l-1.4-1.4a2.824 2.824 0 0 0-4.218 0c-3.619 3.619-3 8.229 1.752 12.979C6.785 16.639 9.45 18 11.912 18a7.175 7.175 0 0 0 5.139-2.325A2.9 2.9 0 0 0 18 13.446Z" />
                             </svg>
                         </div>
                         <input type="text" id="phone-input" aria-describedby="helper-text-explanation"
-                               class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600  block w-full ps-10 p-2.5 0"
-                               placeholder="7(***)***-**-**" required name="phone"/>
+                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600  block w-full ps-10 p-2.5 0"
+                            placeholder="7(***)***-**-**" required name="phone" />
                     </div>
                     <p id="helper-text-explanation" class="mt-2 text-sm text-gray-500 dark:text-gray-400">Введите номер
                         телефона в указанном формате</p>
                 </div>
 
                 @error('phone')
-                <div class="text-danger">{{ $message }}</div>
+                    <div class="text-danger">{{ $message }}</div>
                 @enderror
 
                 <div class="mb-4 w-1/2">
@@ -57,14 +57,15 @@
                 </div>
 
                 @error('user_id')
-                <div class="text-danger">{{ $message }}</div>
+                    <div class="text-danger">{{ $message }}</div>
                 @enderror
 
                 <div class="flex">
                     <button type="button" id="cancelTask"
-                            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Отмена
+                        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Отмена
                     </button>
-                    <button type="submit" class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 ml-2">Создать
+                    <button type="submit"
+                        class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 ml-2">Создать
                         компанию
                     </button>
                 </div>
