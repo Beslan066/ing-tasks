@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-   <meta http-equiv="Content-Security-Policy" content="
+  <meta http-equiv="Content-Security-Policy" content="
 
 default-src 'self';
 
@@ -352,6 +352,53 @@ media-src https://meet.jit.si https:;
                 }
             }
         }
+       .burger-btn {
+    display: none;
+    position: absolute;
+    top: 25px;
+    right: 15px;
+    width: 30px;
+    height: 22px; /* Высота уменьшена для ровного баланса трех линий */
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    z-index: 1000;
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+/* Стили для всех трех линий */
+.burger-btn span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: #000;
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    transform-origin: center;
+}
+
+/* Отображение на мобильных экранах */
+@media (max-width: 638px) {
+    .burger-btn {
+        display: flex;
+    }
+}
+
+
+.burger-btn.active span:nth-child(1) {
+    transform: translateY(9.5px) rotate(45deg);
+}
+
+.burger-btn.active span:nth-child(2) {
+    opacity: 0;
+    transform: scale(0);
+}
+
+.burger-btn.active span:nth-child(3) {
+    transform: translateY(-9.5px) rotate(-45deg);
+}
     </style>
 </head>
 
@@ -368,7 +415,9 @@ media-src https://meet.jit.si https:;
     @endif>
 
     <!-- Боковая панель -->
-    <div class="sidebar w-64 py-6 px-4 hidden sm:flex flex-col relative {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
+    <div id="sidebar-menu" class="sidebar w-64 py-6 px-4 sm:flex flex-col relative
+            max-[638px]:!fixed max-[638px]:top-0 max-[638px]:-left-full max-[638px]:h-full max-[638px]:z-[999] max-[638px]:transition-[left] max-[638px]:duration-300 max-[638px]:ease-in-out max-[638px]:!w-80
+            [&.active]:max-[638px]:left-0 {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
         <!-- Логотип -->
         <div class="mb-8">
             <a href="{{route('welcome')}}" class="flex items-center space-x-3 group">
@@ -587,7 +636,15 @@ media-src https://meet.jit.si https:;
     </div>
 
     <!-- Основной контент -->
-    <div class="flex-1 min-h-[calc(100vh-80px)]">
+    <div class="flex-1 min-h-[calc(100vh-80px)] max-[638px]:pt-[30px]">
+
+    <!-- Бургер меню -->
+      <button id="burger-btn" class="burger-btn">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
         <div id="home" class="page active-page p-6">
             @yield('content')
         </div>
@@ -2060,7 +2117,20 @@ media-src https://meet.jit.si https:;
 
 
 </script>
+<script>
+    const burgerBtn = document.getElementById('burger-btn');
+    const sidebarMenu = document.getElementById('sidebar-menu');
 
+    burgerBtn.addEventListener('click', function () {
+        sidebarMenu.classList.toggle('active');
+        burgerBtn.classList.toggle('active');
+        if (sidebarMenu.classList.contains('active')) {
+            document.body.classList.add('overflow-hidden');
+        } else {
+            document.body.classList.remove('overflow-hidden');
+        }
+    });
+</script>
 
 @stack('scripts')
 
