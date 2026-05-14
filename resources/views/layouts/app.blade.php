@@ -351,6 +351,9 @@ media-src https://meet.jit.si https:;
                     display: block;
                 }
             }
+            .burger-btn span {
+     background-color: #fff;
+            }
         }
        .burger-btn {
     display: none;
@@ -416,7 +419,7 @@ media-src https://meet.jit.si https:;
 
     <!-- Боковая панель -->
     <div id="sidebar-menu" class="sidebar w-64 py-6 px-4 sm:flex flex-col relative
-            max-[638px]:!fixed max-[638px]:top-0 max-[638px]:-left-full max-[638px]:h-full max-[638px]:z-[999] max-[638px]:transition-[left] max-[638px]:duration-300 max-[638px]:ease-in-out max-[638px]:!w-80
+            max-[638px]:!fixed max-[638px]:top-0 max-[638px]:-left-full max-[638px]:h-full max-[638px]:z-[999] max-[638px]:transition-[left] max-[638px]:duration-300 max-[638px]:overflow-x-auto max-[638px]:ease-in-out max-[638px]:!w-80
             [&.active]:max-[638px]:left-0 {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
         <!-- Логотип -->
         <div class="mb-8">
@@ -627,11 +630,14 @@ media-src https://meet.jit.si https:;
 
         <!-- Индикатор активности -->
         <div
-            class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-500 to-transparent opacity-20"></div>
+            class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-500 to-transparent opacity-20 max-[638px]:static max-[638px]:mt-3"></div>
     </div>
-
+    <!-- Оверлей для боковой панели -->
+     <div id="sidebar-overlay"
+     class="fixed inset-0 bg-black/50 z-[998] hidden max-[638px]:[&.active]:block transition-opacity duration-300">
+</div>
     <!-- Основной контент -->
-    <div class="flex-1 min-h-[calc(100vh-80px)] max-[638px]:pt-[30px]">
+    <div class="flex-1 min-h-[calc(100vh-80px)] max-[638px]:pt-[30px] max-[638px]:w-full">
 
     <!-- Бургер меню -->
       <button id="burger-btn" class="burger-btn">
@@ -2115,17 +2121,31 @@ media-src https://meet.jit.si https:;
 <script>
     const burgerBtn = document.getElementById('burger-btn');
     const sidebarMenu = document.getElementById('sidebar-menu');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    function closeSidebar() {
+        sidebarMenu.classList.remove('active');
+        burgerBtn.classList.remove('active');
+        overlay.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
 
     burgerBtn.addEventListener('click', function () {
         sidebarMenu.classList.toggle('active');
         burgerBtn.classList.toggle('active');
+
         if (sidebarMenu.classList.contains('active')) {
             document.body.classList.add('overflow-hidden');
+            overlay.classList.remove('hidden');
         } else {
             document.body.classList.remove('overflow-hidden');
+            overlay.classList.add('hidden');
         }
     });
+
+    overlay.addEventListener('click', closeSidebar);
 </script>
+
 
 @stack('scripts')
 

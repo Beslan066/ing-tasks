@@ -7,7 +7,7 @@
     $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
 @endphp
     <!-- Заголовок и статистика -->
-    <div class="flex justify-between items-center mb-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
         <div>
             @if($backgroundEnabled && $backgroundImage)
             <h2 class="text-3xl font-bold text-white">Мои задачи</h2>
@@ -18,18 +18,18 @@
             @endif
         </div>
         <!-- В блоке с заголовком и статистикой -->
-        <div class="flex space-x-4">
+        <div class="flex space-x-4 w-full md:w-auto">
             <!-- Кнопка создания задачи -->
 
 
             <button
-                class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-50 transition">
+                class="flex-1 md:flex-none bg-white border border-gray-300 text-gray-700 px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-50 transition text-sm md:text-base">
                 <i class="fas fa-filter"></i>
                 <span>Фильтр</span>
                 <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform"></i>
             </button>
             <button onclick="openPersonalTaskModal()"
-                    class=" text-white px-4 py-2 rounded-lg flex items-center space-x-2 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 transition">
+                    class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base">
                 <i class="fas fa-plus"></i>
                 <span>Добавить</span>
             </button>
@@ -40,7 +40,7 @@
     <!-- Доска с задачами -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <!-- Колонка "Новые" -->
-        <div class=" rounded-lg p-4 board-column bg-transparent" data-status="new">
+        <div class=" rounded-lg p-4 board-column bg-transparent max-[600px]:p-0" data-status="new">
             <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2">
                 @if($backgroundEnabled && $backgroundImage)
                     <h3 class="font-semibold text-white">Новые</h3>
@@ -92,7 +92,7 @@
         </div>
 
         <!-- Колонка "В работе" -->
-        <div class="rounded-lg p-4 board-column" data-status="in-progress">
+        <div class="rounded-lg p-4 board-column max-[600px]:p-0" data-status="in-progress">
             <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2">
                 @if($backgroundEnabled && $backgroundImage)
                     <h3 class="font-semibold text-white">В работе</h3>
@@ -153,7 +153,7 @@
         </div>
 
         <!-- Колонка "На проверке" -->
-        <div class="rounded-lg p-4 board-column" data-status="review">
+        <div class="rounded-lg p-4 board-column max-[600px]:p-0" data-status="review">
             <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2">
             @if($backgroundEnabled && $backgroundImage)
                     <h3 class="font-semibold text-white shadow-2xs">На проверке</h3>
@@ -201,7 +201,7 @@
         </div>
 
         <!-- Колонка "Завершено" -->
-        <div class="rounded-lg p-4 board-column bg-transparent" data-status="done">
+        <div class="rounded-lg p-4 board-column bg-transparent max-[600px]:p-0" data-status="done">
             <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2">
                 @if($backgroundEnabled && $backgroundImage)
                     <h3 class="font-semibold text-white">Завершено</h3>
