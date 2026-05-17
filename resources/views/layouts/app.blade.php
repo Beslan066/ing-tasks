@@ -848,22 +848,16 @@ media-src https://meet.jit.si https:;
         const mainContainer = document.querySelector('.main-container');
         const sidebar = document.querySelector('.sidebar');
         const resetInput = document.getElementById('reset-background-input');
-        // const settingBtn = document.querySelector('.setting-button');
-        // const chatBtn = document.querySelector('.chat-button');
+
         function applyBackground(enabled, imagePath) {
             if (enabled && imagePath) {
-                // Включаем фон на main-container
                 mainContainer.classList.add('has-background');
                 mainContainer.style.backgroundImage = `url(${imagePath})`;
-                // Убираем все стили у sidebar
-                // sidebar.classList.add('no-background');
-                  sidebar.classList.add('glass');
-                  resetInput.checked = false;
+                sidebar.classList.add('glass');
+                resetInput.checked = false;
             } else {
-                // Убираем фон с main-container
                 mainContainer.classList.remove('has-background');
                 mainContainer.style.backgroundImage = '';
-                // Возвращаем стили sidebar
                 sidebar.classList.remove('no-background');
                 sidebar.classList.remove('glass');
                 resetInput.checked = true;
@@ -892,7 +886,8 @@ media-src https://meet.jit.si https:;
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        applyBackground(enabled, imagePath);
+                        // Обновляем страницу после успешного сохранения
+                        window.location.reload();
                     }
                 })
                 .catch(error => console.error('Error:', error));
