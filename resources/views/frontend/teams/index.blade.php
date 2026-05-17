@@ -26,7 +26,7 @@
                     <i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>
                 </button>
                 <button
-                    class="flex-1 md:flex-none bg-primary-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-secondary transition text-sm md:text-base"
+                    class="flex-1 md:flex-none bg-primary-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-secondary transition text-sm md:text-base"
                     id="inviteUserBtn">
                     <i class="fas fa-user-plus"></i>
                     <span>Пригласить</span>
@@ -34,412 +34,817 @@
             </div>
         </div>
 
-        <!-- Скрываемый блок фильтров -->
-        <div id="filtersSection"
-             class="bg-white rounded-lg shadow-sm md:shadow-md mb-4 md:mb-6 transition-all duration-300 overflow-hidden"
-             style="max-height: 0; opacity: 0;">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 p-2">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
-                    <input type="text" id="searchInput" placeholder="Поиск по имени или email..."
-                           value="{{ request('search') }}"
-                           class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
+        @if($backgroundEnabled && $backgroundImage)
+            <!-- Скрываемый блок фильтров -->
+            <div id="filtersSection"
+                 class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md mb-4 md:mb-6 transition-all duration-300 overflow-hidden"
+                 style="max-height: 0; opacity: 0;">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 p-2">
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-1">Поиск</label>
+                        <input type="text" id="searchInput" placeholder="Поиск по имени или email..."
+                               value="{{ request('search') }}"
+                               class="w-full px-3 py-2 border-none rounded-lg placeholder:text-white focus:outline-none bg-transparent/20">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-1">Отдел</label>
+                        <select id="departmentFilter"
+                                class="w-full px-3 py-2 border-none rounded-lg focus:outline-none  bg-transparent/20 text-white">
+                            <option value="">Все отделы</option>
+                            @foreach($departments as $department)
+                                <option class="text-gray-800" value="{{ $department->id }}"
+                                    {{ request('department') == $department->id ? 'selected' : '' }}>
+                                    {{ $department->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-1">Роль</label>
+                        <select id="roleFilter"
+                                class="w-full px-3 py-2 border-none rounded-lg focus:outline-none  bg-transparent/20 text-white">
+                            <option value="">Все роли</option>
+                            @foreach($roles as $role)
+                                <option value="{{ $role->id }}" {{ request('role') == $role->id ? 'selected' : '' }}>
+                                    {{ $role->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-1">Статус</label>
+                        <select id="statusFilter"
+                                class="w-full px-3 py-2 border-none rounded-lg focus:outline-none bg-transparent/20 text-white">
+                            <option value="">Все</option>
+                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Активные</option>
+                            <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Неактивные</option>
+                        </select>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
-                    <select id="departmentFilter"
-                            class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-transparent text-sm md:text-base">
-                        <option value="">Все отделы</option>
-                        @foreach($departments as $department)
-                            <option value="{{ $department->id }}"
-                                {{ request('department') == $department->id ? 'selected' : '' }}>
-                                {{ $department->name }}
-                            </option>
-                        @endforeach
-                    </select>
+
+                <!-- Дополнительные фильтры -->
+                <div id="advancedFilters" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 hidden">
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-1">Дата регистрации от</label>
+                        <input type="date" id="dateFrom"
+                               class="w-full px-3 py-2 border-none rounded-lg focus:outline-none text-white bg-transparent/20">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-1">Дата регистрации до</label>
+                        <input type="date" id="dateTo"
+                               class="w-full px-3 py-2 border-none rounded-lg focus:outline-none text-white bg-transparent/20">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-1">Мин. % выполнения</label>
+                        <input type="number" id="completionMin" min="0" max="100" placeholder="0"
+                               class="w-full px-3 py-2 border-none rounded-lg focus:outline-none text-white bg-transparent/20">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-1">Макс. % выполнения</label>
+                        <input type="number" id="completionMax" min="0" max="100" placeholder="100"
+                               class="w-full px-3 py-2 border-none rounded-lg focus:outline-none text-white bg-transparent/20">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Роль</label>
-                    <select id="roleFilter"
-                            class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-transparent text-sm md:text-base">
-                        <option value="">Все роли</option>
-                        @foreach($roles as $role)
-                            <option value="{{ $role->id }}" {{ request('role') == $role->id ? 'selected' : '' }}>
-                                {{ $role->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                    <select id="statusFilter"
-                            class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-transparent text-sm md:text-base">
-                        <option value="">Все</option>
-                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Активные</option>
-                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Неактивные</option>
-                    </select>
+
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
+                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto px-2 mb-2">
+                        <button id="applyFilters"
+                                class="bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                            <i class="fas fa-check"></i>
+                            <span>Применить</span>
+                        </button>
+                        <button id="resetFilters"
+                                class="bg-gray-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-gray-600 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                            <i class="fas fa-redo"></i>
+                            <span>Сбросить</span>
+                        </button>
+                        <button id="toggleAdvancedFilters"
+                                class="bg-purple-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-purple-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                            <i class="fas fa-cog"></i>
+                            <span>Расширенные</span>
+                            <i class="fas fa-chevron-down text-xs ml-1" id="advancedArrow"></i>
+                        </button>
+                    </div>
+                    <div class="text-sm text-white">
+                        Найдено сотрудников: {{ $users->total() }}
+                    </div>
                 </div>
             </div>
+        @else
+            <!-- Скрываемый блок фильтров -->
+            <div id="filtersSection"
+                 class="bg-white rounded-lg shadow-sm md:shadow-md mb-4 md:mb-6 transition-all duration-300 overflow-hidden"
+                 style="max-height: 0; opacity: 0;">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 p-2">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
+                        <input type="text" id="searchInput" placeholder="Поиск по имени или email..."
+                               value="{{ request('search') }}"
+                               class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
+                        <select id="departmentFilter"
+                                class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-transparent text-sm md:text-base">
+                            <option value="">Все отделы</option>
+                            @foreach($departments as $department)
+                                <option value="{{ $department->id }}"
+                                    {{ request('department') == $department->id ? 'selected' : '' }}>
+                                    {{ $department->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Роль</label>
+                        <select id="roleFilter"
+                                class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-transparent text-sm md:text-base">
+                            <option value="">Все роли</option>
+                            @foreach($roles as $role)
+                                <option value="{{ $role->id }}" {{ request('role') == $role->id ? 'selected' : '' }}>
+                                    {{ $role->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
+                        <select id="statusFilter"
+                                class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-transparent text-sm md:text-base">
+                            <option value="">Все</option>
+                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Активные</option>
+                            <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Неактивные</option>
+                        </select>
+                    </div>
+                </div>
 
-            <!-- Дополнительные фильтры -->
-            <div id="advancedFilters" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 hidden">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Дата регистрации от</label>
-                    <input type="date" id="dateFrom"
-                           class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
+                <!-- Дополнительные фильтры -->
+                <div id="advancedFilters" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 hidden">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Дата регистрации от</label>
+                        <input type="date" id="dateFrom"
+                               class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Дата регистрации до</label>
+                        <input type="date" id="dateTo"
+                               class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Мин. % выполнения</label>
+                        <input type="number" id="completionMin" min="0" max="100" placeholder="0"
+                               class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 text-sm md:text-base">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Макс. % выполнения</label>
+                        <input type="number" id="completionMax" min="0" max="100" placeholder="100"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Дата регистрации до</label>
-                    <input type="date" id="dateTo"
-                           class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Мин. % выполнения</label>
-                    <input type="number" id="completionMin" min="0" max="100" placeholder="0"
-                           class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 text-sm md:text-base">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Макс. % выполнения</label>
-                    <input type="number" id="completionMax" min="0" max="100" placeholder="100"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
+
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
+                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+                        <button id="applyFilters"
+                                class="bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                            <i class="fas fa-check"></i>
+                            <span>Применить</span>
+                        </button>
+                        <button id="resetFilters"
+                                class="bg-gray-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-gray-600 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                            <i class="fas fa-redo"></i>
+                            <span>Сбросить</span>
+                        </button>
+                        <button id="toggleAdvancedFilters"
+                                class="bg-purple-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-purple-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                            <i class="fas fa-cog"></i>
+                            <span>Расширенные</span>
+                            <i class="fas fa-chevron-down text-xs ml-1" id="advancedArrow"></i>
+                        </button>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        Найдено сотрудников: {{ $users->total() }}
+                    </div>
                 </div>
             </div>
+        @endif
 
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
-                <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
-                    <button id="applyFilters"
-                            class="bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                        <i class="fas fa-check"></i>
-                        <span>Применить</span>
-                    </button>
-                    <button id="resetFilters"
-                            class="bg-gray-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-gray-600 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                        <i class="fas fa-redo"></i>
-                        <span>Сбросить</span>
-                    </button>
-                    <button id="toggleAdvancedFilters"
-                            class="bg-purple-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-purple-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                        <i class="fas fa-cog"></i>
-                        <span>Расширенные</span>
-                        <i class="fas fa-chevron-down text-xs ml-1" id="advancedArrow"></i>
-                    </button>
+        @if($backgroundEnabled && $backgroundImage)
+            <!-- Основной контейнер с таблицей -->
+            <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
+
+                <!-- Кнопки экспорта и печати -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+                    <div class="text-base md:text-lg font-semibold text-white">
+                        Список сотрудников
+                    </div>
+                    <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                        <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'excel'])) }}"
+                           class="flex-1 sm:flex-none bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                            <i class="fas fa-file-excel"></i>
+                            <span>Excel</span>
+                        </a>
+                        <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'pdf'])) }}"
+                           class="flex-1 sm:flex-none bg-red-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-red-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>PDF</span>
+                        </a>
+                        <a href="{{ route('team.print-table', request()->query()) }}"
+                           target="_blank"
+                           class="flex-1 sm:flex-none bg-blue-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                            <i class="fas fa-print"></i>
+                            <span>Печать</span>
+                        </a>
+                    </div>
                 </div>
-                <div class="text-sm text-gray-600">
-                    Найдено сотрудников: {{ $users->total() }}
-                </div>
-            </div>
-        </div>
 
-
-        <!-- Основной контейнер с таблицей -->
-        <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
-
-            <!-- Кнопки экспорта и печати -->
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
-                <div class="text-base md:text-lg font-semibold text-gray-700">
-                    Список сотрудников
-                </div>
-                <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-                    <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'excel'])) }}"
-                       class="flex-1 sm:flex-none bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                        <i class="fas fa-file-excel"></i>
-                        <span>Excel</span>
-                    </a>
-                    <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'pdf'])) }}"
-                       class="flex-1 sm:flex-none bg-red-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-red-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                        <i class="fas fa-file-pdf"></i>
-                        <span>PDF</span>
-                    </a>
-                    <a href="{{ route('team.print-table', request()->query()) }}"
-                       target="_blank"
-                       class="flex-1 sm:flex-none bg-blue-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                        <i class="fas fa-print"></i>
-                        <span>Печать</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Десктопный вид таблицы -->
-            <div class="overflow-x-auto -mx-4 md:mx-0 hidden md:block">
-                <div class="inline-block min-w-full align-middle">
-                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-300">
-                            <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col"
-                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <a href="{{ request()->fullUrlWithQuery(['sort' => 'name', 'direction' => $currentSort == 'name' && $currentDirection == 'asc' ? 'desc' : 'asc']) }}"
-                                       class="flex items-center space-x-1 hover:text-blue-600 {{ $currentSort == 'name' ? 'text-blue-600 font-semibold' : '' }}">
-                                        <span>Пользователь</span>
-                                        @if($currentSort == 'name')
-                                            <span class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
-                                        @endif
-                                    </a>
-                                </th>
-                                <th scope="col"
-                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Роль
-                                </th>
-                                <th scope="col"
-                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Отделы
-                                </th>
-                                <th scope="col"
-                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Всего задач
-                                </th>
-                                <th scope="col"
-                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Выполнено
-                                </th>
-                                <th scope="col"
-                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    % выполнения
-                                </th>
-                                <th scope="col"
-                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Просрочено
-                                </th>
-                                <th scope="col"
-                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <a href="{{ request()->fullUrlWithQuery(['sort' => 'created_at', 'direction' => $currentSort == 'created_at' && $currentDirection == 'asc' ? 'desc' : 'asc']) }}"
-                                       class="flex items-center space-x-1 hover:text-blue-600 {{ $currentSort == 'created_at' ? 'text-blue-600 font-semibold' : '' }}">
-                                        <span>Зарегистрирован</span>
-                                        @if($currentSort == 'created_at')
-                                            <span class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
-                                        @endif
-                                    </a>
-                                </th>
-                                <th scope="col"
-                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Действия
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @if(isset($users) && $users->count() > 0)
-                                @foreach($users as $user)
-                                    @php
-                                        $stats = $user->getTaskCompletionStats();
-                                        $overdue = $user->assignedTasks()
-                                            ->where('status', '!=', 'выполнена')
-                                            ->where('deadline', '<', now())
-                                            ->count();
-                                    @endphp
-                                    <tr class="bg-white border-b hover:bg-gray-50 transition user-row cursor-pointer"
-                                        data-user-id="{{ $user->id }}">
-                                        <td class="px-3 py-4">
-                                            <div class="flex items-center space-x-3">
-                                                @if($user->avatar)
-                                                    <img src="{{ $user->getAvatarUrlAttribute() }}"
-                                                         alt="{{ $user->name }}"
-                                                         class="w-8 h-8 rounded-full object-cover"
-                                                         style="width:40px; height: 40px;">
-                                                @else
-                                                    <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                                                        <span class="text-gray-600 text-xs font-medium">{{ substr($user->name, 0, 1) }}</span>
+                <!-- Десктопный вид таблицы -->
+                <div class="overflow-x-auto -mx-4 md:mx-0 hidden md:block">
+                    <div class="inline-block min-w-full align-middle">
+                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-300">
+                                <thead class="bg-transparent/20">
+                                <tr>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'name', 'direction' => $currentSort == 'name' && $currentDirection == 'asc' ? 'desc' : 'asc']) }}"
+                                           class="flex items-center space-x-1 hover:text-blue-600 {{ $currentSort == 'name' ? 'text-blue-600 font-semibold' : '' }}">
+                                            <span>Пользователь</span>
+                                            @if($currentSort == 'name')
+                                                <span class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
+                                            @endif
+                                        </a>
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Роль
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Отделы
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Всего задач
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Выполнено
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        % выполнения
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Просрочено
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'created_at', 'direction' => $currentSort == 'created_at' && $currentDirection == 'asc' ? 'desc' : 'asc']) }}"
+                                           class="flex items-center space-x-1 hover:text-blue-600 {{ $currentSort == 'created_at' ? 'text-blue-600 font-semibold' : '' }}">
+                                            <span>Зарегистрирован</span>
+                                            @if($currentSort == 'created_at')
+                                                <span class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
+                                            @endif
+                                        </a>
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Действия
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @if(isset($users) && $users->count() > 0)
+                                    @foreach($users as $user)
+                                        @php
+                                            $stats = $user->getTaskCompletionStats();
+                                            $overdue = $user->assignedTasks()
+                                                ->where('status', '!=', 'выполнена')
+                                                ->where('deadline', '<', now())
+                                                ->count();
+                                        @endphp
+                                        <tr class="bg-transparent/10 border-b hover:bg-gray-50 transition user-row cursor-pointer  text-white hover:text-gray-800"
+                                            data-user-id="{{ $user->id }}">
+                                            <td class="px-3 py-4">
+                                                <div class="flex items-center space-x-3 border-1 border-gray-800">
+                                                    @if($user->avatar)
+                                                        <img src="{{ $user->getAvatarUrlAttribute() }}"
+                                                             alt="{{ $user->name }}"
+                                                             class="w-8 h-8 rounded-full object-cover"
+                                                             style="width:40px; height: 40px;">
+                                                    @else
+                                                        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                                                            <span class="text-white text-xs font-medium">{{ substr($user->name, 0, 1) }}</span>
+                                                        </div>
+                                                    @endif
+                                                    <div class="min-w-0 text-white">
+                                                        <div class="text-sm font-medium hover:text-gray-800 truncate">{{ $user->name }}</div>
+                                                        <div class="text-xs text-gray-500 truncate">{{ $user->email }}</div>
                                                     </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-3 py-4">
+                                                @if($user->role)
+                                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                                        {{ $user->role->name }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-gray-400 text-xs">Не назначена</span>
                                                 @endif
-                                                <div class="min-w-0">
-                                                    <div class="text-sm font-medium text-gray-900 truncate">{{ $user->name }}</div>
-                                                    <div class="text-xs text-gray-500 truncate">{{ $user->email }}</div>
+                                            </td>
+                                            <td class="px-3 py-4 text-sm text-gray-900">
+                                                @if($user->departments->count() > 0)
+                                                    <div class="flex flex-wrap gap-1">
+                                                        @foreach($user->departments as $dept)
+                                                            <span class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                                {{ $dept->name }}
+                                                            </span>
+                                                        @endforeach
+                                                    </div>
+                                                @else
+                                                    <span class="text-gray-400">—</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-3 py-4 font-medium text-sm">{{ $stats['total'] }}</td>
+                                            <td class="px-3 py-4  font-medium text-sm">{{ $stats['completed'] }}</td>
+                                            <td class="px-3 py-4">
+                                                <div class="flex items-center space-x-2">
+                                                    <div class="w-12 bg-gray-200 rounded-full h-1.5">
+                                                        <div class="h-1.5 rounded-full {{ $stats['completion_rate'] >= 80 ? 'bg-green-600' : ($stats['completion_rate'] >= 50 ? 'bg-yellow-500' : 'bg-red-600') }}"
+                                                             style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
+                                                    </div>
+                                                    <span class="text-xs font-medium {{ $stats['completion_rate'] >= 80 ? 'text-green-600' : ($stats['completion_rate'] >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
+                                                        {{ $stats['completion_rate'] }}%
+                                                    </span>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-3 py-4">
-                                            @if($user->role)
-                                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                                                    {{ $user->role->name }}
+                                            </td>
+                                            <td class="px-3 py-4">
+                                                <span class="text-sm">
+                                                    {{ $overdue }}
                                                 </span>
-                                            @else
-                                                <span class="text-gray-400 text-xs">Не назначена</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-3 py-4 text-sm text-gray-900">
-                                            @if($user->departments->count() > 0)
-                                                <div class="flex flex-wrap gap-1">
-                                                    @foreach($user->departments as $dept)
-                                                        <span class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                                                            {{ $dept->name }}
-                                                        </span>
-                                                    @endforeach
+                                            </td>
+                                            <td class="px-3 py-4 text-sm ">{{ $user->created_at->format('d.m.Y') }}</td>
+                                            <td class="px-3 py-4">
+                                                <div class="flex items-center space-x-2">
+                                                    <button class="view-user-btn text-green-600 hover:text-green-800 p-1"
+                                                            data-user-id="{{ $user->id }}" title="Просмотр">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
+                                                            data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" title="Удалить">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
                                                 </div>
-                                            @else
-                                                <span class="text-gray-400">—</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-3 py-4 font-medium text-sm">{{ $stats['total'] }}</td>
-                                        <td class="px-3 py-4 text-green-600 font-medium text-sm">{{ $stats['completed'] }}</td>
-                                        <td class="px-3 py-4">
-                                            <div class="flex items-center space-x-2">
-                                                <div class="w-12 bg-gray-200 rounded-full h-1.5">
-                                                    <div class="h-1.5 rounded-full {{ $stats['completion_rate'] >= 80 ? 'bg-green-600' : ($stats['completion_rate'] >= 50 ? 'bg-yellow-500' : 'bg-red-600') }}"
-                                                         style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
-                                                </div>
-                                                <span class="text-xs font-medium {{ $stats['completion_rate'] >= 80 ? 'text-green-600' : ($stats['completion_rate'] >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
-                                                    {{ $stats['completion_rate'] }}%
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td class="px-3 py-4">
-                                            <span class="text-sm {{ $overdue > 0 ? 'text-red-600 font-medium' : 'text-green-600' }}">
-                                                {{ $overdue }}
-                                            </span>
-                                        </td>
-                                        <td class="px-3 py-4 text-sm text-gray-900">{{ $user->created_at->format('d.m.Y') }}</td>
-                                        <td class="px-3 py-4">
-                                            <div class="flex items-center space-x-2">
-                                                <button class="view-user-btn text-green-600 hover:text-green-800 p-1"
-                                                        data-user-id="{{ $user->id }}" title="Просмотр">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
-                                                        data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" title="Удалить">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="10" class="px-6 py-4 text-center text-gray-500">
+                                            <div class="flex flex-col items-center justify-center py-8">
+                                                <i class="fas fa-users text-4xl text-gray-300 mb-4"></i>
+                                                <p class="text-lg font-medium text-gray-500">Сотрудники не найдены</p>
+                                                <p class="text-gray-400 text-sm">Попробуйте изменить параметры фильтрации</p>
                                             </div>
                                         </td>
                                     </tr>
-                                @endforeach
-                            @else
-                                <tr>
-                                    <td colspan="10" class="px-6 py-4 text-center text-gray-500">
-                                        <div class="flex flex-col items-center justify-center py-8">
-                                            <i class="fas fa-users text-4xl text-gray-300 mb-4"></i>
-                                            <p class="text-lg font-medium text-gray-500">Сотрудники не найдены</p>
-                                            <p class="text-gray-400 text-sm">Попробуйте изменить параметры фильтрации</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endif
-                            </tbody>
-                        </table>
+                                @endif
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Мобильный вид (карточки) -->
-            <div class="md:hidden space-y-4">
-                @forelse($users as $user)
-                    @php
-                        $stats = $user->getTaskCompletionStats();
-                        $overdue = $user->assignedTasks()
-                            ->where('status', '!=', 'выполнена')
-                            ->where('deadline', '<', now())
-                            ->count();
-                    @endphp
-                    <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm user-row cursor-pointer"
-                         data-user-id="{{ $user->id }}">
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="flex items-center space-x-3">
-                                @if($user->avatar)
-                                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full">
-                                @else
-                                    <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                                        <span class="text-gray-600 font-medium">{{ substr($user->name, 0, 1) }}</span>
+                <!-- Мобильный вид (карточки) -->
+                <div class="md:hidden space-y-4">
+                    @forelse($users as $user)
+                        @php
+                            $stats = $user->getTaskCompletionStats();
+                            $overdue = $user->assignedTasks()
+                                ->where('status', '!=', 'выполнена')
+                                ->where('deadline', '<', now())
+                                ->count();
+                        @endphp
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm user-row cursor-pointer"
+                             data-user-id="{{ $user->id }}">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center space-x-3">
+                                    @if($user->avatar)
+                                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full">
+                                    @else
+                                        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                                            <span class="text-gray-600 font-medium">{{ substr($user->name, 0, 1) }}</span>
+                                        </div>
+                                    @endif
+                                    <div class="min-w-0">
+                                        <h3 class="font-semibold text-gray-900 truncate">{{ $user->name }}</h3>
+                                        <p class="text-sm text-gray-600 truncate">{{ $user->email }}</p>
                                     </div>
-                                @endif
-                                <div class="min-w-0">
-                                    <h3 class="font-semibold text-gray-900 truncate">{{ $user->name }}</h3>
-                                    <p class="text-sm text-gray-600 truncate">{{ $user->email }}</p>
+                                </div>
+                                <div class="flex space-x-1">
+                                    <button class="view-user-btn text-green-600 hover:text-green-800 p-1"
+                                            data-user-id="{{ $user->id }}" title="Просмотр">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
+                                            data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" title="Удалить">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="flex space-x-1">
-                                <button class="view-user-btn text-green-600 hover:text-green-800 p-1"
-                                        data-user-id="{{ $user->id }}" title="Просмотр">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
-                                        data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" title="Удалить">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+
+                            <div class="space-y-3">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <span class="text-xs text-gray-600 block mb-1">Роль:</span>
+                                        @if($user->role)
+                                            <span class="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs">
+                                                {{ $user->role->name }}
+                                            </span>
+                                        @else
+                                            <span class="text-gray-400 text-xs">Не назначена</span>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <span class="text-xs text-gray-600 block mb-1">Отделы:</span>
+                                        <div class="flex flex-wrap gap-1">
+                                            @forelse($user->departments as $dept)
+                                                <span class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                    {{ $dept->name }}
+                                                </span>
+                                            @empty
+                                                <span class="text-sm text-gray-400">—</span>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <span class="text-xs text-gray-600 block mb-1">Всего задач:</span>
+                                        <span class="text-sm font-medium">{{ $stats['total'] }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs text-gray-600 block mb-1">Выполнено:</span>
+                                        <span class="text-sm font-medium text-green-600">{{ $stats['completed'] }}</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-xs text-gray-600">% выполнения:</span>
+                                        <span class="text-xs font-medium {{ $stats['completion_rate'] >= 80 ? 'text-green-600' : ($stats['completion_rate'] >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
+                                            {{ $stats['completion_rate'] }}%
+                                        </span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                        <div class="h-1.5 rounded-full {{ $stats['completion_rate'] >= 80 ? 'bg-green-600' : ($stats['completion_rate'] >= 50 ? 'bg-yellow-500' : 'bg-red-600') }}"
+                                             style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <span class="text-xs text-gray-600 block mb-1">Просрочено:</span>
+                                        <span class="text-sm font-medium {{ $overdue > 0 ? 'text-red-600' : 'text-green-600' }}">
+                                            {{ $overdue }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs text-gray-600 block mb-1">Зарегистрирован:</span>
+                                        <span class="text-sm">{{ $user->created_at->format('d.m.Y') }}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    @empty
+                        <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
+                            <i class="fas fa-users text-4xl text-gray-300 mb-4"></i>
+                            <p class="text-lg font-medium text-gray-500">Сотрудники не найдены</p>
+                            <p class="text-gray-400 text-sm">Попробуйте изменить параметры фильтрации</p>
+                        </div>
+                    @endforelse
+                </div>
 
-                        <div class="space-y-3">
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <span class="text-xs text-gray-600 block mb-1">Роль:</span>
-                                    @if($user->role)
-                                        <span class="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs">
+                <!-- Пагинация -->
+                @if($users->hasPages())
+                    <div class="mt-4 md:mt-6">
+                        {{ $users->links('vendor.pagination.tailwind') }}
+                    </div>
+                @endif
+            </div>
+        @else
+            <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
+
+                <!-- Кнопки экспорта и печати -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+                    <div class="text-base md:text-lg font-semibold text-gray-700">
+                        Список сотрудников
+                    </div>
+                    <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                        <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'excel'])) }}"
+                           class="flex-1 sm:flex-none bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                            <i class="fas fa-file-excel"></i>
+                            <span>Excel</span>
+                        </a>
+                        <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'pdf'])) }}"
+                           class="flex-1 sm:flex-none bg-red-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-red-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>PDF</span>
+                        </a>
+                        <a href="{{ route('team.print-table', request()->query()) }}"
+                           target="_blank"
+                           class="flex-1 sm:flex-none bg-blue-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                            <i class="fas fa-print"></i>
+                            <span>Печать</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Десктопный вид таблицы -->
+                <div class="overflow-x-auto -mx-4 md:mx-0 hidden md:block">
+                    <div class="inline-block min-w-full align-middle">
+                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-300">
+                                <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'name', 'direction' => $currentSort == 'name' && $currentDirection == 'asc' ? 'desc' : 'asc']) }}"
+                                           class="flex items-center space-x-1 hover:text-blue-600 {{ $currentSort == 'name' ? 'text-blue-600 font-semibold' : '' }}">
+                                            <span>Пользователь</span>
+                                            @if($currentSort == 'name')
+                                                <span class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
+                                            @endif
+                                        </a>
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Роль
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Отделы
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Всего задач
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Выполнено
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        % выполнения
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Просрочено
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'created_at', 'direction' => $currentSort == 'created_at' && $currentDirection == 'asc' ? 'desc' : 'asc']) }}"
+                                           class="flex items-center space-x-1 hover:text-blue-600 {{ $currentSort == 'created_at' ? 'text-blue-600 font-semibold' : '' }}">
+                                            <span>Зарегистрирован</span>
+                                            @if($currentSort == 'created_at')
+                                                <span class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
+                                            @endif
+                                        </a>
+                                    </th>
+                                    <th scope="col"
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Действия
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @if(isset($users) && $users->count() > 0)
+                                    @foreach($users as $user)
+                                        @php
+                                            $stats = $user->getTaskCompletionStats();
+                                            $overdue = $user->assignedTasks()
+                                                ->where('status', '!=', 'выполнена')
+                                                ->where('deadline', '<', now())
+                                                ->count();
+                                        @endphp
+                                        <tr class="bg-white border-b hover:bg-gray-50 transition user-row cursor-pointer"
+                                            data-user-id="{{ $user->id }}">
+                                            <td class="px-3 py-4">
+                                                <div class="flex items-center space-x-3">
+                                                    @if($user->avatar)
+                                                        <img src="{{ $user->getAvatarUrlAttribute() }}"
+                                                             alt="{{ $user->name }}"
+                                                             class="w-8 h-8 rounded-full object-cover"
+                                                             style="width:40px; height: 40px;">
+                                                    @else
+                                                        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                                                            <span class="text-gray-600 text-xs font-medium">{{ substr($user->name, 0, 1) }}</span>
+                                                        </div>
+                                                    @endif
+                                                    <div class="min-w-0">
+                                                        <div class="text-sm font-medium text-gray-900 truncate">{{ $user->name }}</div>
+                                                        <div class="text-xs text-gray-500 truncate">{{ $user->email }}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-3 py-4">
+                                                @if($user->role)
+                                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                                    {{ $user->role->name }}
+                                                </span>
+                                                @else
+                                                    <span class="text-gray-400 text-xs">Не назначена</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-3 py-4 text-sm text-gray-900">
+                                                @if($user->departments->count() > 0)
+                                                    <div class="flex flex-wrap gap-1">
+                                                        @foreach($user->departments as $dept)
+                                                            <span class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                            {{ $dept->name }}
+                                                        </span>
+                                                        @endforeach
+                                                    </div>
+                                                @else
+                                                    <span class="text-gray-400">—</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-3 py-4 font-medium text-sm">{{ $stats['total'] }}</td>
+                                            <td class="px-3 py-4 text-green-600 font-medium text-sm">{{ $stats['completed'] }}</td>
+                                            <td class="px-3 py-4">
+                                                <div class="flex items-center space-x-2">
+                                                    <div class="w-12 bg-gray-200 rounded-full h-1.5">
+                                                        <div class="h-1.5 rounded-full {{ $stats['completion_rate'] >= 80 ? 'bg-green-600' : ($stats['completion_rate'] >= 50 ? 'bg-yellow-500' : 'bg-red-600') }}"
+                                                             style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
+                                                    </div>
+                                                    <span class="text-xs font-medium {{ $stats['completion_rate'] >= 80 ? 'text-green-600' : ($stats['completion_rate'] >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
+                                                    {{ $stats['completion_rate'] }}%
+                                                </span>
+                                                </div>
+                                            </td>
+                                            <td class="px-3 py-4">
+                                            <span class="text-sm {{ $overdue > 0 ? 'text-red-600 font-medium' : 'text-green-600' }}">
+                                                {{ $overdue }}
+                                            </span>
+                                            </td>
+                                            <td class="px-3 py-4 text-sm text-gray-900">{{ $user->created_at->format('d.m.Y') }}</td>
+                                            <td class="px-3 py-4">
+                                                <div class="flex items-center space-x-2">
+                                                    <button class="view-user-btn text-green-600 hover:text-green-800 p-1"
+                                                            data-user-id="{{ $user->id }}" title="Просмотр">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
+                                                            data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" title="Удалить">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="10" class="px-6 py-4 text-center text-gray-500">
+                                            <div class="flex flex-col items-center justify-center py-8">
+                                                <i class="fas fa-users text-4xl text-gray-300 mb-4"></i>
+                                                <p class="text-lg font-medium text-gray-500">Сотрудники не найдены</p>
+                                                <p class="text-gray-400 text-sm">Попробуйте изменить параметры фильтрации</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Мобильный вид (карточки) -->
+                <div class="md:hidden space-y-4">
+                    @forelse($users as $user)
+                        @php
+                            $stats = $user->getTaskCompletionStats();
+                            $overdue = $user->assignedTasks()
+                                ->where('status', '!=', 'выполнена')
+                                ->where('deadline', '<', now())
+                                ->count();
+                        @endphp
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm user-row cursor-pointer"
+                             data-user-id="{{ $user->id }}">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center space-x-3">
+                                    @if($user->avatar)
+                                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full">
+                                    @else
+                                        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                                            <span class="text-gray-600 font-medium">{{ substr($user->name, 0, 1) }}</span>
+                                        </div>
+                                    @endif
+                                    <div class="min-w-0">
+                                        <h3 class="font-semibold text-gray-900 truncate">{{ $user->name }}</h3>
+                                        <p class="text-sm text-gray-600 truncate">{{ $user->email }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-1">
+                                    <button class="view-user-btn text-green-600 hover:text-green-800 p-1"
+                                            data-user-id="{{ $user->id }}" title="Просмотр">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
+                                            data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" title="Удалить">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <span class="text-xs text-gray-600 block mb-1">Роль:</span>
+                                        @if($user->role)
+                                            <span class="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs">
                                             {{ $user->role->name }}
                                         </span>
-                                    @else
-                                        <span class="text-gray-400 text-xs">Не назначена</span>
-                                    @endif
-                                </div>
-                                <div>
-                                    <span class="text-xs text-gray-600 block mb-1">Отделы:</span>
-                                    <div class="flex flex-wrap gap-1">
-                                        @forelse($user->departments as $dept)
-                                            <span class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                        @else
+                                            <span class="text-gray-400 text-xs">Не назначена</span>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <span class="text-xs text-gray-600 block mb-1">Отделы:</span>
+                                        <div class="flex flex-wrap gap-1">
+                                            @forelse($user->departments as $dept)
+                                                <span class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
                                                 {{ $dept->name }}
                                             </span>
-                                        @empty
-                                            <span class="text-sm text-gray-400">—</span>
-                                        @endforelse
+                                            @empty
+                                                <span class="text-sm text-gray-400">—</span>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <span class="text-xs text-gray-600 block mb-1">Всего задач:</span>
+                                        <span class="text-sm font-medium">{{ $stats['total'] }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs text-gray-600 block mb-1">Выполнено:</span>
+                                        <span class="text-sm font-medium text-green-600">{{ $stats['completed'] }}</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-xs text-gray-600">% выполнения:</span>
+                                        <span class="text-xs font-medium {{ $stats['completion_rate'] >= 80 ? 'text-green-600' : ($stats['completion_rate'] >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
+                                        {{ $stats['completion_rate'] }}%
+                                    </span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                        <div class="h-1.5 rounded-full {{ $stats['completion_rate'] >= 80 ? 'bg-green-600' : ($stats['completion_rate'] >= 50 ? 'bg-yellow-500' : 'bg-red-600') }}"
+                                             style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <span class="text-xs text-gray-600 block mb-1">Просрочено:</span>
+                                        <span class="text-sm font-medium {{ $overdue > 0 ? 'text-red-600' : 'text-green-600' }}">
+                                        {{ $overdue }}
+                                    </span>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs text-gray-600 block mb-1">Зарегистрирован:</span>
+                                        <span class="text-sm">{{ $user->created_at->format('d.m.Y') }}</span>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <span class="text-xs text-gray-600 block mb-1">Всего задач:</span>
-                                    <span class="text-sm font-medium">{{ $stats['total'] }}</span>
-                                </div>
-                                <div>
-                                    <span class="text-xs text-gray-600 block mb-1">Выполнено:</span>
-                                    <span class="text-sm font-medium text-green-600">{{ $stats['completed'] }}</span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="flex justify-between items-center mb-1">
-                                    <span class="text-xs text-gray-600">% выполнения:</span>
-                                    <span class="text-xs font-medium {{ $stats['completion_rate'] >= 80 ? 'text-green-600' : ($stats['completion_rate'] >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
-                                        {{ $stats['completion_rate'] }}%
-                                    </span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                    <div class="h-1.5 rounded-full {{ $stats['completion_rate'] >= 80 ? 'bg-green-600' : ($stats['completion_rate'] >= 50 ? 'bg-yellow-500' : 'bg-red-600') }}"
-                                         style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <span class="text-xs text-gray-600 block mb-1">Просрочено:</span>
-                                    <span class="text-sm font-medium {{ $overdue > 0 ? 'text-red-600' : 'text-green-600' }}">
-                                        {{ $overdue }}
-                                    </span>
-                                </div>
-                                <div>
-                                    <span class="text-xs text-gray-600 block mb-1">Зарегистрирован:</span>
-                                    <span class="text-sm">{{ $user->created_at->format('d.m.Y') }}</span>
-                                </div>
-                            </div>
                         </div>
-                    </div>
-                @empty
-                    <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
-                        <i class="fas fa-users text-4xl text-gray-300 mb-4"></i>
-                        <p class="text-lg font-medium text-gray-500">Сотрудники не найдены</p>
-                        <p class="text-gray-400 text-sm">Попробуйте изменить параметры фильтрации</p>
-                    </div>
-                @endforelse
-            </div>
-
-            <!-- Пагинация -->
-            @if($users->hasPages())
-                <div class="mt-4 md:mt-6">
-                    {{ $users->links('vendor.pagination.tailwind') }}
+                    @empty
+                        <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
+                            <i class="fas fa-users text-4xl text-gray-300 mb-4"></i>
+                            <p class="text-lg font-medium text-gray-500">Сотрудники не найдены</p>
+                            <p class="text-gray-400 text-sm">Попробуйте изменить параметры фильтрации</p>
+                        </div>
+                    @endforelse
                 </div>
-            @endif
-        </div>
+
+                <!-- Пагинация -->
+                @if($users->hasPages())
+                    <div class="mt-4 md:mt-6">
+                        {{ $users->links('vendor.pagination.tailwind') }}
+                    </div>
+                @endif
+            </div>
+        @endif
+
     </div>
 
     <!-- Модальное окно пользователя -->
-    <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+    <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4" style="backdrop-filter: blur(10px)">
         <div class="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div class="p-4 md:p-6">
                 <div class="flex justify-between items-center mb-4 md:mb-6">

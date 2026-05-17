@@ -33,24 +33,25 @@
         </div>
 
         <!-- Фильтры и поиск -->
-        <div id="filtersPanel" class="bg-white rounded-lg border-b border-gray-200 hidden mb-[20px]">
-            <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        @if($backgroundEnabled && $backgroundImage)
+            <div id="filtersPanel" class="backdrop-blur-md bg-transparent/20 rounded-lg border-gray-200 hidden mb-[20px]">
+                <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <form method="GET" action="{{ route('tasks.admin') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                     <!-- Поиск -->
                     <div class="sm:col-span-2 lg:col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
+                        <label class="block text-sm font-medium text-white mb-1">Поиск</label>
                         <input type="text" name="search" value="{{ request('search') }}"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white"
+                               class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10"
                                placeholder="Название или описание...">
                     </div>
 
                     <!-- Статус -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                        <select name="status" class="w-full border border-gray-300 rounded-lg appearance-none px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
-                            <option value="" class="appearance-none">Все статусы</option>
+                        <label class="block text-sm font-medium text-white mb-1">Статус</label>
+                        <select name="status" class="w-full border border-gray-800 rounded-lg appearance-none px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                            <option value="">Все статусы</option>
                             @foreach($filterData['statuses'] as $status)
-                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                                <option class="text-gray-800" value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
                                     {{ $status }}
                                 </option>
                             @endforeach
@@ -59,11 +60,11 @@
 
                     <!-- Исполнитель -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Исполнитель</label>
-                        <select name="user_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                        <label class="block text-sm font-medium text-white mb-1">Исполнитель</label>
+                        <select name="user_id" class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
                             <option value="">Все исполнители</option>
                             @foreach($filterData['users'] as $user)
-                                <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                                <option class="text-gray-800" value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
                                     {{ $user->name }}
                                 </option>
                             @endforeach
@@ -72,11 +73,11 @@
 
                     <!-- Отдел -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
-                        <select name="department_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-500 bg-white">
+                        <label class="block text-sm font-medium text-white mb-1">Отдел</label>
+                        <select name="department_id" class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
                             <option value="">Все отделы</option>
                             @foreach($filterData['departments'] as $department)
-                                <option value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
+                                <option class="text-gray-800" value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
                                     {{ $department->name }}
                                 </option>
                             @endforeach
@@ -85,11 +86,11 @@
 
                     <!-- Приоритет -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
-                        <select name="priority" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                        <label class="block text-sm font-medium text-white mb-1">Приоритет</label>
+                        <select name="priority" class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm  text-white focus:outline-none backdrop-blur-md bg-transparent/10">
                             <option value="">Все приоритеты</option>
                             @foreach($filterData['priorities'] as $priority)
-                                <option value="{{ $priority }}" {{ request('priority') == $priority ? 'selected' : '' }}>
+                                <option class="text-gray-800" value="{{ $priority }}" {{ request('priority') == $priority ? 'selected' : '' }}>
                                     {{ $priority }}
                                 </option>
                             @endforeach
@@ -98,11 +99,11 @@
 
                     <!-- Категория -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
-                        <select name="category_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                        <label class="block text-sm  text-white mb-1">Категория</label>
+                        <select name="category_id" class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm  text-white focus:outline-none backdrop-blur-md bg-transparent/10">
                             <option value="">Все категории</option>
                             @foreach($filterData['categories'] as $category)
-                                <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                <option class="text-gray-800" value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
                                     {{ $category->name }}
                                 </option>
                             @endforeach
@@ -120,7 +121,98 @@
                     </div>
                 </form>
             </div>
-        </div>
+            </div>
+        @else
+            <div id="filtersPanel" class="bg-white rounded-lg border-gray-200 hidden mb-[20px]">
+                <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <form method="GET" action="{{ route('tasks.admin') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                        <!-- Поиск -->
+                        <div class="sm:col-span-2 lg:col-span-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
+                            <input type="text" name="search" value="{{ request('search') }}"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white"
+                                   placeholder="Название или описание...">
+                        </div>
+
+                        <!-- Статус -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
+                            <select name="status" class="w-full border border-gray-300 rounded-lg appearance-none px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                                <option value="" class="appearance-none">Все статусы</option>
+                                @foreach($filterData['statuses'] as $status)
+                                    <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                                        {{ $status }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Исполнитель -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Исполнитель</label>
+                            <select name="user_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                                <option value="">Все исполнители</option>
+                                @foreach($filterData['users'] as $user)
+                                    <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                                        {{ $user->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Отдел -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
+                            <select name="department_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-500 bg-white">
+                                <option value="">Все отделы</option>
+                                @foreach($filterData['departments'] as $department)
+                                    <option value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
+                                        {{ $department->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Приоритет -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
+                            <select name="priority" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                                <option value="">Все приоритеты</option>
+                                @foreach($filterData['priorities'] as $priority)
+                                    <option value="{{ $priority }}" {{ request('priority') == $priority ? 'selected' : '' }}>
+                                        {{ $priority }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Категория -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
+                            <select name="category_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                                <option value="">Все категории</option>
+                                @foreach($filterData['categories'] as $category)
+                                    <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                        {{ $category->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Кнопки фильтра -->
+                        <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base">
+                                Применить фильтры
+                            </button>
+                            <a href="{{ route('tasks.admin') }}" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm md:text-base">
+                                Сбросить
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        @endif
+
         <!-- Статистика в виде карточек -->
         @if($backgroundEnabled && $backgroundImage)
             <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-6 mb-6 md:mb-8">
@@ -304,13 +396,13 @@
                     Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
                 </div>
                 <div class="w-full sm:w-auto">
-                    <select id="sortSelect" class="w-full  sm:w-48 border border-gray-300 rounded-lg px-3 py-2  focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base background-none">
-                        <option value="created_at_desc">Новые сначала</option>
-                        <option value="created_at_asc">Старые сначала</option>
-                        <option value="deadline_asc">Ближайший дедлайн</option>
-                        <option value="deadline_desc">Дальний дедлайн</option>
-                        <option value="priority_desc">Высокий приоритет</option>
-                        <option value="name_asc">По названию (А-Я)</option>
+                    <select id="sortSelect" class="w-full  sm:w-48 border border-gray-800 rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
+                        <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
+                        <option class="text-gray-800" value="created_at_asc">Старые сначала</option>
+                        <option class="text-gray-800" value="deadline_asc">Ближайший дедлайн</option>
+                        <option class="text-gray-800" value="deadline_desc">Дальний дедлайн</option>
+                        <option class="text-gray-800" value="priority_desc">Высокий приоритет</option>
+                        <option class="text-gray-800" value="name_asc">По названию (А-Я)</option>
                     </select>
                 </div>
             </div>
@@ -335,8 +427,9 @@
                             </thead>
                             <tbody class="backdrop-blur-md bg-transparent/10 divide-y divide-gray-200">
                             @forelse($tasks as $task)
-                                <tr class="hover:bg-gray-50 transition text-white  hover:text-gray-900 @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif">
-                                    <td class="px-3 py-4   hover:text-gray-900">
+                                <tr class="hover:bg-gray-50 transition text-white  hover:text-gray-900 @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif"
+                                    >
+                                    <td class="px-3 py-4 cursor-pointer   hover:text-gray-900" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
                                         <div class="flex items-start ">
                                             <div class="ml-2 hover:text-gray-900">
                                                 <div class="text-sm font-medium flex items-center flex-wrap gap-1">
@@ -371,7 +464,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-3 py-4 whitespace-nowrap">
+                                    <td class="px-3 py-4 cursor-pointer whitespace-nowrap" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
                                         @if($task->trashed())
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
                                                 Удалена
@@ -388,7 +481,7 @@
 
                                         @endif
                                     </td>
-                                    <td class="px-3 py-4">
+                                    <td class="px-3 py-4 cursor-pointer" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
                                         @if($task->user)
                                             <div class="flex items-center">
                                                 <div class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium">
@@ -403,10 +496,10 @@
                                             <span class="text-sm text-gray-500">Не назначен</span>
                                         @endif
                                     </td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td class="px-3 py-4 cursor-pointer whitespace-nowrap text-sm text-gray-500" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
                                         {{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : 'Без отдела') }}
                                     </td>
-                                    <td class="px-3 py-4 whitespace-nowrap">
+                                    <td class="px-3 py-4 cursor-pointer whitespace-nowrap" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
                                         @php
                                             $priorityColors = [
                                                 'низкий' => 'bg-gray-100 text-gray-800',
@@ -423,14 +516,14 @@
                                             <span class="text-sm text-gray-400">—</span>
                                         @endif
                                     </td>
-                                    <td class="px-3 py-4 whitespace-nowrap">
+                                    <td class="px-3 py-4 cursor-pointer whitespace-nowrap" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
                                         @if($task->author)
                                             <div class="text-sm font-medium truncate max-w-[100px]">{{ $task->author->name }}</div>
                                         @else
                                             <span class="text-sm">Нет автора</span>
                                         @endif
                                     </td>
-                                    <td class="px-3 py-4">
+                                    <td class="px-3 py-4 cursor-pointer" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
                                         @if($task->deadline && !$task->trashed())
                                             <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }} text-sm">
                                                 {{ $task->deadline->format('d.m.Y H:i') }}
@@ -487,7 +580,8 @@
                         <!-- Мобильный вид таблицы (карточки) -->
                         <div class="md:hidden space-y-3">
                             @forelse($tasks as $task)
-                                <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif">
+                                <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm cursor-pointer hover:shadow-md transition @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif"
+                                     onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})">
                                     <!-- Заголовок карточки -->
                                     <div class="flex justify-between items-start mb-3">
                                         <div class="flex-1">
@@ -660,7 +754,7 @@
                     Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
                 </div>
                 <div class="w-full sm:w-auto">
-                    <select id="sortSelect" class="w-full sm:w-48 border border-gray-300 rounded-lg px-3 py-2 bg-none focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
+                    <select id="sortSelect" class="w-full sm:w-48 border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
                         <option value="created_at_desc">Новые сначала</option>
                         <option value="created_at_asc">Старые сначала</option>
                         <option value="deadline_asc">Ближайший дедлайн</option>
@@ -1300,6 +1394,27 @@
                 <button onclick="closeDeleteModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 text-sm md:text-base">
                     Отмена
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно просмотра задачи -->
+    <div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4" style="backdrop-filter: blur(10px)">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-gray-800">
+                    <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                    Информация о задаче
+                </h3>
+                <button onclick="closeTaskViewModal()" class="text-gray-400 hover:text-gray-600 transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="taskModalContent" class="p-6">
+                <div class="text-center py-8">
+                    <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
+                    <p class="text-gray-500 mt-2">Загрузка...</p>
+                </div>
             </div>
         </div>
     </div>
