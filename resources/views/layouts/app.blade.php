@@ -848,22 +848,16 @@ media-src https://meet.jit.si https:;
         const mainContainer = document.querySelector('.main-container');
         const sidebar = document.querySelector('.sidebar');
         const resetInput = document.getElementById('reset-background-input');
-        // const settingBtn = document.querySelector('.setting-button');
-        // const chatBtn = document.querySelector('.chat-button');
+
         function applyBackground(enabled, imagePath) {
             if (enabled && imagePath) {
-                // Включаем фон на main-container
                 mainContainer.classList.add('has-background');
                 mainContainer.style.backgroundImage = `url(${imagePath})`;
-                // Убираем все стили у sidebar
-                // sidebar.classList.add('no-background');
-                  sidebar.classList.add('glass');
-                  resetInput.checked = false;
+                sidebar.classList.add('glass');
+                resetInput.checked = false;
             } else {
-                // Убираем фон с main-container
                 mainContainer.classList.remove('has-background');
                 mainContainer.style.backgroundImage = '';
-                // Возвращаем стили sidebar
                 sidebar.classList.remove('no-background');
                 sidebar.classList.remove('glass');
                 resetInput.checked = true;
@@ -892,7 +886,8 @@ media-src https://meet.jit.si https:;
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        applyBackground(enabled, imagePath);
+                        // Обновляем страницу после успешного сохранения
+                        window.location.reload();
                     }
                 })
                 .catch(error => console.error('Error:', error));
@@ -2146,7 +2141,19 @@ media-src https://meet.jit.si https:;
     overlay.addEventListener('click', closeSidebar);
 </script>
 
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=109251601', 'ym');
 
+    ym(109251601, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/109251601" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
 @stack('scripts')
 
 </body>
