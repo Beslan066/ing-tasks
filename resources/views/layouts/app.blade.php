@@ -637,7 +637,7 @@ media-src https://meet.jit.si https:;
      class="fixed inset-0 bg-black/50 z-[998] hidden max-[638px]:[&.active]:block transition-opacity duration-300">
 </div>
     <!-- Основной контент -->
-    <div class="flex-1 min-h-[calc(100vh-80px)] max-[638px]:pt-[30px] max-[638px]:w-full">
+    <div class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:pt-[30px] max-[638px]:w-full">
 
     <!-- Бургер меню -->
       <button id="burger-btn" class="burger-btn">
