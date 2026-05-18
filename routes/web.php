@@ -11,6 +11,7 @@ use App\Http\Controllers\Frontend\UserController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Frontend\SmtpSettingController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -76,6 +77,7 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
     Route::get('/home', [\App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('welcome');
     Route::get('/all-tasks', [App\Http\Controllers\Frontend\HomeController::class, 'allTasks'])->name('allTasks');
     Route::get('/tools', [\App\Http\Controllers\Frontend\ToolController::class, 'index'])->name('tools.index');
+
 
     // Админская страница для руководителей и менеджеров
     Route::get('/admin/tasks', [\App\Http\Controllers\Frontend\HomeController::class, 'indexAdmin'])->name('tasks.admin');

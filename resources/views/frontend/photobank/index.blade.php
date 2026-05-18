@@ -1,12 +1,22 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container mx-auto px-4 py-8" x-data="photobankApp()" x-init="init()" x-cloak>
+    @php
+        $backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
+        $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
+    @endphp
+    <div   x-data="photobankApp()" x-cloak>
         <!-- Заголовок и кнопки -->
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
+
             <div>
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Фотобанк</h2>
-                <p class="text-gray-600 dark:text-gray-400 mt-2" x-text="`${totalPhotos} фотографий`"></p>
+                @if($backgroundEnabled && $backgroundImage)
+                    <h2 class="text-3xl font-bold text-white">Фотобанк</h2>
+                    <p class="text-white text-sm">Инструменты для продуктивной работы</p>
+                @else
+                    <h2 class="text-3xl font-bold text-[#16a34a]">Инструменты</h2>
+                    <p class="text-white text-sm">Инструменты для продуктивной работы</p>
+                @endif
             </div>
             <div class="flex gap-3">
                 <button @click="showFilters = !showFilters"
@@ -59,75 +69,141 @@
         </div>
 
         <!-- Раскрывающаяся панель фильтров -->
-        <div x-show="showFilters"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 transform -translate-y-4"
-             x-transition:enter-end="opacity-100 transform translate-y-0"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100 transform translate-y-0"
-             x-transition:leave-end="opacity-0 transform -translate-y-4"
-             class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Поиск</label>
-                    <input type="text" x-model="filters.search" @input.debounce.500ms="loadPhotos"
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
-                           placeholder="Название, описание...">
+        @if($backgroundEnabled && $backgroundImage)
+            <div x-show="showFilters"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 transform -translate-y-4"
+                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 transform translate-y-0"
+                 x-transition:leave-end="opacity-0 transform -translate-y-4"
+                 class="backdrop-blur-md bg-transparent/20  rounded-lg shadow-md p-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-2">Поиск</label>
+                        <input type="text" x-model="filters.search" @input.debounce.500ms="loadPhotos"
+                               class="w-full px-4 py-2 border-none bg-transparent/20 rounded-lg outline-none placeholder:text-white"
+                               placeholder="Название, описание...">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-2">Категория</label>
+                        <select x-model="filters.category" @change="loadPhotos"
+                                class="w-full px-4 py-2 border-none bg-transparent/20 rounded-lg outline-none text-white">
+                            <option value="">Все категории</option>
+                            <template x-for="category in categoriesData" :key="category.id">
+                                <option :value="category.id" x-text="category.name"></option>
+                            </template>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-2">Теги</label>
+                        <select x-model="filters.tags" @change="loadPhotos"
+                                class="w-full px-4 py-2 border-none bg-transparent/20 rounded-lg outline-none text-white">
+                            <option value="">Все теги</option>
+                            <template x-for="tag in tagsData" :key="tag.id">
+                                <option :value="tag.id" x-text="tag.name"></option>
+                            </template>
+                        </select>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Категория</label>
-                    <select x-model="filters.category" @change="loadPhotos"
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:text-white bg-white">
-                        <option value="">Все категории</option>
-                        <template x-for="category in categoriesData" :key="category.id">
-                            <option :value="category.id" x-text="category.name"></option>
-                        </template>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Теги</label>
-                    <select x-model="filters.tags" @change="loadPhotos"
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white">
-                        <option value="">Все теги</option>
-                        <template x-for="tag in tagsData" :key="tag.id">
-                            <option :value="tag.id" x-text="tag.name"></option>
-                        </template>
-                    </select>
-                </div>
-            </div>
-
-            <div x-show="hasActiveFilters" class="mt-4 flex flex-wrap gap-2">
-                <template x-if="filters.search">
+                <div x-show="hasActiveFilters" class="mt-4 flex flex-wrap gap-2">
+                    <template x-if="filters.search">
                 <span class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
                     Поиск: <span x-text="filters.search"></span>
                     <button @click="filters.search = ''; loadPhotos();" class="hover:text-blue-900">×</button>
                 </span>
-                </template>
-                <template x-if="filters.category">
+                    </template>
+                    <template x-if="filters.category">
                 <span class="inline-flex items-center gap-1 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
                     Категория: <span x-text="getCategoryName(filters.category)"></span>
                     <button @click="filters.category = ''; loadPhotos();" class="hover:text-green-900">×</button>
                 </span>
-                </template>
-                <template x-if="filters.tags">
+                    </template>
+                    <template x-if="filters.tags">
                 <span class="inline-flex items-center gap-1 bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
                     Тег: <span x-text="getTagName(filters.tags)"></span>
                     <button @click="filters.tags = ''; loadPhotos();" class="hover:text-purple-900">×</button>
                 </span>
-                </template>
-                <button @click="clearFilters" class="text-gray-500 hover:text-gray-700 text-sm flex items-center gap-1">
-                    Очистить все
-                </button>
+                    </template>
+                    <button @click="clearFilters" class="text-gray-500 hover:text-gray-700 text-sm flex items-center gap-1">
+                        Очистить все
+                    </button>
+                </div>
             </div>
-        </div>
+        @else
+            <div x-show="showFilters"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 transform -translate-y-4"
+                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 transform translate-y-0"
+                 x-transition:leave-end="opacity-0 transform -translate-y-4"
+                 class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Поиск</label>
+                        <input type="text" x-model="filters.search" @input.debounce.500ms="loadPhotos"
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
+                               placeholder="Название, описание...">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Категория</label>
+                        <select x-model="filters.category" @change="loadPhotos"
+                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:text-white bg-white">
+                            <option value="">Все категории</option>
+                            <template x-for="category in categoriesData" :key="category.id">
+                                <option :value="category.id" x-text="category.name"></option>
+                            </template>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Теги</label>
+                        <select x-model="filters.tags" @change="loadPhotos"
+                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white">
+                            <option value="">Все теги</option>
+                            <template x-for="tag in tagsData" :key="tag.id">
+                                <option :value="tag.id" x-text="tag.name"></option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+
+                <div x-show="hasActiveFilters" class="mt-4 flex flex-wrap gap-2">
+                    <template x-if="filters.search">
+                <span class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                    Поиск: <span x-text="filters.search"></span>
+                    <button @click="filters.search = ''; loadPhotos();" class="hover:text-blue-900">×</button>
+                </span>
+                    </template>
+                    <template x-if="filters.category">
+                <span class="inline-flex items-center gap-1 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                    Категория: <span x-text="getCategoryName(filters.category)"></span>
+                    <button @click="filters.category = ''; loadPhotos();" class="hover:text-green-900">×</button>
+                </span>
+                    </template>
+                    <template x-if="filters.tags">
+                <span class="inline-flex items-center gap-1 bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                    Тег: <span x-text="getTagName(filters.tags)"></span>
+                    <button @click="filters.tags = ''; loadPhotos();" class="hover:text-purple-900">×</button>
+                </span>
+                    </template>
+                    <button @click="clearFilters" class="text-gray-500 hover:text-gray-700 text-sm flex items-center gap-1">
+                        Очистить все
+                    </button>
+                </div>
+            </div>
+        @endif
 
         <!-- Быстрые категории -->
         <div class="flex items-center justify-center py-4 flex-wrap gap-2 mb-8">
             <button @click="setCategoryFilter('')"
                     :class="{'bg-green-600 text-white': !filters.category, 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300': filters.category}"
-                    class="px-4 py-2 rounded-lg font-medium transition-colors border border-gray-300 dark:border-gray-600">
+                    class="px-4 py-2 rounded-lg font-medium transition-colors border-none dark:border-gray-600">
                 Все категории
             </button>
             <template x-for="category in categoriesData" :key="category.id">
@@ -140,7 +216,7 @@
         </div>
 
         <!-- Галерея фотографий -->
-        <div class="relative">
+        <div class="relative bg-transparent/20 backdrop-blur-md rounded-lg p-4">
             <div x-show="loading" class="absolute inset-0 bg-white dark:bg-gray-900 bg-opacity-80 flex items-center justify-center z-10 rounded-lg">
                 <div class="flex items-center gap-3 text-gray-600 dark:text-gray-400">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
@@ -330,7 +406,7 @@
     </div>
 
     <!-- Полноэкранный просмотр с инструментами -->
-    <div id="fullscreenViewer" class="fixed inset-0 bg-black bg-opacity-95 z-[100] hidden items-center justify-center">
+    <div id="fullscreenViewer" class="fixed inset-0 bg-black bg-opacity-95 z-[100] hidden items-center justify-center backdrop-blur-md">
         <!-- Кнопка закрытия -->
         <button id="closeFullscreen" class="absolute top-4 right-4 text-white hover:text-gray-300 z-20 bg-black bg-opacity-50 rounded-full p-2 transition-colors">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -5,7 +5,7 @@
         $backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
         $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
     @endphp
-    <!-- !!!class="w-[calc(100% - 250px)]" -->
+        <!-- !!!class="w-[calc(100% - 250px)]" -->
     <div>
         <!-- Заголовок -->
         <div
@@ -28,49 +28,94 @@
                     <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform"></i>
                 </button>
                 <a href="{{ route('welcome') }}"
-                        class="  text-white px-4 py-2 rounded-lg transition flex items-center space-x-2 max-[710px]:basis-[50%]"
-                        style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Назад к доске</span>
-                    </a>
+                   class="  text-white px-4 py-2 rounded-lg transition flex items-center space-x-2 max-[710px]:basis-[50%]"
+                   style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Назад к доске</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        @if($backgroundEnabled && $backgroundImage)
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                <div
+                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+                    onclick="filterByStatus('')">
+                    <div class="text-2xl font-bold text-white">{{ $stats['total'] }}</div>
+                    <div class="text-sm text-white">Всего задач</div>
+                </div>
+                <div
+                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+                    onclick="filterByStatus('назначена')">
+                    <div class="text-2xl font-bold text-white">{{ $stats['new'] }}</div>
+                    <div class="text-sm text-white">Новые</div>
+                </div>
+                <div
+                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+                    onclick="filterByStatus('в работе')">
+                    <div class="text-2xl font-bold text-white">{{ $stats['in_progress'] }}</div>
+                    <div class="text-sm text-white">В работе</div>
+                </div>
+                <div
+                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+                    onclick="filterByStatus('на проверке')">
+                    <div class="text-2xl font-bold text-white">{{ $stats['review'] }}</div>
+                    <div class="text-sm text-white">На проверке</div>
+                </div>
+                <div
+                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+                    onclick="filterByStatus('выполнена')">
+                    <div class="text-2xl font-bold text-white">{{ $stats['done'] }}</div>
+                    <div class="text-sm text-white">Завершено</div>
                 </div>
             </div>
-
-            <!-- Статистика -->
+        @else
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                 <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
-                    onclick="filterByStatus('')">
+                     onclick="filterByStatus('')">
                     <div class="text-2xl font-bold text-blue-600">{{ $stats['total'] }}</div>
                     <div class="text-sm text-gray-600">Всего задач</div>
                 </div>
                 <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
-                    onclick="filterByStatus('назначена')">
+                     onclick="filterByStatus('назначена')">
                     <div class="text-2xl font-bold text-purple-600">{{ $stats['new'] }}</div>
                     <div class="text-sm text-gray-600">Новые</div>
                 </div>
                 <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
-                    onclick="filterByStatus('в работе')">
+                     onclick="filterByStatus('в работе')">
                     <div class="text-2xl font-bold text-orange-600">{{ $stats['in_progress'] }}</div>
                     <div class="text-sm text-gray-600">В работе</div>
                 </div>
                 <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
-                    onclick="filterByStatus('на проверке')">
+                     onclick="filterByStatus('на проверке')">
                     <div class="text-2xl font-bold text-yellow-600">{{ $stats['review'] }}</div>
                     <div class="text-sm text-gray-600">На проверке</div>
                 </div>
                 <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
-                    onclick="filterByStatus('выполнена')">
+                     onclick="filterByStatus('выполнена')">
                     <div class="text-2xl font-bold text-green-600">{{ $stats['done'] }}</div>
                     <div class="text-sm text-gray-600">Завершено</div>
                 </div>
             </div>
+        @endif
 
-            <!-- Фильтры (скрыты по умолчанию) -->
-            <div id="filtersPanel" class="bg-white rounded-lg shadow mb-6 p-4 hidden transition-all duration-300">
+        <!-- Фильтры (скрыты по умолчанию) -->
+        @if($backgroundEnabled && $backgroundImage)
+            <div id="filtersPanel"
+                 class="backdrop-blur-md bg-transparent/20 rounded-lg shadow mb-6 p-4 hidden transition-all duration-300">
                 <div class="flex flex-wrap gap-4">
+
+                    <div class="flex-[2] min-w-[250px]">
+                        <label class="block font-medium text-white mb-1">Поиск</label>
+                        <input type="text" id="searchTask" placeholder="Поиск по названию или описанию..."
+                               class="w-full border-none placeholder:text-white rounded-lg px-3 py-2 bg-transparent/20 text-white">
+                    </div>
+
                     <div class="flex-1 min-w-[200px]">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                        <select id="statusFilter" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <label class="block text-sm font-medium text-white mb-1">Статус</label>
+                        <select id="statusFilter"
+                                class="w-full border-none rounded-lg px-3 py-2 backdrop-blur-md bg-transparent/20 text-white">
                             <option value="">Все статусы</option>
                             <option value="назначена">Новые</option>
                             <option value="в работе">В работе</option>
@@ -80,11 +125,66 @@
                     </div>
 
                     <div class="flex-1 min-w-[200px]">
+                        <label class="block text-sm font-medium text-white mb-1">Отдел</label>
+                        <select id="departmentFilter"
+                                class="w-full border-none rounded-lg px-3 py-2  backdrop-blur-md bg-transparent/20 text-white">
+                            <option value="">Все отделы</option>
+                            @foreach($user->company->departments ?? [] as $department)
+                                <option class="text-gray-800"
+                                        value="{{ $department->id }}">{{ $department->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="flex items-end gap-2">
+                        <button onclick="applyFilters()"
+                                class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition">
+                            <i class="fas fa-search mr-2"></i>Применить
+                        </button>
+                        <button onclick="resetFilters()"
+                                class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">
+                            <i class="fas fa-undo mr-2"></i>Сбросить
+                        </button>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <!-- Сортировка -->
+                    <div class="flex items-center space-x-4 ">
+                        <select id="sortBy" onchange="sortTasks()"
+                                class="border-none rounded-lg px-3 py-2 bg-transparent/20 text-white">
+                            <option class="text-gray-800" value="created_at_desc">Сортировка: новые сначала</option>
+                            <option class="text-gray-800" value="created_at_asc">Сортировка: старые сначала</option>
+                            <option class="text-gray-800" value="deadline_asc">Сортировка: ближайшие</option>
+                            <option class="text-gray-800" value="deadline_desc">Сортировка: Дедлайн(дальние)</option>
+                            <option class="text-gray-800" value="name_asc">Названию (А-Я)</option>
+                            <option class="text-gray-800" value="name_desc">Названию (Я-А)</option>
+                            <option class="text-gray-800" value="status_asc">Статус</option>
+                            <option class="text-gray-800" value="priority_desc">Приоритет (высокие сначала)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        @else
+            <div id="filtersPanel" class="bg-white rounded-lg shadow mb-6 p-4 hidden transition-all duration-300">
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex-1 min-w-[200px]">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
+                        <select id="statusFilter" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                            <option class="text-gray-800" value="">Все статусы</option>
+                            <option class="text-gray-800" value="назначена">Новые</option>
+                            <option class="text-gray-800" value="в работе">В работе</option>
+                            <option class="text-gray-800" value="на проверке">На проверке</option>
+                            <option class="text-gray-800" value="выполнена">Завершено</option>
+                        </select>
+                    </div>
+
+                    <div class="flex-1 min-w-[200px]">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
                         <select id="departmentFilter" class="w-full border border-gray-300 rounded-lg px-3 py-2">
                             <option value="">Все отделы</option>
                             @foreach($user->company->departments ?? [] as $department)
-                                <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                <option class="text-gray-800"
+                                        value="{{ $department->id }}">{{ $department->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -92,26 +192,27 @@
                     <div class="flex-[2] min-w-[250px]">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
                         <input type="text" id="searchTask" placeholder="Поиск по названию или описанию..."
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2">
                     </div>
 
                     <div class="flex items-end gap-2">
                         <button onclick="applyFilters()"
-                            class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition">
+                                class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition">
                             <i class="fas fa-search mr-2"></i>Применить
                         </button>
                         <button onclick="resetFilters()"
-                            class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">
+                                class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">
                             <i class="fas fa-undo mr-2"></i>Сбросить
                         </button>
                     </div>
 
                     <!-- Сортировка -->
-                    <div class="bg-white rounded-lg shadow mb-6 p-4 ">
+                    <div class="bg-white rounded-lg shadow mb-6 p-4">
                         <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center space-x-4 ">
-                                <span class="text-sm font-medium text-gray-700">Сортировать по:</span>
-                                <select id="sortBy" onchange="sortTasks()" class="border border-gray-300 rounded-lg px-3 py-2">
+                                <span class="font-medium text-gray-700">Сортировать по:</span>
+                                <select id="sortBy" onchange="sortTasks()"
+                                        class="border border-gray-300 rounded-lg px-3 py-2">
                                     <option value="created_at_desc">Дате создания (новые сначала)</option>
                                     <option value="created_at_asc">Дате создания (старые сначала)</option>
                                     <option value="deadline_asc">Дедлайну (ближайшие)</option>
@@ -130,87 +231,87 @@
                     </div>
                 </div>
             </div>
+        @endif
+        <!-- Список задач -->
 
-
-            <!-- Список задач -->
-            <div>
-                <div class="w-full max-w-[100%] overflow-x-auto bg-white rounded-lg shadow">
-                    <table class="min-w-[900px] w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                    onclick="sortByColumn('name')">
-                                    Задача <i class="fas fa-sort ml-1"></i>
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                    onclick="sortByColumn('status')">
-                                    Статус <i class="fas fa-sort ml-1"></i>
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                    onclick="sortByColumn('priority')">
-                                    Приоритет <i class="fas fa-sort ml-1"></i>
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Отдел
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                    onclick="sortByColumn('deadline')">
-                                    Дедлайн <i class="fas fa-sort ml-1"></i>
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Действия
-                                </th>
-                            </tr>
+        @if($backgroundEnabled && $backgroundImage)
+            <div class="border-none">
+                <div class="w-full max-w-[100%] overflow-x-auto backdrop-blur-md bg-transparent/20 rounded-lg border-none" style="border-style: unset !important;">
+                    <table class="min-w-[900px] w-full border-none" style="border-style: unset !important;">
+                        <thead class="backdrop-blur-md bg-transparent/20" style="border-style: unset !important;">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                onclick="sortByColumn('name')">
+                                Задача <i class="fas fa-sort ml-1"></i>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                onclick="sortByColumn('status')">
+                                Статус <i class="fas fa-sort ml-1"></i>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                onclick="sortByColumn('priority')">
+                                Приоритет <i class="fas fa-sort ml-1"></i>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Отдел
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                onclick="sortByColumn('deadline')">
+                                Дедлайн <i class="fas fa-sort ml-1"></i>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Действия
+                            </th>
+                        </tr>
                         </thead>
-                        <tbody id="tasksTableBody" class="bg-white divide-y divide-gray-200">
-                            @foreach($allTasks as $task)
-                                <tr class="task-row hover:bg-gray-50" data-id="{{ $task->id }}" data-status="{{ $task->status }}"
-                                    data-department="{{ $task->department_id }}" data-name="{{ $task->name }}"
-                                    data-priority="{{ $task->priority }}"
-                                    data-deadline="{{ $task->deadline ? $task->deadline->timestamp : 9999999999 }}"
-                                    data-created-at="{{ $task->created_at->timestamp }}">
-                                    <td class="px-6 py-4">
-                                        <div class="text-sm font-medium text-gray-900">
-                                            <a href="javascript:void(0)" onclick="openTaskViewModal({{ $task->id }})"
-                                                class="hover:text-blue-600">
-                                                {{ $task->name }}
-                                            </a>
-                                        </div>
-                                        <div class="text-sm text-gray-500">{{ Str::limit($task->description, 60) }}</div>
-                                    </td>
-                                    <td class="px-6 py-4">
+                        <tbody id="tasksTableBody" class="backdrop-blur-md bg-transparent/20 " style="border-style: unset !important;">
+                        @foreach($allTasks as $task)
+                            <tr class="task-row hover:bg-gray-50 text-white hover:text-gray-800 border-none"
+                                data-id="{{ $task->id }}" data-status="{{ $task->status }}"
+                                data-department="{{ $task->department_id }}" data-name="{{ $task->name }}"
+                                data-priority="{{ $task->priority }}"
+                                data-deadline="{{ $task->deadline ? $task->deadline->timestamp : 9999999999 }}"
+                                data-created-at="{{ $task->created_at->timestamp }}">
+                                <td class="px-6 py-4">
+                                    <div class="text-sm font-medium ">
+                                        <a href="javascript:void(0)" onclick="openTaskViewModal({{ $task->id }})">
+                                            {{ $task->name }}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $task->status === 'назначена' ? 'bg-blue-100 text-blue-800' : ($task->status === 'в работе' ? 'bg-purple-100 text-purple-800' : ($task->status === 'на проверке' ? 'bg-yellow-100 text-yellow-800' : ($task->status === 'выполнена' ? 'bg-green-100 text-green-800' : 'bg-red-400 text-white'))) }}">
+                                        {{ $task->status }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $task->priority === 'низкий' ? 'bg-gray-100 text-gray-800' : ($task->priority === 'средний' ? 'bg-blue-100 text-blue-800' : ($task->priority === 'высокий' ? 'bg-orange-100 text-orange-800' : ($task->priority === 'критический' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'))) }}">
+                                        {{ $task->priority }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500">
+                                    {{ $task->department->name ?? ($task->is_personal ? 'Личная' : '-') }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500">
+                                    @if($task->deadline)
                                         <span
-                                            class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $task->status === 'назначена' ? 'bg-blue-100 text-blue-800' : ($task->status === 'в работе' ? 'bg-purple-100 text-purple-800' : ($task->status === 'на проверке' ? 'bg-yellow-100 text-yellow-800' : ($task->status === 'выполнена' ? 'bg-green-100 text-green-800' : 'bg-red-400 text-white'))) }}">
-                                            {{ $task->status }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $task->priority === 'низкий' ? 'bg-gray-100 text-gray-800' : ($task->priority === 'средний' ? 'bg-blue-100 text-blue-800' : ($task->priority === 'высокий' ? 'bg-orange-100 text-orange-800' : ($task->priority === 'критический' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'))) }}">
-                                            {{ $task->priority }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">
-                                        {{ $task->department->name ?? ($task->is_personal ? 'Личная' : '-') }}
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">
-                                        @if($task->deadline)
-                                            <span
-                                                class="{{ $task->deadline->isPast() && $task->status !== 'выполнена' ? 'text-red-600 font-semibold' : '' }}">
+                                            class="{{ $task->deadline->isPast() && $task->status !== 'выполнена' ? 'text-red-600 font-semibold' : '' }}">
                                                 {{ $task->deadline->format('d.m.Y') }}
                                             </span>
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 text-sm font-medium">
-                                        <button onclick="openTaskViewModal({{ $task->id }})"
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-sm font-medium">
+                                    <button onclick="openTaskViewModal({{ $task->id }})"
                                             class="text-green-600 hover:text-green-900 mr-3">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            @endforeach
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -220,57 +321,149 @@
                     {{ $allTasks->links() }}
                 </div>
             </div>
-        </div>
-
-        <!-- Модальные окна -->
-        <div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-            <div class="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-semibold">Просмотр задачи</h3>
-                    <button onclick="closeTaskViewModal()" class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-times"></i>
-                    </button>
+        @else
+            <div>
+                <div class="w-full max-w-[100%] overflow-x-auto bg-white rounded-lg shadow">
+                    <table class="min-w-[900px] w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                onclick="sortByColumn('name')">
+                                Задача <i class="fas fa-sort ml-1"></i>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                onclick="sortByColumn('status')">
+                                Статус <i class="fas fa-sort ml-1"></i>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                onclick="sortByColumn('priority')">
+                                Приоритет <i class="fas fa-sort ml-1"></i>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Отдел
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                onclick="sortByColumn('deadline')">
+                                Дедлайн <i class="fas fa-sort ml-1"></i>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Действия
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody id="tasksTableBody" class="bg-white divide-y divide-gray-200">
+                        @foreach($allTasks as $task)
+                            <tr class="task-row hover:bg-gray-50" data-id="{{ $task->id }}"
+                                data-status="{{ $task->status }}"
+                                data-department="{{ $task->department_id }}" data-name="{{ $task->name }}"
+                                data-priority="{{ $task->priority }}"
+                                data-deadline="{{ $task->deadline ? $task->deadline->timestamp : 9999999999 }}"
+                                data-created-at="{{ $task->created_at->timestamp }}">
+                                <td class="px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        <a href="javascript:void(0)" onclick="openTaskViewModal({{ $task->id }})"
+                                           class="hover:text-blue-600">
+                                            {{ $task->name }}
+                                        </a>
+                                    </div>
+                                    <div class="text-sm text-gray-500">{{ Str::limit($task->description, 60) }}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                        <span
+                                            class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $task->status === 'назначена' ? 'bg-blue-100 text-blue-800' : ($task->status === 'в работе' ? 'bg-purple-100 text-purple-800' : ($task->status === 'на проверке' ? 'bg-yellow-100 text-yellow-800' : ($task->status === 'выполнена' ? 'bg-green-100 text-green-800' : 'bg-red-400 text-white'))) }}">
+                                            {{ $task->status }}
+                                        </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                        <span
+                                            class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $task->priority === 'низкий' ? 'bg-gray-100 text-gray-800' : ($task->priority === 'средний' ? 'bg-blue-100 text-blue-800' : ($task->priority === 'высокий' ? 'bg-orange-100 text-orange-800' : ($task->priority === 'критический' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'))) }}">
+                                            {{ $task->priority }}
+                                        </span>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500">
+                                    {{ $task->department->name ?? ($task->is_personal ? 'Личная' : '-') }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500">
+                                    @if($task->deadline)
+                                        <span
+                                            class="{{ $task->deadline->isPast() && $task->status !== 'выполнена' ? 'text-red-600 font-semibold' : '' }}">
+                                                {{ $task->deadline->format('d.m.Y') }}
+                                            </span>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-sm font-medium">
+                                    <button onclick="openTaskViewModal({{ $task->id }})"
+                                            class="text-green-600 hover:text-green-900 mr-3">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
                 </div>
-                <div id="taskModalContent"></div>
-            </div>
-        </div>
 
-        <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-            <div class="bg-white rounded-lg p-6 w-full max-w-md">
-                <h3 class="text-lg font-semibold mb-4">Отказ от задачи</h3>
-                <p class="text-gray-600 mb-4">Пожалуйста, укажите причину отказа от задачи:</p>
-                <textarea id="rejectReason" placeholder="Причина отказа..."
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 h-24 resize-none"></textarea>
-                <div class="flex space-x-3">
-                    <button onclick="submitRejection()" class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">
-                        Подтвердить отказ
-                    </button>
-                    <button onclick="closeRejectModal()"
+                <!-- Пагинация -->
+                <div class="px-6 py-4 border-t border-gray-200">
+                    {{ $allTasks->links() }}
+                </div>
+            </div>
+        @endif
+    </div>
+
+    <!-- Модальные окна -->
+    <div id="taskViewModal"
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
+        <div class="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Просмотр задачи</h3>
+                <button onclick="closeTaskViewModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="taskModalContent"></div>
+        </div>
+    </div>
+
+    <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-lg font-semibold mb-4">Отказ от задачи</h3>
+            <p class="text-gray-600 mb-4">Пожалуйста, укажите причину отказа от задачи:</p>
+            <textarea id="rejectReason" placeholder="Причина отказа..."
+                      class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 h-24 resize-none"></textarea>
+            <div class="flex space-x-3">
+                <button onclick="submitRejection()"
+                        class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">
+                    Подтвердить отказ
+                </button>
+                <button onclick="closeRejectModal()"
                         class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
-                        Отмена
-                    </button>
-                </div>
+                    Отмена
+                </button>
             </div>
         </div>
+    </div>
 
-        <div id="timeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-            <div class="bg-white rounded-lg p-6 w-full max-w-md">
-                <h3 class="text-lg font-semibold mb-4">Отправка на проверку</h3>
-                <p class="text-gray-600 mb-4">Укажите фактическое время работы над задачей:</p>
-                <input type="number" id="actualHours" step="0.5" min="0" placeholder="Часы"
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4">
-                <div class="flex space-x-3">
-                    <button onclick="submitForReview()"
+    <div id="timeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-lg font-semibold mb-4">Отправка на проверку</h3>
+            <p class="text-gray-600 mb-4">Укажите фактическое время работы над задачей:</p>
+            <input type="number" id="actualHours" step="0.5" min="0" placeholder="Часы"
+                   class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4">
+            <div class="flex space-x-3">
+                <button onclick="submitForReview()"
                         class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">
-                        Отправить на проверку
-                    </button>
-                    <button onclick="closeTimeModal()"
+                    Отправить на проверку
+                </button>
+                <button onclick="closeTimeModal()"
                         class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
-                        Отмена
-                    </button>
-                </div>
+                    Отмена
+                </button>
             </div>
         </div>
+    </div>
 
 @endsection
 
@@ -385,12 +578,12 @@
                         bVal = b.dataset.name.toLowerCase();
                         return bVal.localeCompare(aVal);
                     case 'status_asc':
-                        const statusOrder = { 'назначена': 1, 'в работе': 2, 'на проверке': 3, 'выполнена': 4 };
+                        const statusOrder = {'назначена': 1, 'в работе': 2, 'на проверке': 3, 'выполнена': 4};
                         aVal = statusOrder[a.dataset.status] || 5;
                         bVal = statusOrder[b.dataset.status] || 5;
                         return aVal - bVal;
                     case 'priority_desc':
-                        const priorityOrder = { 'критический': 1, 'высокий': 2, 'средний': 3, 'низкий': 4 };
+                        const priorityOrder = {'критический': 1, 'высокий': 2, 'средний': 3, 'низкий': 4};
                         aVal = priorityOrder[a.dataset.priority] || 5;
                         bVal = priorityOrder[b.dataset.priority] || 5;
                         return aVal - bVal;
@@ -666,7 +859,7 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({ status: 'в работе' })
+                    body: JSON.stringify({status: 'в работе'})
                 });
 
                 const data = await response.json();
@@ -747,7 +940,7 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({ reason })
+                    body: JSON.stringify({reason})
                 });
 
                 const data = await response.json();
@@ -793,6 +986,16 @@
 
 @push('styles')
     <style>
+
+        .task-row:last-child td {
+            border-bottom: none !important;
+        }
+
+        /* Если используется класс divide-y */
+        .divide-y > :last-child {
+            border-bottom-width: 0 !important;
+        }
+
         .task-card {
             transition: all 0.2s ease-in-out;
         }
