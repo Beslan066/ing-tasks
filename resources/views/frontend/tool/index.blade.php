@@ -28,7 +28,7 @@
             </div>
 
             <!-- Карточки инструментов -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <div class="grid grid-cols-1 min-[870px]:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 <!-- Фотобанк -->
                 <div onclick="window.location.href='{{ route('photobank') }}'"
                     class="group cursor-pointer bg-white border border-gray-200 rounded-xl p-4 md:p-6 transition-all duration-300 hover:shadow-lg hover:border-green-300 hover:-translate-y-1">

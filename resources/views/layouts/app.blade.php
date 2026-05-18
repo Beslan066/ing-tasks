@@ -646,7 +646,7 @@ media-src https://meet.jit.si https:;
     <span></span>
 </button>
 
-        <div id="home" class="page active-page p-6">
+        <div id="home" class="page active-page p-6 max-[550px]:p-3">
             @yield('content')
         </div>
 
@@ -2263,7 +2263,7 @@ ${task.rejections && task.rejections.length > 0 ? `
 ` : ''}
 
                 <!-- Кнопки действий -->
-                <div class="flex space-x-3 mt-6 pt-4 border-t border-gray-200">
+                <div class="flex space-x-3 mt-6 pt-4 border-t border-gray-200 max-[500px]:flex-col max-[500px]:space-x-0 max-[500px]:space-y-3">
                     ${task.status === 'назначена' ? `
                         <button onclick="startTask(${task.id})"
                                 class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">

@@ -38,108 +38,118 @@
         @if($backgroundEnabled && $backgroundImage)
             <div id="filtersPanel" class="backdrop-blur-md bg-transparent/20 rounded-lg border-gray-200 hidden mb-[20px]">
                 <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <form method="GET" action="{{ route('tasks.admin') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-                    <!-- Поиск -->
-                    <div class="sm:col-span-2 lg:col-span-1">
-                        <label class="block text-sm font-medium text-white mb-1">Поиск</label>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                               class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10"
-                               placeholder="Название или описание...">
-                    </div>
+                    <form method="GET" action="{{ route('tasks.admin') }}"
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                        <!-- Поиск -->
+                        <div class="sm:col-span-2 lg:col-span-1">
+                            <label class="block text-sm font-medium text-white mb-1">Поиск</label>
+                            <input type="text" name="search" value="{{ request('search') }}"
+                                class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10"
+                                placeholder="Название или описание...">
+                        </div>
 
-                    <!-- Статус -->
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">Статус</label>
-                        <select name="status" class="w-full border border-gray-800 rounded-lg appearance-none px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
-                            <option value="">Все статусы</option>
-                            @foreach($filterData['statuses'] as $status)
-                                <option class="text-gray-800" value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
-                                    {{ $status }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                        <!-- Статус -->
+                        <div>
+                            <label class="block text-sm font-medium text-white mb-1">Статус</label>
+                            <select name="status"
+                                class="w-full border border-gray-800 rounded-lg appearance-none px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                                <option value="">Все статусы</option>
+                                @foreach($filterData['statuses'] as $status)
+                                    <option class="text-gray-800" value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                                        {{ $status }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                    <!-- Исполнитель -->
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">Исполнитель</label>
-                        <select name="user_id" class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
-                            <option value="">Все исполнители</option>
-                            @foreach($filterData['users'] as $user)
-                                <option class="text-gray-800" value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                        <!-- Исполнитель -->
+                        <div>
+                            <label class="block text-sm font-medium text-white mb-1">Исполнитель</label>
+                            <select name="user_id"
+                                class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                                <option value="">Все исполнители</option>
+                                @foreach($filterData['users'] as $user)
+                                    <option class="text-gray-800" value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                                        {{ $user->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                    <!-- Отдел -->
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">Отдел</label>
-                        <select name="department_id" class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
-                            <option value="">Все отделы</option>
-                            @foreach($filterData['departments'] as $department)
-                                <option class="text-gray-800" value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
-                                    {{ $department->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                        <!-- Отдел -->
+                        <div>
+                            <label class="block text-sm font-medium text-white mb-1">Отдел</label>
+                            <select name="department_id"
+                                class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                                <option value="">Все отделы</option>
+                                @foreach($filterData['departments'] as $department)
+                                    <option class="text-gray-800" value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
+                                        {{ $department->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                    <!-- Приоритет -->
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">Приоритет</label>
-                        <select name="priority" class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm  text-white focus:outline-none backdrop-blur-md bg-transparent/10">
-                            <option value="">Все приоритеты</option>
-                            @foreach($filterData['priorities'] as $priority)
-                                <option class="text-gray-800" value="{{ $priority }}" {{ request('priority') == $priority ? 'selected' : '' }}>
-                                    {{ $priority }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                        <!-- Приоритет -->
+                        <div>
+                            <label class="block text-sm font-medium text-white mb-1">Приоритет</label>
+                            <select name="priority"
+                                class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm  text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                                <option value="">Все приоритеты</option>
+                                @foreach($filterData['priorities'] as $priority)
+                                    <option class="text-gray-800" value="{{ $priority }}" {{ request('priority') == $priority ? 'selected' : '' }}>
+                                        {{ $priority }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                    <!-- Категория -->
-                    <div>
-                        <label class="block text-sm  text-white mb-1">Категория</label>
-                        <select name="category_id" class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm  text-white focus:outline-none backdrop-blur-md bg-transparent/10">
-                            <option value="">Все категории</option>
-                            @foreach($filterData['categories'] as $category)
-                                <option class="text-gray-800" value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                        <!-- Категория -->
+                        <div>
+                            <label class="block text-sm  text-white mb-1">Категория</label>
+                            <select name="category_id"
+                                class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm  text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                                <option value="">Все категории</option>
+                                @foreach($filterData['categories'] as $category)
+                                    <option class="text-gray-800" value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                        {{ $category->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                    <!-- Кнопки фильтра -->
-                    <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base">
-                            Применить фильтры
-                        </button>
-                        <a href="{{ route('tasks.admin') }}" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm md:text-base">
-                            Сбросить
-                        </a>
-                    </div>
-                </form>
-            </div>
+                        <!-- Кнопки фильтра -->
+                        <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                            <button type="submit"
+                                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base">
+                                Применить фильтры
+                            </button>
+                            <a href="{{ route('tasks.admin') }}"
+                                class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm md:text-base">
+                                Сбросить
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
         @else
             <div id="filtersPanel" class="bg-white rounded-lg border-gray-200 hidden mb-[20px]">
                 <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <form method="GET" action="{{ route('tasks.admin') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                    <form method="GET" action="{{ route('tasks.admin') }}"
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                         <!-- Поиск -->
                         <div class="sm:col-span-2 lg:col-span-1">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
                             <input type="text" name="search" value="{{ request('search') }}"
-                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white"
-                                   placeholder="Название или описание...">
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white"
+                                placeholder="Название или описание...">
                         </div>
 
                         <!-- Статус -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                            <select name="status" class="w-full border border-gray-300 rounded-lg appearance-none px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                            <select name="status"
+                                class="w-full border border-gray-300 rounded-lg appearance-none px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
                                 <option value="" class="appearance-none">Все статусы</option>
                                 @foreach($filterData['statuses'] as $status)
                                     <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
@@ -152,7 +162,8 @@
                         <!-- Исполнитель -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Исполнитель</label>
-                            <select name="user_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                            <select name="user_id"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
                                 <option value="">Все исполнители</option>
                                 @foreach($filterData['users'] as $user)
                                     <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
@@ -165,7 +176,8 @@
                         <!-- Отдел -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
-                            <select name="department_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-500 bg-white">
+                            <select name="department_id"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-500 bg-white">
                                 <option value="">Все отделы</option>
                                 @foreach($filterData['departments'] as $department)
                                     <option value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
@@ -178,7 +190,8 @@
                         <!-- Приоритет -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
-                            <select name="priority" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                            <select name="priority"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
                                 <option value="">Все приоритеты</option>
                                 @foreach($filterData['priorities'] as $priority)
                                     <option value="{{ $priority }}" {{ request('priority') == $priority ? 'selected' : '' }}>
@@ -191,7 +204,8 @@
                         <!-- Категория -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
-                            <select name="category_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                            <select name="category_id"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
                                 <option value="">Все категории</option>
                                 @foreach($filterData['categories'] as $category)
                                     <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -203,10 +217,12 @@
 
                         <!-- Кнопки фильтра -->
                         <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base">
+                            <button type="submit"
+                                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base">
                                 Применить фильтры
                             </button>
-                            <a href="{{ route('tasks.admin') }}" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm md:text-base">
+                            <a href="{{ route('tasks.admin') }}"
+                                class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm md:text-base">
                                 Сбросить
                             </a>
                         </div>
@@ -406,233 +422,104 @@
         <!-- Таблица задач -->
         @if($backgroundEnabled && $backgroundImage)
             <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
-                <div class="text-gray-500 text-sm md:text-base">
-                    Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+                    <div class="text-gray-500 text-sm md:text-base">
+                        Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
+                    </div>
+                    <div class="w-full sm:w-auto">
+                        <select id="sortSelect"
+                            class="w-full  sm:w-48 border border-gray-800 rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
+                            <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
+                            <option class="text-gray-800" value="created_at_asc">Старые сначала</option>
+                            <option class="text-gray-800" value="deadline_asc">Ближайший дедлайн</option>
+                            <option class="text-gray-800" value="deadline_desc">Дальний дедлайн</option>
+                            <option class="text-gray-800" value="priority_desc">Высокий приоритет</option>
+                            <option class="text-gray-800" value="name_asc">По названию (А-Я)</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="w-full sm:w-auto">
-                    <select id="sortSelect" class="w-full  sm:w-48 border border-gray-800 rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
-                        <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
-                        <option class="text-gray-800" value="created_at_asc">Старые сначала</option>
-                        <option class="text-gray-800" value="deadline_asc">Ближайший дедлайн</option>
-                        <option class="text-gray-800" value="deadline_desc">Дальний дедлайн</option>
-                        <option class="text-gray-800" value="priority_desc">Высокий приоритет</option>
-                        <option class="text-gray-800" value="name_asc">По названию (А-Я)</option>
-                    </select>
-                </div>
-            </div>
 
-            <!-- Адаптивная таблица -->
-            <div class="overflow-x-auto -mx-4 md:mx-0">
-                <div class="inline-block min-w-full align-middle">
-                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                        <!-- Десктопный вид таблицы -->
-                        <table class="min-w-full divide-y divide-gray-300 hidden md:table">
-                            <thead class="bg-transparent/20">
-                            <tr>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Задача</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Исполнитель</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Отдел</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Приоритет</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Автор</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Дедлайн</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
-                            </tr>
-                            </thead>
-                            <tbody class="backdrop-blur-md bg-transparent/10 divide-y divide-gray-200">
-                            @forelse($tasks as $task)
-                                <tr class="hover:bg-gray-50 transition text-white  hover:text-gray-900 @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif"
-                                    >
-                                    <td class="px-3 py-4 cursor-pointer   hover:text-gray-900" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                        <div class="flex items-start ">
-                                            <div class="ml-2 hover:text-gray-900">
-                                                <div class="text-sm font-medium flex items-center flex-wrap gap-1">
-                                                    <span class="truncate max-w-[250px]">{{ $task->name }}</span>
-                                                    @if($task->trashed())
-                                                        <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap">
-                                                            <i class="fas fa-trash mr-1"></i>Удалена
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                                <div class="flex flex-wrap gap-1 mt-2">
-                                                    @if($task->category)
-                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white">
-                                                            {{ $task->category->name }}
-                                                        </span>
-                                                    @endif
-                                                    @if($task->rejections_count > 0)
-                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
-                                                              title="Количество отказов: {{ $task->rejections_count }}">
-                                                            <i class="fas fa-user-slash mr-1"></i>
-                                                            {{ $task->rejections_count }}
-                                                        </span>
-                                                    @endif
-                                                    @if($task->trashed() && $task->deletedBy)
-                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                                                              title="Удалил: {{ $task->deletedBy->name }}">
-                                                            <i class="fas fa-user-times mr-1"></i>
-                                                            Удалил: {{ $task->deletedBy->name }}
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-3 py-4 cursor-pointer whitespace-nowrap" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                        @if($task->trashed())
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                                Удалена
-                                            </span>
-                                        @else
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
-                                                {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
-                                                {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                                {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
-                                                {{ $task->status }}
-                                            </span>
+                <!-- Адаптивная таблица -->
+                <div class="overflow-x-auto -mx-4 md:mx-0">
 
-                                        @endif
-                                    </td>
-                                    <td class="px-3 py-4 cursor-pointer" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                        @if($task->user)
-                                            <div class="flex items-center">
-                                                <div class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium">
-                                                    {{ substr($task->user->name, 0, 2) }}
+                    <div class="inline-block min-w-full align-middle">
+                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                            <!-- Десктопный вид таблицы -->
+                            <table class="min-w-full divide-y divide-gray-300 hidden md:table">
+                                <thead class="bg-transparent/20">
+                                    <tr>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Задача</th>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Статус</th>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Исполнитель</th>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Отдел</th>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Приоритет</th>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Автор</th>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Дедлайн</th>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="backdrop-blur-md bg-transparent/10 divide-y divide-gray-200">
+                                    @forelse($tasks as $task)
+                                        <tr
+                                            class="hover:bg-gray-50 transition text-white  hover:text-gray-900 @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif">
+                                            <td class="px-3 py-4 cursor-pointer   hover:text-gray-900"
+                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                                <div class="flex items-start ">
+                                                    <div class="ml-2 hover:text-gray-900">
+                                                        <div class="text-sm font-medium flex items-center flex-wrap gap-1">
+                                                            <span class="truncate max-w-[250px]">{{ $task->name }}</span>
+                                                            @if($task->trashed())
+                                                                <span
+                                                                    class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap">
+                                                                    <i class="fas fa-trash mr-1"></i>Удалена
+                                                                </span>
+                                                            @endif
+                                                        </div>
+                                                        <div class="flex flex-wrap gap-1 mt-2">
+                                                            @if($task->category)
+                                                                <span
+                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white">
+                                                                    {{ $task->category->name }}
+                                                                </span>
+                                                            @endif
+                                                            @if($task->rejections_count > 0)
+                                                                <span
+                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                                                                    title="Количество отказов: {{ $task->rejections_count }}">
+                                                                    <i class="fas fa-user-slash mr-1"></i>
+                                                                    {{ $task->rejections_count }}
+                                                                </span>
+                                                            @endif
+                                                            @if($task->trashed() && $task->deletedBy)
+                                                                <span
+                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                                                    title="Удалил: {{ $task->deletedBy->name }}">
+                                                                    <i class="fas fa-user-times mr-1"></i>
+                                                                    Удалил: {{ $task->deletedBy->name }}
+                                                                </span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="ml-2">
-                                                    <div class="text-sm font-medium truncate max-w-[100px]">{{ $task->user->name }}</div>
-                                                    <div class="text-xs text-gray-500 truncate max-w-[100px]">{{ $task->user->email }}</div>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <span class="text-sm text-gray-500">Не назначен</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-3 py-4 cursor-pointer whitespace-nowrap text-sm text-gray-500" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                        {{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : 'Без отдела') }}
-                                    </td>
-                                    <td class="px-3 py-4 cursor-pointer whitespace-nowrap" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                        @php
-                                            $priorityColors = [
-                                                'низкий' => 'bg-gray-100 text-gray-800',
-                                                'средний' => 'bg-blue-100 text-blue-800',
-                                                'высокий' => 'bg-orange-100 text-orange-800',
-                                                'критический' => 'bg-red-100 text-red-800'
-                                            ];
-                                        @endphp
-                                        @if(!$task->trashed())
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $priorityColors[$task->priority] ?? 'bg-gray-100 text-gray-800' }}">
-                                                {{ $task->priority }}
-                                            </span>
-                                        @else
-                                            <span class="text-sm text-gray-400">—</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-3 py-4 cursor-pointer whitespace-nowrap" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                        @if($task->author)
-                                            <div class="text-sm font-medium truncate max-w-[100px]">{{ $task->author->name }}</div>
-                                        @else
-                                            <span class="text-sm">Нет автора</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-3 py-4 cursor-pointer" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                        @if($task->deadline && !$task->trashed())
-                                            <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }} text-sm">
-                                                {{ $task->deadline->format('d.m.Y H:i') }}
-                                            </div>
-                                            <div class="text-xs text-gray-400">
-                                                {{ $task->getTimeRemaining() }}
-                                            </div>
-                                        @else
-                                            <span class="text-gray-400 text-sm">—</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-3 py-4 whitespace-nowrap">
-                                        @if($task->trashed())
-                                            <span class="text-gray-400 text-sm">Действия недоступны</span>
-                                        @else
-                                            <div class="flex space-x-2">
-                                                <button onclick="openEditModal({{ $task->id }})"
-                                                        class="text-yellow-700 hover:text-yellow-900 p-1"
-                                                        title="Редактировать">
-                                                    <i class="fa-solid fa-file-pen"></i>
-                                                </button>
-                                                @if($task->status === 'на проверке')
-                                                    <button onclick="returnToWork({{ $task->id }})"
-                                                            class="text-orange-600 hover:text-orange-900 p-1 text-sm"
-                                                            title="Вернуть на доработку">
-                                                        <i class="fas fa-redo"></i>
-                                                    </button>
-                                                @endif
-                                                @if($task->author_id === Auth::id())
-                                                    <button onclick="openDeleteModal({{ $task->id }})"
-                                                            class="text-red-600 hover:text-red-900 p-1"
-                                                            title="Удалить">
-                                                        <i class="fa-solid fa-trash"></i>
-                                                    </button>
-                                                @else
-                                                    <button class="text-gray-400 cursor-not-allowed p-1" title="Можно удалять только свои задачи">
-                                                        <i class="fa-solid fa-trash"></i>
-                                                    </button>
-                                                @endif
-                                            </div>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
-                                        Задачи не найдены
-                                    </td>
-                                </tr>
-                            @endforelse
-                            </tbody>
-                        </table>
-
-                        <!-- Мобильный вид таблицы (карточки) -->
-                        <div class="md:hidden space-y-3">
-                            @forelse($tasks as $task)
-                                <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm cursor-pointer hover:shadow-md transition @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif"
-                                     onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})">
-                                    <!-- Заголовок карточки -->
-                                    <div class="flex justify-between items-start mb-3">
-                                        <div class="flex-1">
-                                            <div class="flex items-center flex-wrap gap-2 mb-1">
-                                                <h3 class="font-semibold text-gray-900 truncate">{{ $task->name }}</h3>
-                                                @if($task->trashed())
-                                                    <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
-                                                        <i class="fas fa-trash mr-1"></i>Удалена
-                                                    </span>
-                                                @endif
-                                            </div>
-                                            <div class="text-sm text-gray-600 mb-2 line-clamp-2">{{ $task->description }}</div>
-                                        </div>
-                                        <div class="flex space-x-1">
-                                            @if(!$task->trashed())
-                                                <button onclick="openEditModal({{ $task->id }})"
-                                                        class="text-yellow-700 hover:text-yellow-900 p-1"
-                                                        title="Редактировать">
-                                                    <i class="fa-solid fa-file-pen"></i>
-                                                </button>
-                                                @if($task->author_id === Auth::id())
-                                                    <button onclick="openDeleteModal({{ $task->id }})"
-                                                            class="text-red-600 hover:text-red-900 p-1"
-                                                            title="Удалить">
-                                                        <i class="fa-solid fa-trash"></i>
-                                                    </button>
-                                                @endif
-                                            @endif
-                                        </div>
-                                    </div>
-
-                                        <!-- Информация в карточке -->
-                                        <div class="space-y-2">
-                                            <!-- Статус -->
-                                            <div class="flex items-center">
-                                                <span class="text-sm text-gray-600 w-20">Статус:</span>
+                                            </td>
+                                            <td class="px-3 py-4 cursor-pointer whitespace-nowrap"
+                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
                                                 @if($task->trashed())
                                                     <span
                                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
@@ -641,19 +528,185 @@
                                                 @else
                                                     <span
                                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                                                                                                                                                                                                                                                    {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
-                                                                                                                                                                                                                                                                                    {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
-                                                                                                                                                                                                                                                                                    {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                                                                                                                                                                                                                                                                    {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                                                                                                                                                                                                                                                                    {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
+                                                        {{ $task->status }}
+                                                    </span>
+
+                                                @endif
+                                            </td>
+                                            <td class="px-3 py-4 cursor-pointer"
+                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                                @if($task->user)
+                                                    <div class="flex items-center">
+                                                        <div
+                                                            class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium">
+                                                            {{ substr($task->user->name, 0, 2) }}
+                                                        </div>
+                                                        <div class="ml-2">
+                                                            <div class="text-sm font-medium truncate max-w-[100px]">
+                                                                {{ $task->user->name }}
+                                                            </div>
+                                                            <div class="text-xs text-gray-500 truncate max-w-[100px]">
+                                                                {{ $task->user->email }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <span class="text-sm text-gray-500">Не назначен</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-3 py-4 cursor-pointer whitespace-nowrap text-sm text-gray-500"
+                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                                {{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : 'Без отдела') }}
+                                            </td>
+                                            <td class="px-3 py-4 cursor-pointer whitespace-nowrap"
+                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                                @php
+                                                    $priorityColors = [
+                                                        'низкий' => 'bg-gray-100 text-gray-800',
+                                                        'средний' => 'bg-blue-100 text-blue-800',
+                                                        'высокий' => 'bg-orange-100 text-orange-800',
+                                                        'критический' => 'bg-red-100 text-red-800'
+                                                    ];
+                                                @endphp
+                                                @if(!$task->trashed())
+                                                    <span
+                                                        class="px-2 py-1 text-xs font-semibold rounded-full {{ $priorityColors[$task->priority] ?? 'bg-gray-100 text-gray-800' }}">
+                                                        {{ $task->priority }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-sm text-gray-400">—</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-3 py-4 cursor-pointer whitespace-nowrap"
+                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                                @if($task->author)
+                                                    <div class="text-sm font-medium truncate max-w-[100px]">{{ $task->author->name }}
+                                                    </div>
+                                                @else
+                                                    <span class="text-sm">Нет автора</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-3 py-4 cursor-pointer"
+                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                                @if($task->deadline && !$task->trashed())
+                                                    <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }} text-sm">
+                                                        {{ $task->deadline->format('d.m.Y H:i') }}
+                                                    </div>
+                                                    <div class="text-xs text-gray-400">
+                                                        {{ $task->getTimeRemaining() }}
+                                                    </div>
+                                                @else
+                                                    <span class="text-gray-400 text-sm">—</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-3 py-4 whitespace-nowrap">
+                                                @if($task->trashed())
+                                                    <span class="text-gray-400 text-sm">Действия недоступны</span>
+                                                @else
+                                                    <div class="flex space-x-2">
+                                                        <button onclick="openEditModal({{ $task->id }})"
+                                                            class="text-yellow-700 hover:text-yellow-900 p-1" title="Редактировать">
+                                                            <i class="fa-solid fa-file-pen"></i>
+                                                        </button>
+                                                        @if($task->status === 'на проверке')
+                                                            <button onclick="returnToWork({{ $task->id }})"
+                                                                class="text-orange-600 hover:text-orange-900 p-1 text-sm"
+                                                                title="Вернуть на доработку">
+                                                                <i class="fas fa-redo"></i>
+                                                            </button>
+                                                        @endif
+                                                        @if($task->author_id === Auth::id())
+                                                            <button onclick="openDeleteModal({{ $task->id }})"
+                                                                class="text-red-600 hover:text-red-900 p-1" title="Удалить">
+                                                                <i class="fa-solid fa-trash"></i>
+                                                            </button>
+                                                        @else
+                                                            <button class="text-gray-400 cursor-not-allowed p-1"
+                                                                title="Можно удалять только свои задачи">
+                                                                <i class="fa-solid fa-trash"></i>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
+                                                Задачи не найдены
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+
+                            <!-- Мобильный вид таблицы (карточки) -->
+                            <div class="md:hidden space-y-3">
+                                @forelse($tasks as $task)
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm cursor-pointer hover:shadow-md transition @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif"
+                                        onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})">
+                                        <!-- Заголовок карточки -->
+                                        <div class="flex justify-between items-start mb-3">
+                                            <div class="flex-1">
+                                                <div class="flex items-center flex-wrap gap-2 mb-1">
+                                                    <h3 class="font-semibold text-gray-900 truncate">{{ $task->name }}</h3>
+                                                    @if($task->trashed())
+                                                        <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                                                            <i class="fas fa-trash mr-1"></i>Удалена
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                <div class="text-sm text-gray-600 mb-2 line-clamp-2 max-[500px]:!hidden">
+                                                    {{ $task->description }}
+                                                </div>
+                                            </div>
+                                            <div class="flex space-x-1">
+                                                @if(!$task->trashed())
+                                                    <button onclick="openEditModal({{ $task->id }})"
+                                                        class="text-yellow-700 hover:text-yellow-900 p-1" title="Редактировать">
+                                                        <i class="fa-solid fa-file-pen"></i>
+                                                    </button>
+                                                    @if($task->author_id === Auth::id())
+                                                        <button onclick="openDeleteModal({{ $task->id }})"
+                                                            class="text-red-600 hover:text-red-900 p-1" title="Удалить">
+                                                            <i class="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    @endif
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <!-- Информация в карточке -->
+                                        <div class="space-y-2">
+                                            <!-- Статус -->
+                                            <div class="flex items-center gap-6 max-[500px]:hidden">
+                                                <span class="text-sm text-gray-600">Статус:</span>
+                                                @if($task->trashed())
+                                                    <span
+                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                        Удалена
+                                                    </span>
+                                                @else
+                                                    <span
+                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
                                                         {{ $task->status }}
                                                     </span>
                                                 @endif
                                             </div>
 
                                             <!-- Исполнитель -->
-                                            <div class="flex items-center">
-                                                <span class="text-sm text-gray-600 w-20">Исполнитель:</span>
+                                            <div class="flex items-center gap-2 max-[500px]:hidden">
+                                                <span class="text-sm text-gray-600">Исполнитель:</span>
                                                 @if($task->user)
                                                     <div class="flex items-center">
                                                         <div
@@ -668,13 +721,13 @@
                                             </div>
 
                                             <!-- Отдел и Приоритет -->
-                                            <div class="grid grid-cols-2 gap-2">
-                                                <div class="flex items-center">
-                                                    <span class="text-sm text-gray-600 w-16">Отдел:</span>
+                                            <div class="grid grid-cols-2 gap-2 max-[500px]:grid-cols-1">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-sm text-gray-600">Отдел:</span>
                                                     <span class="text-sm">{{ $task->department->name ?? '—' }}</span>
                                                 </div>
-                                                <div class="flex items-center">
-                                                    <span class="text-sm text-gray-600 w-16">Приоритет:</span>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-sm text-gray-600">Приоритет:</span>
                                                     @if(!$task->trashed())
                                                         @php
                                                             $priorityColors = [
@@ -695,13 +748,13 @@
                                             </div>
 
                                             <!-- Автор и Дедлайн -->
-                                            <div class="grid grid-cols-2 gap-2">
-                                                <div class="flex items-center">
-                                                    <span class="text-sm text-gray-600 w-16">Автор:</span>
+                                            <div class="grid grid-cols-2 gap-2 max-[500px]:grid-cols-1">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-sm text-gray-600">Автор:</span>
                                                     <span class="text-sm truncate">{{ $task->author->name ?? '—' }}</span>
                                                 </div>
-                                                <div class="flex items-center">
-                                                    <span class="text-sm text-gray-600 w-16">Дедлайн:</span>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-sm text-gray-600">Дедлайн:</span>
                                                     @if($task->deadline && !$task->trashed())
                                                         <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }}">
                                                             <div class="text-sm">{{ $task->deadline->format('d.m.Y') }}</div>
@@ -714,7 +767,7 @@
                                             </div>
 
                                             <!-- Дополнительная информация -->
-                                            <div class="flex flex-wrap gap-1 pt-2 border-t">
+                                            <div class="flex flex-wrap gap-1 pt-2 border-t max-[500px]:!hidden">
                                                 @if($task->category)
                                                     <span
                                                         class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -771,21 +824,22 @@
             </div>
         @else
             <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
-                <div class="text-gray-500 text-sm md:text-base">
-                    Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+                    <div class="text-gray-500 text-sm md:text-base">
+                        Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
+                    </div>
+                    <div class="w-full sm:w-auto">
+                        <select id="sortSelect"
+                            class="w-full sm:w-48 border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
+                            <option value="created_at_desc">Новые сначала</option>
+                            <option value="created_at_asc">Старые сначала</option>
+                            <option value="deadline_asc">Ближайший дедлайн</option>
+                            <option value="deadline_desc">Дальний дедлайн</option>
+                            <option value="priority_desc">Высокий приоритет</option>
+                            <option value="name_asc">По названию (А-Я)</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="w-full sm:w-auto">
-                    <select id="sortSelect" class="w-full sm:w-48 border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
-                        <option value="created_at_desc">Новые сначала</option>
-                        <option value="created_at_asc">Старые сначала</option>
-                        <option value="deadline_asc">Ближайший дедлайн</option>
-                        <option value="deadline_desc">Дальний дедлайн</option>
-                        <option value="priority_desc">Высокий приоритет</option>
-                        <option value="name_asc">По названию (А-Я)</option>
-                    </select>
-                </div>
-            </div>
 
                 <!-- Адаптивная таблица -->
                 <div class="overflow-x-auto -mx-4 md:mx-0">
@@ -877,11 +931,11 @@
                                                 @else
                                                     <span
                                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                                                                                                                                                                                                                                                {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
-                                                                                                                                                                                                                                                                                {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
-                                                                                                                                                                                                                                                                                {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                                                                                                                                                                                                                                                                {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                                                                                                                                                                                                                                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
                                                         {{ $task->status }}
                                                     </span>
 
@@ -1037,11 +1091,11 @@
                                                 @else
                                                     <span
                                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                                                                                                                                                                                                                                                    {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
-                                                                                                                                                                                                                                                                                    {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
-                                                                                                                                                                                                                                                                                    {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                                                                                                                                                                                                                                                                    {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                                                                                                                                                                                                                                                                    {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
                                                         {{ $task->status }}
                                                     </span>
                                                 @endif
@@ -1483,7 +1537,8 @@
     </div>
 
     <!-- Модальное окно просмотра задачи -->
-    <div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4" style="backdrop-filter: blur(10px)">
+    <div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4"
+        style="backdrop-filter: blur(10px)">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
                 <h3 class="text-xl font-bold text-gray-800">
@@ -1796,24 +1851,24 @@
                     const fileElement = document.createElement('div');
                     fileElement.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-lg mb-2';
                     fileElement.innerHTML = `
-                                                                            <div class="flex items-center space-x-3">
-                                                                                <i class="fas fa-paperclip text-gray-500"></i>
-                                                                                <div>
-                                                                                    <a href="/storage/${file.file_path}" target="_blank"
-                                                                                       class="text-blue-600 hover:text-blue-800 font-medium block">
-                                                                                        ${file.name}
-                                                                                    </a>
-                                                                                    <span class="text-xs text-gray-500">
-                                                                                        ${Math.round(file.file_size / 1024)} KB •
-                                                                                        ${formatDateTime(file.created_at)}
-                                                                                    </span>
-                                                                                </div>
-                                                                            </div>
-                                                                            <button type="button" onclick="deleteFile(${file.id})"
-                                                                                    class="text-red-600 hover:text-red-800 p-1 rounded transition">
-                                                                                <i class="fas fa-trash"></i>
-                                                                            </button>
-                                                                        `;
+                                                                                                                                                                        <div class="flex items-center space-x-3">
+                                                                                                                                                                            <i class="fas fa-paperclip text-gray-500"></i>
+                                                                                                                                                                            <div>
+                                                                                                                                                                                <a href="/storage/${file.file_path}" target="_blank"
+                                                                                                                                                                                   class="text-blue-600 hover:text-blue-800 font-medium block">
+                                                                                                                                                                                    ${file.name}
+                                                                                                                                                                                </a>
+                                                                                                                                                                                <span class="text-xs text-gray-500">
+                                                                                                                                                                                    ${Math.round(file.file_size / 1024)} KB •
+                                                                                                                                                                                    ${formatDateTime(file.created_at)}
+                                                                                                                                                                                </span>
+                                                                                                                                                                            </div>
+                                                                                                                                                                        </div>
+                                                                                                                                                                        <button type="button" onclick="deleteFile(${file.id})"
+                                                                                                                                                                                class="text-red-600 hover:text-red-800 p-1 rounded transition">
+                                                                                                                                                                            <i class="fas fa-trash"></i>
+                                                                                                                                                                        </button>
+                                                                                                                                                                    `;
                     filesContainer.appendChild(fileElement);
                 });
             } else {
@@ -1862,16 +1917,16 @@
                     const fileElement = document.createElement('div');
                     fileElement.className = 'flex items-center justify-between bg-blue-50 p-2 rounded mb-1';
                     fileElement.innerHTML = `
-                                                                            <div class="flex items-center space-x-2">
-                                                                                <i class="fas fa-file text-blue-500"></i>
-                                                                                <span class="text-blue-700 text-sm">${file.name}</span>
-                                                                                <span class="text-xs text-blue-600">(${Math.round(file.size / 1024)} KB)</span>
-                                                                            </div>
-                                                                            <button type="button" onclick="removeSelectedFile(${index})"
-                                                                                    class="text-red-500 hover:text-red-700 text-sm">
-                                                                                <i class="fas fa-times"></i>
-                                                                            </button>
-                                                                        `;
+                                                                                                                                                                        <div class="flex items-center space-x-2">
+                                                                                                                                                                            <i class="fas fa-file text-blue-500"></i>
+                                                                                                                                                                            <span class="text-blue-700 text-sm">${file.name}</span>
+                                                                                                                                                                            <span class="text-xs text-blue-600">(${Math.round(file.size / 1024)} KB)</span>
+                                                                                                                                                                        </div>
+                                                                                                                                                                        <button type="button" onclick="removeSelectedFile(${index})"
+                                                                                                                                                                                class="text-red-500 hover:text-red-700 text-sm">
+                                                                                                                                                                            <i class="fas fa-times"></i>
+                                                                                                                                                                        </button>
+                                                                                                                                                                    `;
                     filesList.appendChild(fileElement);
                 });
             }
@@ -1943,26 +1998,26 @@
                 rejectionsCount.textContent = rejections.length;
 
                 rejectionsContainer.innerHTML = rejections.map(rejection => `
-                                                                            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                                                                                <div class="flex justify-between items-start mb-2">
-                                                                                    <div class="flex items-center space-x-3">
-                                                                                        <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600">
-                                                                                            <i class="fas fa-user-slash text-sm"></i>
-                                                                                        </div>
-                                                                                        <div>
-                                                                                            <div class="font-medium text-red-800">${rejection.user?.name || 'Пользователь'}</div>
-                                                                                            <div class="text-xs text-red-600">${formatDateTime(rejection.created_at)}</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
-                                                                                        Отказ
-                                                                                    </span>
-                                                                                </div>
-                                                                                <div class="mt-2">
-                                                                                    <p class="text-sm text-red-700 bg-red-100 p-3 rounded-lg">${rejection.reason || 'Причина не указана'}</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        `).join('');
+                                                                                                                                                                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                                                                                                                                                                            <div class="flex justify-between items-start mb-2">
+                                                                                                                                                                                <div class="flex items-center space-x-3">
+                                                                                                                                                                                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600">
+                                                                                                                                                                                        <i class="fas fa-user-slash text-sm"></i>
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                    <div>
+                                                                                                                                                                                        <div class="font-medium text-red-800">${rejection.user?.name || 'Пользователь'}</div>
+                                                                                                                                                                                        <div class="text-xs text-red-600">${formatDateTime(rejection.created_at)}</div>
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                </div>
+                                                                                                                                                                                <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
+                                                                                                                                                                                    Отказ
+                                                                                                                                                                                </span>
+                                                                                                                                                                            </div>
+                                                                                                                                                                            <div class="mt-2">
+                                                                                                                                                                                <p class="text-sm text-red-700 bg-red-100 p-3 rounded-lg">${rejection.reason || 'Причина не указана'}</p>
+                                                                                                                                                                            </div>
+                                                                                                                                                                        </div>
+                                                                                                                                                                    `).join('');
             } else {
                 rejectionsCount.textContent = '0';
                 rejectionsContainer.innerHTML = '<p class="text-gray-500 text-center py-4">Отказов нет</p>';

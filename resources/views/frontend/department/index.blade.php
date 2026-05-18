@@ -7,7 +7,7 @@
     @endphp
     <div>
         <!-- Заголовок и кнопки -->
-        <div class="flex justify-between items-center mb-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
             <div>
                 @if($backgroundEnabled && $backgroundImage)
                     <h2 class="text-3xl font-bold text-white">Мои отделы</h2>
@@ -17,15 +17,15 @@
                     <p class="text-gray-700 text-sm">Управляйте отделами, задачами и почтовой системой</p>
                 @endif
             </div>
-            <div class="flex gap-3">
+            <div class="flex flex-wrap gap-3 w-full md:w-auto">
                 <button id="filterToggle"
-                        class="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg flex items-center space-x-2 hover:bg-gray-50 transition">
+                        class="flex-1 md:flex-none bg-white border border-gray-300 text-gray-700 px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-50 transition text-sm md:text-base">
                     <i class="fas fa-filter"></i>
                     <span>Фильтры</span>
                     <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform duration-200"></i>
                 </button>
                 <button onclick="openDepartmentModal()"
-                        class="bg-gradient-to-r from-green-600 to-green-500 text-white px-6 py-3 rounded-lg hover:from-green-700 hover:to-green-600 transition-colors flex items-center space-x-2">
+                        class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base">
                     <i class="fas fa-plus"></i>
                     <span>Новый отдел</span>
                 </button>
@@ -34,7 +34,7 @@
 
         <!-- Статистика по отделам -->
         @if($backgroundEnabled && $backgroundImage)
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-1 xl:grid-cols-4 md:grid-cols-2 gap-6 mb-8">
                 <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow p-6 border-none">
                     <div class="flex items-center justify-between">
                         <div>
