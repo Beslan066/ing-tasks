@@ -61,21 +61,21 @@
                             </div>
                             <div id="prioritySection" class="mt-3 space-y-2">
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300" data-filter-type="priority" value="critical">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300  accent-green-600" data-filter-type="priority" value="critical">
                                     <span class="text-sm text-gray-700">Критический</span>
                                     <span class="text-sm">🚨</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300" data-filter-type="priority" value="high">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="priority" value="high">
                                     <span class="text-sm text-gray-700">Высокий</span>
                                     <span class="text-sm">‼️</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300" data-filter-type="priority" value="medium">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="priority" value="medium">
                                     <span class="text-sm text-gray-700">Средний</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300" data-filter-type="priority" value="low">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="priority" value="low">
                                     <span class="text-sm text-gray-700">Низкий</span>
                                 </label>
                             </div>
@@ -89,21 +89,21 @@
                             </div>
                             <div id="deadlineSection" class="mt-3 space-y-2">
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300" data-filter-type="deadline" value="overdue">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="deadline" value="overdue">
                                     <span class="text-sm text-gray-700">Просроченные</span>
                                     <span class="text-sm text-red-500">⚠️</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300" data-filter-type="deadline" value="today">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="deadline" value="today">
                                     <span class="text-sm text-gray-700">Сегодня</span>
                                     <span class="text-sm text-orange-500">📅</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300" data-filter-type="deadline" value="tomorrow">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="deadline" value="tomorrow">
                                     <span class="text-sm text-gray-700">Завтра</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300" data-filter-type="deadline" value="week">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="deadline" value="week">
                                     <span class="text-sm text-gray-700">На этой неделе</span>
                                 </label>
                             </div>
@@ -117,11 +117,11 @@
                             </div>
                             <div id="descriptionSection" class="mt-3 space-y-2">
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300" data-filter-type="has-description" value="true">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="has-description" value="true">
                                     <span class="text-sm text-gray-700">Есть описание</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300" data-filter-type="has-description" value="false">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="has-description" value="false">
                                     <span class="text-sm text-gray-700">Нет описания</span>
                                 </label>
                             </div>
