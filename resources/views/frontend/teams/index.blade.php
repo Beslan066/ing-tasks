@@ -321,6 +321,7 @@
                                             $stats = $user->getTaskCompletionStats();
                                             $overdue = $user->assignedTasks()
                                                 ->where('status', '!=', 'выполнена')
+                                                ->where('is_personal', '!=', true)
                                                 ->where('deadline', '<', now())
                                                 ->count();
                                         @endphp
@@ -423,6 +424,7 @@
                             $stats = $user->getTaskCompletionStats();
                             $overdue = $user->assignedTasks()
                                 ->where('status', '!=', 'выполнена')
+                                ->where('is_personal', '!=', true)
                                 ->where('deadline', '<', now())
                                 ->count();
                         @endphp
@@ -626,6 +628,7 @@
                                             $stats = $user->getTaskCompletionStats();
                                             $overdue = $user->assignedTasks()
                                                 ->where('status', '!=', 'выполнена')
+                                                ->where('is_personal', '!=', true)
                                                 ->where('deadline', '<', now())
                                                 ->count();
                                         @endphp
@@ -728,6 +731,7 @@
                             $stats = $user->getTaskCompletionStats();
                             $overdue = $user->assignedTasks()
                                 ->where('status', '!=', 'выполнена')
+                                ->where('is_personal', '!=', true)
                                 ->where('deadline', '<', now())
                                 ->count();
                         @endphp

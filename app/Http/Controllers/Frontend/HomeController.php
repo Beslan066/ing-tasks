@@ -299,7 +299,7 @@ class HomeController extends Controller
         $allTasks = Task::with(['author', 'department', 'category', 'files'])
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
-            ->paginate(20); // По 20 задач на странице
+            ->paginate(10); // По 20 задач на странице
 
         // Статистика по статусам
         $stats = [
