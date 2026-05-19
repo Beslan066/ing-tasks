@@ -127,7 +127,7 @@
             </div>
 
             <!-- Информация о руководителе и последней активности -->
-            <div class="border-t border-gray-100 pt-4">
+            <div class="border-gray-100 pt-4">
                 <div class="flex justify-between items-center">
                     <div class="flex items-center space-x-3">
                         @if($department->supervisor)
@@ -204,7 +204,7 @@
                         </a>
                     @endif
                     <a href=""
-                       class="bg- text-white border border-gray-300 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+                       class="bg- text-white border border-gray-300 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 hover:text-gray-800 transition-colors">
                         Подробнее
                     </a>
                 </div>

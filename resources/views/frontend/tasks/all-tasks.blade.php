@@ -317,7 +317,7 @@
                 </div>
 
                 <!-- Пагинация -->
-                <div class="px-6 py-4 border-t border-gray-200">
+                <div class="px-6 py-4">
                     {{ $allTasks->links() }}
                 </div>
             </div>
@@ -406,7 +406,7 @@
                 </div>
 
                 <!-- Пагинация -->
-                <div class="px-6 py-4 border-t border-gray-200">
+                <div class="px-6 py-4">
                     {{ $allTasks->links() }}
                 </div>
             </div>

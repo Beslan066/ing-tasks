@@ -261,7 +261,7 @@
                 <div class="overflow-x-auto -mx-4 md:mx-0 hidden md:block">
                     <div class="inline-block min-w-full align-middle">
                         <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                            <table class="min-w-full divide-y divide-gray-300">
+                            <table class="min-w-full">
                                 <thead class="bg-transparent/20">
                                 <tr>
                                     <th scope="col"
@@ -325,7 +325,7 @@
                                                 ->where('deadline', '<', now())
                                                 ->count();
                                         @endphp
-                                        <tr class="bg-transparent/10 border-b hover:bg-gray-50 transition user-row cursor-pointer  text-white hover:text-gray-800"
+                                        <tr class="bg-transparent/10 hover:bg-gray-50 transition user-row cursor-pointer text-white hover:text-gray-800"
                                             data-user-id="{{ $user->id }}">
                                             <td class="px-3 py-4">
                                                 <div class="flex items-center space-x-3 border-1 border-gray-800">
@@ -568,7 +568,7 @@
                 <div class="overflow-x-auto -mx-4 md:mx-0 hidden md:block">
                     <div class="inline-block min-w-full align-middle">
                         <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                            <table class="min-w-full divide-y divide-gray-300">
+                            <table class="min-w-full">
                                 <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col"

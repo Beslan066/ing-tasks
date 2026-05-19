@@ -411,7 +411,7 @@
                     Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
                 </div>
                 <div class="w-full sm:w-auto">
-                    <select id="sortSelect" class="w-full  sm:w-48 border border-gray-800 rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
+                    <select id="sortSelect" class="w-full  sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
                         <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
                         <option class="text-gray-800" value="created_at_asc">Старые сначала</option>
                         <option class="text-gray-800" value="deadline_asc">Ближайший дедлайн</option>
@@ -427,9 +427,9 @@
                 <div class="inline-block min-w-full align-middle">
                     <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
                         <!-- Десктопный вид таблицы -->
-                        <table class="min-w-full divide-y divide-gray-300 hidden md:table">
+                        <table class="min-w-full  hidden md:table">
                             <thead class="bg-transparent/20">
-                            <tr>
+                            <tr class="border-none">
                                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Задача</th>
                                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
                                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Исполнитель</th>
@@ -776,7 +776,7 @@
                     Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
                 </div>
                 <div class="w-full sm:w-auto">
-                    <select id="sortSelect" class="w-full sm:w-48 border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
+                    <select id="sortSelect" class="w-full sm:w-48 border-none rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
                         <option value="created_at_desc">Новые сначала</option>
                         <option value="created_at_asc">Старые сначала</option>
                         <option value="deadline_asc">Ближайший дедлайн</option>

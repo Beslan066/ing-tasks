@@ -503,7 +503,7 @@ media-src https://meet.jit.si https:;
                 <div class="flex items-center justify-between mb-4 px-2">
                     <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider">ТЕГИ</h3>
                     <button onclick="openCategoryModal()"
-                            class="w-6 h-6 rounded-full bg-sidebar-hover flex items-center justify-center text-sidebar-text hover:text-white hover:bg-primary-600 transition-colors">
+                            class="w-6 h-6 rounded-full bg-transparent/20 flex items-center justify-center text-sidebar-text hover:text-white hover:bg-primary-600 transition-colors">
                         <i class="fas fa-plus text-xs"></i>
                     </button>
                 </div>
