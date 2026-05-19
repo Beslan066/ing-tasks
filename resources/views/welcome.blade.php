@@ -7,7 +7,7 @@
         $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
     @endphp
 
-        <!-- Заголовок и статистика -->
+    <!-- Заголовок и статистика -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
         <div>
             @if($backgroundEnabled && $backgroundImage)
@@ -21,7 +21,7 @@
 
         <div class="flex space-x-4 w-full md:w-auto">
             <button onclick="openPersonalTaskModal()"
-                    class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base">
+                class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base">
                 <i class="fas fa-plus"></i>
                 <span>Добавить</span>
             </button>
@@ -29,20 +29,22 @@
     </div>
 
     <!-- YouGile-style Filters -->
-    <div class="mb-6">
+    <div class="mb-6 max-[500px]:mb-1">
         <div class="flex items-center gap-2 flex-wrap">
             <!-- Кнопка фильтров -->
             <div class="relative">
                 <button onclick="toggleFiltersDropdown()"
-                        class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-50 transition text-sm">
+                    class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-50 transition text-sm">
                     <i class="fas fa-filter"></i>
                     <span>Фильтры</span>
-                    <span id="activeFiltersCount" class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
+                    <span id="activeFiltersCount"
+                        class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
                     <i class="fas fa-chevron-down ml-1 text-xs transition-transform" id="filtersChevron"></i>
                 </button>
 
                 <!-- Выпадающая панель фильтров -->
-                <div id="filtersDropdown" class="hidden absolute left-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+                <div id="filtersDropdown"
+                    class="hidden absolute left-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
                     <div class="p-4 border-b border-gray-100">
                         <div class="flex justify-between items-center">
                             <h3 class="font-semibold text-gray-800">Фильтрация задач</h3>
@@ -55,27 +57,33 @@
                     <div class="max-h-96 overflow-y-auto">
                         <!-- Приоритет -->
                         <div class="p-4 border-b border-gray-100">
-                            <div class="flex justify-between items-center cursor-pointer" onclick="toggleFilterSection('prioritySection')">
+                            <div class="flex justify-between items-center cursor-pointer"
+                                onclick="toggleFilterSection('prioritySection')">
                                 <span class="font-medium text-gray-700 text-sm">Приоритет</span>
-                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform" id="prioritySectionIcon"></i>
+                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform"
+                                    id="prioritySectionIcon"></i>
                             </div>
                             <div id="prioritySection" class="mt-3 space-y-2">
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300  accent-green-600" data-filter-type="priority" value="critical">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300  accent-green-600"
+                                        data-filter-type="priority" value="critical">
                                     <span class="text-sm text-gray-700">Критический</span>
                                     <span class="text-sm">🚨</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="priority" value="high">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="priority" value="high">
                                     <span class="text-sm text-gray-700">Высокий</span>
                                     <span class="text-sm">‼️</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="priority" value="medium">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="priority" value="medium">
                                     <span class="text-sm text-gray-700">Средний</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="priority" value="low">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="priority" value="low">
                                     <span class="text-sm text-gray-700">Низкий</span>
                                 </label>
                             </div>
@@ -83,27 +91,33 @@
 
                         <!-- Сроки -->
                         <div class="p-4 border-b border-gray-100">
-                            <div class="flex justify-between items-center cursor-pointer" onclick="toggleFilterSection('deadlineSection')">
+                            <div class="flex justify-between items-center cursor-pointer"
+                                onclick="toggleFilterSection('deadlineSection')">
                                 <span class="font-medium text-gray-700 text-sm">Сроки</span>
-                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform" id="deadlineSectionIcon"></i>
+                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform"
+                                    id="deadlineSectionIcon"></i>
                             </div>
                             <div id="deadlineSection" class="mt-3 space-y-2">
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="deadline" value="overdue">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="deadline" value="overdue">
                                     <span class="text-sm text-gray-700">Просроченные</span>
                                     <span class="text-sm text-red-500">⚠️</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="deadline" value="today">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="deadline" value="today">
                                     <span class="text-sm text-gray-700">Сегодня</span>
                                     <span class="text-sm text-orange-500">📅</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="deadline" value="tomorrow">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="deadline" value="tomorrow">
                                     <span class="text-sm text-gray-700">Завтра</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="deadline" value="week">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="deadline" value="week">
                                     <span class="text-sm text-gray-700">На этой неделе</span>
                                 </label>
                             </div>
@@ -111,17 +125,21 @@
 
                         <!-- Описание -->
                         <div class="p-4 border-b border-gray-100">
-                            <div class="flex justify-between items-center cursor-pointer" onclick="toggleFilterSection('descriptionSection')">
+                            <div class="flex justify-between items-center cursor-pointer"
+                                onclick="toggleFilterSection('descriptionSection')">
                                 <span class="font-medium text-gray-700 text-sm">Описание</span>
-                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform" id="descriptionSectionIcon"></i>
+                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform"
+                                    id="descriptionSectionIcon"></i>
                             </div>
                             <div id="descriptionSection" class="mt-3 space-y-2">
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="has-description" value="true">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="has-description" value="true">
                                     <span class="text-sm text-gray-700">Есть описание</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="has-description" value="false">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="has-description" value="false">
                                     <span class="text-sm text-gray-700">Нет описания</span>
                                 </label>
                             </div>
@@ -129,7 +147,8 @@
                     </div>
 
                     <div class="p-4 bg-gray-50 rounded-b-lg">
-                        <button onclick="applyFiltersAndClose()" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition text-sm font-medium">
+                        <button onclick="applyFiltersAndClose()"
+                            class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition text-sm font-medium">
                             Применить фильтры
                         </button>
                     </div>
@@ -140,58 +159,68 @@
             <div class="relative flex-1 max-w-xs">
                 <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
                 <input type="text" id="taskSearchInput" placeholder="Поиск по названию..."
-                       class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
             </div>
         </div>
 
         <!-- Активные фильтры (чипсы) -->
-        <div id="activeFiltersContainer" class="flex flex-wrap gap-2 mt-3 min-h-[32px]">
+        <div id="activeFiltersContainer" class="flex flex-wrap gap-2 mt-3 min-h-[32px] max-[500px]:min-h-[10px]">
             <!-- Сюда динамически добавляются активные фильтры -->
         </div>
     </div>
 
     <!-- Доска с задачами -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         <!-- Колонка "Новые" -->
         <div class="rounded-lg p-4 board-column bg-transparent max-[600px]:p-0" data-status="new">
             @if($backgroundEnabled && $backgroundImage)
-                <div class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
+                <div
+                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2 max-[500px]:hidden">
                     <h3 class="font-semibold text-white">Новые</h3>
-                    <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['new'] }}</span>
+                    <span
+                        class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['new'] }}</span>
                 </div>
             @else
-                <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2">
+                <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2 max-[500px]:hidden">
                     <h3 class="font-semibold text-gray-700">Новые</h3>
-                    <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['new'] }}</span>
+                    <span
+                        class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['new'] }}</span>
                 </div>
             @endif
 
             <div class="space-y-4 task-container" data-status="new">
                 @foreach($tasksByStatus['new'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move" draggable="true" data-task="{{ $task->id }}"
-                         data-priority="{{ $task->priority ?? 'medium' }}"
-                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
-                         data-task-name="{{ strtolower($task->name) }}">
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move" draggable="true"
+                        data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
+                        data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
+                        data-has-description="{{ $task->description ? 'true' : 'false' }}"
+                        data-task-name="{{ strtolower($task->name) }}">
                         <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-medium cursor-pointer hover:text-blue-600" onclick="openTaskViewModal({{ $task->id }})">
+                            <h4 class="font-medium cursor-pointer hover:text-blue-600"
+                                onclick="openTaskViewModal({{ $task->id }})">
                                 {{ $task->name }}
                             </h4>
                             <div class="flex space-x-1">
-                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs" title="{{ $task->author->name }}">
+                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
+                                    title="{{ $task->author->name }}">
                                     {{ substr($task->author->name, 0, 2) }}
                                 </div>
                             </div>
                         </div>
-                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}</p>
+                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}
+                        </p>
                         <div class="flex justify-between items-center">
-                            <div class="flex space-x-1">
-                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
+                            <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1  max-[500px]:space-x-0">
+                                <span
+                                    class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
                                 @if($task->priority === 'высокий')
                                     <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">‼️ Высокий</span>
                                 @elseif($task->priority === 'критический')
                                     <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">🚨 Критический</span>
                                 @endif
+                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded hidden max-[500px]:inline">
+                                    {{ $task->status ?? 'Без статуса' }}
+                                </span>
                             </div>
                             <div class="flex items-center space-x-2">
                                 @if($task->deadline && $task->deadline->isPast())
@@ -201,7 +230,7 @@
                                     <i class="fa-solid fa-check" style="color: #166534;"></i>
                                 </button>
                                 <button onclick="showRejectModal({{ $task->id }})"
-                                        class="text-red-600 hover:text-red-800 text-sm font-medium">
+                                    class="text-red-600 hover:text-red-800 text-sm font-medium">
                                     <i class="fa-solid fa-rectangle-xmark" style="color: #dc2626;"></i>
                                 </button>
                             </div>
@@ -214,39 +243,46 @@
         <!-- Колонка "В работе" -->
         <div class="rounded-lg p-4 board-column max-[600px]:p-0" data-status="in-progress">
             @if($backgroundEnabled && $backgroundImage)
-                <div class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
+                <div
+                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2 max-[500px]:hidden">
                     <h3 class="font-semibold text-white">В работе</h3>
-                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['in_progress'] }}</span>
+                    <span
+                        class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['in_progress'] }}</span>
                 </div>
             @else
-                <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2">
+                <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2 max-[500px]:hidden">
                     <h3 class="font-semibold text-gray-700">В работе</h3>
-                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['in_progress'] }}</span>
+                    <span
+                        class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['in_progress'] }}</span>
                 </div>
             @endif
 
             <div class="space-y-4 task-container" data-status="in-progress">
                 @foreach($tasksByStatus['in_progress'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move" draggable="true" data-task="{{ $task->id }}"
-                         data-priority="{{ $task->priority ?? 'medium' }}"
-                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
-                         data-task-name="{{ strtolower($task->name) }}">
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move" draggable="true"
+                        data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
+                        data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
+                        data-has-description="{{ $task->description ? 'true' : 'false' }}"
+                        data-task-name="{{ strtolower($task->name) }}">
                         <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-medium cursor-pointer hover:text-blue-600" onclick="openTaskViewModal({{ $task->id }})">
+                            <h4 class="font-medium cursor-pointer hover:text-blue-600"
+                                onclick="openTaskViewModal({{ $task->id }})">
                                 {{ $task->name }}
                             </h4>
                             <div class="flex space-x-1">
-                                <div class="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs" title="{{ $task->author->name }}">
+                                <div class="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs"
+                                    title="{{ $task->author->name }}">
                                     {{ substr($task->author->name, 0, 2) }}
                                 </div>
                             </div>
                         </div>
-                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}</p>
+                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}
+                        </p>
 
                         @if($task->deadline)
                             <div class="mb-3">
-                                <div class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
+                                <div
+                                    class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
                                     <i class="fas fa-clock mr-2"></i>
                                     {{ $task->deadline->format('d.m.Y H:i') }}
                                     @if($task->deadline->isPast())
@@ -257,19 +293,23 @@
                         @endif
 
                         <div class="flex justify-between items-center">
-                            <div class="flex space-x-1">
-                                <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
+                            <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1  max-[500px]:space-x-0">
+                                <span
+                                    class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
                                 @if($task->category)
-                                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->category->name }}</span>
+                                    <span
+                                        class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->category->name }}</span>
                                 @endif
+                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded hidden max-[500px]:inline">
+                                    {{ $task->status ?? 'Без статуса' }}
+                                </span>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <button onclick="sendForReview({{ $task->id }})"
-                                        class=" text-white px-3 py-1 rounded text-sm ">
+                                <button onclick="sendForReview({{ $task->id }})" class=" text-white px-3 py-1 rounded text-sm ">
                                     <i class="fa-solid fa-check" style="color: #166534;"></i>
                                 </button>
                                 <button onclick="showRejectModal({{ $task->id }})"
-                                        class="text-red-600 hover:text-red-800 text-sm">
+                                    class="text-red-600 hover:text-red-800 text-sm">
                                     <i class="fa-solid fa-rectangle-xmark" style="color: #dc2626;"></i>
                                 </button>
                             </div>
@@ -282,35 +322,41 @@
         <!-- Колонка "На проверке" -->
         <div class="rounded-lg p-4 board-column max-[600px]:p-0" data-status="review">
             @if($backgroundEnabled && $backgroundImage)
-                <div class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
+                <div
+                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2 max-[500px]:hidden">
                     <h3 class="font-semibold text-white shadow-2xs">На проверке</h3>
-                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['review'] }}</span>
+                    <span
+                        class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['review'] }}</span>
                 </div>
             @else
-                <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2">
+                <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2 max-[500px]:hidden">
                     <h3 class="font-semibold text-gray-700">На проверке</h3>
-                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['review'] }}</span>
+                    <span
+                        class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['review'] }}</span>
                 </div>
             @endif
 
             <div class="space-y-4 task-container" data-status="review">
                 @foreach($tasksByStatus['review'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move" draggable="true" data-task="{{ $task->id }}"
-                         data-priority="{{ $task->priority ?? 'medium' }}"
-                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
-                         data-task-name="{{ strtolower($task->name) }}">
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move" draggable="true"
+                        data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
+                        data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
+                        data-has-description="{{ $task->description ? 'true' : 'false' }}"
+                        data-task-name="{{ strtolower($task->name) }}">
                         <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-medium cursor-pointer hover:text-blue-600" onclick="openTaskViewModal({{ $task->id }})">
+                            <h4 class="font-medium cursor-pointer hover:text-blue-600"
+                                onclick="openTaskViewModal({{ $task->id }})">
                                 {{ $task->name }}
                             </h4>
                             <div class="flex space-x-1">
-                                <div class="w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center text-white text-xs" title="{{ $task->author->name }}">
+                                <div class="w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center text-white text-xs"
+                                    title="{{ $task->author->name }}">
                                     {{ substr($task->author->name, 0, 2) }}
                                 </div>
                             </div>
                         </div>
-                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}</p>
+                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}
+                        </p>
 
                         @if($task->actual_hours)
                             <div class="mb-3">
@@ -322,8 +368,9 @@
                         @endif
 
                         <div class="flex justify-between items-center">
-                            <div class="flex space-x-1">
-                                <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
+                            <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1  max-[500px]:space-x-0">
+                                <span
+                                    class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
                             </div>
                             <div class="text-sm text-gray-500">
                                 Ожидает проверки
@@ -337,35 +384,41 @@
         <!-- Колонка "Завершено" -->
         <div class="rounded-lg p-4 board-column bg-transparent max-[600px]:p-0" data-status="done">
             @if($backgroundEnabled && $backgroundImage)
-                <div class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
+                <div
+                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2 max-[500px]:hidden">
                     <h3 class="font-semibold text-white">Завершено</h3>
-                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['done'] }}</span>
+                    <span
+                        class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['done'] }}</span>
                 </div>
             @else
-                <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2">
+                <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2 max-[500px]:hidden">
                     <h3 class="font-semibold text-gray-700">Завершено</h3>
-                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['done'] }}</span>
+                    <span
+                        class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['done'] }}</span>
                 </div>
             @endif
 
             <div class="space-y-4 task-container" data-status="done">
                 @foreach($tasksByStatus['done'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow opacity-80 cursor-move" draggable="true" data-task="{{ $task->id }}"
-                         data-priority="{{ $task->priority ?? 'medium' }}"
-                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
-                         data-task-name="{{ strtolower($task->name) }}">
+                    <div class="task-card bg-white p-4 rounded-lg shadow opacity-80 cursor-move" draggable="true"
+                        data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
+                        data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
+                        data-has-description="{{ $task->description ? 'true' : 'false' }}"
+                        data-task-name="{{ strtolower($task->name) }}">
                         <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-medium cursor-pointer hover:text-blue-600" onclick="openTaskViewModal({{ $task->id }})">
+                            <h4 class="font-medium cursor-pointer hover:text-blue-600"
+                                onclick="openTaskViewModal({{ $task->id }})">
                                 {{ $task->name }}
                             </h4>
                             <div class="flex space-x-1">
-                                <div class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs" title="{{ $task->author->name }}">
+                                <div class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs"
+                                    title="{{ $task->author->name }}">
                                     {{ substr($task->author->name, 0, 2) }}
                                 </div>
                             </div>
                         </div>
-                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}</p>
+                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}
+                        </p>
 
                         @if($task->actual_hours)
                             <div class="mb-3">
@@ -377,7 +430,11 @@
                         @endif
 
                         <div class="flex justify-between items-center">
-                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
+                            <span
+                                class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded hidden max-[500px]:inline">
+                                {{ $task->status ?? 'Без статуса' }}
+                            </span>
                             <span class="text-xs text-gray-500">Завершено</span>
                         </div>
                     </div>
@@ -412,10 +469,12 @@
             <h3 class="text-lg font-semibold mb-4">Отказ от задачи</h3>
             <p class="text-gray-600 mb-4">Пожалуйста, укажите причину отказа от задачи:</p>
             <textarea id="rejectReason" placeholder="Причина отказа..."
-                      class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 h-24 resize-none"></textarea>
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 h-24 resize-none"></textarea>
             <div class="flex space-x-3">
-                <button onclick="submitRejection()" class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">Подтвердить отказ</button>
-                <button onclick="closeRejectModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Отмена</button>
+                <button onclick="submitRejection()"
+                    class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">Подтвердить отказ</button>
+                <button onclick="closeRejectModal()"
+                    class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Отмена</button>
             </div>
         </div>
     </div>
@@ -425,10 +484,13 @@
             <h3 class="text-lg font-semibold mb-4">Отправка на проверку</h3>
             <p class="text-gray-600 mb-4">Укажите фактическое время работы над задачей:</p>
             <input type="number" id="actualHours" step="0.5" min="0" placeholder="Часы"
-                   class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4">
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4">
             <div class="flex space-x-3">
-                <button onclick="submitForReview()" class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">Отправить на проверку</button>
-                <button onclick="closeTimeModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Отмена</button>
+                <button onclick="submitForReview()"
+                    class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">Отправить на
+                    проверку</button>
+                <button onclick="closeTimeModal()"
+                    class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Отмена</button>
             </div>
         </div>
     </div>
@@ -535,11 +597,11 @@
             const chip = document.createElement('div');
             chip.className = 'inline-flex items-center bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full';
             chip.innerHTML = `
-            <span>${label}</span>
-            <button onclick="removeFilter('${type}', '${value}')" class="ml-2 text-gray-500 hover:text-gray-700">
-                <i class="fas fa-times-circle text-xs"></i>
-            </button>
-        `;
+                                                                                                                                                                            <span>${label}</span>
+                                                                                                                                                                            <button onclick="removeFilter('${type}', '${value}')" class="ml-2 text-gray-500 hover:text-gray-700">
+                                                                                                                                                                                <i class="fas fa-times-circle text-xs"></i>
+                                                                                                                                                                            </button>
+                                                                                                                                                                        `;
             container.appendChild(chip);
         }
 
@@ -691,16 +753,16 @@
         }
 
         // Search input handler
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const searchInput = document.getElementById('taskSearchInput');
             if (searchInput) {
-                searchInput.addEventListener('input', function() {
+                searchInput.addEventListener('input', function () {
                     applyFilters();
                 });
             }
 
             // Close dropdown when clicking outside
-            document.addEventListener('click', function(event) {
+            document.addEventListener('click', function (event) {
                 const dropdown = document.getElementById('filtersDropdown');
                 const filterButton = event.target.closest('[onclick="toggleFiltersDropdown()"]');
 
@@ -732,15 +794,15 @@
 
             if (departmentField && departmentSelect) {
                 @if($user->department_id && $user->department)
-                departmentSelect.removeAttribute('required');
-                departmentSelect.innerHTML = `<option value="{{ $user->department_id }}" selected>{{ $user->department->name }}</option>`;
-                departmentSelect.disabled = true;
-                departmentField.style.display = 'block';
+                    departmentSelect.removeAttribute('required');
+                    departmentSelect.innerHTML = `<option value="{{ $user->department_id }}" selected>{{ $user->department->name }}</option>`;
+                    departmentSelect.disabled = true;
+                    departmentField.style.display = 'block';
                 @else
-                departmentSelect.removeAttribute('required');
-                departmentField.style.display = 'none';
+                    departmentSelect.removeAttribute('required');
+                    departmentField.style.display = 'none';
                 @endif
-            }
+                                                                                                                                                                            }
 
             if (statusField && statusSelect) {
                 statusSelect.innerHTML = `<option value="назначена" selected>назначена</option>`;
@@ -762,10 +824,10 @@
             formData.set('status', 'назначена');
 
             @if($user->department_id)
-            formData.set('department_id', '{{ $user->department_id }}');
+                formData.set('department_id', '{{ $user->department_id }}');
             @endif
 
-            const submitBtn = form.querySelector('button[type="submit"]');
+                                                                                                                                                                            const submitBtn = form.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Создание...';
             submitBtn.disabled = true;
@@ -938,11 +1000,11 @@
             document.getElementById('taskModalContent').innerHTML = '';
         }
 
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (e.target.id === 'taskViewModal') closeTaskViewModal();
         });
 
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') closeTaskViewModal();
         });
     </script>
@@ -959,6 +1021,12 @@
 
         .board-column {
             min-height: 600px;
+        }
+
+        @media(max-width:500px) {
+            .board-column {
+                min-height: auto;
+            }
         }
 
         #filtersDropdown {

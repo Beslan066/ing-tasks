@@ -412,7 +412,7 @@ media-src https://meet.jit.si https:;
     $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
 @endphp
 
-<div class="flex min-h-screen main-container {{ $backgroundEnabled && $backgroundImage ? 'has-background' : '' }}"
+<div class="flex min-h-screen main-container max-[500px]:pb-[50px] {{ $backgroundEnabled && $backgroundImage ? 'has-background' : '' }}"
      @if($backgroundEnabled && $backgroundImage)
          style="background-image: url('{{ $backgroundImage }}')"
     @endif>

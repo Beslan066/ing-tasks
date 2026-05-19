@@ -19,7 +19,7 @@
                 <nav>
                     <ol class="flex items-center gap-1.5">
                         <li>
-                            <a class="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400"
+                            <a class="inline-flex items-center gap-1.5 text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-500 dark:text-gray-400' }}"
                                href="{{ route('dashboard') }}">
                                 Главная
                                 <svg class="stroke-current" width="17" height="16" viewBox="0 0 17 16" fill="none"
@@ -29,7 +29,7 @@
                                 </svg>
                             </a>
                         </li>
-                        <li class="text-sm text-gray-800 dark:text-white/90" x-text="pageName">Хранилище</li>
+                        <li class="text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-800 dark:text-white/90' }}" x-text="pageName">Хранилище</li>
                     </ol>
                 </nav>
             </div>
@@ -170,7 +170,7 @@
                                     <!-- Search Input -->
                                     <div class="relative">
                                         <button
-                                            class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+                                            class="absolute left-4 top-1/2 -translate-y-1/2 {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-500 dark:text-gray-400' }}">
                                             <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                                                  xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" clip-rule="evenodd"
@@ -180,7 +180,10 @@
                                         </button>
 
                                         <input type="text" placeholder="Поиск файлов..."
-                                               class="w-full rounded-lg border-none bg-transparent py-2.5 pl-[42px] pr-3.5 text-sm text-white  placeholder:text-white  focus:outline-hidden focus:ring-2 focus:ring-green-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-green-800 xl:w-[300px] outline-none focus:border-gray-800  focus:ring-gray-800 border-2 border-gray-500">
+                                               class="w-full rounded-lg bg-transparent py-2.5 pl-[42px] pr-3.5 text-sm
+                                                 placeholder:text-white  focus:outline-hidden focus:ring-2 focus:ring-green-500/10 dark:border-gray-700 dark:bg-gray-900
+                                                  dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-green-800 xl:w-[300px] outline-none focus:border-gray-800  focus:ring-gray-800 border-2
+                                                   {{ $backgroundEnabled && $backgroundImage ? 'text-white  border-white border-[1px]' : 'text-gray-800 dark:text-white/90 border-gray-500' }}">
                                     </div>
 
                                     <!-- Upload Button with Modal -->
