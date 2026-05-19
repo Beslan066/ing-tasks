@@ -170,7 +170,7 @@
     </div>
 
     <!-- Доска с задачами -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-4 gap-6">
         <!-- Колонка "Новые" -->
         <div class="rounded-lg p-4 board-column bg-transparent max-[600px]:p-0" data-status="new">
             @if($backgroundEnabled && $backgroundImage)
@@ -190,7 +190,7 @@
 
             <div class="space-y-4 task-container" data-status="new">
                 @foreach($tasksByStatus['new'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move" draggable="true"
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[120px]" draggable="true"
                         data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
@@ -207,12 +207,23 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}
-                        </p>
+                        @if($task->deadline)
+                            <div class="mb-3">
+                                <div
+                                    class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
+                                    <i class="fas fa-clock mr-2"></i>
+                                    {{ $task->deadline->format('d.m.Y H:i') }}
+                                    @if($task->deadline->isPast())
+                                        <span class="ml-1">(Просрочено)</span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
                         <div class="flex justify-between items-center">
+
                             <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1  max-[500px]:space-x-0">
-                                <span
-                                    class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
+                                <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
+                                    class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
                                 @if($task->priority === 'высокий')
                                     <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">‼️ Высокий</span>
                                 @elseif($task->priority === 'критический')
@@ -259,7 +270,7 @@
 
             <div class="space-y-4 task-container" data-status="in-progress">
                 @foreach($tasksByStatus['in_progress'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move" draggable="true"
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[120px]" draggable="true"
                         data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
@@ -276,8 +287,6 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}
-                        </p>
 
                         @if($task->deadline)
                             <div class="mb-3">
@@ -295,7 +304,7 @@
                         <div class="flex justify-between items-center">
                             <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1  max-[500px]:space-x-0">
                                 <span
-                                    class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
+                                    class="text-purple-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
                                 @if($task->category)
                                     <span
                                         class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->category->name }}</span>
@@ -338,7 +347,7 @@
 
             <div class="space-y-4 task-container" data-status="review">
                 @foreach($tasksByStatus['review'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move" draggable="true"
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move  min-h-[120px]" draggable="true"
                         data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
@@ -355,8 +364,6 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}
-                        </p>
 
                         @if($task->actual_hours)
                             <div class="mb-3">
@@ -417,8 +424,6 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}
-                        </p>
 
                         @if($task->actual_hours)
                             <div class="mb-3">
@@ -597,11 +602,11 @@
             const chip = document.createElement('div');
             chip.className = 'inline-flex items-center bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full';
             chip.innerHTML = `
-                                                                                                                                                                            <span>${label}</span>
-                                                                                                                                                                            <button onclick="removeFilter('${type}', '${value}')" class="ml-2 text-gray-500 hover:text-gray-700">
-                                                                                                                                                                                <i class="fas fa-times-circle text-xs"></i>
-                                                                                                                                                                            </button>
-                                                                                                                                                                        `;
+                                                                                                                                                                                                                                                                    <span>${label}</span>
+                                                                                                                                                                                                                                                                    <button onclick="removeFilter('${type}', '${value}')" class="ml-2 text-gray-500 hover:text-gray-700">
+                                                                                                                                                                                                                                                                        <i class="fas fa-times-circle text-xs"></i>
+                                                                                                                                                                                                                                                                    </button>
+                                                                                                                                                                                                                                                                `;
             container.appendChild(chip);
         }
 
@@ -802,7 +807,7 @@
                     departmentSelect.removeAttribute('required');
                     departmentField.style.display = 'none';
                 @endif
-                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                    }
 
             if (statusField && statusSelect) {
                 statusSelect.innerHTML = `<option value="назначена" selected>назначена</option>`;
@@ -827,7 +832,7 @@
                 formData.set('department_id', '{{ $user->department_id }}');
             @endif
 
-                                                                                                                                                                            const submitBtn = form.querySelector('button[type="submit"]');
+                                                                                                                                                                                                                                                                    const submitBtn = form.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Создание...';
             submitBtn.disabled = true;
