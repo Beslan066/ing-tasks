@@ -20,56 +20,109 @@
         </div>
 
         <!-- Основной контейнер -->
-        <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
-                <div class="text-base md:text-lg font-semibold text-gray-700">
-                    Инструменты
-                </div>
-            </div>
-
-            <!-- Карточки инструментов -->
-            <div class="grid grid-cols-1 min-[870px]:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                <!-- Фотобанк -->
-                <div onclick="window.location.href='{{ route('photobank') }}'"
-                    class="group cursor-pointer bg-white border border-gray-200 rounded-xl p-4 md:p-6 transition-all duration-300 hover:shadow-lg hover:border-green-300 hover:-translate-y-1">
-                    <div class="flex items-start gap-4">
-                        <div
-                            class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors">
-                                Фотобанк</h3>
-                            <p class="text-gray-500 text-sm mt-1">Хранилище изображений и медиафайлов</p>
-                        </div>
+        @if($backgroundEnabled && $backgroundImage)
+            <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+                    <div class="text-base md:text-lg font-semibold text-white">
+                        Инструменты
                     </div>
                 </div>
 
-                <!-- Видеоконференции -->
-                <div onclick="openConferenceManager()"
-                    class="group cursor-pointer bg-white border border-gray-200 rounded-xl p-4 md:p-6 transition-all duration-300 hover:shadow-lg hover:border-green-300 hover:-translate-y-1">
-                    <div class="flex items-start gap-4">
-                        <div
-                            class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
-                                </path>
-                            </svg>
+                <!-- Карточки инструментов -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                    <!-- Фотобанк -->
+                    <div onclick="window.location.href='{{ route('photobank') }}'"
+                         class="group cursor-pointer bg-transparent/20 border-none rounded-xl p-4 md:p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-white transition-colors">
+                                    Фотобанк</h3>
+                                <p class="text-gray-500 text-sm mt-1">Хранилище изображений и медиафайлов</p>
+                            </div>
                         </div>
-                        <div class="flex-1">
-                            <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors">
-                                Видеоконференции</h3>
-                            <p class="text-gray-500 text-sm mt-1">Создайте комнату и пригласите коллег</p>
+                    </div>
+
+                    <!-- Видеоконференции -->
+                    <div onclick="openConferenceManager()"
+                         class="group cursor-pointer backdrop-blur-md bg-transparent/20 border-none rounded-xl p-4 md:p-6 transition-all duration-300 hover:shadow-lg hover:border-green-300 hover:-translate-y-1">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-white transition-colors">
+                                    Видеоконференции</h3>
+                                <p class="text-gray-500 text-sm mt-1">Создайте комнату и пригласите коллег</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @else
+            <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+                    <div class="text-base md:text-lg font-semibold text-gray-700">
+                        Инструменты
+                    </div>
+                </div>
+
+                <!-- Карточки инструментов -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                    <!-- Фотобанк -->
+                    <div onclick="window.location.href='{{ route('photobank') }}'"
+                         class="group cursor-pointer bg-white border border-gray-200 rounded-xl p-4 md:p-6 transition-all duration-300 hover:shadow-lg hover:border-green-300 hover:-translate-y-1">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors">
+                                    Фотобанк</h3>
+                                <p class="text-gray-500 text-sm mt-1">Хранилище изображений и медиафайлов</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Видеоконференции -->
+                    <div onclick="openConferenceManager()"
+                         class="group cursor-pointer bg-white border border-gray-200 rounded-xl p-4 md:p-6 transition-all duration-300 hover:shadow-lg hover:border-green-300 hover:-translate-y-1">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors">
+                                    Видеоконференции</h3>
+                                <p class="text-gray-500 text-sm mt-1">Создайте комнату и пригласите коллег</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 
     <!-- Менеджер комнаты -->
