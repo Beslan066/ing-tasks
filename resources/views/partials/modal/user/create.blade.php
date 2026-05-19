@@ -1,4 +1,4 @@
-<div id="newUserModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50" style="backdrop-filter: blur(10px)">
+<div id="newUserModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
     <div class="bg-white rounded-lg w-full max-w-md p-6">
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-xl font-bold">Новый пользователь</h3>

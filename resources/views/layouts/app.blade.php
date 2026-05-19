@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <meta http-equiv="Content-Security-Policy" content="
+    <meta http-equiv="Content-Security-Policy" content="
 
 default-src 'self';
 
@@ -101,14 +101,16 @@ media-src https://meet.jit.si https:;
             backdrop-filter: none !important;
             box-shadow: none !important;
         }
+
         /* ------v */
         .sidebar.glass {
             backdrop-filter: blur(10px) saturate(160%);
-            background:none;
+            background: none;
             -webkit-backdrop-filter: blur(10px) saturate(160%);
             box-shadow: 10px 0 15px -3px rgba(0, 0, 0, 0.1);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         /* Стиль main-container по умолчанию */
         .main-container {
             background-color: #f9fafb;
@@ -120,11 +122,13 @@ media-src https://meet.jit.si https:;
             background-position: center;
 
             .chat-button {
-            color:#fff;
+                color: #fff;
             }
+
             .setting-button {
-                color:#fff;
+                color: #fff;
             }
+
             .sidebar:hover {
                 box-shadow: 0 0 50px rgba(34, 197, 94, 0.1);
             }
@@ -351,57 +355,59 @@ media-src https://meet.jit.si https:;
                     display: block;
                 }
             }
+
             .burger-btn span {
-     background-color: #fff;
+                background-color: #fff;
             }
         }
-       .burger-btn {
-    display: none;
-    position: absolute;
-    top: 25px;
-    right: 15px;
-    width: 30px;
-    height: 22px; /* Высота уменьшена для ровного баланса трех линий */
-    flex-direction: column;
-    justify-content: space-between;
-    cursor: pointer;
-    z-index: 1000;
-    background: transparent;
-    border: none;
-    padding: 0;
-}
 
-/* Стили для всех трех линий */
-.burger-btn span {
-    display: block;
-    height: 3px;
-    width: 100%;
-    background-color: #000;
-    transition: all 0.3s ease;
-    border-radius: 20px;
-    transform-origin: center;
-}
+        .burger-btn {
+            display: none;
+            position: absolute;
+            top: 25px;
+            right: 15px;
+            width: 30px;
+            height: 22px; /* Высота уменьшена для ровного баланса трех линий */
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            z-index: 1000;
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
 
-/* Отображение на мобильных экранах */
-@media (max-width: 638px) {
-    .burger-btn {
-        display: flex;
-    }
-}
+        /* Стили для всех трех линий */
+        .burger-btn span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: #000;
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            transform-origin: center;
+        }
+
+        /* Отображение на мобильных экранах */
+        @media (max-width: 638px) {
+            .burger-btn {
+                display: flex;
+            }
+        }
 
 
-.burger-btn.active span:nth-child(1) {
-    transform: translateY(9.5px) rotate(45deg);
-}
+        .burger-btn.active span:nth-child(1) {
+            transform: translateY(9.5px) rotate(45deg);
+        }
 
-.burger-btn.active span:nth-child(2) {
-    opacity: 0;
-    transform: scale(0);
-}
+        .burger-btn.active span:nth-child(2) {
+            opacity: 0;
+            transform: scale(0);
+        }
 
-.burger-btn.active span:nth-child(3) {
-    transform: translateY(-9.5px) rotate(-45deg);
-}
+        .burger-btn.active span:nth-child(3) {
+            transform: translateY(-9.5px) rotate(-45deg);
+        }
     </style>
 </head>
 
@@ -512,7 +518,7 @@ media-src https://meet.jit.si https:;
                     @if(isset($categories) && $categories->count() > 0)
                         @foreach($categories as $category)
                             <div
-                                class="group flex items-center justify-between px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-sidebar-hover rounded-lg cursor-pointer transition-all duration-200">
+                                class="group flex items-center justify-between px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-transparent/20 rounded-lg cursor-pointer transition-all duration-200">
                                 <div class="flex items-center">
                                     <div class="category-dot" style="background-color: {{ $category->color }}"></div>
                                     <span class="font-medium">{{ $category->name }}</span>
@@ -633,18 +639,18 @@ media-src https://meet.jit.si https:;
             class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-500 to-transparent opacity-20 max-[638px]:static max-[638px]:mt-3"></div>
     </div>
     <!-- Оверлей для боковой панели -->
-     <div id="sidebar-overlay"
-     class="fixed inset-0 bg-black/50 z-[998] hidden max-[638px]:[&.active]:block transition-opacity duration-300">
-</div>
+    <div id="sidebar-overlay"
+         class="fixed inset-0 bg-black/50 z-[998] hidden max-[638px]:[&.active]:block transition-opacity duration-300">
+    </div>
     <!-- Основной контент -->
     <div class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:pt-[30px] max-[638px]:w-full">
 
-    <!-- Бургер меню -->
-      <button id="burger-btn" class="burger-btn">
-    <span></span>
-    <span></span>
-    <span></span>
-</button>
+        <!-- Бургер меню -->
+        <button id="burger-btn" class="burger-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
 
         <div id="home" class="page active-page p-6">
             @yield('content')
@@ -717,7 +723,7 @@ media-src https://meet.jit.si https:;
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify({ work_seconds: seconds })
+            body: JSON.stringify({work_seconds: seconds})
         })
             .then(response => response.json())
             .then(data => {
@@ -844,7 +850,7 @@ media-src https://meet.jit.si https:;
     console.log('🎯 Трекинг времени загружен');
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const mainContainer = document.querySelector('.main-container');
         const sidebar = document.querySelector('.sidebar');
         const resetInput = document.getElementById('reset-background-input');
@@ -871,7 +877,7 @@ media-src https://meet.jit.si https:;
         applyBackground(false, null);
         @endif
 
-            window.updateBackground = function(imagePath, enabled) {
+            window.updateBackground = function (imagePath, enabled) {
             fetch('{{ route("user.updateBackground") }}', {
                 method: 'POST',
                 headers: {
@@ -1364,19 +1370,46 @@ media-src https://meet.jit.si https:;
 
     function getFileIcon(extension) {
         const ext = (extension || '').toLowerCase();
-        const icons = { 'pdf': '📄', 'doc': '📝', 'docx': '📝', 'xls': '📊', 'xlsx': '📊', 'jpg': '🖼️', 'jpeg': '🖼️', 'png': '🖼️', 'gif': '🖼️', 'zip': '📦', 'rar': '📦', '7z': '📦', 'txt': '📃', 'mp3': '🎵', 'mp4': '🎬', 'avi': '🎬', 'mov': '🎬', 'wav': '🎵', 'ppt': '📊', 'pptx': '📊' };
+        const icons = {
+            'pdf': '📄',
+            'doc': '📝',
+            'docx': '📝',
+            'xls': '📊',
+            'xlsx': '📊',
+            'jpg': '🖼️',
+            'jpeg': '🖼️',
+            'png': '🖼️',
+            'gif': '🖼️',
+            'zip': '📦',
+            'rar': '📦',
+            '7z': '📦',
+            'txt': '📃',
+            'mp3': '🎵',
+            'mp4': '🎬',
+            'avi': '🎬',
+            'mov': '🎬',
+            'wav': '🎵',
+            'ppt': '📊',
+            'pptx': '📊'
+        };
         return icons[ext] || '📎';
     }
 
     function getFileTypeClass(extension) {
         const ext = (extension || '').toLowerCase();
-        if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) return {bg: 'bg-pink-100', text: 'text-pink-600'};
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) return {
+            bg: 'bg-pink-100',
+            text: 'text-pink-600'
+        };
         else if (['pdf'].includes(ext)) return {bg: 'bg-red-100', text: 'text-red-600'};
         else if (['doc', 'docx', 'txt', 'rtf'].includes(ext)) return {bg: 'bg-blue-100', text: 'text-blue-600'};
         else if (['xls', 'xlsx', 'csv'].includes(ext)) return {bg: 'bg-green-100', text: 'text-green-600'};
         else if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return {bg: 'bg-yellow-100', text: 'text-yellow-600'};
         else if (['mp3', 'wav', 'ogg', 'flac'].includes(ext)) return {bg: 'bg-purple-100', text: 'text-purple-600'};
-        else if (['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(ext)) return {bg: 'bg-indigo-100', text: 'text-indigo-600'};
+        else if (['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(ext)) return {
+            bg: 'bg-indigo-100',
+            text: 'text-indigo-600'
+        };
         else return {bg: 'bg-gray-100', text: 'text-gray-600'};
     }
 
@@ -1390,7 +1423,13 @@ media-src https://meet.jit.si https:;
 
     function formatDate(dateString, full = false) {
         const date = new Date(dateString);
-        if (full) return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        if (full) return date.toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
         return date.toLocaleDateString('ru-RU');
     }
 
@@ -1399,7 +1438,7 @@ media-src https://meet.jit.si https:;
         if (!file) return;
         try {
             const response = await fetch(`/file-storage/download/${fileId}`, {
-                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' }
+                headers: {'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''}
             });
             if (response.ok) {
                 const blob = await response.blob();
@@ -1422,9 +1461,15 @@ media-src https://meet.jit.si https:;
     const sortByEl = document.getElementById('fileManagerSortBy');
 
     if (fileSearch && typeFilterEl && sortByEl) {
-        fileSearch.addEventListener('input', function () { filterAndRenderFiles(); });
-        typeFilterEl.addEventListener('change', function () { filterAndRenderFiles(); });
-        sortByEl.addEventListener('change', function () { filterAndRenderFiles(); });
+        fileSearch.addEventListener('input', function () {
+            filterAndRenderFiles();
+        });
+        typeFilterEl.addEventListener('change', function () {
+            filterAndRenderFiles();
+        });
+        sortByEl.addEventListener('change', function () {
+            filterAndRenderFiles();
+        });
     }
 
     function filterAndRenderFiles() {
@@ -1437,23 +1482,35 @@ media-src https://meet.jit.si https:;
             filteredFiles = filteredFiles.filter(file => {
                 const ext = (file.extension || '').toLowerCase();
                 switch (typeFilterVal) {
-                    case 'image': return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext);
-                    case 'document': return ['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(ext);
-                    case 'video': return ['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(ext);
-                    case 'audio': return ['mp3', 'wav', 'ogg', 'flac'].includes(ext);
-                    case 'archive': return ['zip', 'rar', '7z', 'tar', 'gz'].includes(ext);
-                    default: return true;
+                    case 'image':
+                        return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext);
+                    case 'document':
+                        return ['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(ext);
+                    case 'video':
+                        return ['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(ext);
+                    case 'audio':
+                        return ['mp3', 'wav', 'ogg', 'flac'].includes(ext);
+                    case 'archive':
+                        return ['zip', 'rar', '7z', 'tar', 'gz'].includes(ext);
+                    default:
+                        return true;
                 }
             });
         }
         filteredFiles.sort((a, b) => {
             switch (sortByVal) {
-                case 'oldest': return new Date(a.created_at) - new Date(b.created_at);
-                case 'name_asc': return a.name.localeCompare(b.name);
-                case 'name_desc': return b.name.localeCompare(a.name);
-                case 'size_asc': return a.size - b.size;
-                case 'size_desc': return b.size - a.size;
-                default: return new Date(b.created_at) - new Date(a.created_at);
+                case 'oldest':
+                    return new Date(a.created_at) - new Date(b.created_at);
+                case 'name_asc':
+                    return a.name.localeCompare(b.name);
+                case 'name_desc':
+                    return b.name.localeCompare(a.name);
+                case 'size_asc':
+                    return a.size - b.size;
+                case 'size_desc':
+                    return b.size - a.size;
+                default:
+                    return new Date(b.created_at) - new Date(a.created_at);
             }
         });
         renderFiles(filteredFiles);
@@ -1467,7 +1524,9 @@ media-src https://meet.jit.si https:;
             e.preventDefault();
             const formData = new FormData(this);
             const selectedFilesData = JSON.parse(document.getElementById('selectedFiles')?.value || '[]');
-            selectedFilesData.forEach(file => { formData.append('selected_file_ids[]', file.id); });
+            selectedFilesData.forEach(file => {
+                formData.append('selected_file_ids[]', file.id);
+            });
             const submitButton = this.querySelector('button[type="submit"]');
             const originalText = submitButton ? submitButton.innerHTML : '';
             const name = formData.get('name');
@@ -1495,7 +1554,10 @@ media-src https://meet.jit.si https:;
                 const response = await fetch(url, {
                     method: method,
                     body: formData,
-                    headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '', 'Accept': 'application/json' }
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '',
+                        'Accept': 'application/json'
+                    }
                 });
                 const contentType = response.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
@@ -1548,7 +1610,10 @@ media-src https://meet.jit.si https:;
                 const response = await fetch('/users/store', {
                     method: 'POST',
                     body: formData,
-                    headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '', 'Accept': 'application/json' }
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '',
+                        'Accept': 'application/json'
+                    }
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -1585,7 +1650,10 @@ media-src https://meet.jit.si https:;
                 const response = await fetch('/category/create', {
                     method: 'POST',
                     body: formData,
-                    headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '', 'Accept': 'application/json' }
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '',
+                        'Accept': 'application/json'
+                    }
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -1653,7 +1721,11 @@ media-src https://meet.jit.si https:;
                 const response = await fetch('/category/update', {
                     method: 'POST',
                     body: formData,
-                    headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '', 'Accept': 'application/json', 'X-HTTP-Method-Override': 'patch' }
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '',
+                        'Accept': 'application/json',
+                        'X-HTTP-Method-Override': 'patch'
+                    }
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -1690,7 +1762,10 @@ media-src https://meet.jit.si https:;
                 const response = await fetch('/departments/store', {
                     method: 'POST',
                     body: formData,
-                    headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '', 'Accept': 'application/json' }
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '',
+                        'Accept': 'application/json'
+                    }
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -1758,7 +1833,10 @@ media-src https://meet.jit.si https:;
                 const response = await fetch('/departments/update', {
                     method: 'POST',
                     body: formData,
-                    headers: { 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '', 'Accept': 'application/json' }
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '',
+                        'Accept': 'application/json'
+                    }
                 });
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const data = await response.json();
@@ -1788,10 +1866,14 @@ media-src https://meet.jit.si https:;
         notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${type === 'success' ? 'bg-green-500 text-white' : type === 'error' ? 'bg-red-500 text-white' : type === 'warning' ? 'bg-yellow-500 text-white' : 'bg-blue-500 text-white'}`;
         notification.innerHTML = `<div class="flex items-center"><i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} mr-2"></i><span>${message}</span></div>`;
         document.body.appendChild(notification);
-        setTimeout(() => { notification.style.transform = 'translateX(0)'; }, 100);
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
         setTimeout(() => {
             notification.style.transform = 'translateX(100%)';
-            setTimeout(() => { if (notification.parentNode) notification.parentNode.removeChild(notification); }, 300);
+            setTimeout(() => {
+                if (notification.parentNode) notification.parentNode.removeChild(notification);
+            }, 300);
         }, 5000);
     }
 
@@ -1888,7 +1970,7 @@ media-src https://meet.jit.si https:;
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ status: serverStatus })
+                body: JSON.stringify({status: serverStatus})
             });
 
             const data = await response.json();
@@ -1919,10 +2001,16 @@ media-src https://meet.jit.si https:;
 
     function updateTaskCounters() {
         const columns = [
-            { selector: '[data-status="new"]', counterSelector: '.board-column[data-status="new"] span:first-child' },
-            { selector: '[data-status="in-progress"]', counterSelector: '.board-column[data-status="in-progress"] span:first-child' },
-            { selector: '[data-status="review"]', counterSelector: '.board-column[data-status="review"] span:first-child' },
-            { selector: '[data-status="done"]', counterSelector: '.board-column[data-status="done"] span:first-child' }
+            {selector: '[data-status="new"]', counterSelector: '.board-column[data-status="new"] span:first-child'},
+            {
+                selector: '[data-status="in-progress"]',
+                counterSelector: '.board-column[data-status="in-progress"] span:first-child'
+            },
+            {
+                selector: '[data-status="review"]',
+                counterSelector: '.board-column[data-status="review"] span:first-child'
+            },
+            {selector: '[data-status="done"]', counterSelector: '.board-column[data-status="done"] span:first-child'}
         ];
 
         columns.forEach(column => {
@@ -1969,7 +2057,10 @@ media-src https://meet.jit.si https:;
                 const response = await fetch('/category/delete', {
                     method: 'POST',
                     body: formData,
-                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '', 'Accept': 'application/json' }
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                        'Accept': 'application/json'
+                    }
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -2379,16 +2470,33 @@ ${task.rejections && task.rejections.length > 0 ? `
 
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
-    (function(m,e,t,r,i,k,a){
-        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=109251601', 'ym');
+    (function (m, e, t, r, i, k, a) {
+        m[i] = m[i] || function () {
+            (m[i].a = m[i].a || []).push(arguments)
+        };
+        m[i].l = 1 * new Date();
+        for (var j = 0; j < document.scripts.length; j++) {
+            if (document.scripts[j].src === r) {
+                return;
+            }
+        }
+        k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+    })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=109251601', 'ym');
 
-    ym(109251601, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    ym(109251601, 'init', {
+        ssr: true,
+        webvisor: true,
+        clickmap: true,
+        ecommerce: "dataLayer",
+        referrer: document.referrer,
+        url: location.href,
+        accurateTrackBounce: true,
+        trackLinks: true
+    });
 </script>
-<noscript><div><img src="https://mc.yandex.ru/watch/109251601" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<noscript>
+    <div><img src="https://mc.yandex.ru/watch/109251601" style="position:absolute; left:-9999px;" alt=""/></div>
+</noscript>
 <!-- /Yandex.Metrika counter -->
 @stack('scripts')
 

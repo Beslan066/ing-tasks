@@ -1,4 +1,4 @@
-<div id="taskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50" style="backdrop-filter: blur(10px)">
+<div id="taskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
     <div class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl
             scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         <!-- Заголовок -->

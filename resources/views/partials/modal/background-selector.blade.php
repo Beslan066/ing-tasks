@@ -1,4 +1,4 @@
-<div id="backgroundSelectorModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+<div id="backgroundSelectorModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center backdrop-blur-md">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4">
         <div class="flex justify-between items-center p-6 border-b">
             <h3 class="text-xl font-semibold">Выбор фона</h3>
