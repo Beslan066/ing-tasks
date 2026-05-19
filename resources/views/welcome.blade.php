@@ -29,7 +29,7 @@
     </div>
 
     <!-- YouGile-style Filters -->
-    <div class="mb-6 max-[500px]:mb-1">
+    <div class="mb-4 max-[500px]:mb-1">
         <div class="flex items-center gap-2 flex-wrap">
             <!-- Кнопка фильтров -->
             <div class="relative">
@@ -190,8 +190,8 @@
 
             <div class="space-y-4 task-container" data-status="new">
                 @foreach($tasksByStatus['new'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[120px]" draggable="true"
-                        data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[120px] flex flex-col justify-between"
+                        draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
                         data-task-name="{{ strtolower($task->name) }}">
@@ -270,8 +270,8 @@
 
             <div class="space-y-4 task-container" data-status="in-progress">
                 @foreach($tasksByStatus['in_progress'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[120px]" draggable="true"
-                        data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[120px] flex flex-col justify-between"
+                        draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
                         data-task-name="{{ strtolower($task->name) }}">
@@ -347,8 +347,8 @@
 
             <div class="space-y-4 task-container" data-status="review">
                 @foreach($tasksByStatus['review'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move  min-h-[120px]" draggable="true"
-                        data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move  min-h-[120px] flex flex-col justify-between"
+                        draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
                         data-task-name="{{ strtolower($task->name) }}">
@@ -407,8 +407,8 @@
 
             <div class="space-y-4 task-container" data-status="done">
                 @foreach($tasksByStatus['done'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow opacity-80 cursor-move" draggable="true"
-                        data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
+                    <div class="task-card bg-white p-4 rounded-lg shadow opacity-80 cursor-move flex flex-col justify-between"
+                        draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
                         data-task-name="{{ strtolower($task->name) }}">
@@ -602,11 +602,11 @@
             const chip = document.createElement('div');
             chip.className = 'inline-flex items-center bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full';
             chip.innerHTML = `
-                                                                                                                                                                                                                                                                                                                        <span>${label}</span>
-                                                                                                                                                                                                                                                                                                                        <button onclick="removeFilter('${type}', '${value}')" class="ml-2 text-gray-500 hover:text-gray-700">
-                                                                                                                                                                                                                                                                                                                            <i class="fas fa-times-circle text-xs"></i>
-                                                                                                                                                                                                                                                                                                                        </button>
-                                                                                                                                                                                                                                                                                                                    `;
+                                                                                                                                                                                                                                                                                                                                                        <span>${label}</span>
+                                                                                                                                                                                                                                                                                                                                                        <button onclick="removeFilter('${type}', '${value}')" class="ml-2 text-gray-500 hover:text-gray-700">
+                                                                                                                                                                                                                                                                                                                                                            <i class="fas fa-times-circle text-xs"></i>
+                                                                                                                                                                                                                                                                                                                                                        </button>
+                                                                                                                                                                                                                                                                                                                                                    `;
             container.appendChild(chip);
         }
 
@@ -705,7 +705,7 @@
                 // Search filter
                 const searchTerm = document.getElementById('taskSearchInput').value.toLowerCase();
                 if (show && searchTerm) {
-                    const taskName = card.dataset.taskName;
+                    const taskName = card.dataset.taskName.toLowerCase();
                     if (!taskName.includes(searchTerm)) {
                         show = false;
                     }
@@ -807,7 +807,7 @@
                     departmentSelect.removeAttribute('required');
                     departmentField.style.display = 'none';
                 @endif
-                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                        }
 
             if (statusField && statusSelect) {
                 statusSelect.innerHTML = `<option value="назначена" selected>назначена</option>`;
@@ -832,7 +832,7 @@
                 formData.set('department_id', '{{ $user->department_id }}');
             @endif
 
-                                                                                                                                                                                                                                                                                                                        const submitBtn = form.querySelector('button[type="submit"]');
+                                                                                                                                                                                                                                                                                                                                                        const submitBtn = form.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Создание...';
             submitBtn.disabled = true;

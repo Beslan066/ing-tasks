@@ -418,9 +418,12 @@ media-src https://meet.jit.si https:;
     @endif>
 
     <!-- Боковая панель -->
-    <div id="sidebar-menu" class="sidebar w-64 py-6 px-4 sm:flex flex-col relative
+    <div id="sidebar-menu" class="sidebar w-64 h-full py-6 px-4 fixed
             max-[638px]:!fixed max-[638px]:top-0 max-[638px]:-left-full max-[638px]:h-full max-[638px]:z-[999] max-[638px]:transition-[left] max-[638px]:duration-300 max-[638px]:overflow-x-auto max-[638px]:ease-in-out max-[638px]:!w-80
             [&.active]:max-[638px]:left-0 {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
+<div class="relative h-full w-full sm:flex flex-col">
+
+
         <!-- Логотип -->
         <div class="mb-8">
             <a href="{{route('welcome')}}" class="flex items-center space-x-3 group">
@@ -631,6 +634,7 @@ media-src https://meet.jit.si https:;
         <!-- Индикатор активности -->
         <div
             class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-500 to-transparent opacity-20 max-[638px]:static max-[638px]:mt-3"></div>
+             </div>
     </div>
     <!-- Оверлей для боковой панели -->
      <div id="sidebar-overlay"
@@ -646,7 +650,7 @@ media-src https://meet.jit.si https:;
     <span></span>
 </button>
 
-        <div id="home" class="page active-page p-6 max-[550px]:p-3">
+        <div id="home" class="page active-page p-6 pl-[calc(256px+1.5rem)] max-[638px]:pl-6 max-[550px]:p-3">
             @yield('content')
         </div>
 
