@@ -22,14 +22,6 @@ class HomeController extends Controller
         // Загружаем необходимые связи
         $user->load(['company', 'ownedCompanies', 'departments']);
 
-        // ДЕТАЛЬНАЯ ОТЛАДКА - временно, чтобы увидеть проблему
-        // \Log::info('User data:', [
-        //     'user_id' => $user->id,
-        //     'company_id' => $user->company_id,
-        //     'has_company' => (bool)$user->company,
-        //     'owned_companies_count' => $user->ownedCompanies->count()
-        // ]);
-
         // ПРОВЕРКА 1: Есть ли у пользователя компания?
         $hasCompany = $user->company_id && $user->company;
 
@@ -58,39 +50,44 @@ class HomeController extends Controller
             return redirect()->route('tasks.admin');
         }
 
-        // Получаем задачи пользователя по статусам
+        // Получаем задачи пользователя по статусам с КОЛИЧЕСТВОМ ФАЙЛОВ
         $tasksByStatus = [
             'new' => Task::with(['author', 'department', 'category', 'files'])
+                ->withCount('files')  // ДОБАВЛЕНО
                 ->where('user_id', $user->id)
                 ->where('status', 'назначена')
                 ->orderBy('created_at', 'desc')
                 ->get(),
 
             'in_progress' => Task::with(['author', 'department', 'category', 'files'])
+                ->withCount('files')  // ДОБАВЛЕНО
                 ->where('user_id', $user->id)
                 ->where('status', 'в работе')
                 ->orderBy('created_at', 'desc')
                 ->get(),
 
             'review' => Task::with(['author', 'department', 'category', 'files'])
+                ->withCount('files')  // ДОБАВЛЕНО
                 ->where('user_id', $user->id)
                 ->where('status', 'на проверке')
                 ->orderBy('created_at', 'desc')
                 ->get(),
 
             'done' => Task::with(['author', 'department', 'category', 'files'])
+                ->withCount('files')  // ДОБАВЛЕНО
                 ->where('user_id', $user->id)
                 ->where('status', 'выполнена')
                 ->orderBy('created_at', 'desc')
-                ->limit(10)  // Ограничиваем 10 задачами
+                ->limit(10)
                 ->get(),
         ];
 
-        // Задачи отделов (доступные для взятия) - ИСПРАВЛЕНО
+        // Задачи отделов (доступные для взятия)
         $availableTasks = collect();
         if ($user->departments()->count() > 0) {
             $departmentIds = $user->departments()->pluck('departments.id')->toArray();
             $availableTasks = Task::with(['author', 'departments', 'category'])
+                ->withCount('files')  // ДОБАВЛЕНО
                 ->whereIn('department_id', $departmentIds)
                 ->whereNull('user_id')
                 ->where('status', 'не назначена')
@@ -99,7 +96,6 @@ class HomeController extends Controller
                 ->get();
         }
 
-
         // Подсчёт всех завершённых задач для статистики
         $allDoneTasksCount = Task::where('user_id', $user->id)
             ->where('status', 'выполнена')
@@ -107,6 +103,7 @@ class HomeController extends Controller
 
         // Личные задачи пользователя
         $personalTasks = Task::with(['author', 'department', 'category', 'files'])
+            ->withCount('files')  // ДОБАВЛЕНО
             ->where('author_id', $user->id)
             ->where('user_id', $user->id)
             ->where('is_personal', true)

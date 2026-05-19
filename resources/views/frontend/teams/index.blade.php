@@ -338,8 +338,8 @@
                                                             <span class="text-white text-xs font-medium">{{ substr($user->name, 0, 1) }}</span>
                                                         </div>
                                                     @endif
-                                                    <div class="min-w-0 text-white">
-                                                        <div class="text-sm font-medium hover:text-gray-800 truncate">{{ $user->name }}</div>
+                                                    <div class="min-w-0 ">
+                                                        <div class="text-sm font-medium  truncate">{{ $user->name }}</div>
                                                         <div class="text-xs text-gray-500 truncate">{{ $user->email }}</div>
                                                     </div>
                                                 </div>

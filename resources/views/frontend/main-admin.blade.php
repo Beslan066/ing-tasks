@@ -1169,7 +1169,7 @@
     </div>
 
     <!-- Модальное окно редактирования задачи -->
-    <div id="editTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div id="editTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
         <div
             class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
             <!-- Заголовок -->
@@ -1445,7 +1445,7 @@
 
     <!-- Модальное окно возврата на доработку -->
     <div id="returnToWorkModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
         <div class="bg-white rounded-lg p-4 md:p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-3">Возврат задачи на доработку</h3>
             <p class="text-gray-600 mb-3">Укажите комментарий для исполнителя:</p>
@@ -1465,7 +1465,7 @@
     </div>
 
     <!-- Модальное окно удаления задачи -->
-    <div id="deleteTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+    <div id="deleteTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
         <div class="bg-white rounded-lg p-4 md:p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-3">Удаление задачи</h3>
             <p class="text-gray-600 mb-4">Вы уверены, что хотите удалить эту задачу? Это действие нельзя отменить.</p>
@@ -1483,7 +1483,7 @@
     </div>
 
     <!-- Модальное окно просмотра задачи -->
-    <div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4" style="backdrop-filter: blur(10px)">
+    <div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
                 <h3 class="text-xl font-bold text-gray-800">

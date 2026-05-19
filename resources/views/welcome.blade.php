@@ -109,20 +109,21 @@
                             </div>
                         </div>
 
-                        <!-- Описание -->
+                        <!-- Файлы -->
                         <div class="p-4 border-b border-gray-100">
-                            <div class="flex justify-between items-center cursor-pointer" onclick="toggleFilterSection('descriptionSection')">
-                                <span class="font-medium text-gray-700 text-sm">Описание</span>
-                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform" id="descriptionSectionIcon"></i>
+                            <div class="flex justify-between items-center cursor-pointer" onclick="toggleFilterSection('filesSection')">
+                                <span class="font-medium text-gray-700 text-sm">Файлы</span>
+                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform" id="filesSectionIcon"></i>
                             </div>
-                            <div id="descriptionSection" class="mt-3 space-y-2">
+                            <div id="filesSection" class="mt-3 space-y-2">
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="has-description" value="true">
-                                    <span class="text-sm text-gray-700">Есть описание</span>
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="has-files" value="true">
+                                    <span class="text-sm text-gray-700">Есть файлы</span>
+                                    <span class="text-sm">📎</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="has-description" value="false">
-                                    <span class="text-sm text-gray-700">Нет описания</span>
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="has-files" value="false">
+                                    <span class="text-sm text-gray-700">Нет файлов</span>
                                 </label>
                             </div>
                         </div>
@@ -136,7 +137,7 @@
                 </div>
             </div>
 
-            <!-- Поиск как в YouGile -->
+            <!-- Поиск -->
             <div class="relative flex-1 max-w-xs">
                 <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
                 <input type="text" id="taskSearchInput" placeholder="Поиск по названию..."
@@ -145,9 +146,7 @@
         </div>
 
         <!-- Активные фильтры (чипсы) -->
-        <div id="activeFiltersContainer" class="flex flex-wrap gap-2 mt-3 min-h-[32px]">
-            <!-- Сюда динамически добавляются активные фильтры -->
-        </div>
+        <div id="activeFiltersContainer" class="flex flex-wrap gap-2 mt-3 min-h-[32px]"></div>
     </div>
 
     <!-- Доска с задачами -->
@@ -171,8 +170,8 @@
                     <div class="task-card bg-white p-4 rounded-lg shadow cursor-move" draggable="true" data-task="{{ $task->id }}"
                          data-priority="{{ $task->priority ?? 'medium' }}"
                          data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
-                         data-task-name="{{ strtolower($task->name) }}">
+                         data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                         data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}">
                         <div class="flex justify-between items-start mb-2">
                             <h4 class="font-medium cursor-pointer hover:text-blue-600" onclick="openTaskViewModal({{ $task->id }})">
                                 {{ $task->name }}
@@ -184,6 +183,12 @@
                             </div>
                         </div>
                         <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}</p>
+                        @if($task->files_count > 0)
+                            <div class="mb-2 flex items-center text-xs text-gray-500">
+                                <i class="fas fa-paperclip mr-1"></i>
+                                <span>Файлы: {{ $task->files_count }}</span>
+                            </div>
+                        @endif
                         <div class="flex justify-between items-center">
                             <div class="flex space-x-1">
                                 <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
@@ -230,8 +235,8 @@
                     <div class="task-card bg-white p-4 rounded-lg shadow cursor-move" draggable="true" data-task="{{ $task->id }}"
                          data-priority="{{ $task->priority ?? 'medium' }}"
                          data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
-                         data-task-name="{{ strtolower($task->name) }}">
+                         data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                         data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}">
                         <div class="flex justify-between items-start mb-2">
                             <h4 class="font-medium cursor-pointer hover:text-blue-600" onclick="openTaskViewModal({{ $task->id }})">
                                 {{ $task->name }}
@@ -243,7 +248,12 @@
                             </div>
                         </div>
                         <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}</p>
-
+                        @if($task->files_count > 0)
+                            <div class="mb-2 flex items-center text-xs text-gray-500">
+                                <i class="fas fa-paperclip mr-1"></i>
+                                <span>Файлы: {{ $task->files_count }}</span>
+                            </div>
+                        @endif
                         @if($task->deadline)
                             <div class="mb-3">
                                 <div class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
@@ -298,8 +308,8 @@
                     <div class="task-card bg-white p-4 rounded-lg shadow cursor-move" draggable="true" data-task="{{ $task->id }}"
                          data-priority="{{ $task->priority ?? 'medium' }}"
                          data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
-                         data-task-name="{{ strtolower($task->name) }}">
+                         data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                         data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}">
                         <div class="flex justify-between items-start mb-2">
                             <h4 class="font-medium cursor-pointer hover:text-blue-600" onclick="openTaskViewModal({{ $task->id }})">
                                 {{ $task->name }}
@@ -311,7 +321,12 @@
                             </div>
                         </div>
                         <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}</p>
-
+                        @if($task->files_count > 0)
+                            <div class="mb-2 flex items-center text-xs text-gray-500">
+                                <i class="fas fa-paperclip mr-1"></i>
+                                <span>Файлы: {{ $task->files_count }}</span>
+                            </div>
+                        @endif
                         @if($task->actual_hours)
                             <div class="mb-3">
                                 <div class="flex items-center text-sm text-gray-500">
@@ -353,8 +368,8 @@
                     <div class="task-card bg-white p-4 rounded-lg shadow opacity-80 cursor-move" draggable="true" data-task="{{ $task->id }}"
                          data-priority="{{ $task->priority ?? 'medium' }}"
                          data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-description="{{ $task->description ? 'true' : 'false' }}"
-                         data-task-name="{{ strtolower($task->name) }}">
+                         data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                         data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}">
                         <div class="flex justify-between items-start mb-2">
                             <h4 class="font-medium cursor-pointer hover:text-blue-600" onclick="openTaskViewModal({{ $task->id }})">
                                 {{ $task->name }}
@@ -366,7 +381,12 @@
                             </div>
                         </div>
                         <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}</p>
-
+                        @if($task->files_count > 0)
+                            <div class="mb-2 flex items-center text-xs text-gray-500">
+                                <i class="fas fa-paperclip mr-1"></i>
+                                <span>Файлы: {{ $task->files_count }}</span>
+                            </div>
+                        @endif
                         @if($task->actual_hours)
                             <div class="mb-3">
                                 <div class="flex items-center text-sm text-gray-500">
@@ -394,7 +414,7 @@
         @endif
     </div>
 
-    <!-- Модальные окна (оставлены без изменений) -->
+    <!-- Модальные окна -->
     <div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
@@ -440,7 +460,15 @@
         let activeFilters = {
             priority: [],
             deadline: [],
-            hasDescription: []
+            hasFiles: []
+        };
+
+        // Маппинг значений для фильтрации
+        const priorityMap = {
+            'critical': 'критический',
+            'high': 'высокий',
+            'medium': 'средний',
+            'low': 'низкий'
         };
 
         // Toggle filters dropdown
@@ -448,8 +476,10 @@
             const dropdown = document.getElementById('filtersDropdown');
             const chevron = document.getElementById('filtersChevron');
 
-            dropdown.classList.toggle('hidden');
-            chevron.style.transform = dropdown.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+            if (dropdown && chevron) {
+                dropdown.classList.toggle('hidden');
+                chevron.style.transform = dropdown.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+            }
         }
 
         // Toggle filter sections
@@ -457,8 +487,10 @@
             const section = document.getElementById(sectionId);
             const icon = document.getElementById(sectionId + 'Icon');
 
-            section.classList.toggle('hidden');
-            icon.style.transform = section.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+            if (section && icon) {
+                section.classList.toggle('hidden');
+                icon.style.transform = section.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+            }
         }
 
         // Apply filters and close dropdown
@@ -474,7 +506,7 @@
             activeFilters = {
                 priority: [],
                 deadline: [],
-                hasDescription: []
+                hasFiles: []
             };
 
             document.querySelectorAll('.filter-checkbox:checked').forEach(checkbox => {
@@ -485,26 +517,29 @@
                 }
             });
 
-            // Update counter badge
             updateFiltersCounter();
         }
 
         // Update counter on filters button
         function updateFiltersCounter() {
-            const totalFilters = activeFilters.priority.length + activeFilters.deadline.length + activeFilters.hasDescription.length;
+            const totalFilters = activeFilters.priority.length + activeFilters.deadline.length + activeFilters.hasFiles.length;
             const counterBadge = document.getElementById('activeFiltersCount');
 
-            if (totalFilters > 0) {
-                counterBadge.textContent = totalFilters;
-                counterBadge.classList.remove('hidden');
-            } else {
-                counterBadge.classList.add('hidden');
+            if (counterBadge) {
+                if (totalFilters > 0) {
+                    counterBadge.textContent = totalFilters;
+                    counterBadge.classList.remove('hidden');
+                } else {
+                    counterBadge.classList.add('hidden');
+                }
             }
         }
 
         // Display active filters as chips
         function updateActiveFiltersDisplay() {
             const container = document.getElementById('activeFiltersContainer');
+            if (!container) return;
+
             container.innerHTML = '';
 
             // Priority filters
@@ -523,10 +558,10 @@
                 addFilterChip(container, 'deadline', deadline, label);
             });
 
-            // Description filters
-            activeFilters.hasDescription.forEach(desc => {
-                const label = desc === 'true' ? 'Есть описание' : 'Нет описания';
-                addFilterChip(container, 'has-description', desc, label);
+            // Files filters
+            activeFilters.hasFiles.forEach(hasFile => {
+                const label = hasFile === 'true' ? '📎 Есть файлы' : 'Нет файлов';
+                addFilterChip(container, 'has-files', hasFile, label);
             });
         }
 
@@ -545,13 +580,11 @@
 
         // Remove specific filter
         function removeFilter(type, value) {
-            // Remove from activeFilters
             const index = activeFilters[type].indexOf(value);
             if (index !== -1) {
                 activeFilters[type].splice(index, 1);
             }
 
-            // Uncheck corresponding checkbox
             const checkbox = document.querySelector(`.filter-checkbox[data-filter-type="${type}"][value="${value}"]`);
             if (checkbox) {
                 checkbox.checked = false;
@@ -567,58 +600,86 @@
             activeFilters = {
                 priority: [],
                 deadline: [],
-                hasDescription: []
+                hasFiles: []
             };
 
-            document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
+            document.querySelectorAll('.filter-checkbox:checked').forEach(checkbox => {
                 checkbox.checked = false;
             });
+
+            // Clear search input
+            const searchInput = document.getElementById('taskSearchInput');
+            if (searchInput) {
+                searchInput.value = '';
+            }
 
             updateActiveFiltersDisplay();
             updateFiltersCounter();
             applyFilters();
 
-            // Close dropdown if open
             const dropdown = document.getElementById('filtersDropdown');
-            if (!dropdown.classList.contains('hidden')) {
+            if (dropdown && !dropdown.classList.contains('hidden')) {
                 dropdown.classList.add('hidden');
-                document.getElementById('filtersChevron').style.transform = 'rotate(0deg)';
+                const chevron = document.getElementById('filtersChevron');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
             }
         }
 
         // Apply all filters to tasks
         function applyFilters() {
             const taskCards = document.querySelectorAll('.task-card');
+            const searchTerm = document.getElementById('taskSearchInput')?.value.toLowerCase().trim() || '';
 
             taskCards.forEach(card => {
                 let show = true;
 
                 // Priority filter
                 if (activeFilters.priority.length > 0) {
-                    const priority = card.dataset.priority;
-                    if (!activeFilters.priority.includes(priority)) {
+                    const priorityValue = card.dataset.priority;
+                    let matchesPriority = false;
+                    for (const filter of activeFilters.priority) {
+                        const russianValue = priorityMap[filter];
+                        if (priorityValue === russianValue) {
+                            matchesPriority = true;
+                            break;
+                        }
+                    }
+                    if (!matchesPriority) {
                         show = false;
                     }
                 }
 
                 // Deadline filter
                 if (show && activeFilters.deadline.length > 0) {
-                    const deadlineDate = card.dataset.deadline;
+                    const deadlineDateStr = card.dataset.deadline;
                     let matchesDeadline = false;
 
                     for (const filter of activeFilters.deadline) {
-                        if (filter === 'overdue' && deadlineDate && new Date(deadlineDate) < new Date()) {
-                            matchesDeadline = true;
-                            break;
-                        } else if (filter === 'today' && deadlineDate && isToday(new Date(deadlineDate))) {
-                            matchesDeadline = true;
-                            break;
-                        } else if (filter === 'tomorrow' && deadlineDate && isTomorrow(new Date(deadlineDate))) {
-                            matchesDeadline = true;
-                            break;
-                        } else if (filter === 'week' && deadlineDate && isThisWeek(new Date(deadlineDate))) {
-                            matchesDeadline = true;
-                            break;
+                        if (filter === 'overdue') {
+                            if (deadlineDateStr) {
+                                const deadlineDate = new Date(deadlineDateStr);
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
+                                if (deadlineDate < today) {
+                                    matchesDeadline = true;
+                                    break;
+                                }
+                            }
+                        } else if (filter === 'today') {
+                            if (deadlineDateStr && isToday(new Date(deadlineDateStr))) {
+                                matchesDeadline = true;
+                                break;
+                            }
+                        } else if (filter === 'tomorrow') {
+                            if (deadlineDateStr && isTomorrow(new Date(deadlineDateStr))) {
+                                matchesDeadline = true;
+                                break;
+                            }
+                        } else if (filter === 'week') {
+                            if (deadlineDateStr && isThisWeek(new Date(deadlineDateStr))) {
+                                matchesDeadline = true;
+                                break;
+                            }
                         }
                     }
 
@@ -627,18 +688,24 @@
                     }
                 }
 
-                // Description filter
-                if (show && activeFilters.hasDescription.length > 0) {
-                    const hasDescription = card.dataset.hasDescription;
-                    if (!activeFilters.hasDescription.includes(hasDescription)) {
+                // Files filter
+                if (show && activeFilters.hasFiles.length > 0) {
+                    const hasFilesValue = card.dataset.hasFiles;
+                    let matchesFiles = false;
+                    for (const filter of activeFilters.hasFiles) {
+                        if (hasFilesValue === filter) {
+                            matchesFiles = true;
+                            break;
+                        }
+                    }
+                    if (!matchesFiles) {
                         show = false;
                     }
                 }
 
-                // Search filter
-                const searchTerm = document.getElementById('taskSearchInput').value.toLowerCase();
+                // Search filter - ИСПРАВЛЕНО
                 if (show && searchTerm) {
-                    const taskName = card.dataset.taskName;
+                    const taskName = card.dataset.taskName || '';
                     if (!taskName.includes(searchTerm)) {
                         show = false;
                     }
@@ -653,23 +720,24 @@
         // Helper date functions
         function isToday(date) {
             const today = new Date();
-            return date.getDate() === today.getDate() &&
-                date.getMonth() === today.getMonth() &&
-                date.getFullYear() === today.getFullYear();
+            today.setHours(0, 0, 0, 0);
+            date.setHours(0, 0, 0, 0);
+            return date.getTime() === today.getTime();
         }
 
         function isTomorrow(date) {
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
-            return date.getDate() === tomorrow.getDate() &&
-                date.getMonth() === tomorrow.getMonth() &&
-                date.getFullYear() === tomorrow.getFullYear();
+            tomorrow.setHours(0, 0, 0, 0);
+            date.setHours(0, 0, 0, 0);
+            return date.getTime() === tomorrow.getTime();
         }
 
         function isThisWeek(date) {
             const today = new Date();
+            const currentDay = today.getDay();
             const startOfWeek = new Date(today);
-            startOfWeek.setDate(today.getDate() - today.getDay());
+            startOfWeek.setDate(today.getDate() - currentDay + (currentDay === 0 ? -6 : 1));
             startOfWeek.setHours(0, 0, 0, 0);
 
             const endOfWeek = new Date(startOfWeek);
@@ -681,20 +749,41 @@
 
         // Update column counters
         function updateColumnCounters() {
-            document.querySelectorAll('.board-column').forEach(column => {
-                const visibleTasks = column.querySelectorAll('.task-card:not([style*="display: none"])').length;
-                const counterSpan = column.querySelector('.stat-count');
-                if (counterSpan) {
-                    counterSpan.textContent = visibleTasks;
+            const columns = document.querySelectorAll('.board-column');
+
+            columns.forEach(column => {
+                const taskContainer = column.querySelector('.task-container');
+                if (taskContainer) {
+                    const visibleTasks = taskContainer.querySelectorAll('.task-card:not([style*="display: none"])').length;
+                    const counterSpan = column.querySelector('.stat-count');
+                    if (counterSpan) {
+                        counterSpan.textContent = visibleTasks;
+                    }
                 }
             });
         }
 
-        // Search input handler
+        // Функция для отладки
+        function debugSearch() {
+            console.log('=== DEBUG SEARCH ===');
+            const searchTerm = document.getElementById('taskSearchInput')?.value;
+            console.log('Search term:', searchTerm);
+            const taskCards = document.querySelectorAll('.task-card');
+            taskCards.forEach((card, i) => {
+                const taskName = card.dataset.taskName;
+                const display = card.style.display;
+                console.log(`${i+1}. "${taskName}" - display: ${display}`);
+            });
+        }
+
+        // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('taskSearchInput');
             if (searchInput) {
                 searchInput.addEventListener('input', function() {
+                    applyFilters();
+                });
+                searchInput.addEventListener('keyup', function() {
                     applyFilters();
                 });
             }
@@ -703,23 +792,114 @@
             document.addEventListener('click', function(event) {
                 const dropdown = document.getElementById('filtersDropdown');
                 const filterButton = event.target.closest('[onclick="toggleFiltersDropdown()"]');
+                const isInsideDropdown = dropdown && dropdown.contains(event.target);
 
-                if (!dropdown.contains(event.target) && !filterButton && !dropdown.classList.contains('hidden')) {
+                if (dropdown && !dropdown.classList.contains('hidden') && !filterButton && !isInsideDropdown) {
                     dropdown.classList.add('hidden');
-                    document.getElementById('filtersChevron').style.transform = 'rotate(0deg)';
+                    const chevron = document.getElementById('filtersChevron');
+                    if (chevron) chevron.style.transform = 'rotate(0deg)';
                 }
             });
+
+            // Инициализация перетаскивания
+            initDragAndDrop();
+
+            // Для отладки - раскомментировать при необходимости
+            // window.debugSearch = debugSearch;
         });
 
-        // Rest of your existing functions (openPersonalTaskModal, createPersonalTask, etc.)
-        // ... (keep all your existing task management functions here)
+        // Drag and drop functionality
+        function initDragAndDrop() {
+            const taskCards = document.querySelectorAll('.task-card');
+            const columns = document.querySelectorAll('.board-column');
 
+            taskCards.forEach(card => {
+                card.setAttribute('draggable', 'true');
+                card.addEventListener('dragstart', dragStart);
+                card.addEventListener('dragend', dragEnd);
+            });
+
+            columns.forEach(column => {
+                column.addEventListener('dragover', dragOver);
+                column.addEventListener('drop', drop);
+            });
+        }
+
+        let draggedItem = null;
+
+        function dragStart(e) {
+            draggedItem = this;
+            e.dataTransfer.setData('text/plain', this.dataset.task);
+            this.style.opacity = '0.5';
+        }
+
+        function dragEnd(e) {
+            if (draggedItem) {
+                draggedItem.style.opacity = '';
+                draggedItem = null;
+            }
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            const column = this.closest('.board-column');
+            if (!column || !draggedItem) return;
+
+            const newStatus = column.dataset.status;
+            const taskId = draggedItem.dataset.task;
+
+            let statusMap = {
+                'new': 'назначена',
+                'in-progress': 'в работе',
+                'review': 'на проверке',
+                'done': 'выполнена'
+            };
+
+            const newStatusValue = statusMap[newStatus];
+            if (!newStatusValue) return;
+
+            updateTaskStatus(taskId, newStatusValue);
+        }
+
+        async function updateTaskStatus(taskId, newStatus) {
+            try {
+                const response = await fetch(`/tasks/${taskId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message || 'Ошибка при перемещении задачи');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка при перемещении задачи');
+            }
+        }
+
+        // Rest of your existing task management functions
         function openPersonalTaskModal() {
             const modal = document.getElementById('taskModal');
             const form = document.getElementById('taskForm');
 
-            modal.querySelector('h3').textContent = 'Новая личная задача';
-            modal.querySelector('p').textContent = 'Создайте задачу для себя';
+            if (!modal || !form) return;
+
+            const titleElement = modal.querySelector('h3');
+            const descElement = modal.querySelector('p');
+            if (titleElement) titleElement.textContent = 'Новая личная задача';
+            if (descElement) descElement.textContent = 'Создайте задачу для себя';
 
             const executorField = document.querySelector('select[name="user_id"]')?.closest('.space-y-2');
             const departmentField = document.querySelector('select[name="department_id"]')?.closest('.space-y-2');
@@ -766,6 +946,8 @@
             @endif
 
             const submitBtn = form.querySelector('button[type="submit"]');
+            if (!submitBtn) return;
+
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Создание...';
             submitBtn.disabled = true;
@@ -799,21 +981,27 @@
             const modal = document.getElementById('taskModal');
             const form = document.getElementById('taskForm');
 
+            if (!modal) return;
+
             const executorField = document.querySelector('select[name="user_id"]')?.closest('.space-y-2');
             const departmentField = document.querySelector('select[name="department_id"]')?.closest('.space-y-2');
             const statusField = document.querySelector('select[name="status"]')?.closest('.space-y-2');
 
             if (executorField) executorField.style.display = 'block';
-
             if (departmentField) departmentField.style.display = 'block';
             if (statusField) statusField.style.display = 'block';
 
-            modal.querySelector('h3').textContent = 'Новая задача';
-            modal.querySelector('p').textContent = 'Заполните информацию о задаче';
+            const titleElement = modal.querySelector('h3');
+            const descElement = modal.querySelector('p');
+            if (titleElement) titleElement.textContent = 'Новая задача';
+            if (descElement) descElement.textContent = 'Заполните информацию о задаче';
 
-            form.onsubmit = null;
+            if (form) {
+                form.onsubmit = null;
+                form.reset();
+            }
+
             modal.classList.add('hidden');
-            form.reset();
         }
 
         async function startTask(taskId) {
@@ -842,11 +1030,12 @@
 
         async function sendForReview(taskId) {
             currentTaskId = taskId;
-            document.getElementById('timeModal').classList.remove('hidden');
+            const timeModal = document.getElementById('timeModal');
+            if (timeModal) timeModal.classList.remove('hidden');
         }
 
         async function submitForReview() {
-            const actualHours = document.getElementById('actualHours').value;
+            const actualHours = document.getElementById('actualHours')?.value;
             if (!actualHours || actualHours <= 0) {
                 alert('Пожалуйста, укажите корректное время работы');
                 return;
@@ -878,11 +1067,12 @@
 
         function showRejectModal(taskId) {
             currentTaskId = taskId;
-            document.getElementById('rejectModal').classList.remove('hidden');
+            const rejectModal = document.getElementById('rejectModal');
+            if (rejectModal) rejectModal.classList.remove('hidden');
         }
 
         async function submitRejection() {
-            const reason = document.getElementById('rejectReason').value.trim();
+            const reason = document.getElementById('rejectReason')?.value.trim();
             if (!reason) {
                 alert('Пожалуйста, укажите причину отказа');
                 return;
@@ -913,14 +1103,18 @@
         }
 
         function closeTimeModal() {
-            document.getElementById('timeModal').classList.add('hidden');
-            document.getElementById('actualHours').value = '';
+            const timeModal = document.getElementById('timeModal');
+            const actualHours = document.getElementById('actualHours');
+            if (timeModal) timeModal.classList.add('hidden');
+            if (actualHours) actualHours.value = '';
             currentTaskId = null;
         }
 
         function closeRejectModal() {
-            document.getElementById('rejectModal').classList.add('hidden');
-            document.getElementById('rejectReason').value = '';
+            const rejectModal = document.getElementById('rejectModal');
+            const rejectReason = document.getElementById('rejectReason');
+            if (rejectModal) rejectModal.classList.add('hidden');
+            if (rejectReason) rejectReason.value = '';
             currentTaskId = null;
         }
 
@@ -928,14 +1122,19 @@
             fetch(`/tasks/${taskId}`)
                 .then(response => response.text())
                 .then(html => {
-                    document.getElementById('taskModalContent').innerHTML = html;
-                    document.getElementById('taskViewModal').classList.remove('hidden');
-                });
+                    const content = document.getElementById('taskModalContent');
+                    const modal = document.getElementById('taskViewModal');
+                    if (content) content.innerHTML = html;
+                    if (modal) modal.classList.remove('hidden');
+                })
+                .catch(error => console.error('Ошибка:', error));
         }
 
         function closeTaskViewModal() {
-            document.getElementById('taskViewModal').classList.add('hidden');
-            document.getElementById('taskModalContent').innerHTML = '';
+            const modal = document.getElementById('taskViewModal');
+            const content = document.getElementById('taskModalContent');
+            if (modal) modal.classList.add('hidden');
+            if (content) content.innerHTML = '';
         }
 
         document.addEventListener('click', function(e) {
