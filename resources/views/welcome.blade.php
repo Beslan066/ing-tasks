@@ -303,8 +303,8 @@
 
                         <div class="flex justify-between items-center">
                             <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1  max-[500px]:space-x-0">
-                                <span
-                                    class="text-purple-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
+                                <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
+                                    class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
                                 @if($task->category)
                                     <span
                                         class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->category->name }}</span>
@@ -376,8 +376,8 @@
 
                         <div class="flex justify-between items-center">
                             <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1  max-[500px]:space-x-0">
-                                <span
-                                    class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
+                                <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
+                                    class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
                             </div>
                             <div class="text-sm text-gray-500">
                                 Ожидает проверки
@@ -435,8 +435,8 @@
                         @endif
 
                         <div class="flex justify-between items-center">
-                            <span
-                                class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
+                            <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
+                                class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
                             <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded hidden max-[500px]:inline">
                                 {{ $task->status ?? 'Без статуса' }}
                             </span>
@@ -602,11 +602,11 @@
             const chip = document.createElement('div');
             chip.className = 'inline-flex items-center bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full';
             chip.innerHTML = `
-                                                                                                                                                                                                                                                                    <span>${label}</span>
-                                                                                                                                                                                                                                                                    <button onclick="removeFilter('${type}', '${value}')" class="ml-2 text-gray-500 hover:text-gray-700">
-                                                                                                                                                                                                                                                                        <i class="fas fa-times-circle text-xs"></i>
-                                                                                                                                                                                                                                                                    </button>
-                                                                                                                                                                                                                                                                `;
+                                                                                                                                                                                                                                                                                                                        <span>${label}</span>
+                                                                                                                                                                                                                                                                                                                        <button onclick="removeFilter('${type}', '${value}')" class="ml-2 text-gray-500 hover:text-gray-700">
+                                                                                                                                                                                                                                                                                                                            <i class="fas fa-times-circle text-xs"></i>
+                                                                                                                                                                                                                                                                                                                        </button>
+                                                                                                                                                                                                                                                                                                                    `;
             container.appendChild(chip);
         }
 
@@ -807,7 +807,7 @@
                     departmentSelect.removeAttribute('required');
                     departmentField.style.display = 'none';
                 @endif
-                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                        }
 
             if (statusField && statusSelect) {
                 statusSelect.innerHTML = `<option value="назначена" selected>назначена</option>`;
@@ -832,7 +832,7 @@
                 formData.set('department_id', '{{ $user->department_id }}');
             @endif
 
-                                                                                                                                                                                                                                                                    const submitBtn = form.querySelector('button[type="submit"]');
+                                                                                                                                                                                                                                                                                                                        const submitBtn = form.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Создание...';
             submitBtn.disabled = true;
