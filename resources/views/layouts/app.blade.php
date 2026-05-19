@@ -419,9 +419,10 @@ media-src https://meet.jit.si https:;
 
     <!-- Боковая панель -->
     <div id="sidebar-menu" class="sidebar w-64 h-full py-6 px-4 fixed
-            max-[638px]:!fixed max-[638px]:top-0 max-[638px]:-left-full max-[638px]:h-full max-[638px]:z-[999] max-[638px]:transition-[left] max-[638px]:duration-300 max-[638px]:overflow-x-auto max-[638px]:ease-in-out max-[638px]:!w-80
-            [&.active]:max-[638px]:left-0 {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
-<div class="relative h-full w-full sm:flex flex-col">
+                                  max-[638px]:!fixed max-[638px]:top-0 max-[638px]:-left-full max-[638px]:h-full
+                                  max-[638px]:z-[999] max-[638px]:transition-[left] max-[638px]:duration-300 max-[638px]:ease-in-out max-[638px]:!w-80
+                                  [&.active]:max-[638px]:left-0 max-[638px]:pb-2 {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
+<div class="relative h-full w-full sm:flex flex-col max-[638px]:flex">
 
 
         <!-- Логотип -->
@@ -439,7 +440,7 @@ media-src https://meet.jit.si https:;
         </div>
 
         <!-- Навигация -->
-        <div class="space-y-2 flex-1 scrollbar-thin">
+        <div class="space-y-2 flex-1 scrollbar-thin overflow-x-hidden overflow-y-auto">
             <!-- Главное меню -->
             <div class="mb-6">
 
@@ -451,7 +452,6 @@ media-src https://meet.jit.si https:;
                         </div>
                         <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Мои задачи</span>
                     </a>
-
                     <a href="{{route('tasks.admin')}}"
                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:rounded-lg hover:bg-sidebar-hover {{request()->routeIs('tasks.admin*') ? 'active' : ''}}">
                         <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3">
