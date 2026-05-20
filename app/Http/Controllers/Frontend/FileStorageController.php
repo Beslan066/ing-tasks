@@ -41,7 +41,7 @@ class FileStorageController extends Controller
         $files = File::where('company_id', $company->id)
             ->with('uploadedBy')
             ->latest()
-            ->paginate(20);
+            ->paginate(7);
 
         // Группируем файлы по типам для статистики
         $fileStats = $this->getFileStatistics($company->id);

@@ -422,119 +422,93 @@
         <!-- Таблица задач -->
         @if($backgroundEnabled && $backgroundImage)
             <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
-                    <div class="text-gray-500 text-sm md:text-base">
-                        Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
-                    </div>
-                    <div class="w-full sm:w-auto">
-                        <select id="sortSelect"
-                            class="w-full  sm:w-48 border border-gray-800 rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
-                            <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
-                            <option class="text-gray-800" value="created_at_asc">Старые сначала</option>
-                            <option class="text-gray-800" value="deadline_asc">Ближайший дедлайн</option>
-                            <option class="text-gray-800" value="deadline_desc">Дальний дедлайн</option>
-                            <option class="text-gray-800" value="priority_desc">Высокий приоритет</option>
-                            <option class="text-gray-800" value="name_asc">По названию (А-Я)</option>
-                        </select>
-                    </div>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+                <div class="text-gray-500 text-sm md:text-base">
+                    Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
                 </div>
+                <div class="w-full sm:w-auto">
+                    <select id="sortSelect" class="w-full  sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
+                        <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
+                        <option class="text-gray-800" value="created_at_asc">Старые сначала</option>
+                        <option class="text-gray-800" value="deadline_asc">Ближайший дедлайн</option>
+                        <option class="text-gray-800" value="deadline_desc">Дальний дедлайн</option>
+                        <option class="text-gray-800" value="priority_desc">Высокий приоритет</option>
+                        <option class="text-gray-800" value="name_asc">По названию (А-Я)</option>
+                    </select>
+                </div>
+            </div>
 
-                <!-- Адаптивная таблица -->
-                <div class="overflow-x-auto -mx-4 md:mx-0">
-
-                    <div class="inline-block min-w-full align-middle">
-                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                            <!-- Десктопный вид таблицы -->
-                            <table class="min-w-full divide-y divide-gray-300 hidden md:table">
-                                <thead class="bg-transparent/20">
-                                    <tr>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Задача</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Статус</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Исполнитель</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Отдел</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Приоритет</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Автор</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Дедлайн</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Действия</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="backdrop-blur-md bg-transparent/10 divide-y divide-gray-200">
-                                    @forelse($tasks as $task)
-                                        <tr
-                                            class="hover:bg-gray-50 transition text-white  hover:text-gray-900 @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif">
-                                            <td class="px-3 py-4 cursor-pointer   hover:text-gray-900"
-                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                                <div class="flex items-start ">
-                                                    <div class="ml-2 hover:text-gray-900">
-                                                        <div class="text-sm font-medium flex items-center flex-wrap gap-1">
-                                                            <span class="truncate max-w-[250px]">{{ $task->name }}</span>
-                                                            @if($task->trashed())
-                                                                <span
-                                                                    class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap">
-                                                                    <i class="fas fa-trash mr-1"></i>Удалена
-                                                                </span>
-                                                            @endif
-                                                        </div>
-                                                        <div class="flex flex-wrap gap-1 mt-2">
-                                                            @if($task->category)
-                                                                <span
-                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white">
-                                                                    {{ $task->category->name }}
-                                                                </span>
-                                                            @endif
-                                                            @if($task->rejections_count > 0)
-                                                                <span
-                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
-                                                                    title="Количество отказов: {{ $task->rejections_count }}">
-                                                                    <i class="fas fa-user-slash mr-1"></i>
-                                                                    {{ $task->rejections_count }}
-                                                                </span>
-                                                            @endif
-                                                            @if($task->trashed() && $task->deletedBy)
-                                                                <span
-                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                                                                    title="Удалил: {{ $task->deletedBy->name }}">
-                                                                    <i class="fas fa-user-times mr-1"></i>
-                                                                    Удалил: {{ $task->deletedBy->name }}
-                                                                </span>
-                                                            @endif
-                                                        </div>
-                                                    </div>
+            <!-- Адаптивная таблица -->
+            <div class="overflow-x-auto -mx-4 md:mx-0">
+                <div class="inline-block min-w-full align-middle">
+                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                        <!-- Десктопный вид таблицы -->
+                        <table class="min-w-full  hidden md:table">
+                            <thead class="bg-transparent/20">
+                            <tr class="border-none">
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Задача</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Исполнитель</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Отдел</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Приоритет</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Автор</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Дедлайн</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
+                            </tr>
+                            </thead>
+                            <tbody class="backdrop-blur-md bg-transparent/10 divide-y divide-gray-200">
+                            @forelse($tasks as $task)
+                                <tr class="hover:bg-gray-50 transition text-white  hover:text-gray-900 @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif"
+                                    >
+                                    <td class="px-3 py-4 cursor-pointer   hover:text-gray-900" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                        <div class="flex items-start ">
+                                            <div class="ml-2 hover:text-gray-900">
+                                                <div class="text-sm font-medium flex items-center flex-wrap gap-1">
+                                                    <span class="truncate max-w-[250px]">{{ $task->name }}</span>
+                                                    @if($task->trashed())
+                                                        <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap">
+                                                            <i class="fas fa-trash mr-1"></i>Удалена
+                                                        </span>
+                                                    @endif
                                                 </div>
-                                            </td>
-                                            <td class="px-3 py-4 cursor-pointer whitespace-nowrap"
-                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                                @if($task->trashed())
-                                                    <span
-                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                                        Удалена
-                                                    </span>
-                                                @else
-                                                    <span
-                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
-                                                        {{ $task->status }}
-                                                    </span>
+                                                <div class="flex flex-wrap gap-1 mt-2">
+                                                    @if($task->category)
+                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white">
+                                                            {{ $task->category->name }}
+                                                        </span>
+                                                    @endif
+                                                    @if($task->rejections_count > 0)
+                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                                                              title="Количество отказов: {{ $task->rejections_count }}">
+                                                            <i class="fas fa-user-slash mr-1"></i>
+                                                            {{ $task->rejections_count }}
+                                                        </span>
+                                                    @endif
+                                                    @if($task->trashed() && $task->deletedBy)
+                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                                              title="Удалил: {{ $task->deletedBy->name }}">
+                                                            <i class="fas fa-user-times mr-1"></i>
+                                                            Удалил: {{ $task->deletedBy->name }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-4 cursor-pointer whitespace-nowrap" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                        @if($task->trashed())
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                Удалена
+                                            </span>
+                                        @else
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
+                                                {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
+                                                {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                                {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
+                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
+                                                {{ $task->status }}
+                                            </span>
 
                                                 @endif
                                             </td>
@@ -824,22 +798,21 @@
             </div>
         @else
             <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
-                    <div class="text-gray-500 text-sm md:text-base">
-                        Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
-                    </div>
-                    <div class="w-full sm:w-auto">
-                        <select id="sortSelect"
-                            class="w-full sm:w-48 border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
-                            <option value="created_at_desc">Новые сначала</option>
-                            <option value="created_at_asc">Старые сначала</option>
-                            <option value="deadline_asc">Ближайший дедлайн</option>
-                            <option value="deadline_desc">Дальний дедлайн</option>
-                            <option value="priority_desc">Высокий приоритет</option>
-                            <option value="name_asc">По названию (А-Я)</option>
-                        </select>
-                    </div>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+                <div class="text-gray-500 text-sm md:text-base">
+                    Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
                 </div>
+                <div class="w-full sm:w-auto">
+                    <select id="sortSelect" class="w-full sm:w-48 border-none rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
+                        <option value="created_at_desc">Новые сначала</option>
+                        <option value="created_at_asc">Старые сначала</option>
+                        <option value="deadline_asc">Ближайший дедлайн</option>
+                        <option value="deadline_desc">Дальний дедлайн</option>
+                        <option value="priority_desc">Высокий приоритет</option>
+                        <option value="name_asc">По названию (А-Я)</option>
+                    </select>
+                </div>
+            </div>
 
                 <!-- Адаптивная таблица -->
                 <div class="overflow-x-auto -mx-4 md:mx-0">
@@ -1223,7 +1196,7 @@
     </div>
 
     <!-- Модальное окно редактирования задачи -->
-    <div id="editTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div id="editTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
         <div
             class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
             <!-- Заголовок -->
@@ -1499,7 +1472,7 @@
 
     <!-- Модальное окно возврата на доработку -->
     <div id="returnToWorkModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
         <div class="bg-white rounded-lg p-4 md:p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-3">Возврат задачи на доработку</h3>
             <p class="text-gray-600 mb-3">Укажите комментарий для исполнителя:</p>
@@ -1519,7 +1492,7 @@
     </div>
 
     <!-- Модальное окно удаления задачи -->
-    <div id="deleteTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+    <div id="deleteTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
         <div class="bg-white rounded-lg p-4 md:p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-3">Удаление задачи</h3>
             <p class="text-gray-600 mb-4">Вы уверены, что хотите удалить эту задачу? Это действие нельзя отменить.</p>
@@ -1537,8 +1510,7 @@
     </div>
 
     <!-- Модальное окно просмотра задачи -->
-    <div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4"
-        style="backdrop-filter: blur(10px)">
+    <div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
                 <h3 class="text-xl font-bold text-gray-800">

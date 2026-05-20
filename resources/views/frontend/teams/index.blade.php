@@ -261,7 +261,7 @@
                 <div class="overflow-x-auto -mx-4 md:mx-0 hidden md:block">
                     <div class="inline-block min-w-full align-middle">
                         <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                            <table class="min-w-full divide-y divide-gray-300">
+                            <table class="min-w-full">
                                 <thead class="bg-transparent/20">
                                 <tr>
                                     <th scope="col"
@@ -321,10 +321,11 @@
                                             $stats = $user->getTaskCompletionStats();
                                             $overdue = $user->assignedTasks()
                                                 ->where('status', '!=', 'выполнена')
+                                                ->where('is_personal', '!=', true)
                                                 ->where('deadline', '<', now())
                                                 ->count();
                                         @endphp
-                                        <tr class="bg-transparent/10 border-b hover:bg-gray-50 transition user-row cursor-pointer  text-white hover:text-gray-800"
+                                        <tr class="bg-transparent/10 hover:bg-gray-50 transition user-row cursor-pointer text-white hover:text-gray-800"
                                             data-user-id="{{ $user->id }}">
                                             <td class="px-3 py-4">
                                                 <div class="flex items-center space-x-3 border-1 border-gray-800">
@@ -338,8 +339,8 @@
                                                             <span class="text-white text-xs font-medium">{{ substr($user->name, 0, 1) }}</span>
                                                         </div>
                                                     @endif
-                                                    <div class="min-w-0 text-white">
-                                                        <div class="text-sm font-medium hover:text-gray-800 truncate">{{ $user->name }}</div>
+                                                    <div class="min-w-0 ">
+                                                        <div class="text-sm font-medium  truncate">{{ $user->name }}</div>
                                                         <div class="text-xs text-gray-500 truncate">{{ $user->email }}</div>
                                                     </div>
                                                 </div>
@@ -423,6 +424,7 @@
                             $stats = $user->getTaskCompletionStats();
                             $overdue = $user->assignedTasks()
                                 ->where('status', '!=', 'выполнена')
+                                ->where('is_personal', '!=', true)
                                 ->where('deadline', '<', now())
                                 ->count();
                         @endphp
@@ -566,7 +568,7 @@
                 <div class="overflow-x-auto -mx-4 md:mx-0 hidden md:block">
                     <div class="inline-block min-w-full align-middle">
                         <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                            <table class="min-w-full divide-y divide-gray-300">
+                            <table class="min-w-full">
                                 <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col"
@@ -626,6 +628,7 @@
                                             $stats = $user->getTaskCompletionStats();
                                             $overdue = $user->assignedTasks()
                                                 ->where('status', '!=', 'выполнена')
+                                                ->where('is_personal', '!=', true)
                                                 ->where('deadline', '<', now())
                                                 ->count();
                                         @endphp
@@ -728,6 +731,7 @@
                             $stats = $user->getTaskCompletionStats();
                             $overdue = $user->assignedTasks()
                                 ->where('status', '!=', 'выполнена')
+                                ->where('is_personal', '!=', true)
                                 ->where('deadline', '<', now())
                                 ->count();
                         @endphp

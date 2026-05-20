@@ -41,9 +41,6 @@
                             <h2 class="text-lg font-bold text-white">Отделов:</h2>
                             <p class="text-2xl font-bold text-gray-500">{{ $departments->count() }}</p>
                         </div>
-                        <div class="w-12 h-12 bg-transparent/20 rounded-full flex items-center justify-center">
-                            <i class="fas fa-building text-blue-500 text-xl"></i>
-                        </div>
                     </div>
                 </div>
 
@@ -52,9 +49,6 @@
                         <div>
                             <h2 class="text-lg font-bold text-white">Задач</h2>
                             <p class="text-2xl font-bold text-gray-500">{{ $totalActiveTasks }}</p>
-                        </div>
-                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-tasks text-green-500 text-xl"></i>
                         </div>
                     </div>
                 </div>
@@ -65,9 +59,6 @@
                             <h2 class="text-lg font-bold text-white">Писем</h2>
                             <p class="text-2xl font-bold text-gray-500">{{ $totalUnreadEmails }}</p>
                         </div>
-                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-envelope text-purple-500 text-xl"></i>
-                        </div>
                     </div>
                 </div>
 
@@ -76,9 +67,6 @@
                         <div>
                             <h2 class="text-lg font-bold text-white">Сотрудников</h2>
                             <p class="text-2xl font-bold text-gray-500">{{ $totalUsers }}</p>
-                        </div>
-                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-users text-orange-500 text-xl"></i>
                         </div>
                     </div>
                 </div>

@@ -416,11 +416,12 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Рассчитывает средний процент выполнения задач пользователя
+     * Рассчитывает процент выполнения задач пользователя
+     * (простое отношение выполненных задач к общему количеству)
      */
     public function getAverageCompletionRate($period = null): float
     {
-        $query = $this->assignedTasks()->where('is_personal', '!=', true);;
+        $query = $this->assignedTasks()->where('is_personal', '!=', true);
 
         if ($period && $period !== 'all') {
             switch ($period) {
@@ -436,35 +437,15 @@ class User extends Authenticatable implements MustVerifyEmail
             }
         }
 
-        $tasks = $query->get();
+        $total = $query->count();
 
-        if ($tasks->isEmpty()) {
+        if ($total === 0) {
             return 0;
         }
 
-        $totalCompletion = 0;
-        $count = 0;
+        $completed = $query->where('status', 'выполнена')->count();
 
-        foreach ($tasks as $task) {
-            // Если у задачи есть поле progress, используем его
-            if (isset($task->progress) && is_numeric($task->progress)) {
-                $totalCompletion += min(100, max(0, $task->progress)); // Ограничиваем от 0 до 100
-                $count++;
-            } else {
-                // Если нет поля progress, вычисляем на основе статуса
-                $completion = match($task->status) {
-                    'выполнена' => 100,
-                    'в работе' => 50,
-                    'не назначена' => 0,
-                    'просрочена' => 25, // начали, но просрочили
-                    default => 0
-                };
-                $totalCompletion += $completion;
-                $count++;
-            }
-        }
-
-        return $count > 0 ? round($totalCompletion / $count, 1) : 0;
+        return round(($completed / $total) * 100, 1);
     }
 
     /**
@@ -472,8 +453,8 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getTaskCompletionStats($period = null)
     {
-        $total = $this->assignedTasks()
-            ->where('is_personal', '!=', true) // ДОБАВИТЬ ЭТУ СТРОКУ
+        $query = $this->assignedTasks()
+            ->where('is_personal', '!=', true)
             ->when($period && $period !== 'all', function($query) use ($period) {
                 switch ($period) {
                     case 'week':
@@ -486,27 +467,13 @@ class User extends Authenticatable implements MustVerifyEmail
                         $query->where('created_at', '>=', Carbon::now()->startOfYear());
                         break;
                 }
-            })->count();
+            });
 
-        $completed = $this->assignedTasks()
-            ->where('is_personal', '!=', true) // ДОБАВИТЬ ЭТУ СТРОКУ
-            ->where('status', 'выполнена')
-            ->when($period && $period !== 'all', function($query) use ($period) {
-                switch ($period) {
-                    case 'week':
-                        $query->where('created_at', '>=', Carbon::now()->startOfWeek());
-                        break;
-                    case 'month':
-                        $query->where('created_at', '>=', Carbon::now()->startOfMonth());
-                        break;
-                    case 'year':
-                        $query->where('created_at', '>=', Carbon::now()->startOfYear());
-                        break;
-                }
-            })->count();
+        $total = $query->count();
+        $completed = (clone $query)->where('status', 'выполнена')->count();
 
-        // Используем средний процент выполнения
-        $completionRate = $this->getAverageCompletionRate($period);
+        // Простой процент выполнения
+        $completionRate = $total > 0 ? round(($completed / $total) * 100, 1) : 0;
 
         return [
             'total' => $total,

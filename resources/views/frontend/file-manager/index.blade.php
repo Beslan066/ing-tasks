@@ -685,7 +685,7 @@
 
                         <!-- Pagination -->
                         @if($files->hasPages())
-                            <div class="border-t border-gray-100 px-6 py-4 dark:border-gray-800">
+                            <div class=" px-6 py-4 dark:border-gray-800">
                                 {{ $files->links() }}
                             </div>
                         @endif
