@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo('/login');
 
         $middleware->alias([
+            'require.company' => \App\Http\Middleware\RequireCompany::class,
             'haveCompanies' => \App\Http\Middleware\CheckUserCompanies::class,
             'checkUserRole' => \App\Http\Middleware\CheckUserRole::class,
             'isLeader' => \App\Http\Middleware\LeaderMiddleware::class,

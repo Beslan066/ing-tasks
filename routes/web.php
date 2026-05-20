@@ -75,8 +75,8 @@ Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class, 'home'])-
 // Домашняя страница
 Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->group(function () {
     Route::get('/home', [\App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('welcome');
-    Route::get('/all-tasks', [App\Http\Controllers\Frontend\HomeController::class, 'allTasks'])->name('allTasks');
-    Route::get('/tools', [\App\Http\Controllers\Frontend\ToolController::class, 'index'])->name('tools.index');
+    Route::get('/all-tasks', [App\Http\Controllers\Frontend\HomeController::class, 'allTasks'])->middleware('require.company')->name('allTasks');
+    Route::get('/tools', [\App\Http\Controllers\Frontend\ToolController::class, 'index'])->middleware('require.company')->name('tools.index');
 
 
     // Админская страница для руководителей и менеджеров
@@ -189,7 +189,7 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
 
 });
 
-Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () {
+Route::middleware(['auth', 'verified', 'trackUserActivity', 'require.company'])->group(function () {
     Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
     Route::prefix('chat/api')->name('chat.api.')->group(function () {
         // GET запросы
@@ -416,7 +416,7 @@ Route::get('/invitation/{token}', [InvitationController::class, 'showInvitationF
 Route::post('/invitation/{token}/accept', [InvitationController::class, 'acceptInvitation'])->name('invitation.process');
 
 // ВСЕ МАРШРУТЫ ДЛЯ ЗАДАЧ ПЕРЕНЕСЕМ В TaskController
-Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified', 'trackUserActivity']], function () {
+Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified', 'trackUserActivity', 'require.company']], function () {
     // Основные CRUD маршруты
     Route::get('/', [App\Http\Controllers\Frontend\TaskController::class, 'index'])->name('tasks.index');
     Route::get('/create', [App\Http\Controllers\Frontend\TaskController::class, 'create'])->name('tasks.create');
@@ -449,7 +449,7 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified', 'trackUs
 });
 
 // Остальные маршруты остаются без изменений
-Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () {
+Route::middleware(['auth', 'verified', 'trackUserActivity', 'require.company'])->group(function () {
     Route::get('/photobank', [\App\Http\Controllers\Frontend\PhotobankController::class, 'index'])->name('photobank');
     Route::post('/photobank/categories', [\App\Http\Controllers\Frontend\PhotobankController::class, 'createCategory'])->name('photobank.categories.store');
     Route::post('/photobank/tags', [\App\Http\Controllers\Frontend\PhotobankController::class, 'createTag'])->name('photobank.tags.store');
@@ -489,7 +489,7 @@ Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () 
 });
 
 
-Route::group(['prefix' => 'departments', 'middleware' => ['auth', 'verified', 'trackUserActivity']], function () {
+Route::group(['prefix' => 'departments', 'middleware' => ['auth', 'verified', 'trackUserActivity', 'require.company']], function () {
     Route::get('/', [App\Http\Controllers\Frontend\DepartmentController::class, 'index'])->name('departments.index');
     Route::post('/store', [App\Http\Controllers\Frontend\DepartmentController::class, 'store'])->name('departments.store');
     Route::get('/{id}/edit', [App\Http\Controllers\Frontend\DepartmentController::class, 'edit'])->name('departments.edit');
@@ -499,7 +499,7 @@ Route::group(['prefix' => 'departments', 'middleware' => ['auth', 'verified', 't
 });
 
 // Маршруты для команды с системой приглашений
-Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () {
+Route::middleware(['auth', 'verified', 'trackUserActivity', 'require.company'])->group(function () {
     Route::prefix('team')->name('team.')->group(function () {
         // Основные маршруты команды
         Route::get('/', [TeamController::class, 'index'])->name('index');
@@ -529,7 +529,7 @@ Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () 
     });
 });
 
-Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'verified', 'trackUserActivity']], function () {
+Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'verified', 'trackUserActivity', 'require.company']], function () {
     Route::get('/', [App\Http\Controllers\Frontend\CompanyController::class, 'index'])->name('companies.index');
     Route::get('/create', [App\Http\Controllers\Frontend\CompanyController::class, 'create'])->name('companies.create');
     Route::post('/store', [App\Http\Controllers\Frontend\CompanyController::class, 'store'])->name('companies.store');
