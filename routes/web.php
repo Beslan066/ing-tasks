@@ -402,6 +402,10 @@ Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () 
         Route::get('/view/{file}', [FileStorageController::class, 'view'])->name('files.view');
         Route::delete('/delete/{file}', [FileStorageController::class, 'destroy'])->name('files.destroy');
         Route::get('/statistics', [FileStorageController::class, 'getStatistics'])->name('files.statistics');
+
+        // Маршрут для удаления файлов
+        Route::delete('/files/{file}', [App\Http\Controllers\Frontend\TaskController::class, 'deleteFile'])->name('files.delete');
+        Route::post('/files/upload-ajax', [FileStorageController::class, 'uploadAjax'])->name('files.upload.ajax');
     });
 });
 
@@ -443,9 +447,6 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified', 'trackUs
         ->name('file-storage.get-files');
 
 });
-
-// Маршрут для удаления файлов
-Route::delete('/files/{file}', [App\Http\Controllers\Frontend\TaskController::class, 'deleteFile'])->name('files.delete');
 
 // Остальные маршруты остаются без изменений
 Route::middleware(['auth', 'verified', 'trackUserActivity'])->group(function () {

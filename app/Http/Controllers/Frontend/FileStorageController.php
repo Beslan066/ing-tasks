@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class FileStorageController extends Controller
 {
@@ -17,6 +18,11 @@ class FileStorageController extends Controller
     const BASIC_LIMIT = 1073741824;      // 1GB
     const OPTIMAL_LIMIT = 107374182400;  // 100GB
     const PREMIUM_LIMIT = 1073741824000; // 1000GB (1TB)
+
+    // Константы с максимальным размером файла (в байтах)
+    const BASIC_FILE_MAX = 104857600;    // 100MB
+    const OPTIMAL_FILE_MAX = 524288000;  // 500MB
+    const PREMIUM_FILE_MAX = 1073741824; // 1GB
 
     /**
      * Отображение страницы файлового менеджера
@@ -46,11 +52,17 @@ class FileStorageController extends Controller
         // Группируем файлы по типам для статистики
         $fileStats = $this->getFileStatistics($company->id);
 
+        // Получаем максимальный размер файла для текущей подписки
+        $maxFileSizeBytes = $this->getMaxFileSizeByLicense($company->license_type);
+        $maxFileSizeFormatted = $this->formatBytes($maxFileSizeBytes);
+
         return view('frontend.file-manager.index', compact(
             'files',
             'storageUsage',
             'fileStats',
-            'company'
+            'company',
+            'maxFileSizeBytes',
+            'maxFileSizeFormatted'
         ));
     }
 
@@ -59,13 +71,20 @@ class FileStorageController extends Controller
      */
     public function upload(Request $request)
     {
-        $request->validate([
-            'file' => 'required|file|max:512000', // 500MB максимум
-            'folder' => 'nullable|string|max:255'
-        ]);
-
         $user = Auth::user();
         $company = $user->company;
+
+        // Получаем максимальный размер файла для текущей подписки
+        $maxFileSize = $this->getMaxFileSizeByLicense($company->license_type);
+        $maxFileSizeMB = $maxFileSize / 1048576;
+
+        // Валидация с динамическим максимальным размером
+        $request->validate([
+            'file' => 'required|file|max:' . $maxFileSize,
+            'folder' => 'nullable|string|max:255'
+        ], [
+            'file.max' => 'Максимальный размер файла для вашего тарифа (' . $company->getLicenseTypeName() . ') составляет ' . $this->formatBytes($maxFileSize) . '. Ваш файл превышает этот лимит.'
+        ]);
 
         // Проверяем лицензию и права доступа
         if (!$this->checkUploadPermission($user)) {
@@ -88,7 +107,8 @@ class FileStorageController extends Controller
 
         // Проверяем, не превышен ли лимит хранилища
         if (!$storageUsage->canUploadFile($fileSize)) {
-            return back()->with('error', 'Превышен лимит хранилища. Доступно: ' . $storageUsage->getFormattedFreeStorage());
+            $freeSpace = $storageUsage->getFormattedFreeStorage();
+            return back()->with('error', "Превышен лимит хранилища. Свободно: {$freeSpace}");
         }
 
         // Генерируем уникальное имя файла
@@ -120,7 +140,125 @@ class FileStorageController extends Controller
         $storageUsage->increment('used_storage', $fileSize);
         $storageUsage->increment('file_count');
 
-        return back()->with('success', 'Файл успешно загружен');
+        return back()->with('success', 'Файл "' . $originalName . '" успешно загружен');
+    }
+
+    /**
+     * Загрузка файла через AJAX
+     */
+    public function uploadAjax(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            $company = $user->company;
+
+            // Получаем максимальный размер файла для текущей подписки
+            $maxFileSize = $this->getMaxFileSizeByLicense($company->license_type);
+
+            // Валидация с динамическим максимальным размером
+            $request->validate([
+                'file' => 'required|file|max:' . $maxFileSize,
+                'folder' => 'nullable|string|max:255'
+            ], [
+                'file.max' => 'Максимальный размер файла для вашего тарифа (' . $company->getLicenseTypeName() . ') составляет ' . $this->formatBytes($maxFileSize)
+            ]);
+
+            // Проверяем права
+            if (!$this->checkUploadPermission($user)) {
+                return response()->json(['error' => 'У вас нет прав для загрузки файлов'], 403);
+            }
+
+            // Получаем информацию о хранилище
+            $storageUsage = StorageUsage::firstOrCreate(
+                ['company_id' => $company->id],
+                [
+                    'total_storage_limit' => $this->getStorageLimitByLicense($company->license_type),
+                    'used_storage' => 0,
+                    'file_count' => 0,
+                    'license_type' => $company->license_type
+                ]
+            );
+
+            $file = $request->file('file');
+            $fileSize = $file->getSize();
+
+            // Проверяем лимит хранилища
+            if (!$storageUsage->canUploadFile($fileSize)) {
+                $freeSpace = $storageUsage->getFormattedFreeStorage();
+                return response()->json(['error' => "Превышен лимит хранилища. Свободно: {$freeSpace}"], 400);
+            }
+
+            // Генерируем уникальное имя файла
+            $originalName = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension();
+            $fileName = pathinfo($originalName, PATHINFO_FILENAME);
+            $uniqueName = $fileName . '_' . Str::random(10) . '.' . $extension;
+
+            // Определяем папку для сохранения
+            $folder = $request->input('folder', 'uploads');
+            $path = $file->storeAs("companies/{$company->id}/{$folder}", $uniqueName, 'public');
+
+            // Создаем запись в базе данных
+            $fileRecord = File::create([
+                'name' => $originalName,
+                'path' => $path,
+                'size' => $fileSize,
+                'mime_type' => $file->getMimeType(),
+                'extension' => $extension,
+                'uploaded_by' => $user->id,
+                'company_id' => $company->id,
+                'department_id' => $user->department_id,
+                'disk' => 'public',
+                'folder' => $folder,
+                'is_public' => false,
+            ]);
+
+            // Обновляем статистику
+            $storageUsage->increment('used_storage', $fileSize);
+            $storageUsage->increment('file_count');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Файл "' . $originalName . '" успешно загружен',
+                'file' => [
+                    'name' => $originalName,
+                    'size' => $this->formatBytes($fileSize),
+                    'type' => $file->getMimeType()
+                ]
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['error' => $e->errors()['file'][0] ?? 'Ошибка валидации'], 422);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Произошла ошибка при загрузке файла: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Получение максимального размера файла по типу лицензии
+     */
+    private function getMaxFileSizeByLicense($licenseType): int
+    {
+        return match($licenseType) {
+            'basic' => self::BASIC_FILE_MAX,
+            'optimal' => self::OPTIMAL_FILE_MAX,
+            'premium' => self::PREMIUM_FILE_MAX,
+            default => self::BASIC_FILE_MAX
+        };
+    }
+
+    /**
+     * Форматирование байтов
+     */
+    private function formatBytes($bytes, $precision = 2): string
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        $bytes /= pow(1024, $pow);
+
+        return round($bytes, $precision) . ' ' . $units[$pow];
     }
 
     /**
