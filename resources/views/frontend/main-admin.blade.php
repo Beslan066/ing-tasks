@@ -236,7 +236,8 @@
             <div
                 class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 min-[1370px]:grid-cols-4 min-[1600px]:grid-cols-6 gap-3 md:gap-6 mb-6 md:mb-8">
                 <!-- Всего задач -->
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
+                <div
+                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">Всего задач</h3>
@@ -251,7 +252,8 @@
                 </div>
 
                 <!-- Назначены -->
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
+                <div
+                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">Назначены</h3>
@@ -266,7 +268,8 @@
                 </div>
 
                 <!-- В работе -->
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
+                <div
+                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">В работе</h3>
@@ -281,7 +284,8 @@
                 </div>
 
                 <!-- На проверке -->
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
+                <div
+                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">На проверке</h3>
@@ -296,7 +300,8 @@
                 </div>
 
                 <!-- Выполнено -->
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
+                <div
+                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">Выполнено</h3>
@@ -311,7 +316,8 @@
                 </div>
 
                 <!-- Просрочено -->
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
+                <div
+                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">Просрочено</h3>
@@ -328,7 +334,7 @@
         @else
             <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-6 mb-6 md:mb-8">
                 <!-- Всего задач -->
-                <div class=" bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
+                <div class=" bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">Всего задач</h3>
@@ -343,7 +349,7 @@
                 </div>
 
                 <!-- Назначены -->
-                <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
+                <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">Назначены</h3>
@@ -358,7 +364,8 @@
                 </div>
 
                 <!-- В работе -->
-                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
+                <div
+                    class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">В работе</h3>
@@ -373,7 +380,8 @@
                 </div>
 
                 <!-- На проверке -->
-                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
+                <div
+                    class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">На проверке</h3>
@@ -388,7 +396,8 @@
                 </div>
 
                 <!-- Выполнено -->
-                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
+                <div
+                    class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">Выполнено</h3>
@@ -403,7 +412,8 @@
                 </div>
 
                 <!-- Просрочено -->
-                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover">
+                <div
+                    class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">Просрочено</h3>
@@ -422,93 +432,118 @@
         <!-- Таблица задач -->
         @if($backgroundEnabled && $backgroundImage)
             <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
-                <div class="text-gray-500 text-sm md:text-base">
-                    Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+                    <div class="text-gray-500 text-sm md:text-base">
+                        Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
+                    </div>
+                    <div class="w-full sm:w-auto">
+                        <select id="sortSelect"
+                            class="w-full  sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
+                            <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
+                            <option class="text-gray-800" value="created_at_asc">Старые сначала</option>
+                            <option class="text-gray-800" value="deadline_asc">Ближайший дедлайн</option>
+                            <option class="text-gray-800" value="deadline_desc">Дальний дедлайн</option>
+                            <option class="text-gray-800" value="priority_desc">Высокий приоритет</option>
+                            <option class="text-gray-800" value="name_asc">По названию (А-Я)</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="w-full sm:w-auto">
-                    <select id="sortSelect" class="w-full  sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
-                        <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
-                        <option class="text-gray-800" value="created_at_asc">Старые сначала</option>
-                        <option class="text-gray-800" value="deadline_asc">Ближайший дедлайн</option>
-                        <option class="text-gray-800" value="deadline_desc">Дальний дедлайн</option>
-                        <option class="text-gray-800" value="priority_desc">Высокий приоритет</option>
-                        <option class="text-gray-800" value="name_asc">По названию (А-Я)</option>
-                    </select>
-                </div>
-            </div>
 
-            <!-- Адаптивная таблица -->
-            <div class="overflow-x-auto -mx-4 md:mx-0">
-                <div class="inline-block min-w-full align-middle">
-                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                        <!-- Десктопный вид таблицы -->
-                        <table class="min-w-full  hidden md:table">
-                            <thead class="bg-transparent/20">
-                            <tr class="border-none">
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Задача</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Исполнитель</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Отдел</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Приоритет</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Автор</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Дедлайн</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
-                            </tr>
-                            </thead>
-                            <tbody class="backdrop-blur-md bg-transparent/10 divide-y divide-gray-200">
-                            @forelse($tasks as $task)
-                                <tr class="hover:bg-gray-50 transition text-white  hover:text-gray-900 @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif"
-                                    >
-                                    <td class="px-3 py-4 cursor-pointer   hover:text-gray-900" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                        <div class="flex items-start ">
-                                            <div class="ml-2 hover:text-gray-900">
-                                                <div class="text-sm font-medium flex items-center flex-wrap gap-1">
-                                                    <span class="truncate max-w-[250px]">{{ $task->name }}</span>
-                                                    @if($task->trashed())
-                                                        <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap">
-                                                            <i class="fas fa-trash mr-1"></i>Удалена
-                                                        </span>
-                                                    @endif
+                <!-- Адаптивная таблица -->
+                <div class="overflow-x-auto -mx-4 md:mx-0">
+                    <div class="inline-block min-w-full align-middle">
+                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                            <!-- Десктопный вид таблицы -->
+                            <table class="min-w-full  hidden md:table">
+                                <thead class="bg-transparent/20">
+                                    <tr class="border-none">
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Задача</th>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Статус</th>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Исполнитель</th>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Отдел</th>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Приоритет</th>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Автор</th>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Дедлайн</th>
+                                        <th
+                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="backdrop-blur-md bg-transparent/10 divide-y divide-gray-200">
+                                    @forelse($tasks as $task)
+                                        <tr
+                                            class="hover:bg-gray-50 transition text-white  hover:text-gray-900 @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif">
+                                            <td class="px-3 py-4 cursor-pointer   hover:text-gray-900"
+                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                                <div class="flex items-start ">
+                                                    <div class="ml-2 hover:text-gray-900">
+                                                        <div class="text-sm font-medium flex items-center flex-wrap gap-1">
+                                                            <span class="truncate max-w-[250px]">{{ $task->name }}</span>
+                                                            @if($task->trashed())
+                                                                <span
+                                                                    class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap">
+                                                                    <i class="fas fa-trash mr-1"></i>Удалена
+                                                                </span>
+                                                            @endif
+                                                        </div>
+                                                        <div class="flex flex-wrap gap-1 mt-2">
+                                                            @if($task->category)
+                                                                <span
+                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white">
+                                                                    {{ $task->category->name }}
+                                                                </span>
+                                                            @endif
+                                                            @if($task->rejections_count > 0)
+                                                                <span
+                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                                                                    title="Количество отказов: {{ $task->rejections_count }}">
+                                                                    <i class="fas fa-user-slash mr-1"></i>
+                                                                    {{ $task->rejections_count }}
+                                                                </span>
+                                                            @endif
+                                                            @if($task->trashed() && $task->deletedBy)
+                                                                <span
+                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                                                    title="Удалил: {{ $task->deletedBy->name }}">
+                                                                    <i class="fas fa-user-times mr-1"></i>
+                                                                    Удалил: {{ $task->deletedBy->name }}
+                                                                </span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="flex flex-wrap gap-1 mt-2">
-                                                    @if($task->category)
-                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white">
-                                                            {{ $task->category->name }}
-                                                        </span>
-                                                    @endif
-                                                    @if($task->rejections_count > 0)
-                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
-                                                              title="Количество отказов: {{ $task->rejections_count }}">
-                                                            <i class="fas fa-user-slash mr-1"></i>
-                                                            {{ $task->rejections_count }}
-                                                        </span>
-                                                    @endif
-                                                    @if($task->trashed() && $task->deletedBy)
-                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                                                              title="Удалил: {{ $task->deletedBy->name }}">
-                                                            <i class="fas fa-user-times mr-1"></i>
-                                                            Удалил: {{ $task->deletedBy->name }}
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-3 py-4 cursor-pointer whitespace-nowrap" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                        @if($task->trashed())
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                                Удалена
-                                            </span>
-                                        @else
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
-                                                {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
-                                                {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                                {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
-                                                {{ $task->status }}
-                                            </span>
+                                            </td>
+                                            <td class="px-3 py-4 cursor-pointer whitespace-nowrap"
+                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                                @if($task->trashed())
+                                                    <span
+                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                        Удалена
+                                                    </span>
+                                                @else
+                                                    <span
+                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                                                                                                                                                                                {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
+                                                                                                                                                                                                                {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
+                                                                                                                                                                                                                {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                                                                                                                                                                                                {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
+                                                                                                                                                                                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
+                                                        {{ $task->status }}
+                                                    </span>
 
                                                 @endif
                                             </td>
@@ -668,11 +703,11 @@
                                                 @else
                                                     <span
                                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
                                                         {{ $task->status }}
                                                     </span>
                                                 @endif
@@ -798,21 +833,22 @@
             </div>
         @else
             <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
-                <div class="text-gray-500 text-sm md:text-base">
-                    Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+                    <div class="text-gray-500 text-sm md:text-base">
+                        Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
+                    </div>
+                    <div class="w-full sm:w-auto">
+                        <select id="sortSelect"
+                            class="w-full sm:w-48 border-none rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
+                            <option value="created_at_desc">Новые сначала</option>
+                            <option value="created_at_asc">Старые сначала</option>
+                            <option value="deadline_asc">Ближайший дедлайн</option>
+                            <option value="deadline_desc">Дальний дедлайн</option>
+                            <option value="priority_desc">Высокий приоритет</option>
+                            <option value="name_asc">По названию (А-Я)</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="w-full sm:w-auto">
-                    <select id="sortSelect" class="w-full sm:w-48 border-none rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
-                        <option value="created_at_desc">Новые сначала</option>
-                        <option value="created_at_asc">Старые сначала</option>
-                        <option value="deadline_asc">Ближайший дедлайн</option>
-                        <option value="deadline_desc">Дальний дедлайн</option>
-                        <option value="priority_desc">Высокий приоритет</option>
-                        <option value="name_asc">По названию (А-Я)</option>
-                    </select>
-                </div>
-            </div>
 
                 <!-- Адаптивная таблица -->
                 <div class="overflow-x-auto -mx-4 md:mx-0">
@@ -904,11 +940,11 @@
                                                 @else
                                                     <span
                                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
                                                         {{ $task->status }}
                                                     </span>
 
@@ -1064,19 +1100,19 @@
                                                 @else
                                                     <span
                                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
                                                         {{ $task->status }}
                                                     </span>
                                                 @endif
                                             </div>
 
                                             <!-- Исполнитель -->
-                                            <div class="flex items-center">
-                                                <span class="text-sm text-gray-600 w-20">Исполнитель:</span>
+                                            <div class="flex items-center max-[500px]:gap-1">
+                                                <span class="text-sm text-gray-600 w-20 max-[500px]:w-auto">Исполнитель:</span>
                                                 @if($task->user)
                                                     <div class="flex items-center">
                                                         <div
@@ -1096,8 +1132,8 @@
                                                     <span class="text-sm text-gray-600 w-16">Отдел:</span>
                                                     <span class="text-sm">{{ $task->department->name ?? '—' }}</span>
                                                 </div>
-                                                <div class="flex items-center">
-                                                    <span class="text-sm text-gray-600 w-16">Приоритет:</span>
+                                                <div class="flex items-center max-[500px]:gap-1">
+                                                    <span class="text-sm text-gray-600 w-16 max-[500px]:w-auto">Приоритет:</span>
                                                     @if(!$task->trashed())
                                                         @php
                                                             $priorityColors = [
@@ -1123,8 +1159,8 @@
                                                     <span class="text-sm text-gray-600 w-16">Автор:</span>
                                                     <span class="text-sm truncate">{{ $task->author->name ?? '—' }}</span>
                                                 </div>
-                                                <div class="flex items-center">
-                                                    <span class="text-sm text-gray-600 w-16">Дедлайн:</span>
+                                                <div class="flex items-center max-[500px]:gap-2">
+                                                    <span class="text-sm text-gray-600 w-16 max-[500px]:w-auto">Дедлайн:</span>
                                                     @if($task->deadline && !$task->trashed())
                                                         <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }}">
                                                             <div class="text-sm">{{ $task->deadline->format('d.m.Y') }}</div>
@@ -1196,7 +1232,8 @@
     </div>
 
     <!-- Модальное окно редактирования задачи -->
-    <div id="editTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
+    <div id="editTaskModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
         <div
             class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
             <!-- Заголовок -->
@@ -1492,7 +1529,8 @@
     </div>
 
     <!-- Модальное окно удаления задачи -->
-    <div id="deleteTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
+    <div id="deleteTaskModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
         <div class="bg-white rounded-lg p-4 md:p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-3">Удаление задачи</h3>
             <p class="text-gray-600 mb-4">Вы уверены, что хотите удалить эту задачу? Это действие нельзя отменить.</p>
@@ -1510,7 +1548,8 @@
     </div>
 
     <!-- Модальное окно просмотра задачи -->
-    <div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
+    <div id="taskViewModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
                 <h3 class="text-xl font-bold text-gray-800">
@@ -1823,24 +1862,24 @@
                     const fileElement = document.createElement('div');
                     fileElement.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-lg mb-2';
                     fileElement.innerHTML = `
-                                                                                                                                                                        <div class="flex items-center space-x-3">
-                                                                                                                                                                            <i class="fas fa-paperclip text-gray-500"></i>
-                                                                                                                                                                            <div>
-                                                                                                                                                                                <a href="/storage/${file.file_path}" target="_blank"
-                                                                                                                                                                                   class="text-blue-600 hover:text-blue-800 font-medium block">
-                                                                                                                                                                                    ${file.name}
-                                                                                                                                                                                </a>
-                                                                                                                                                                                <span class="text-xs text-gray-500">
-                                                                                                                                                                                    ${Math.round(file.file_size / 1024)} KB •
-                                                                                                                                                                                    ${formatDateTime(file.created_at)}
-                                                                                                                                                                                </span>
-                                                                                                                                                                            </div>
-                                                                                                                                                                        </div>
-                                                                                                                                                                        <button type="button" onclick="deleteFile(${file.id})"
-                                                                                                                                                                                class="text-red-600 hover:text-red-800 p-1 rounded transition">
-                                                                                                                                                                            <i class="fas fa-trash"></i>
-                                                                                                                                                                        </button>
-                                                                                                                                                                    `;
+                                                                                                                                                                                                                <div class="flex items-center space-x-3">
+                                                                                                                                                                                                                    <i class="fas fa-paperclip text-gray-500"></i>
+                                                                                                                                                                                                                    <div>
+                                                                                                                                                                                                                        <a href="/storage/${file.file_path}" target="_blank"
+                                                                                                                                                                                                                           class="text-blue-600 hover:text-blue-800 font-medium block">
+                                                                                                                                                                                                                            ${file.name}
+                                                                                                                                                                                                                        </a>
+                                                                                                                                                                                                                        <span class="text-xs text-gray-500">
+                                                                                                                                                                                                                            ${Math.round(file.file_size / 1024)} KB •
+                                                                                                                                                                                                                            ${formatDateTime(file.created_at)}
+                                                                                                                                                                                                                        </span>
+                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                <button type="button" onclick="deleteFile(${file.id})"
+                                                                                                                                                                                                                        class="text-red-600 hover:text-red-800 p-1 rounded transition">
+                                                                                                                                                                                                                    <i class="fas fa-trash"></i>
+                                                                                                                                                                                                                </button>
+                                                                                                                                                                                                            `;
                     filesContainer.appendChild(fileElement);
                 });
             } else {
@@ -1889,16 +1928,16 @@
                     const fileElement = document.createElement('div');
                     fileElement.className = 'flex items-center justify-between bg-blue-50 p-2 rounded mb-1';
                     fileElement.innerHTML = `
-                                                                                                                                                                        <div class="flex items-center space-x-2">
-                                                                                                                                                                            <i class="fas fa-file text-blue-500"></i>
-                                                                                                                                                                            <span class="text-blue-700 text-sm">${file.name}</span>
-                                                                                                                                                                            <span class="text-xs text-blue-600">(${Math.round(file.size / 1024)} KB)</span>
-                                                                                                                                                                        </div>
-                                                                                                                                                                        <button type="button" onclick="removeSelectedFile(${index})"
-                                                                                                                                                                                class="text-red-500 hover:text-red-700 text-sm">
-                                                                                                                                                                            <i class="fas fa-times"></i>
-                                                                                                                                                                        </button>
-                                                                                                                                                                    `;
+                                                                                                                                                                                                                <div class="flex items-center space-x-2">
+                                                                                                                                                                                                                    <i class="fas fa-file text-blue-500"></i>
+                                                                                                                                                                                                                    <span class="text-blue-700 text-sm">${file.name}</span>
+                                                                                                                                                                                                                    <span class="text-xs text-blue-600">(${Math.round(file.size / 1024)} KB)</span>
+                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                <button type="button" onclick="removeSelectedFile(${index})"
+                                                                                                                                                                                                                        class="text-red-500 hover:text-red-700 text-sm">
+                                                                                                                                                                                                                    <i class="fas fa-times"></i>
+                                                                                                                                                                                                                </button>
+                                                                                                                                                                                                            `;
                     filesList.appendChild(fileElement);
                 });
             }
@@ -1970,26 +2009,26 @@
                 rejectionsCount.textContent = rejections.length;
 
                 rejectionsContainer.innerHTML = rejections.map(rejection => `
-                                                                                                                                                                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                                                                                                                                                                            <div class="flex justify-between items-start mb-2">
-                                                                                                                                                                                <div class="flex items-center space-x-3">
-                                                                                                                                                                                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600">
-                                                                                                                                                                                        <i class="fas fa-user-slash text-sm"></i>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                    <div>
-                                                                                                                                                                                        <div class="font-medium text-red-800">${rejection.user?.name || 'Пользователь'}</div>
-                                                                                                                                                                                        <div class="text-xs text-red-600">${formatDateTime(rejection.created_at)}</div>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                </div>
-                                                                                                                                                                                <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
-                                                                                                                                                                                    Отказ
-                                                                                                                                                                                </span>
-                                                                                                                                                                            </div>
-                                                                                                                                                                            <div class="mt-2">
-                                                                                                                                                                                <p class="text-sm text-red-700 bg-red-100 p-3 rounded-lg">${rejection.reason || 'Причина не указана'}</p>
-                                                                                                                                                                            </div>
-                                                                                                                                                                        </div>
-                                                                                                                                                                    `).join('');
+                                                                                                                                                                                                                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                                                                                                                                                                                                                    <div class="flex justify-between items-start mb-2">
+                                                                                                                                                                                                                        <div class="flex items-center space-x-3">
+                                                                                                                                                                                                                            <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600">
+                                                                                                                                                                                                                                <i class="fas fa-user-slash text-sm"></i>
+                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                            <div>
+                                                                                                                                                                                                                                <div class="font-medium text-red-800">${rejection.user?.name || 'Пользователь'}</div>
+                                                                                                                                                                                                                                <div class="text-xs text-red-600">${formatDateTime(rejection.created_at)}</div>
+                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                        <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
+                                                                                                                                                                                                                            Отказ
+                                                                                                                                                                                                                        </span>
+                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                    <div class="mt-2">
+                                                                                                                                                                                                                        <p class="text-sm text-red-700 bg-red-100 p-3 rounded-lg">${rejection.reason || 'Причина не указана'}</p>
+                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                            `).join('');
             } else {
                 rejectionsCount.textContent = '0';
                 rejectionsContainer.innerHTML = '<p class="text-gray-500 text-center py-4">Отказов нет</p>';
