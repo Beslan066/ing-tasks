@@ -125,7 +125,12 @@ class HomeController extends Controller
 
     public function home()
     {
+        // Если пользователь авторизован - редирект на /home
+        if (auth()->check()) {
+            return redirect()->route('welcome');
+        }
 
+        // Для неавторизованных - показываем обычную страницу
         $usersCount = User::count();
         $companiesCount = Company::count();
         return view('frontend.index', [
@@ -133,7 +138,6 @@ class HomeController extends Controller
             'usersCount' => $usersCount,
         ]);
     }
-
 
 
     public function indexAdmin(Request $request)
