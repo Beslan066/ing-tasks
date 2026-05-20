@@ -15,14 +15,14 @@
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-medium mb-2">Название отдела</label>
                 <input type="text" name="name" id="edit_department_name"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                       class="w-full pl-10 pr-4 py-3 border-2 border-gray-200  rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400 hover:border-gray-300 outline-none"
                        placeholder="Введите название отдела" required>
             </div>
 
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-medium mb-2">Компания</label>
                 <select name="company_id" id="edit_department_company"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        class="w-full pl-10 pr-4 py-3 border-2 border-gray-200  rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400 hover:border-gray-300 outline-none">
                     @if(isset($ownedCompanies))
                         @foreach($ownedCompanies as $company)
                             <option value="{{ $company->id }}">{{ $company->name }}</option>
@@ -42,9 +42,7 @@
                 <button type="button" onclick="closeEditDepartmentModal()"
                         class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Отмена
                 </button>
-                <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary">Сохранить
-                    изменения
-                </button>
+                <button type="submit" class="px-4 py-2 bg-primary bg-green-500 text-white rounded-lg hover:bg-secondary">Обновить</button>
             </div>
         </form>
     </div>

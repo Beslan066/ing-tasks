@@ -19,12 +19,21 @@
             </div>
 
             <div class="flex flex-wrap gap-2 w-full md:w-auto">
-                <button id="toggleFilters"
-                        class="flex-1 md:flex-none bg-white border border-gray-300 text-gray-700 px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-50 transition text-sm md:text-base">
-                    <i class="fas fa-filter"></i>
-                    <span>Фильтр</span>
-                    <i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>
-                </button>
+                @if($backgroundEnabled && $backgroundImage)
+                    <button id="toggleFilters"
+                            class="flex-1 md:flex-none bg-transparent/20 border-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2  transition text-sm md:text-base">
+                        <i class="fas fa-filter"></i>
+                        <span>Фильтры</span>
+                        <i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>
+                    </button>
+                @else
+                    <button id="toggleFilters"
+                            class="flex-1 md:flex-none bg-white border border-gray-300 text-gray-700 px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2  transition text-sm md:text-base">
+                        <i class="fas fa-filter"></i>
+                        <span>Фильтры</span>
+                        <i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>
+                    </button>
+                @endif
                 <button
                     class="flex-1 md:flex-none bg-primary-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-secondary transition text-sm md:text-base"
                     id="inviteUserBtn">
@@ -1051,7 +1060,7 @@
                 filtersSection.style.maxHeight = '0';
                 filtersSection.style.opacity = '0';
                 filterArrow.className = 'fas fa-chevron-down text-xs ml-1';
-                toggleFiltersBtn.innerHTML = `<i class="fas fa-filter"></i><span>Фильтр</span><i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>`;
+                toggleFiltersBtn.innerHTML = `<i class="fas fa-filter"></i><span>Фильтры</span><i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>`;
                 filtersVisible = false;
                 localStorage.setItem('teamFiltersVisible', 'false');
                 if (advancedFiltersVisible) hideAdvancedFilters();

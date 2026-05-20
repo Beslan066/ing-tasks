@@ -18,17 +18,57 @@
                 @endif
             </div>
             <div class="flex gap-3">
-                <button id="filterToggle"
-                        class="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg flex items-center space-x-2 hover:bg-gray-50 transition">
-                    <i class="fas fa-filter"></i>
-                    <span>Фильтры</span>
-                    <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform duration-200"></i>
-                </button>
+                @if($backgroundEnabled && $backgroundImage)
+                    <button id="filterToggle"
+                            class="bg-transparent/20 border-none text-white px-4 py-3 rounded-lg flex items-center space-x-2 transition">
+                        <i class="fas fa-filter"></i>
+                        <span>Фильтры</span>
+                        <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform duration-200"></i>
+                    </button>
+                @else
+                    <button id="filterToggle"
+                            class="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg flex items-center space-x-2 hover:bg-gray-50 transition">
+                        <i class="fas fa-filter"></i>
+                        <span>Фильтры</span>
+                        <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform duration-200"></i>
+                    </button>
+                @endif
                 <button onclick="openDepartmentModal()"
                         class="bg-gradient-to-r from-green-600 to-green-500 text-white px-6 py-3 rounded-lg hover:from-green-700 hover:to-green-600 transition-colors flex items-center space-x-2">
                     <i class="fas fa-plus"></i>
                     <span>Новый отдел</span>
                 </button>
+            </div>
+        </div>
+
+        <!-- Фильтры и поиск - Скрытый блок -->
+        <div id="filtersPanel" class="backdrop-blur-md bg-transparent/10 rounded-xl shadow mb-6 p-4 hidden">
+            <div class="flex flex-col md:flex-row md:items-center">
+                <div class="">
+                    <div class="relative">
+                        <input type="text"
+                               placeholder="Поиск отделов..."
+                               class="w-full pl-10 pr-4 py-2 border-none rounded-lg  outline-none bg-transparent/20 placeholder:text-white"
+                               id="departmentSearch">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+                <div class="ml-4 flex space-x-4">
+                    <select class="border-none rounded-lg  px-4 py-2 bg-transparent/20 text-white"
+                            id="filterStatus"
+                            onchange="filterDepartments(this.value)">
+                        <option class="text-gray-800" value="all">Все отделы</option>
+                        <option class="text-gray-800" value="active">Активные</option>
+                        <option class="text-gray-800" value="inactive">Неактивные</option>
+                    </select>
+                    <select class="border-none rounded-lg  px-4 py-2 outline-none bg-transparent/20 text-white"
+                            id="sortBy"
+                            onchange="sortDepartments(this.value)">
+                        <option class="text-gray-800" value="name">Сортировать по названию</option>
+                        <option class="text-gray-800" value="tasks">По количеству задач</option>
+                        <option class="text-gray-800" value="emails">По новым письмам</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -38,8 +78,8 @@
                 <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow p-6 border-none">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h2 class="text-lg font-bold text-white">Отделов:</h2>
-                            <p class="text-2xl font-bold text-gray-500">{{ $departments->count() }}</p>
+                            <h2 class="text-lg font-bold text-white">Отделов</h2>
+                            <p class="text-2xl font-bold text-white">{{ $departments->count() }}</p>
                         </div>
                     </div>
                 </div>
@@ -48,7 +88,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h2 class="text-lg font-bold text-white">Задач</h2>
-                            <p class="text-2xl font-bold text-gray-500">{{ $totalActiveTasks }}</p>
+                            <p class="text-2xl font-bold text-white">{{ $totalActiveTasks }}</p>
                         </div>
                     </div>
                 </div>
@@ -57,7 +97,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h2 class="text-lg font-bold text-white">Писем</h2>
-                            <p class="text-2xl font-bold text-gray-500">{{ $totalUnreadEmails }}</p>
+                            <p class="text-2xl font-bold text-white">{{ $totalUnreadEmails }}</p>
                         </div>
                     </div>
                 </div>
@@ -66,7 +106,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h2 class="text-lg font-bold text-white">Сотрудников</h2>
-                            <p class="text-2xl font-bold text-gray-500">{{ $totalUsers }}</p>
+                            <p class="text-2xl font-bold text-white">{{ $totalUsers }}</p>
                         </div>
                     </div>
                 </div>
@@ -122,37 +162,6 @@
                 </div>
             </div>
         @endif
-
-        <!-- Фильтры и поиск - Скрытый блок -->
-        <div id="filtersPanel" class="backdrop-blur-md bg-transparent/10 rounded-xl shadow mb-6 p-4 hidden">
-            <div class="flex flex-col md:flex-row md:items-center">
-                <div class="">
-                    <div class="relative">
-                        <input type="text"
-                               placeholder="Поиск отделов..."
-                               class="w-full pl-10 pr-4 py-2 border-none rounded-lg  outline-none bg-transparent/20 placeholder:text-white"
-                               id="departmentSearch">
-                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                    </div>
-                </div>
-                <div class="ml-4 flex space-x-4">
-                    <select class="border-none rounded-lg  px-4 py-2 bg-transparent/20 text-white"
-                            id="filterStatus"
-                            onchange="filterDepartments(this.value)">
-                        <option class="text-gray-800" value="all">Все отделы</option>
-                        <option class="text-gray-800" value="active">Активные</option>
-                        <option class="text-gray-800" value="inactive">Неактивные</option>
-                    </select>
-                    <select class="border-none rounded-lg  px-4 py-2 outline-none bg-transparent/20 text-white"
-                            id="sortBy"
-                            onchange="sortDepartments(this.value)">
-                        <option class="text-gray-800" value="name">Сортировать по названию</option>
-                        <option class="text-gray-800" value="tasks">По количеству задач</option>
-                        <option class="text-gray-800" value="emails">По новым письмам</option>
-                    </select>
-                </div>
-            </div>
-        </div>
 
         <!-- Список отделов -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="departments-container">

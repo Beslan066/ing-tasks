@@ -32,24 +32,9 @@
                     <!-- Выпадающее меню -->
                     <div class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 border border-gray-200">
                         <div class="py-1">
-                            <a href="{{ route('departments.emails.index', $department) }}"
-                               class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <i class="fas fa-envelope mr-3 text-blue-500"></i>
-                                Почта отдела
-                            </a>
-                            <a href=""
-                               class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <i class="fas fa-tasks mr-3 text-green-500"></i>
-                                Задачи отдела
-                            </a>
-                            <a href=""
-                               class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <i class="fas fa-folder mr-3 text-yellow-500"></i>
-                                Файлы отдела
-                            </a>
                             <div class="border-t border-gray-100"></div>
                             <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                               onclick="editDepartment({{ $department->id }})">
+                               onclick="openEditDepartmentModal({{ $department->id }})">
                                 <i class="fas fa-edit mr-3 text-primary"></i>
                                 Редактировать
                             </a>
@@ -203,10 +188,10 @@
                             {{--                                        @endif--}}
                         </a>
                     @endif
-                    <a href=""
-                       class="bg- text-white border border-gray-300 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 hover:text-gray-800 transition-colors">
-                        Подробнее
-                    </a>
+{{--                    <a href=""--}}
+{{--                       class="bg- text-white border border-gray-300 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 hover:text-gray-800 transition-colors">--}}
+{{--                        Подробнее--}}
+{{--                    </a>--}}
                 </div>
             </div>
         </div>
@@ -245,24 +230,9 @@
                     <!-- Выпадающее меню -->
                     <div class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 border border-gray-200">
                         <div class="py-1">
-                            <a href="{{ route('departments.emails.index', $department) }}"
-                               class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <i class="fas fa-envelope mr-3 text-blue-500"></i>
-                                Почта отдела
-                            </a>
-                            <a href=""
-                               class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <i class="fas fa-tasks mr-3 text-green-500"></i>
-                                Задачи отдела
-                            </a>
-                            <a href=""
-                               class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <i class="fas fa-folder mr-3 text-yellow-500"></i>
-                                Файлы отдела
-                            </a>
                             <div class="border-t border-gray-100"></div>
                             <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                               onclick="editDepartment({{ $department->id }})">
+                               onclick="openEditDepartmentModal({{ $department->id }})">
                                 <i class="fas fa-edit mr-3 text-primary"></i>
                                 Редактировать
                             </a>

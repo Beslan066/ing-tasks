@@ -19,7 +19,7 @@
                 <nav>
                     <ol class="flex items-center gap-1.5">
                         <li>
-                            <a class="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400"
+                            <a class="inline-flex items-center gap-1.5 text-sm text-white dark:text-gray-400"
                                href="{{ route('welcome') }}">
                                 Главная
                                 <svg class="stroke-current" width="17" height="16" viewBox="0 0 17 16" fill="none"
@@ -29,7 +29,7 @@
                                 </svg>
                             </a>
                         </li>
-                        <li class="text-sm text-gray-800 dark:text-white/90" x-text="pageName">Хранилище</li>
+                        <li class="text-sm text-white" x-text="pageName">Хранилище</li>
                     </ol>
                 </nav>
             </div>
