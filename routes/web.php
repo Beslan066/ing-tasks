@@ -571,6 +571,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
         Route::get('/online-users', [App\Http\Controllers\Admin\UserTrackingController::class, 'getOnlineUsers'])
             ->name('online.users');
     });
+
+    Route::post('/update-user-location', [App\Http\Controllers\UserLocationController::class, 'update'])->middleware('auth');
 });
 
 require __DIR__.'/auth.php';

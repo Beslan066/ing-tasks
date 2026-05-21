@@ -110,6 +110,24 @@
             // Логируем количество маркеров
             console.log('Добавлено маркеров: ' + markers.length);
         });
+
+        // Определение геолокации пользователя через браузер
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                // Отправляем координаты на сервер
+                fetch('/update-user-location', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    })
+                });
+            });
+        }
     </script>
 
     <style>

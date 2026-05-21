@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\UserOnlineSession;
 use App\Models\UserVisit;
+use App\Traits\GeolocationTrait;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TrackUserActivity
 {
+
+    use GeolocationTrait;
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
@@ -22,7 +25,7 @@ class TrackUserActivity
 
             if ($this->shouldTrack($request)) {
                 $this->updateUserActivity($user);
-                $this->trackSession($user);
+                $this->trackSession($request, $user); // Передаем $request
 
                 // Только для GET запросов и не AJAX
                 if ($request->isMethod('get') && !$request->ajax() && !$request->wantsJson()) {
@@ -108,11 +111,15 @@ class TrackUserActivity
         }
     }
 
-    private function trackSession($user): void
+    private function trackSession(Request $request, $user): void
     {
         try {
             $today = now()->toDateString();
             $sessionId = session()->getId();
+            $ip = $request->ip();
+
+            // Получаем геолокацию по IP
+            $geoData = $this->getGeolocationByIp($ip);
 
             $session = UserOnlineSession::where('user_id', $user->id)
                 ->whereDate('date', $today)
@@ -125,17 +132,25 @@ class TrackUserActivity
                     'login_at' => now(),
                     'session_id' => $sessionId,
                     'date' => $today,
-                    'ip_address' => request()->ip(),
-                    'user_agent' => request()->userAgent(),
+                    'ip_address' => $ip,
+                    'user_agent' => $request->userAgent(),
                     'last_activity_at' => now(),
+                    'country' => $geoData['country'],
+                    'city' => $geoData['city'],
+                    'latitude' => $geoData['latitude'],
+                    'longitude' => $geoData['longitude'],
                 ]);
             } else {
                 $session->update([
                     'last_activity_at' => now(),
+                    'country' => $geoData['country'],
+                    'city' => $geoData['city'],
+                    'latitude' => $geoData['latitude'],
+                    'longitude' => $geoData['longitude'],
                 ]);
 
-                if ($session->ip_address !== request()->ip()) {
-                    $session->update(['ip_address' => request()->ip()]);
+                if ($session->ip_address !== $ip) {
+                    $session->update(['ip_address' => $ip]);
                 }
             }
         } catch (\Exception $e) {
