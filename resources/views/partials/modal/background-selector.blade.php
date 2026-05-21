@@ -7,7 +7,7 @@
             </button>
         </div>
 
-        <div class="p-6">
+        <div class="p-6 max-[500px]:p-2">
             @php
                 $backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
                 $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
@@ -29,7 +29,7 @@
             <!-- Сетка с фонами -->
             <div class="mb-2">
                 <p class="font-medium mb-3">Доступные фоны:</p>
-                <div class="grid grid-cols-3 gap-4" id="backgroundsGrid">
+                <div class="grid grid-cols-3 gap-4 max-[500px]:grid-cols-2 max-[500px]:max-h-[470px] max-[500px]:overflow-y-auto" id="backgroundsGrid">
                     @php
                         $fones = [];
                         if (is_dir(public_path('images/fones'))) {

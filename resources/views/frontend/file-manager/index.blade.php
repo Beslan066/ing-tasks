@@ -19,7 +19,7 @@
                 <nav>
                     <ol class="flex items-center gap-1.5">
                         <li>
-                            <a class="inline-flex items-center gap-1.5 text-sm text-white dark:text-gray-400"
+                            <a class="inline-flex items-center gap-1.5 text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-500 dark:text-gray-400' }}"
                                href="{{ route('welcome') }}">
                                 Главная
                                 <svg class="stroke-current" width="17" height="16" viewBox="0 0 17 16" fill="none"
@@ -29,7 +29,7 @@
                                 </svg>
                             </a>
                         </li>
-                        <li class="text-sm text-white" x-text="pageName">Хранилище</li>
+                        <li class="text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-800 dark:text-white/90' }}" x-text="pageName">Хранилище</li>
                     </ol>
                 </nav>
             </div>
@@ -170,9 +170,8 @@
                                     <!-- Search Input -->
                                     <div class="relative">
                                         <button
-                                            class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
-                                            <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20"
-                                                 fill="none"
+                                            class="absolute left-4 top-1/2 -translate-y-1/2 {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-500 dark:text-gray-400' }}">
+                                            <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                                                  xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" clip-rule="evenodd"
                                                       d="M3.04199 9.37363C3.04199 5.87693 5.87735 3.04199 9.37533 3.04199C12.8733 3.04199 15.7087 5.87693 15.7087 9.37363C15.7087 12.8703 12.8733 15.7053 9.37533 15.7053C5.87735 15.7053 3.04199 12.8703 3.04199 9.37363ZM9.37533 1.54199C5.04926 1.54199 1.54199 5.04817 1.54199 9.37363C1.54199 13.6991 5.04926 17.2053 9.37533 17.2053C11.2676 17.2053 13.0032 16.5344 14.3572 15.4176L17.1773 18.238C17.4702 18.5309 17.945 18.5309 18.2379 18.238C18.5308 17.9451 18.5309 17.4703 18.238 17.1773L15.4182 14.3573C16.5367 13.0033 17.2087 11.2669 17.2087 9.37363C17.2087 5.04817 13.7014 1.54199 9.37533 1.54199Z"
@@ -181,7 +180,10 @@
                                         </button>
 
                                         <input type="text" placeholder="Поиск файлов..."
-                                               class="w-full rounded-lg border-none bg-transparent py-2.5 pl-[42px] pr-3.5 text-sm text-white  placeholder:text-white  focus:outline-hidden focus:ring-2 focus:ring-green-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-green-800 xl:w-[300px] outline-none focus:border-gray-800  focus:ring-gray-800 border-2 border-gray-500">
+                                               class="w-full rounded-lg bg-transparent py-2.5 pl-[42px] pr-3.5 text-sm
+                                                 placeholder:text-white  focus:outline-hidden focus:ring-2 focus:ring-green-500/10 dark:border-gray-700 dark:bg-gray-900
+                                                  dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-green-800 xl:w-[300px] outline-none focus:border-gray-800  focus:ring-gray-800 border-2
+                                                   {{ $backgroundEnabled && $backgroundImage ? 'text-white  border-white border-[1px]' : 'text-gray-800 dark:text-white/90 border-gray-500' }}">
                                     </div>
 
                                     <!-- Upload Button with Modal -->

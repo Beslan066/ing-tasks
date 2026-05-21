@@ -20,19 +20,21 @@
             </div>
             <div class="flex gap-3">
                 <button @click="showFilters = !showFilters"
-                        class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-4 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
+                    class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-4 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                        </path>
                     </svg>
                     Фильтры
                     <template x-if="hasActiveFilters">
                         <span class="bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
-                              x-text="getActiveFiltersCount"></span>
+                            x-text="getActiveFiltersCount"></span>
                     </template>
                 </button>
 
                 <button @click="showUploadModal = true"
-                        class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
+                    class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -42,26 +44,29 @@
         </div>
 
         <!-- Уведомления -->
-        <div x-show="toast.show"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 transform translate-y-4"
-             x-transition:enter-end="opacity-100 transform translate-y-0"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100 transform translate-y-0"
-             x-transition:leave-end="opacity-0 transform translate-y-4"
-             class="fixed bottom-4 right-4 z-50 max-w-sm w-full"
-             style="display: none;">
+        <div x-show="toast.show" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform translate-y-4"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform translate-y-4" class="fixed bottom-4 right-4 z-50 max-w-sm w-full"
+            style="display: none;">
             <div :class="{'bg-green-500': toast.type === 'success', 'bg-red-500': toast.type === 'error', 'bg-blue-500': toast.type === 'info'}"
-                 class="rounded-lg shadow-lg p-4 text-white">
+                class="rounded-lg shadow-lg p-4 text-white">
                 <div class="flex items-center gap-3">
-                    <svg x-show="toast.type === 'success'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg x-show="toast.type === 'success'" class="w-5 h-5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
-                    <svg x-show="toast.type === 'error'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    <svg x-show="toast.type === 'error'" class="w-5 h-5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
                     </svg>
-                    <svg x-show="toast.type === 'info'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <svg x-show="toast.type === 'info'" class="w-5 h-5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     <span x-text="toast.message"></span>
                 </div>
@@ -208,9 +213,9 @@
             </button>
             <template x-for="category in categoriesData" :key="category.id">
                 <button @click="setCategoryFilter(category.id)"
-                        :class="{'bg-green-600 text-white': filters.category == category.id, 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300': filters.category != category.id}"
-                        class="px-4 py-2 rounded-lg font-medium transition-colors border border-gray-300 dark:border-gray-600"
-                        x-text="category.name">
+                    :class="{'bg-green-600 text-white': filters.category == category.id, 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300': filters.category != category.id}"
+                    class="px-4 py-2 rounded-lg font-medium transition-colors border border-gray-300 dark:border-gray-600"
+                    x-text="category.name">
                 </button>
             </template>
         </div>
@@ -228,30 +233,35 @@
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     <template x-for="photo in photos" :key="photo.id">
                         <div @click="openFullscreen(photo)"
-                             class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden group relative transition-all duration-300 hover:shadow-lg cursor-pointer">
-                            <img class="w-full h-48 object-cover"
-                                 :src="'/storage/' + photo.file_path"
-                                 :alt="photo.title"
-                                 loading="lazy">
+                            class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden group relative transition-all duration-300 hover:shadow-lg cursor-pointer">
+                            <img class="w-full h-48 object-cover" :src="'/storage/' + photo.file_path" :alt="photo.title"
+                                loading="lazy">
 
                             <!-- Кнопка удаления - не перехватывает клик -->
-                            <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-1 z-10">
+                            <div
+                                class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-1 z-10">
                                 <button @click.stop="deletePhoto(photo)"
-                                        class="bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 transition-colors">
+                                    class="bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                        </path>
                                     </svg>
                                 </button>
                             </div>
 
                             <!-- Overlay с информацией - НЕ перехватывает клик -->
-                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-end p-3 pointer-events-none">
-                                <div class="text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 mb-4 w-full pointer-events-none">
+                            <div
+                                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-end p-3 pointer-events-none">
+                                <div
+                                    class="text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 mb-4 w-full pointer-events-none">
                                     <h3 class="font-semibold text-sm mb-1" x-text="photo.title"></h3>
-                                    <p class="text-xs opacity-90 mb-2" x-text="photo.category ? photo.category.name : 'Без категории'"></p>
+                                    <p class="text-xs opacity-90 mb-2"
+                                        x-text="photo.category ? photo.category.name : 'Без категории'"></p>
                                     <div class="flex flex-wrap gap-1">
                                         <template x-for="tag in photo.tags" :key="tag.id">
-                                            <span class="bg-green-500 bg-opacity-80 px-2 py-1 rounded text-xs" x-text="tag.name"></span>
+                                            <span class="bg-green-500 bg-opacity-80 px-2 py-1 rounded text-xs"
+                                                x-text="tag.name"></span>
                                         </template>
                                     </div>
                                 </div>
@@ -264,15 +274,30 @@
             <template x-if="!loading && photos.length === 0">
                 <div class="text-center py-12">
                     <div class="max-w-md mx-auto">
-                        <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+                        <div
+                            class="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
                             <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
                             </svg>
                         </div>
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2" x-text="hasActiveFilters ? 'Ничего не найдено' : 'Пока нет фотографий'"></h3>
-                        <p class="text-gray-500 dark:text-gray-400 mb-6" x-text="hasActiveFilters ? 'Попробуйте изменить параметры поиска' : 'Будьте первым, кто добавит фотографию!'"></p>
+                        @if($backgroundEnabled && $backgroundImage)
+                            <h3 class="text-lg font-medium text-white dark:text-white mb-2"
+                                x-text="hasActiveFilters ? 'Ничего не найдено' : 'Пока нет фотографий'"></h3>
+                            <p class="text-white dark:text-gray-400 mb-6"
+                                x-text="hasActiveFilters ? 'Попробуйте изменить параметры поиска' : 'Будьте первым, кто добавит фотографию!'">
+                            </p>
+                        @else
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2"
+                                x-text="hasActiveFilters ? 'Ничего не найдено' : 'Пока нет фотографий'"></h3>
+                            <p class="text-gray-500 dark:text-gray-400 mb-6"
+                                x-text="hasActiveFilters ? 'Попробуйте изменить параметры поиска' : 'Будьте первым, кто добавит фотографию!'">
+                            </p>
+                        @endif
+
                         <button @click="hasActiveFilters ? clearFilters() : (showUploadModal = true)"
-                                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                            class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                             <span x-text="hasActiveFilters ? 'Сбросить фильтры' : 'Добавить фото'"></span>
                         </button>
                     </div>
@@ -282,30 +307,28 @@
 
         <div x-show="hasMorePages && photos.length > 0" class="text-center mt-8">
             <button @click="loadMore" :disabled="loadingMore"
-                    class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50">
+                class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50">
                 <span x-show="!loadingMore">Загрузить еще</span>
                 <span x-show="loadingMore">Загрузка...</span>
             </button>
         </div>
 
         <!-- Модальное окно загрузки -->
-        <div x-show="showUploadModal"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-             style="display: none;">
+        <div x-show="showUploadModal" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" style="display: none;">
             <div @click.away="showUploadModal = false"
-                 class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Добавить фотографию</h2>
-                        <button @click="showUploadModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <button @click="showUploadModal = false"
+                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
@@ -314,52 +337,55 @@
                         @csrf
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Название *</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Название
+                                *</label>
                             <input type="text" x-model="uploadForm.title"
-                                   class="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white"
-                                   required>
-                            <span x-show="uploadErrors.title" x-text="uploadErrors.title" class="text-red-500 text-sm mt-1"></span>
+                                class="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white"
+                                required>
+                            <span x-show="uploadErrors.title" x-text="uploadErrors.title"
+                                class="text-red-500 text-sm mt-1"></span>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Описание</label>
                             <textarea x-model="uploadForm.description" rows="3"
-                                      class="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white"></textarea>
+                                class="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white"></textarea>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Категория *</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Категория
+                                *</label>
                             <div class="flex gap-2">
                                 <select x-model="uploadForm.category_id"
-                                        class="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 bg-white"
-                                        required>
+                                    class="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 bg-white"
+                                    required>
                                     <option value="">Выберите категорию</option>
                                     <template x-for="category in categoriesData" :key="category.id">
                                         <option :value="category.id" x-text="category.name"></option>
                                     </template>
                                 </select>
                                 <button type="button" @click="showNewCategory = !showNewCategory"
-                                        class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">
+                                    class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">
                                     +
                                 </button>
                             </div>
 
                             <div x-show="showNewCategory" class="flex gap-2 mt-2">
-                                <input type="text" x-model="newCategory.name"
-                                       placeholder="Новая категория"
-                                       class="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white">
+                                <input type="text" x-model="newCategory.name" placeholder="Новая категория"
+                                    class="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white">
                                 <button type="button" @click="createCategory"
-                                        class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg">
+                                    class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg">
                                     Создать
                                 </button>
                             </div>
-                            <span x-show="uploadErrors.category_id" x-text="uploadErrors.category_id" class="text-red-500 text-sm"></span>
+                            <span x-show="uploadErrors.category_id" x-text="uploadErrors.category_id"
+                                class="text-red-500 text-sm"></span>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Теги</label>
                             <select x-model="uploadForm.tags" multiple
-                                    class="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white h-32">
+                                class="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white h-32">
                                 <template x-for="tag in tagsData" :key="tag.id">
                                     <option :value="tag.id" x-text="tag.name"></option>
                                 </template>
@@ -368,34 +394,38 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Фотография *</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Фотография
+                                *</label>
                             <input type="file" @change="handleFileSelect"
-                                   class="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white"
-                                   accept="image/*" required>
-                            <span x-show="uploadErrors.photo" x-text="uploadErrors.photo" class="text-red-500 text-sm mt-1"></span>
-                            <p class="text-sm text-gray-500 mt-2">Поддерживаемые форматы: JPEG, PNG, GIF, WebP. Максимальный размер: 20MB</p>
+                                class="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white"
+                                accept="image/*" required>
+                            <span x-show="uploadErrors.photo" x-text="uploadErrors.photo"
+                                class="text-red-500 text-sm mt-1"></span>
+                            <p class="text-sm text-gray-500 mt-2">Поддерживаемые форматы: JPEG, PNG, GIF, WebP. Максимальный
+                                размер: 20MB</p>
                         </div>
 
                         <div x-show="previewUrl">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Предпросмотр</label>
-                            <img :src="previewUrl" class="max-w-full h-48 object-cover rounded-lg border border-gray-300 dark:border-gray-600">
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Предпросмотр</label>
+                            <img :src="previewUrl"
+                                class="max-w-full h-48 object-cover rounded-lg border border-gray-300 dark:border-gray-600">
                         </div>
 
                         <div x-show="uploadMessage"
-                             :class="{'bg-green-100 border-green-400 text-green-700': uploadMessageType === 'success', 'bg-red-100 border-red-400 text-red-700': uploadMessageType === 'error'}"
-                             class="px-4 py-3 rounded border">
+                            :class="{'bg-green-100 border-green-400 text-green-700': uploadMessageType === 'success', 'bg-red-100 border-red-400 text-red-700': uploadMessageType === 'error'}"
+                            class="px-4 py-3 rounded border">
                             <span x-text="uploadMessage"></span>
                         </div>
 
                         <div class="flex gap-4 pt-4">
-                            <button type="submit"
-                                    :disabled="uploadLoading"
-                                    class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                            <button type="submit" :disabled="uploadLoading"
+                                class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                                 <span x-show="!uploadLoading">Загрузить фотографию</span>
                                 <span x-show="uploadLoading">Загрузка...</span>
                             </button>
                             <button type="button" @click="showUploadModal = false"
-                                    class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                                 Отмена
                             </button>
                         </div>
@@ -408,22 +438,26 @@
     <!-- Полноэкранный просмотр с инструментами -->
     <div id="fullscreenViewer" class="fixed inset-0 bg-black bg-opacity-95 z-[100] hidden items-center justify-center backdrop-blur-md">
         <!-- Кнопка закрытия -->
-        <button id="closeFullscreen" class="absolute top-4 right-4 text-white hover:text-gray-300 z-20 bg-black bg-opacity-50 rounded-full p-2 transition-colors">
+        <button id="closeFullscreen"
+            class="absolute top-4 right-4 text-white hover:text-gray-300 z-20 bg-black bg-opacity-50 rounded-full p-2 transition-colors">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
         </button>
 
         <!-- Счетчик -->
-        <div id="photoCounter" class="absolute top-4 left-4 text-white bg-black bg-opacity-50 rounded-lg px-3 py-1 text-sm z-20"></div>
+        <div id="photoCounter"
+            class="absolute top-4 left-4 text-white bg-black bg-opacity-50 rounded-lg px-3 py-1 text-sm z-20"></div>
 
         <!-- Кнопки навигации -->
-        <button id="prevPhoto" class="absolute left-4 text-white hover:text-gray-300 bg-black bg-opacity-50 rounded-full p-3 transition-colors hover:bg-opacity-75 z-20">
+        <button id="prevPhoto"
+            class="absolute left-4 text-white hover:text-gray-300 bg-black bg-opacity-50 rounded-full p-3 transition-colors hover:bg-opacity-75 z-20">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
         </button>
-        <button id="nextPhoto" class="absolute right-4 text-white hover:text-gray-300 bg-black bg-opacity-50 rounded-full p-3 transition-colors hover:bg-opacity-75 z-20">
+        <button id="nextPhoto"
+            class="absolute right-4 text-white hover:text-gray-300 bg-black bg-opacity-50 rounded-full p-3 transition-colors hover:bg-opacity-75 z-20">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
@@ -449,33 +483,44 @@
                 <div class="border-t border-gray-700 pt-4">
                     <div class="flex flex-wrap gap-3">
                         <!-- Скачать -->
-                        <button id="downloadBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                        <button id="downloadBtn"
+                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                             </svg>
                             Скачать
                         </button>
 
                         <!-- Изменить размер -->
-                        <button id="resizeBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                        <button id="resizeBtn"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4">
+                                </path>
                             </svg>
                             Изменить размер
                         </button>
 
                         <!-- Конвертация -->
-                        <button id="convertBtn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                        <button id="convertBtn"
+                            class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                                </path>
                             </svg>
                             Конвертировать
                         </button>
 
                         <!-- Соотношение сторон -->
-                        <button id="ratioBtn" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                        <button id="ratioBtn"
+                            class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4">
+                                </path>
                             </svg>
                             Соотношение
                         </button>
@@ -491,11 +536,15 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ширина (px)</label>
-                        <input type="number" id="resizeWidth" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Ширина">
+                        <input type="number" id="resizeWidth"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
+                            placeholder="Ширина">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Высота (px)</label>
-                        <input type="number" id="resizeHeight" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Высота">
+                        <input type="number" id="resizeHeight"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
+                            placeholder="Высота">
                     </div>
                     <label class="flex items-center gap-2">
                         <input type="checkbox" id="resizeCrop" class="rounded">
@@ -503,8 +552,10 @@
                     </label>
                 </div>
                 <div class="flex gap-3 mt-6">
-                    <button id="applyResizeBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">Применить</button>
-                    <button id="cancelResizeBtn" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">Отмена</button>
+                    <button id="applyResizeBtn"
+                        class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">Применить</button>
+                    <button id="cancelResizeBtn"
+                        class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">Отмена</button>
                 </div>
             </div>
         </div>
@@ -514,24 +565,29 @@
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
                 <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Конвертировать в формат</h3>
                 <div class="grid grid-cols-2 gap-3">
-                    <button data-format="jpeg" class="convert-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
+                    <button data-format="jpeg"
+                        class="convert-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
                         <div class="font-medium">JPEG</div>
                         <div class="text-xs text-gray-500">Хорош для фотографий</div>
                     </button>
-                    <button data-format="png" class="convert-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
+                    <button data-format="png"
+                        class="convert-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
                         <div class="font-medium">PNG</div>
                         <div class="text-xs text-gray-500">Поддерживает прозрачность</div>
                     </button>
-                    <button data-format="webp" class="convert-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
+                    <button data-format="webp"
+                        class="convert-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
                         <div class="font-medium">WebP</div>
                         <div class="text-xs text-gray-500">Современный формат</div>
                     </button>
-                    <button data-format="gif" class="convert-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
+                    <button data-format="gif"
+                        class="convert-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
                         <div class="font-medium">GIF</div>
                         <div class="text-xs text-gray-500">Для анимации</div>
                     </button>
                 </div>
-                <button id="cancelConvertBtn" class="w-full mt-4 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">Отмена</button>
+                <button id="cancelConvertBtn"
+                    class="w-full mt-4 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">Отмена</button>
             </div>
         </div>
 
@@ -540,28 +596,34 @@
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
                 <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Выберите соотношение сторон</h3>
                 <div class="grid grid-cols-2 gap-3">
-                    <button data-ratio="16:9" class="ratio-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
+                    <button data-ratio="16:9"
+                        class="ratio-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
                         <div class="font-medium">16:9</div>
                         <div class="text-xs text-gray-500">Широкоэкранное</div>
                     </button>
-                    <button data-ratio="4:3" class="ratio-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
+                    <button data-ratio="4:3"
+                        class="ratio-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
                         <div class="font-medium">4:3</div>
                         <div class="text-xs text-gray-500">Классическое</div>
                     </button>
-                    <button data-ratio="1:1" class="ratio-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
+                    <button data-ratio="1:1"
+                        class="ratio-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
                         <div class="font-medium">1:1</div>
                         <div class="text-xs text-gray-500">Квадратное</div>
                     </button>
-                    <button data-ratio="3:2" class="ratio-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
+                    <button data-ratio="3:2"
+                        class="ratio-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
                         <div class="font-medium">3:2</div>
                         <div class="text-xs text-gray-500">Фотографическое</div>
                     </button>
-                    <button data-ratio="2:3" class="ratio-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
+                    <button data-ratio="2:3"
+                        class="ratio-option bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-3 rounded-lg text-center transition-colors">
                         <div class="font-medium">2:3</div>
                         <div class="text-xs text-gray-500">Портретное</div>
                     </button>
                 </div>
-                <button id="cancelRatioBtn" class="w-full mt-4 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">Отмена</button>
+                <button id="cancelRatioBtn"
+                    class="w-full mt-4 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">Отмена</button>
             </div>
         </div>
     </div>
@@ -570,9 +632,11 @@
         [x-cloak] {
             display: none !important;
         }
+
         #fullscreenViewer.hidden {
             display: none !important;
         }
+
         #fullscreenViewer:not(.hidden) {
             display: flex !important;
         }

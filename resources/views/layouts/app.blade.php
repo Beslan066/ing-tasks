@@ -418,15 +418,19 @@ media-src https://meet.jit.si https:;
     $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
 @endphp
 
-<div class="flex min-h-screen main-container {{ $backgroundEnabled && $backgroundImage ? 'has-background' : '' }}"
+<div class="flex min-h-screen main-container max-[500px]:pb-[50px] {{ $backgroundEnabled && $backgroundImage ? 'has-background' : '' }}"
      @if($backgroundEnabled && $backgroundImage)
          style="background-image: url('{{ $backgroundImage }}')"
     @endif>
 
     <!-- Боковая панель -->
-    <div id="sidebar-menu" class="sidebar w-64 py-6 px-4 sm:flex flex-col relative
-            max-[638px]:!fixed max-[638px]:top-0 max-[638px]:-left-full max-[638px]:h-full max-[638px]:z-[999] max-[638px]:transition-[left] max-[638px]:duration-300 max-[638px]:overflow-x-auto max-[638px]:ease-in-out max-[638px]:!w-80
-            [&.active]:max-[638px]:left-0 {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
+    <div id="sidebar-menu" class="sidebar w-64 h-full py-6 px-4 fixed
+                                  max-[638px]:!fixed max-[638px]:top-0 max-[638px]:-left-full max-[638px]:h-full
+                                  max-[638px]:z-[999] max-[638px]:transition-[left] max-[638px]:duration-300 max-[638px]:ease-in-out max-[638px]:!w-80
+                                  [&.active]:max-[638px]:left-0 max-[638px]:pb-2 {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
+<div class="relative h-full w-full sm:flex flex-col max-[638px]:flex">
+
+
         <!-- Логотип -->
         <div class="mb-8">
             <a href="{{route('welcome')}}" class="flex items-center space-x-3 group">
@@ -442,7 +446,7 @@ media-src https://meet.jit.si https:;
         </div>
 
         <!-- Навигация -->
-        <div class="space-y-2 flex-1 scrollbar-thin">
+        <div class="space-y-2 flex-1 scrollbar-thin overflow-x-hidden overflow-y-auto">
             <!-- Главное меню -->
             <div class="mb-6">
 
@@ -454,7 +458,6 @@ media-src https://meet.jit.si https:;
                         </div>
                         <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Мои задачи</span>
                     </a>
-
                     <a href="{{route('tasks.admin')}}"
                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:rounded-lg hover:bg-transparent/20 {{request()->routeIs('tasks.admin*') ? 'active' : ''}}">
                         <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3">
@@ -637,6 +640,7 @@ media-src https://meet.jit.si https:;
         <!-- Индикатор активности -->
         <div
             class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-500 to-transparent opacity-20 max-[638px]:static max-[638px]:mt-3"></div>
+             </div>
     </div>
     <!-- Оверлей для боковой панели -->
     <div id="sidebar-overlay"
@@ -652,7 +656,7 @@ media-src https://meet.jit.si https:;
             <span></span>
         </button>
 
-        <div id="home" class="page active-page p-6">
+        <div id="home" class="page active-page p-6 pl-[calc(256px+1.5rem)] max-[638px]:pl-6 max-[550px]:p-3">
             @yield('content')
         </div>
 
@@ -2357,7 +2361,7 @@ ${task.rejections && task.rejections.length > 0 ? `
 ` : ''}
 
                 <!-- Кнопки действий -->
-                <div class="flex space-x-3 mt-6 pt-4 border-t border-gray-200">
+                <div class="flex space-x-3 mt-6 pt-4 border-t border-gray-200 max-[500px]:flex-col max-[500px]:space-x-0 max-[500px]:space-y-3">
                     ${task.status === 'назначена' ? `
                         <button onclick="startTask(${task.id})"
                                 class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
