@@ -281,9 +281,8 @@
 </div>
 
 <!-- Модальное окно файлового менеджера -->
-<div id="fileManagerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[60]">
+<div id="createFileManagerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[60]">
     <div class="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
-        <!-- Заголовок -->
         <div class="flex justify-between items-center p-6 border-b border-gray-200 bg-white">
             <div>
                 <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Файловое хранилище</h3>
@@ -291,100 +290,255 @@
             </div>
             <div class="flex items-center space-x-3">
                 <span class="text-sm text-gray-600 bg-green-50 px-3 py-1 rounded-full">
-                    Выбрано: <span id="selectedCount" class="font-semibold text-green-600">0</span>
+                    Выбрано: <span id="createSelectedCount" class="font-semibold text-green-600">0</span>
                 </span>
-                <button onclick="closeFileManager()"
-                        class="text-gray-400 hover:text-gray-600 p-2 rounded-xl hover:bg-gray-100 transition-all duration-200">
+                <button onclick="closeCreateFileManager()" class="text-gray-400 hover:text-gray-600 p-2 rounded-xl">
                     <i class="fas fa-times text-lg"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Панель поиска и фильтров -->
         <div class="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
             <div class="flex flex-col sm:flex-row gap-3">
                 <div class="flex-1">
                     <div class="relative">
                         <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        <input type="text"
-                               id="fileManagerSearch"
-                               placeholder="Поиск по названию файла..."
-                               class="w-full pl-10 pr-4 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all duration-200 bg-white">
+                        <input type="text" id="createFileManagerSearch" placeholder="Поиск по названию файла..." class="w-full pl-10 pr-4 py-2 border-2 border-gray-200 rounded-xl bg-white">
                     </div>
-                </div>
-                <div class="flex space-x-2">
-                    <select id="fileManagerTypeFilter"
-                            class="px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-sm hover:border-gray-300 transition-all duration-200">
-                        <option value="">Все типы</option>
-                        <option value="image">Изображения</option>
-                        <option value="document">Документы</option>
-                        <option value="video">Видео</option>
-                        <option value="audio">Аудио</option>
-                        <option value="archive">Архивы</option>
-                    </select>
-                    <select id="fileManagerSortBy"
-                            class="px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-sm hover:border-gray-300 transition-all duration-200">
-                        <option value="newest">Сначала новые</option>
-                        <option value="oldest">Сначала старые</option>
-                        <option value="name_asc">По имени (А-Я)</option>
-                        <option value="name_desc">По имени (Я-А)</option>
-                        <option value="size_asc">По размеру (↑)</option>
-                        <option value="size_desc">По размеру (↓)</option>
-                    </select>
                 </div>
             </div>
         </div>
 
-        <!-- Контент файлового менеджера -->
         <div class="flex-1 overflow-hidden">
             <div class="h-full flex">
-                <!-- Список файлов -->
-                <div class="flex-1 overflow-y-auto p-4" id="fileManagerContent">
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                        <!-- Файлы будут загружаться здесь -->
-                        <div class="col-span-full text-center py-12">
-                            <i class="fas fa-spinner fa-spin text-3xl text-gray-400 mb-4"></i>
-                            <p class="text-gray-600">Загрузка файлов...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Предпросмотр файла (правая панель) -->
-                <div id="fileManagerPreviewPanel" class="hidden w-96 border-l border-gray-200 bg-gray-50 p-4 overflow-y-auto">
-                    <div class="sticky top-0 bg-gray-50 pb-4">
-                        <button onclick="closeFilePreview()"
-                                class="mb-4 text-gray-400 hover:text-gray-600 flex items-center transition-colors duration-200">
-                            <i class="fas fa-arrow-left mr-2"></i> Назад
-                        </button>
-                        <div id="filePreviewContent" class="space-y-4">
-                            <!-- Контент предпросмотра -->
-                        </div>
+                <div class="flex-1 overflow-y-auto p-4" id="createFileManagerContent">
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div class="col-span-full text-center py-12">Загрузка...</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Футер с кнопками -->
         <div class="p-4 border-t border-gray-200 bg-white">
             <div class="flex justify-between items-center">
-                <div class="text-sm text-gray-600" id="fileManagerStorageInfo">
-                    <i class="fas fa-hdd mr-1"></i>
-                    <span id="fileManagerStorageUsed">0</span> из <span id="fileManagerStorageTotal">0</span> использовано
-                </div>
+                <div class="text-sm text-gray-600">Файловое хранилище</div>
                 <div class="flex space-x-3">
-                    <button type="button" onclick="closeFileManager()"
-                            class="px-5 py-2.5 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-medium transition-all duration-200">
-                        Отмена
-                    </button>
-                    <button type="button" onclick="confirmFileSelection()"
-                            class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-md hover:shadow-lg">
-                        <i class="fas fa-check mr-2"></i>Выбрать (<span id="confirmCount">0</span>)
+                    <button type="button" onclick="closeCreateFileManager()" class="px-5 py-2.5 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50">Отмена</button>
+                    <button type="button" onclick="confirmCreateFileSelection()" class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700">
+                        <i class="fas fa-check mr-2"></i>Выбрать (<span id="createConfirmCount">0</span>)
                     </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+@push('scripts')
+    <script>
+        // Переменные для создания задачи
+        let createSelectedFiles = [];
+        let createAllFiles = [];
+
+        // Функция выбора/снятия файла для создания задачи
+        window.toggleFileSelectionForCreate = function(fileId) {
+            console.log('toggleFileSelectionForCreate вызвана, fileId:', fileId);
+
+            let file = createAllFiles.find(f => f.id === fileId);
+            if (!file) {
+                file = window.createAllFiles?.find(f => f.id === fileId);
+            }
+            if (!file) {
+                console.log('Файл не найден');
+                return;
+            }
+
+            const index = createSelectedFiles.findIndex(f => f.id === fileId);
+            if (index === -1) {
+                createSelectedFiles.push(file);
+                console.log('Файл добавлен, теперь всего:', createSelectedFiles.length);
+            } else {
+                createSelectedFiles.splice(index, 1);
+                console.log('Файл удален, осталось:', createSelectedFiles.length);
+            }
+
+            // Обновляем отображение
+            renderCreateFiles(createAllFiles);
+            updateCreateSelectedCount();
+        };
+
+        function updateCreateSelectedCount() {
+            const selectedCountSpan = document.getElementById('createSelectedCount');
+            const confirmCountSpan = document.getElementById('createConfirmCount');
+            if (selectedCountSpan) selectedCountSpan.textContent = createSelectedFiles.length;
+            if (confirmCountSpan) confirmCountSpan.textContent = createSelectedFiles.length;
+        }
+
+        function renderCreateFiles(files) {
+            const contentDiv = document.getElementById('createFileManagerContent');
+            if (!contentDiv) return;
+
+            if (!files || files.length === 0) {
+                contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Нет файлов</div>`;
+                return;
+            }
+
+            let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
+            files.forEach(file => {
+                const isSelected = createSelectedFiles.some(f => f.id === file.id);
+                const fileIcon = getFileIcon(file.extension);
+                const fileType = getFileTypeClass(file.extension);
+                html += `
+            <div class="file-card bg-white border ${isSelected ? 'border-green-500 shadow-md' : 'border-gray-200'} rounded-lg p-3 cursor-pointer" onclick="toggleFileSelectionForCreate(${file.id})">
+                <div class="flex justify-end mb-2">
+                    <div class="w-5 h-5 rounded border ${isSelected ? 'bg-green-500 border-green-500' : 'border-gray-300'} flex items-center justify-center">
+                        ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <span class="text-2xl">${fileIcon}</span>
+                    </div>
+                    <p class="text-sm font-medium truncate">${escapeHtml(file.name)}</p>
+                    <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                    <p class="text-xs text-gray-400 mt-1">${formatDate(file.created_at)}</p>
+                </div>
+                <div class="flex justify-center space-x-2 mt-2 pt-2 border-t border-gray-100">
+                    <button type="button" onclick="event.stopPropagation(); downloadCreateFile(${file.id})"
+                            class="text-gray-400 hover:text-green-600 p-1" title="Скачать">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>`;
+            });
+            html += '</div>';
+            contentDiv.innerHTML = html;
+            updateCreateSelectedCount();
+        }
+
+        async function loadCreateFiles() {
+            const contentDiv = document.getElementById('createFileManagerContent');
+            if (!contentDiv) return;
+            contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Загрузка...</div>`;
+
+            try {
+                const response = await fetch('/tasks/file-storage/get-files', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    }
+                });
+                if (!response.ok) throw new Error('Ошибка');
+                createAllFiles = await response.json();
+                renderCreateFiles(createAllFiles);
+            } catch (error) {
+                contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">Ошибка загрузки</div>`;
+            }
+        }
+
+        async function openCreateFileManager() {
+            const modal = document.getElementById('createFileManagerModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+                await loadCreateFiles();
+            }
+        }
+
+        function closeCreateFileManager() {
+            const modal = document.getElementById('createFileManagerModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        function confirmCreateFileSelection() {
+            console.log('=== confirmCreateFileSelection вызвана ===');
+            console.log('createSelectedFiles.length:', createSelectedFiles.length);
+
+            if (createSelectedFiles.length === 0) {
+                alert('Пожалуйста, выберите хотя бы один файл');
+                return;
+            }
+
+            const selectedFilesInput = document.getElementById('selectedFiles');
+            if (selectedFilesInput) {
+                selectedFilesInput.value = JSON.stringify(createSelectedFiles);
+            }
+
+            updateCreateSelectedFilesDisplay();
+            switchCreateFileTab('storage');
+            closeCreateFileManager();
+        }
+
+        function updateCreateSelectedFilesDisplay() {
+            const container = document.getElementById('selectedFilesContainer');
+            const fileCounter = document.getElementById('fileCounter');
+            const fileCount = document.getElementById('fileCount');
+
+            if (!container) return;
+
+            if (createSelectedFiles.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg"><i class="fas fa-folder-open text-3xl text-gray-300 mb-3"></i><p class="text-sm text-gray-500">Файлы не выбраны</p><p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p></div>`;
+                if (fileCounter) fileCounter.classList.add('hidden');
+            } else {
+                let html = '';
+                createSelectedFiles.forEach(file => {
+                    const fileIcon = getFileIcon(file.extension);
+                    const fileType = getFileTypeClass(file.extension);
+                    html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"><div class="flex items-center space-x-3"><div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center"><span class="text-lg">${fileIcon}</span></div><div><p class="text-sm font-medium text-gray-800">${escapeHtml(file.name)}</p><p class="text-xs text-gray-500">${formatFileSize(file.size)}</p></div></div><button onclick="removeCreateSelectedFile(${file.id})" class="text-red-500 hover:text-red-700 p-1"><i class="fas fa-times"></i></button></div>`;
+                });
+                container.innerHTML = html;
+                if (fileCount) fileCount.textContent = createSelectedFiles.length;
+                if (fileCounter) fileCounter.classList.remove('hidden');
+            }
+        }
+
+        function removeCreateSelectedFile(fileId) {
+            createSelectedFiles = createSelectedFiles.filter(f => f.id !== fileId);
+            updateCreateSelectedFilesDisplay();
+            updateCreateSelectedCount();
+        }
+
+        function clearCreateSelectedFiles() {
+            if (createSelectedFiles.length === 0) return;
+            if (confirm(`Удалить все выбранные файлы (${createSelectedFiles.length})?`)) {
+                createSelectedFiles = [];
+                updateCreateSelectedFilesDisplay();
+                updateCreateSelectedCount();
+            }
+        }
+
+        function switchCreateFileTab(tabName) {
+            document.querySelectorAll('#taskModal .tab-button').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.tab === tabName) btn.classList.add('active');
+            });
+            document.querySelectorAll('#taskModal .tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            const activeContent = document.getElementById(tabName + 'TabContent');
+            if (activeContent) activeContent.classList.remove('hidden');
+        }
+
+        async function downloadCreateFile(fileId) {
+            window.open(`/file-storage/download/${fileId}`, '_blank');
+        }
+
+        // Переопределяем функции для создания
+        window.openFileManager = openCreateFileManager;
+        window.confirmStorageFileSelection = confirmCreateFileSelection;
+        window.clearSelectedFiles = clearCreateSelectedFiles;
+        window.switchFileTab = switchCreateFileTab;
+        window.closeFileManager = closeCreateFileManager;
+        window.updateSelectedFilesDisplay = updateCreateSelectedFilesDisplay;
+        window.updateSelectedCount = updateCreateSelectedCount;
+        window.renderFiles = renderCreateFiles;
+        window.allFiles = createAllFiles;
+        window.selectedFiles = createSelectedFiles;
+    </script>
+@endpush
 
 @push('styles')
     <style>

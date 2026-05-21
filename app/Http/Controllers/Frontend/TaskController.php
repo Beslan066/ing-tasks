@@ -13,6 +13,7 @@
     use App\Notifications\TaskAssignedNotification;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Storage;
 
     class TaskController extends Controller
@@ -285,6 +286,9 @@
             }
         }
 
+        /**
+         * Get task data for editing (уже есть, но проверим)
+         */
         public function getTask(Task $task)
         {
             $user = Auth::user();
@@ -557,6 +561,9 @@
             ]);
         }
 
+        /**
+         * Update task (добавляем поддержку файлов)
+         */
         public function update(Request $request, Task $task)
         {
             $user = Auth::user();
@@ -586,10 +593,12 @@
                 'deadline' => 'nullable|date',
                 'estimated_hours' => 'nullable|numeric|min:0',
                 'actual_hours' => 'nullable|numeric|min:0',
+//                'selected_file_ids' => 'nullable|array',  // Оставляем nullable
+//                'selected_file_ids.*' => 'exists:files,id',
+                'new_files.*' => 'nullable|file|max:10240',
             ]);
 
             if ($validator->fails()) {
-                \Log::error('Validation failed:', $validator->errors()->toArray());
                 return response()->json([
                     'success' => false,
                     'message' => 'Ошибки валидации',
@@ -598,6 +607,9 @@
             }
 
             try {
+                DB::beginTransaction();
+
+                // Проверяем отдел
                 $department = Department::find($request->department_id);
                 if (!$department || $department->company_id !== $user->company_id) {
                     return response()->json([
@@ -619,6 +631,7 @@
                     }
                 }
 
+                // Обновляем основные данные задачи
                 $updateData = [
                     'name' => $request->name,
                     'description' => $request->description,
@@ -642,26 +655,249 @@
 
                 $task->update($updateData);
 
+                // Обработка файлов из хранилища
+                if ($request->has('selected_file_ids') && is_array($request->selected_file_ids)) {
+                    $selectedFileIds = $request->selected_file_ids;
+
+                    // Получаем текущие привязанные файлы
+                    $currentFileIds = $task->files()->pluck('files.id')->toArray();
+
+                    // Файлы для добавления
+                    $filesToAdd = array_diff($selectedFileIds, $currentFileIds);
+
+                    // Файлы для удаления
+                    $filesToRemove = array_diff($currentFileIds, $selectedFileIds);
+
+                    // Добавляем новые файлы
+                    if (!empty($filesToAdd)) {
+                        $task->files()->attach($filesToAdd);
+                    }
+
+                    // Удаляем файлы, которые больше не привязаны
+                    if (!empty($filesToRemove)) {
+                        $task->files()->detach($filesToRemove);
+                    }
+                } else {
+                    // Если не переданы selected_file_ids, удаляем все файлы
+                    $task->files()->detach();
+                }
+
+                // Загружаем новые файлы
+                if ($request->hasFile('new_files')) {
+                    foreach ($request->file('new_files') as $file) {
+                        $path = $file->store("tasks/{$task->id}", 'public');
+
+                        $fileRecord = File::create([
+                            'name' => $file->getClientOriginalName(),
+                            'file_path' => $path,
+                            'path' => $path,
+                            'file_size' => $file->getSize(),
+                            'size' => $file->getSize(),
+                            'mime_type' => $file->getMimeType(),
+                            'extension' => $file->getClientOriginalExtension(),
+                            'uploaded_by' => $user->id,
+                            'company_id' => $user->company_id,
+                            'department_id' => $task->department_id,
+                            'disk' => 'public',
+                            'folder' => 'tasks',
+                            'is_public' => false,
+                        ]);
+
+                        $task->files()->attach($fileRecord->id);
+                    }
+                }
+
+                // Отправляем уведомление при смене исполнителя
                 if ($newAssignedUser && $oldUserId !== $newAssignedUser->id) {
                     try {
                         $newAssignedUser->notify(new TaskAssignedNotification($task));
-                        \Log::info('Notification sent to new assigned user');
                     } catch (\Exception $e) {
                         \Log::error('Notification error: ' . $e->getMessage());
                     }
                 }
 
+                DB::commit();
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Задача успешно обновлена',
-                    'task' => $task->load(['department', 'category', 'user', 'author'])
+                    'task' => $task->load(['department', 'category', 'user', 'author', 'files'])
                 ]);
 
             } catch (\Exception $e) {
+                DB::rollBack();
                 \Log::error('Ошибка при обновлении задачи: ' . $e->getMessage());
+                \Log::error('Stack trace: ' . $e->getTraceAsString());
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Ошибка при обновлении задачи: ' . $e->getMessage()
+                ], 500);
+            }
+        }
+
+        /**
+         * Add files to task (новый метод)
+         */
+        public function addFiles(Request $request, Task $task)
+        {
+            $user = Auth::user();
+
+            if (!$user->canViewAllCompanyTasks()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'У вас нет прав для добавления файлов'
+                ], 403);
+            }
+
+            if ($task->company_id !== $user->company_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Задача не принадлежит вашей компании'
+                ], 403);
+            }
+
+            $request->validate([
+                'files.*' => 'required|file|max:10240',
+            ]);
+
+            try {
+                $uploadedFiles = [];
+
+                if ($request->hasFile('files')) {
+                    foreach ($request->file('files') as $file) {
+                        $path = $file->store("tasks/{$task->id}", 'public');
+
+                        $fileRecord = File::create([
+                            'name' => $file->getClientOriginalName(),
+                            'file_path' => $path,
+                            'path' => $path,
+                            'file_size' => $file->getSize(),
+                            'size' => $file->getSize(),
+                            'mime_type' => $file->getMimeType(),
+                            'extension' => $file->getClientOriginalExtension(),
+                            'uploaded_by' => $user->id,
+                            'company_id' => $user->company_id,
+                            'department_id' => $task->department_id,
+                            'disk' => 'public',
+                            'folder' => 'tasks',
+                            'is_public' => false,
+                        ]);
+
+                        $task->files()->attach($fileRecord->id);
+                        $uploadedFiles[] = $fileRecord;
+                    }
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Файлы успешно добавлены',
+                    'files' => $uploadedFiles
+                ]);
+
+            } catch (\Exception $e) {
+                \Log::error('Ошибка при добавлении файлов: ' . $e->getMessage());
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ошибка при добавлении файлов: ' . $e->getMessage()
+                ], 500);
+            }
+        }
+
+        /**
+         * Delete file from task
+         */
+        public function deleteFile($fileId)
+        {
+            $user = Auth::user();
+
+            try {
+                $file = File::findOrFail($fileId);
+
+                // Проверяем права доступа
+                $task = $file->tasks()->first();
+                if ($task && !$user->canViewAllCompanyTasks()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'У вас нет прав для удаления этого файла'
+                    ], 403);
+                }
+
+                // Отвязываем файл от задачи
+                if ($task) {
+                    $task->files()->detach($fileId);
+                }
+
+                // Удаляем физический файл
+                if (Storage::disk('public')->exists($file->file_path)) {
+                    Storage::disk('public')->delete($file->file_path);
+                }
+
+                // Удаляем запись из БД (опционально)
+                // $file->delete();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Файл успешно удален'
+                ]);
+
+            } catch (\Exception $e) {
+                \Log::error('Ошибка при удалении файла: ' . $e->getMessage());
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ошибка при удалении файла'
+                ], 500);
+            }
+        }
+
+        /**
+         * Return task to work (for admin)
+         */
+        public function returnToWork(Request $request, Task $task)
+        {
+            $user = Auth::user();
+
+            if (!$user->canViewAllCompanyTasks()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'У вас нет прав для этого действия'
+                ], 403);
+            }
+
+            if ($task->company_id !== $user->company_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Задача не принадлежит вашей компании'
+                ], 403);
+            }
+
+            $request->validate([
+                'comment' => 'nullable|string|max:1000'
+            ]);
+
+            try {
+                // Создаем запись об отказе
+                TaskRejection::create([
+                    'reason' => $request->comment ?: 'Возврат на доработку руководителем',
+                    'task_id' => $task->id,
+                    'user_id' => $user->id,
+                    'company_id' => $user->company_id
+                ]);
+
+                $task->update([
+                    'status' => 'в работе'
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Задача возвращена на доработку'
+                ]);
+
+            } catch (\Exception $e) {
+                \Log::error('Ошибка при возврате задачи: ' . $e->getMessage());
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ошибка при возврате задачи'
                 ], 500);
             }
         }

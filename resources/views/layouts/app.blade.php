@@ -909,6 +909,9 @@ media-src https://meet.jit.si https:;
     let currentPreviewFile = null;
     let draggedTaskCard = null;
 
+    window.selectedFiles = [];
+    window.allFiles = [];
+
     // Добавим интерактивности для сайдбара
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.email-dropdown-item').forEach(item => {
@@ -1222,7 +1225,7 @@ media-src https://meet.jit.si https:;
         if (confirmCount) confirmCount.textContent = selectedFiles.length;
     }
 
-    function confirmFileSelection() {
+    function confirmStorageFileSelection() {
         if (selectedFiles.length === 0) {
             showNotification('Выберите хотя бы один файл', 'warning');
             return;
