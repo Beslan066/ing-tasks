@@ -714,5 +714,27 @@
 
 <!-- Page JS -->
 <script src="{{asset('main/assets/js/dashboards-analytics.js')}}"></script>
+<script>
+    setInterval(function() {
+        fetch('/online-users')
+            .then(response => response.json())
+            .then(data => {
+                // Обновляем счетчик онлайн
+                $('.online-count').text(data.count);
+
+                // Обновляем статусы в таблице
+                data.users.forEach(user => {
+                    $(`#user-${user.id}-status`).html(`
+                    <span class="badge bg-success me-2">
+                        <i class="ri-circle-fill me-1" style="font-size: 8px;"></i> Онлайн
+                    </span>
+                    <div class="small text-muted">${user.last_activity}</div>
+                `);
+                });
+            });
+    }, 30000); // Обновляем каждые 30 секунд
+</script>
+
+@stack('scripts')
 </body>
 </html>

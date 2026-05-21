@@ -566,6 +566,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
         ->name('admin.sessions.delete');
     Route::delete('/users/{user}/clear-sessions', [App\Http\Controllers\Admin\UserTrackingController::class, 'clearSessions'])
         ->name('admin.users.clear-sessions');
+
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/online-users', [App\Http\Controllers\Admin\UserTrackingController::class, 'getOnlineUsers'])
+            ->name('online.users');
+    });
 });
 
 require __DIR__.'/auth.php';

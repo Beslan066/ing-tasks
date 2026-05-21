@@ -4,19 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserOnlineSession extends Model
 {
     use HasFactory;
 
+    protected $table = 'user_online_sessions';
+
     protected $fillable = [
         'user_id',
         'login_at',
         'logout_at',
-        'duration_seconds',
-        'date',
         'session_id',
+        'date',
         'ip_address',
         'user_agent',
         'last_activity_at',
@@ -29,46 +30,23 @@ class UserOnlineSession extends Model
         'date' => 'date',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function endSession(): void
+    // Проверка, онлайн ли пользователь
+    public function isOnline(): bool
     {
-        if (!$this->logout_at) {
-            $logoutTime = now();
-            $duration = $this->login_at->diffInSeconds($logoutTime);
-
-            $this->update([
-                'logout_at' => $logoutTime,
-                'duration_seconds' => $duration,
-            ]);
-        }
+        return $this->logout_at === null &&
+            $this->last_activity_at &&
+            $this->last_activity_at->diffInMinutes(now()) < 5;
     }
 
-    public function getFormattedDurationAttribute(): string
+    // Scope для активных сессий
+    public function scopeActive($query)
     {
-        $hours = floor($this->duration_seconds / 3600);
-        $minutes = floor(($this->duration_seconds % 3600) / 60);
-        $seconds = $this->duration_seconds % 60;
-
-        if ($hours > 0) {
-            return sprintf('%d ч. %d мин.', $hours, $minutes);
-        } elseif ($minutes > 0) {
-            return sprintf('%d мин. %d сек.', $minutes, $seconds);
-        } else {
-            return sprintf('%d сек.', $seconds);
-        }
-    }
-
-    public function getSessionInfoAttribute(): array
-    {
-        return [
-            'start' => $this->login_at?->format('d.m.Y H:i') ?? '—',
-            'end' => $this->logout_at ? $this->logout_at->format('d.m.Y H:i') : 'Активна',
-            'duration' => $this->formatted_duration,
-            'ip' => $this->ip_address ?? '—',
-        ];
+        return $query->whereNull('logout_at')
+            ->where('last_activity_at', '>=', now()->subMinutes(5));
     }
 }

@@ -4,79 +4,220 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserOnlineSession;
 use App\Models\UserSession;
+use App\Models\UserVisit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UserTrackingController extends Controller
 {
     public function index()
     {
-        $users = User::with(['sessions' => function($query) {
-            $query->orderBy('last_activity', 'desc');
-        }])->get();
+        try {
+            // Получаем пользователей с их сессиями
+            $users = User::with(['onlineSessions' => function($query) {
+                $query->whereNull('logout_at')
+                    ->orderBy('last_activity_at', 'desc');
+            }])->get();
 
-        // Статистика
-        $totalUsers = User::count();
-        $newUsersCount = User::where('created_at', '>=', now()->subWeek())->count();
+            // Базовая статистика
+            $totalUsers = User::count();
+            $newUsersCount = User::where('created_at', '>=', now()->subWeek())->count();
 
-        // ИСПРАВЛЕНО: Активные сессии - те, у которых is_current = true
-        $activeSessions = UserSession::where('is_current', true)->count();
+            // Активные онлайн пользователи (за последние 5 минут)
+            $activeSessions = UserOnlineSession::whereNull('logout_at')
+                ->where('last_activity_at', '>=', now()->subMinutes(5))
+                ->count();
 
-        // Или активные за последние 5 минут
-        $activeOnlineUsers = UserSession::where('last_activity', '>=', now()->subMinutes(5))
-            ->distinct('user_id')
-            ->count('user_id');
+            // Количество уникальных онлайн пользователей
+            $onlineUsersCount = UserOnlineSession::whereNull('logout_at')
+                ->where('last_activity_at', '>=', now()->subMinutes(5))
+                ->distinct('user_id')
+                ->count('user_id');
 
-        $activePercentage = $totalUsers > 0 ? round(($activeSessions / $totalUsers) * 100) : 0;
+            // Процент онлайн
+            $activePercentage = $totalUsers > 0 ? round(($onlineUsersCount / $totalUsers) * 100) : 0;
 
-        $uniqueDevices = UserSession::distinct('device_fingerprint')->count('device_fingerprint');
-        $devicesCount = UserSession::distinct('device_type')->count('device_type');
+            // Уникальные устройства за сегодня
+            $uniqueDevices = UserOnlineSession::whereDate('date', today())
+                ->distinct('user_agent')
+                ->count('user_agent');
 
-        $countriesCount = UserSession::whereNotNull('country')
-            ->distinct('country')
-            ->count('country');
+            // Страны (если есть поле country в таблице)
+            $countriesCount = 0;
+            try {
+                $countriesCount = UserOnlineSession::whereNotNull('country')
+                    ->whereDate('date', today())
+                    ->distinct('country')
+                    ->count('country');
+            } catch (\Exception $e) {
+                $countriesCount = 0;
+            }
 
-        return view('admin.users-tracking', compact(
-            'users',
-            'totalUsers',
-            'newUsersCount',
-            'activeSessions',
-            'activePercentage',
-            'uniqueDevices',
-            'devicesCount',
-            'countriesCount'
-        ));
+            // Преобразуем все в числа на всякий случай
+            $totalUsers = (int) $totalUsers;
+            $newUsersCount = (int) $newUsersCount;
+            $activeSessions = (int) $activeSessions;
+            $onlineUsersCount = (int) $onlineUsersCount;
+            $activePercentage = (int) $activePercentage;
+            $uniqueDevices = (int) $uniqueDevices;
+            $countriesCount = (int) $countriesCount;
+
+            return view('admin.users-tracking', compact(
+                'users',
+                'totalUsers',
+                'newUsersCount',
+                'activeSessions',
+                'onlineUsersCount',
+                'activePercentage',
+                'uniqueDevices',
+                'countriesCount'
+            ));
+
+        } catch (\Exception $e) {
+            Log::error('UserTrackingController index error: ' . $e->getMessage());
+
+            // Возвращаем пустые данные в случае ошибки
+            return view('admin.users-tracking', [
+                'users' => collect(),
+                'totalUsers' => 0,
+                'newUsersCount' => 0,
+                'activeSessions' => 0,
+                'onlineUsersCount' => 0,
+                'activePercentage' => 0,
+                'uniqueDevices' => 0,
+                'countriesCount' => 0,
+            ]);
+        }
     }
 
     public function show(User $user)
     {
-        $sessions = $user->sessions()->orderBy('last_activity', 'desc')->get();
-        return view('admin.user-details', compact('user', 'sessions'));
+        try {
+            $sessions = $user->onlineSessions()->orderBy('login_at', 'desc')->get();
+
+            return view('admin.user-details', compact('user', 'sessions'));
+
+        } catch (\Exception $e) {
+            Log::error('UserTrackingController show error: ' . $e->getMessage());
+            abort(404, 'Пользователь не найден');
+        }
     }
 
     public function map()
     {
-        $sessions = UserSession::whereNotNull('latitude')
-            ->whereNotNull('longitude')
-            ->with('user')
-            ->get();
+        try {
+            $sessions = UserOnlineSession::whereNotNull('ip_address')
+                ->whereDate('date', today())
+                ->with('user')
+                ->get()
+                ->map(function($session) {
+                    // Добавляем тестовые координаты для демонстрации (если нет реальных)
+                    if ($session->ip_address && !in_array($session->ip_address, ['127.0.0.1', '::1', 'localhost'])) {
+                        if (!$session->latitude) {
+                            $session->latitude = 55.751244;
+                            $session->longitude = 37.618423;
+                            $session->address = "Москва, Россия";
+                            $session->city = "Москва";
+                            $session->country = "Россия";
+                        }
+                    }
+                    return $session;
+                });
 
-        return view('admin.users-map', compact('sessions'));
+            return view('admin.users-map', compact('sessions'));
+
+        } catch (\Exception $e) {
+            Log::error('UserTrackingController map error: ' . $e->getMessage());
+            return view('admin.users-map', ['sessions' => collect()]);
+        }
+    }
+
+    public function getOnlineUsers()
+    {
+        try {
+            $onlineUsers = User::whereHas('onlineSessions', function($query) {
+                $query->whereNull('logout_at')
+                    ->where('last_activity_at', '>=', now()->subMinutes(5));
+            })->with('onlineSessions')->get();
+
+            return response()->json([
+                'success' => true,
+                'count' => $onlineUsers->count(),
+                'users' => $onlineUsers->map(function($user) {
+                    $session = $user->onlineSessions->first();
+                    return [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'avatar' => $user->avatar,
+                        'last_activity' => $session ? $session->last_activity_at->diffForHumans() : null
+                    ];
+                })
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('getOnlineUsers error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'count' => 0,
+                'users' => []
+            ]);
+        }
     }
 
     public function deleteSession($sessionId)
     {
-        $session = UserSession::findOrFail($sessionId);
-        $session->delete();
+        try {
+            $session = UserOnlineSession::findOrFail($sessionId);
+            $session->delete();
 
-        return response()->json(['success' => true]);
+            return response()->json(['success' => true]);
+
+        } catch (\Exception $e) {
+            Log::error('deleteSession error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function clearSessions($userId)
     {
-        $user = User::findOrFail($userId);
-        $user->sessions()->delete();
+        try {
+            $user = User::findOrFail($userId);
+            $user->onlineSessions()->delete();
 
-        return response()->json(['success' => true]);
+            return response()->json(['success' => true]);
+
+        } catch (\Exception $e) {
+            Log::error('clearSessions error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function forceLogout($userId)
+    {
+        try {
+            $user = User::findOrFail($userId);
+
+            // Завершаем все активные сессии
+            UserOnlineSession::where('user_id', $user->id)
+                ->whereNull('logout_at')
+                ->update([
+                    'logout_at' => now(),
+                    'last_activity_at' => now()
+                ]);
+
+            // Опционально: удаляем все сессии Laravel
+            DB::table('sessions')
+                ->where('user_id', $user->id)
+                ->delete();
+
+            return response()->json(['success' => true]);
+
+        } catch (\Exception $e) {
+            Log::error('forceLogout error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
     }
 }

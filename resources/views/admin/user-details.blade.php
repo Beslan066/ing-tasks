@@ -158,116 +158,217 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($sessions as $session)
-                            <tr @if($session->is_current) class="table-success" @endif>
-                                <td>#{{ $session->id }}</td>
+                        @foreach($users as $user)
+                            @php
+                                // Проверяем, есть ли сессии у пользователя
+                                $sessions = $user->sessions ?? collect(); // Если null, создаем пустую коллекцию
+                                $lastSession = $sessions->isNotEmpty() ? $sessions->first() : null;
+
+                                // Проверяем онлайн статус (по is_current)
+                                $isOnline = $lastSession && $lastSession->is_current;
+
+                                // Определяем тип устройства
+                                $deviceIcon = 'ri-computer-line';
+                                $deviceType = 'Десктоп';
+                                if ($lastSession && $lastSession->device_type) {
+                                    if ($lastSession->device_type == 'mobile') {
+                                        $deviceIcon = 'ri-smartphone-line';
+                                        $deviceType = 'Мобильный';
+                                    } elseif ($lastSession->device_type == 'tablet') {
+                                        $deviceIcon = 'ri-tablet-line';
+                                        $deviceType = 'Планшет';
+                                    }
+                                }
+
+                                // Определяем браузер
+                                $browser = $lastSession ? ($lastSession->browser ?: 'Unknown') : 'Нет данных';
+
+                                // Получаем геолокацию
+                                $hasLocation = $lastSession && $lastSession->latitude && $lastSession->longitude;
+                                $location = $hasLocation ? ($lastSession->city ?? 'По IP') : 'Не определено';
+                                $country = $lastSession && $lastSession->country ? $lastSession->country : '';
+
+                                // Форматируем время
+                                $lastActivity = $lastSession && $lastSession->last_activity
+                                    ? $lastSession->last_activity
+                                    : null;
+                            @endphp
+
+                            <tr @if($isOnline) class="table-success" @endif>
+                                <!-- ID -->
                                 <td>
-                                    <code>{{ $session->ip_address }}</code>
-                                    @if($session->is_current)
-                                        <span class="badge bg-success d-block mt-1">Текущая</span>
-                                    @endif
+                                    <span class="fw-medium">#{{ $user->id }}</span>
                                 </td>
+
+                                <!-- Пользователь -->
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        @if($session->device_type == 'mobile')
-                                            <i class="ri-smartphone-line ri-24px me-2 text-primary"></i>
-                                            <span>Мобильное устройство</span>
-                                        @elseif($session->device_type == 'tablet')
-                                            <i class="ri-tablet-line ri-24px me-2 text-primary"></i>
-                                            <span>Планшет</span>
+                                        <div class="avatar avatar-sm me-3">
+                                            @if($user->avatar)
+                                                <img src="{{ Storage::url($user->avatar) }}" alt="Avatar" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
+                                            @else
+                                                <div class="avatar-initial rounded-circle bg-label-primary" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                                    {{ strtoupper(substr($user->name, 0, 2)) }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <span class="fw-medium">{{ $user->name }}</span>
+                                            <div class="small text-muted">ID: {{ $user->id }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- Email -->
+                                <td>
+                                    <div>
+                                        <span class="text-muted">{{ $user->email }}</span>
+                                        @if($user->email_verified_at)
+                                            <div class="small text-success">
+                                                <i class="ri-checkbox-circle-line"></i> Подтвержден
+                                            </div>
                                         @else
-                                            <i class="ri-computer-line ri-24px me-2 text-primary"></i>
-                                            <span>Десктоп</span>
+                                            <div class="small text-warning">
+                                                <i class="ri-error-warning-line"></i> Не подтвержден
+                                            </div>
                                         @endif
                                     </div>
-                                    <div class="small text-muted mt-1">
-                                        <i class="ri-fingerprint-line"></i>
-                                        Отпечаток: {{ substr($session->device_fingerprint ?? 'unknown', 0, 8) }}...
+                                </td>
+
+                                <!-- Статус (Онлайн/Офлайн) -->
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        @if($isOnline)
+                                            <span class="badge bg-success me-2">
+                        <i class="ri-circle-fill me-1" style="font-size: 8px;"></i> Онлайн
+                    </span>
+                                            @if($lastActivity)
+                                                <div class="small text-muted">
+                                                    {{ $lastActivity->diffForHumans() }}
+                                                </div>
+                                            @endif
+                                        @else
+                                            <span class="badge bg-secondary me-2">Офлайн</span>
+                                            @if($lastActivity)
+                                                <div class="small text-muted">
+                                                    Был(а) {{ $lastActivity->diffForHumans() }}
+                                                </div>
+                                            @else
+                                                <div class="small text-muted">Нет данных</div>
+                                            @endif
+                                        @endif
                                     </div>
                                 </td>
+
+                                <!-- Устройство -->
                                 <td>
                                     <div class="d-flex flex-column">
-                                        <div class="mb-1">
-                                            <i class="ri-browser-line me-1 text-info"></i>
-                                            <strong>{{ $session->browser ?: 'Unknown' }}</strong>
+                                        <div class="d-flex align-items-center">
+                                            <i class="{{ $deviceIcon }} me-1 text-primary"></i>
+                                            <span>{{ $deviceType }}</span>
                                         </div>
-                                        <div>
-                                            <i class="ri-windows-line me-1 text-info"></i>
-                                            {{ $session->os ?: 'Unknown' }}
-                                        </div>
-                                        <div class="small text-muted mt-1">
-                                            <i class="ri-user-agent-line"></i>
-                                            User Agent: {{ Str::limit($session->user_agent, 50) }}
-                                        </div>
+                                        @if($browser && $browser != 'Нет данных')
+                                            <div class="small text-muted mt-1">
+                                                <i class="ri-browser-line me-1"></i> {{ $browser }}
+                                            </div>
+                                        @endif
                                     </div>
                                 </td>
+
+                                <!-- IP адрес -->
                                 <td>
-                                    @if($session->latitude && $session->longitude)
-                                        <div>
-                                            <i class="ri-map-pin-line text-danger me-1"></i>
-                                            <strong>{{ $session->city ?: 'Город не определен' }}</strong>
+                                    @if($lastSession && $lastSession->ip_address)
+                                        <div class="d-flex flex-column">
+                                            <code class="small">{{ $lastSession->ip_address }}</code>
+                                            @if($lastSession->id)
+                                                <div class="small text-muted mt-1">
+                                                    <i class="ri-shield-check-line"></i>
+                                                    Сессия: #{{ $lastSession->id }}
+                                                </div>
+                                            @endif
                                         </div>
-                                        <div class="small text-muted">
-                                            {{ $session->country ?: 'Страна не определена' }}
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+
+                                <!-- Геолокация -->
+                                <td>
+                                    @if($hasLocation)
+                                        <div class="d-flex flex-column">
+                                            <div class="d-flex align-items-center">
+                                                <i class="ri-map-pin-line text-danger me-1"></i>
+                                                <span>{{ $location }}</span>
+                                            </div>
+                                            @if($country)
+                                                <div class="small text-muted">
+                                                    {{ $country }}
+                                                </div>
+                                            @endif
                                         </div>
-                                        <div class="small mt-1">
-                                            <a href="https://www.google.com/maps?q={{ $session->latitude }},{{ $session->longitude }}"
-                                               target="_blank" class="text-info">
-                                                <i class="ri-external-link-line"></i>
-                                                {{ number_format($session->latitude, 4) }}, {{ number_format($session->longitude, 4) }}
-                                            </a>
+                                    @elseif($lastSession && $lastSession->ip_address && !in_array($lastSession->ip_address, ['127.0.0.1', '::1', 'localhost']))
+                                        <div class="d-flex flex-column">
+                                            <div class="d-flex align-items-center">
+                                                <i class="ri-map-pin-line text-danger me-1"></i>
+                                                <span>По IP</span>
+                                            </div>
+                                            <div class="small text-muted">
+                                                {{ $lastSession->ip_address }}
+                                            </div>
                                         </div>
                                     @else
                                         <span class="text-muted">
-                                            <i class="ri-map-pin-line"></i> Не определено
-                                        </span>
+                    <i class="ri-map-pin-line"></i> Не определено
+                </span>
                                     @endif
                                 </td>
+
+                                <!-- Последняя активность -->
                                 <td>
-                                    <div>
-                                        <span title="{{ $session->last_activity->format('d.m.Y H:i:s') }}">
-                                            {{ $session->last_activity->diffForHumans() }}
-                                        </span>
-                                    </div>
-                                    <div class="small text-muted">
-                                        {{ $session->last_activity->format('d.m.Y H:i:s') }}
-                                    </div>
-                                </td>
-                                <td>
-                                    @if($session->is_current)
-                                        <span class="badge bg-success">
-                                            <i class="ri-checkbox-circle-line me-1"></i>Онлайн
-                                        </span>
+                                    @if($lastActivity)
+                                        <div class="d-flex flex-column">
+                                            <div class="small">
+                                                {{ $lastActivity->diffForHumans() }}
+                                            </div>
+                                            <div class="small text-muted">
+                                                {{ $lastActivity->format('d.m.Y H:i:s') }}
+                                            </div>
+                                        </div>
                                     @else
-                                        <span class="badge bg-secondary">
-                                            <i class="ri-time-line me-1"></i>Офлайн
-                                        </span>
+                                        <span class="text-muted">-</span>
                                     @endif
                                 </td>
+
+                                <!-- Действия -->
                                 <td>
                                     <div class="dropdown">
-                                        <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown">
+                                        <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="ri-more-2-line"></i>
                                         </button>
                                         <ul class="dropdown-menu">
-                                            @if($session->latitude && $session->longitude)
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('admin.users.show', $user) }}">
+                                                    <i class="ri-eye-line me-1"></i> Детали
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#sessionModal-{{ $user->id }}">
+                                                    <i class="ri-history-line me-1"></i> Все сессии ({{ $sessions->count() }})
+                                                </a>
+                                            </li>
+                                            @if($lastSession && $lastSession->ip_address && !in_array($lastSession->ip_address, ['127.0.0.1', '::1', 'localhost']))
                                                 <li>
-                                                    <a class="dropdown-item" href="https://www.google.com/maps?q={{ $session->latitude }},{{ $session->longitude }}" target="_blank">
-                                                        <i class="ri-map-pin-line me-1"></i> Открыть на карте
+                                                    <a class="dropdown-item" href="https://whatismyipaddress.com/ip/{{ $lastSession->ip_address }}" target="_blank">
+                                                        <i class="ri-shield-cross-line me-1"></i> Информация об IP
                                                     </a>
                                                 </li>
                                             @endif
                                             <li>
-                                                <a class="dropdown-item" href="#" onclick="copyToClipboard('{{ $session->ip_address }}')">
-                                                    <i class="ri-clipboard-line me-1"></i> Скопировать IP
-                                                </a>
-                                            </li>
-                                            <li>
                                                 <hr class="dropdown-divider">
                                             </li>
                                             <li>
-                                                <a class="dropdown-item text-danger" href="#" onclick="confirmDeleteSession({{ $session->id }})">
-                                                    <i class="ri-delete-bin-line me-1"></i> Удалить сессию
+                                                <a class="dropdown-item text-danger" href="#" onclick="confirmForceLogout({{ $user->id }})">
+                                                    <i class="ri-logout-circle-r-line me-1"></i> Принудительный выход
                                                 </a>
                                             </li>
                                         </ul>
@@ -372,6 +473,24 @@
                             location.reload();
                         } else {
                             alert('Ошибка при очистке сессий');
+                        }
+                    });
+                }
+            }
+            function confirmForceLogout(userId) {
+                if (confirm('Вы уверены, что хотите принудительно завершить все сессии пользователя?')) {
+                    fetch(`/admin/users/${userId}/force-logout`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            toastr.success('Пользователь отключен');
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            toastr.error('Ошибка при отключении');
                         }
                     });
                 }
