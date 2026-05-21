@@ -181,9 +181,8 @@
 
                                         <input type="text" placeholder="Поиск файлов..."
                                                class="w-full rounded-lg bg-transparent py-2.5 pl-[42px] pr-3.5 text-sm
-                                                 placeholder:text-white  focus:outline-hidden focus:ring-2 focus:ring-green-500/10 dark:border-gray-700 dark:bg-gray-900
-                                                  dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-green-800 xl:w-[300px] outline-none focus:border-gray-800  focus:ring-gray-800 border-2
-                                                   {{ $backgroundEnabled && $backgroundImage ? 'text-white  border-white border-[1px]' : 'text-gray-800 dark:text-white/90 border-gray-500' }}">
+                                                 placeholder:text-white outline-none
+                                                   {{ $backgroundEnabled && $backgroundImage ? 'text-white bg-transparent/20  border-none border-[1px]' : 'text-gray-800 dark:text-white/90 border-gray-500' }}">
                                     </div>
 
                                     <!-- Upload Button with Modal -->
@@ -200,7 +199,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="border-t border-gray-100 p-4 dark:border-gray-800 sm:p-6">
+                        <div class="border-none p-4 sm:p-6">
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
 
                                 @if($backgroundEnabled && $backgroundImage)
@@ -762,7 +761,7 @@
                                         </button>
 
                                         <input type="text" placeholder="Поиск файлов..."
-                                               class="dark:bg-dark-900 h-11 w-full rounded-lg border-2 border-gray-300 bg-transparent py-2.5 pl-[42px] pr-3.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400  focus:outline-hidden focus:ring-3 focus:ring-green-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-green-800 xl:w-[300px] outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100">
+                                               class="h-11 w-full rounded-lg border-none bg-transparent py-2.5 pl-[42px] pr-3.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400  focus:outline-hidden focus:ring-3 focus:ring-green-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-green-800 xl:w-[300px] outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100">
                                     </div>
 
                                     <!-- Upload Button with Modal -->
