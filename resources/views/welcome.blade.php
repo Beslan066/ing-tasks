@@ -33,18 +33,26 @@
         <div class="flex items-center gap-2 flex-wrap">
             <!-- Кнопка фильтров -->
             <div class="relative">
-                <button onclick="toggleFiltersDropdown()"
-                    class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-50 transition text-sm">
-                    <i class="fas fa-filter"></i>
-                    <span>Фильтры</span>
-                    <span id="activeFiltersCount"
-                        class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
-                    <i class="fas fa-chevron-down ml-1 text-xs transition-transform" id="filtersChevron"></i>
-                </button>
+                @if($backgroundEnabled && $backgroundImage)
+                    <button onclick="toggleFiltersDropdown()"
+                            class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
+                        <i class="fas fa-filter"></i>
+                        <span>Фильтры</span>
+                        <span id="activeFiltersCount" class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
+                        <i class="fas fa-chevron-down ml-1 text-xs transition-transform" id="filtersChevron"></i>
+                    </button>
+                @else
+                    <button onclick="toggleFiltersDropdown()"
+                            class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
+                        <i class="fas fa-filter"></i>
+                        <span>Фильтры</span>
+                        <span id="activeFiltersCount" class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
+                        <i class="fas fa-chevron-down ml-1 text-xs transition-transform" id="filtersChevron"></i>
+                    </button>
+                @endif
 
                 <!-- Выпадающая панель фильтров -->
-                <div id="filtersDropdown"
-                    class="hidden absolute left-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+                <div id="filtersDropdown" class="hidden absolute left-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border z-50">
                     <div class="p-4 border-b border-gray-100">
                         <div class="flex justify-between items-center">
                             <h3 class="font-semibold text-gray-800">Фильтрация задач</h3>
@@ -153,11 +161,19 @@
             </div>
 
             <!-- Поиск -->
-            <div class="relative flex-1 max-w-xs">
-                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
-                <input type="text" id="taskSearchInput" placeholder="Поиск по названию..."
-                    class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
-            </div>
+            @if($backgroundEnabled && $backgroundImage)
+                <div class="relative flex-1 max-w-xs">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-white text-sm"></i>
+                    <input type="text" id="taskSearchInput" placeholder="Поиск по названию..."
+                           class="w-full pl-9 pr-3 py-2 border-none rounded-lg text-sm focus:outline-none bg-transparent/20 placeholder:text-white">
+                </div>
+            @else
+                <div class="relative flex-1 max-w-xs">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" id="taskSearchInput" placeholder="Поиск по названию..."
+                           class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                </div>
+            @endif
         </div>
 
         <!-- Активные фильтры (чипсы) -->

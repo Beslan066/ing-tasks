@@ -20,12 +20,21 @@
             </div>
 
             <div class="flex flex-wrap gap-2 w-full md:w-auto">
-                <button id="filterToggle"
-                    class="flex-1 md:flex-none bg-white border border-gray-300 text-gray-700 px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-50 transition text-sm md:text-base">
-                    <i class="fas fa-filter"></i>
-                    <span>Фильтры</span>
-                    <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform"></i>
-                </button>
+                @if($backgroundEnabled && $backgroundImage)
+                    <button id="filterToggle"
+                            class="flex-1 md:flex-none bg-transparent/20 border-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 transition text-sm md:text-base">
+                        <i class="fas fa-filter"></i>
+                        <span>Фильтры</span>
+                        <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform"></i>
+                    </button>
+                @else
+                    <button id="filterToggle"
+                            class="flex-1 md:flex-none bg-white border border-gray-300 text-gray-700 px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-50 transition text-sm md:text-base">
+                        <i class="fas fa-filter"></i>
+                        <span>Фильтры</span>
+                        <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform"></i>
+                    </button>
+                @endif
                 <button id="newTaskBtn"
                     class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base">
                     <i class="fas fa-plus"></i>
@@ -236,99 +245,87 @@
             <div
                 class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 min-[1370px]:grid-cols-4 min-[1600px]:grid-cols-6 gap-3 md:gap-6 mb-6 md:mb-8">
                 <!-- Всего задач -->
-                <div
-                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-start justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">Всего задач</h3>
-                            <p class="text-gray-500 text-xs md:text-sm">Активные и завершенные</p>
                         </div>
                         <div
                             class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0">
                             <i class="fas fa-tasks text-blue-600 text-sm md:text-xl"></i>
                         </div>
                     </div>
-                    <div class="text-xl md:text-3xl font-bold" style="color: #16a34a;">{{ $stats['total'] }}</div>
+                    <div class="text-xl md:text-3xl font-bold text-white">{{ $stats['total'] }}</div>
                 </div>
 
                 <!-- Назначены -->
-                <div
-                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-start justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">Назначены</h3>
-                            <p class="text-gray-500 text-xs md:text-sm">Ожидают подтверждения</p>
                         </div>
                         <div
                             class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0">
                             <i class="fas fa-user-check text-purple-600 text-sm md:text-xl"></i>
                         </div>
                     </div>
-                    <div class="text-xl md:text-3xl font-bold text-purple-600">{{ $stats['assigned'] }}</div>
+                    <div class="text-xl md:text-3xl font-bold text-white">{{ $stats['assigned'] }}</div>
                 </div>
 
                 <!-- В работе -->
-                <div
-                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-start justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">В работе</h3>
-                            <p class="text-gray-500 text-xs md:text-sm">Активные задачи</p>
                         </div>
                         <div
                             class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-cogs text-orange-600 text-sm md:text-xl"></i>
+                            <i class="fas fa-cogs text-white text-sm md:text-xl"></i>
                         </div>
                     </div>
-                    <div class="text-xl md:text-3xl font-bold text-orange-600">{{ $stats['in_progress'] }}</div>
+                    <div class="text-xl md:text-3xl font-bold text-white">{{ $stats['in_progress'] }}</div>
                 </div>
 
                 <!-- На проверке -->
-                <div
-                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-start justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">На проверке</h3>
-                            <p class="text-gray-500 text-xs md:text-sm">Ожидают подтверждения</p>
                         </div>
                         <div
                             class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0">
                             <i class="fas fa-search text-yellow-600 text-sm md:text-xl"></i>
                         </div>
                     </div>
-                    <div class="text-xl md:text-3xl font-bold text-yellow-600">{{ $stats['review'] }}</div>
+                    <div class="text-xl md:text-3xl font-bold text-white">{{ $stats['review'] }}</div>
                 </div>
 
                 <!-- Выполнено -->
-                <div
-                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-start justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">Выполнено</h3>
-                            <p class="text-gray-500 text-xs md:text-sm">Успешные задачи</p>
                         </div>
                         <div
                             class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0">
                             <i class="fas fa-check-circle text-green-600 text-sm md:text-xl"></i>
                         </div>
                     </div>
-                    <div class="text-xl md:text-3xl font-bold text-green-600">{{ $stats['completed'] }}</div>
+                    <div class="text-xl md:text-3xl font-bold text-white">{{ $stats['completed'] }}</div>
                 </div>
 
                 <!-- Просрочено -->
-                <div
-                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-start justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">Просрочено</h3>
-                            <p class="text-gray-500 text-xs md:text-sm">Задачи с истекшим сроком</p>
                         </div>
                         <div
                             class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0">
                             <i class="fas fa-exclamation-circle text-red-600 text-sm md:text-xl"></i>
                         </div>
                     </div>
-                    <div class="text-xl md:text-3xl font-bold text-red-600">{{ $stats['overdue'] }}</div>
+                    <div class="text-xl md:text-3xl font-bold text-white">{{ $stats['overdue'] }}</div>
                 </div>
             </div>
         @else
@@ -338,7 +335,6 @@
                     <div class="flex items-start justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">Всего задач</h3>
-                            <p class="text-gray-500 text-xs md:text-sm">Активные и завершенные</p>
                         </div>
                         <div
                             class="w-8 h-8 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0">
@@ -353,7 +349,6 @@
                     <div class="flex items-start justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">Назначены</h3>
-                            <p class="text-gray-500 text-xs md:text-sm">Ожидают подтверждения</p>
                         </div>
                         <div
                             class="w-8 h-8 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0">
@@ -364,12 +359,10 @@
                 </div>
 
                 <!-- В работе -->
-                <div
-                    class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
+                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-start justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">В работе</h3>
-                            <p class="text-gray-500 text-xs md:text-sm">Активные задачи</p>
                         </div>
                         <div
                             class="w-8 h-8 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0">
@@ -380,12 +373,10 @@
                 </div>
 
                 <!-- На проверке -->
-                <div
-                    class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
+                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-start justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">На проверке</h3>
-                            <p class="text-gray-500 text-xs md:text-sm">Ожидают подтверждения</p>
                         </div>
                         <div
                             class="w-8 h-8 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0">
@@ -396,12 +387,10 @@
                 </div>
 
                 <!-- Выполнено -->
-                <div
-                    class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
+                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-start justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">Выполнено</h3>
-                            <p class="text-gray-500 text-xs md:text-sm">Успешные задачи</p>
                         </div>
                         <div
                             class="w-8 h-8 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0">
@@ -412,12 +401,10 @@
                 </div>
 
                 <!-- Просрочено -->
-                <div
-                    class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
+                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-start justify-between mb-3 md:mb-4">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">Просрочено</h3>
-                            <p class="text-gray-500 text-xs md:text-sm">Задачи с истекшим сроком</p>
                         </div>
                         <div
                             class="w-8 h-8 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0">
@@ -1232,21 +1219,18 @@
     </div>
 
     <!-- Модальное окно редактирования задачи -->
-    <div id="editTaskModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
-        <div
-            class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
+    <div id="editTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
+        <div class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
             <!-- Заголовок -->
             <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-100">
                 <div class="flex justify-between items-center p-6">
                     <div>
-                        <h3
-                            class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                            Редактирование задачи</h3>
+                        <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                            Редактирование задачи
+                        </h3>
                         <p class="text-sm text-gray-500 mt-1">Измените информацию о задаче</p>
                     </div>
-                    <button onclick="closeEditModal()"
-                        class="text-gray-400 hover:text-gray-600 transition-all duration-200 p-2 rounded-xl hover:bg-gray-100 hover:scale-110">
+                    <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 transition-all duration-200 p-2 rounded-xl hover:bg-gray-100 hover:scale-110">
                         <i class="fas fa-times text-lg"></i>
                     </button>
                 </div>
@@ -1255,25 +1239,21 @@
             <!-- Форма -->
             <form id="editTaskForm" class="p-6 space-y-6">
                 @csrf
-                @method('PUT')
-                <input type="hidden" name="_method" value="PUT">
+                <input type="hidden" name="selected_file_ids" id="editSelectedFiles" value="[]">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Название задачи -->
                     <div class="md:col-span-2 space-y-2">
                         <label class="block text-gray-700 text-sm font-semibold mb-1">
-                            <i
-                                class="fas fa-tag text-green-500 mr-2 text-xs focus:border-green-400 focus:ring-4 focus:ring-green-100"></i>Название
-                            задачи *
+                            <i class="fas fa-tag text-green-500 mr-2 text-xs"></i>Название задачи *
                         </label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i
-                                    class="fas fa-tasks text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
+                                <i class="fas fa-tasks text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
                             </div>
                             <input type="text" name="name" id="editTaskName"
-                                class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400 hover:border-gray-300"
-                                placeholder="Введите название задачи" required>
+                                   class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400 hover:border-gray-300"
+                                   placeholder="Введите название задачи" required>
                         </div>
                     </div>
 
@@ -1282,11 +1262,9 @@
                         <label class="block text-gray-700 text-sm font-semibold mb-1">
                             <i class="fas fa-align-left text-green-500 mr-2 text-xs"></i>Описание
                         </label>
-                        <div class="relative group">
-                            <textarea name="description" id="editTaskDescription" rows="4"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 resize-none bg-white placeholder-gray-400"
-                                placeholder="Подробное описание задачи..."></textarea>
-                        </div>
+                        <textarea name="description" id="editTaskDescription" rows="4"
+                                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 resize-none bg-white placeholder-gray-400"
+                                  placeholder="Подробное описание задачи..."></textarea>
                     </div>
 
                     <!-- Отдел -->
@@ -1296,8 +1274,8 @@
                         </label>
                         <div class="relative group">
                             <select name="department_id" id="editTaskDepartment"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
-                                required>
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
+                                    required>
                                 <option value="">Выберите отдел</option>
                             </select>
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -1313,7 +1291,7 @@
                         </label>
                         <div class="relative group">
                             <select name="category_id" id="editTaskCategory"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
                                 <option value="">Без категории</option>
                             </select>
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -1329,7 +1307,7 @@
                         </label>
                         <div class="relative group">
                             <select name="user_id" id="editTaskUser"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
                                 <option value="">Не назначен</option>
                             </select>
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -1345,8 +1323,8 @@
                         </label>
                         <div class="relative group">
                             <select name="priority" id="editTaskPriority"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
-                                required>
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
+                                    required>
                                 <option value="низкий">Низкий</option>
                                 <option value="средний">Средний</option>
                                 <option value="высокий">Высокий</option>
@@ -1365,14 +1343,14 @@
                         </label>
                         <div class="relative group">
                             <select name="status" id="editTaskStatus"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
-                                required>
-                                <option value="не назначена">📋 Не назначена</option>
-                                <option value="назначена">👤 Назначена</option>
-                                <option value="в работе">⚙️ В работе</option>
-                                <option value="на проверке">🔍 На проверке</option>
-                                <option value="выполнена">✅ Выполнена</option>
-                                <option value="просрочена">⏰ Просрочена</option>
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
+                                    required>
+                                <option value="не назначена">Не назначена</option>
+                                <option value="назначена">Назначена</option>
+                                <option value="в работе">В работе</option>
+                                <option value="на проверке">На проверке</option>
+                                <option value="выполнена">Выполнена</option>
+                                <option value="просрочена">Просрочена</option>
                             </select>
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                 <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
@@ -1387,11 +1365,10 @@
                         </label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i
-                                    class="fas fa-clock text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
+                                <i class="fas fa-clock text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
                             </div>
                             <input type="datetime-local" name="deadline" id="editTaskDeadline"
-                                class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white cursor-pointer hover:border-gray-300">
+                                   class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white cursor-pointer hover:border-gray-300">
                         </div>
                     </div>
 
@@ -1402,14 +1379,12 @@
                         </label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i
-                                    class="fas fa-stopwatch text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
+                                <i class="fas fa-stopwatch text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
                             </div>
                             <input type="number" name="estimated_hours" id="editTaskEstimatedHours" step="0.5" min="0"
-                                class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
-                                placeholder="0.0">
-                            <span
-                                class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium text-sm">часов</span>
+                                   class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
+                                   placeholder="0.0">
+                            <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium text-sm">часов</span>
                         </div>
                     </div>
 
@@ -1420,73 +1395,110 @@
                         </label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i
-                                    class="fas fa-chart-simple text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
+                                <i class="fas fa-chart-simple text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
                             </div>
                             <input type="number" name="actual_hours" id="editTaskActualHours" step="0.5" min="0"
-                                class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
-                                placeholder="0.0">
-                            <span
-                                class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium text-sm">часов</span>
+                                   class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
+                                   placeholder="0.0">
+                            <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium text-sm">часов</span>
                         </div>
                     </div>
 
-                    <!-- 🔥 НОВЫЙ БЛОК: История отказов -->
+                    <!-- Вкладки для файлов (как в создании) -->
+                    <div class="md:col-span-2 space-y-4">
+                        <div class="border-b border-gray-200">
+                            <nav class="flex space-x-6" aria-label="Tabs">
+                                <button type="button"
+                                        onclick="switchEditFileTab('storage')"
+                                        id="editStorageTab"
+                                        class="py-2 px-1 border-b-2 outline-none font-medium text-sm focus:outline-none tab-button active transition-all duration-200"
+                                        data-tab="storage">
+                                    <i class="fas fa-database mr-2"></i>Из хранилища
+                                </button>
+                                <button type="button"
+                                        onclick="switchEditFileTab('upload')"
+                                        id="editUploadTab"
+                                        class="py-2 px-1 border-b-2 outline-none font-medium text-sm focus:outline-none tab-button transition-all duration-200"
+                                        data-tab="upload">
+                                    <i class="fas fa-cloud-upload-alt mr-2"></i>Новая загрузка
+                                </button>
+                            </nav>
+                        </div>
+
+                        <!-- Контейнер для файлов из хранилища -->
+                        <div id="editStorageTabContent" class="tab-content active">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-700">Выберите файлы из хранилища</h4>
+                                    <p class="text-xs text-gray-500 mt-1">Файлы будут прикреплены к задаче</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button type="button" onclick="openEditFileManager()"
+                                            class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200">
+                                        <i class="fas fa-folder-open mr-2"></i>Открыть хранилище
+                                    </button>
+                                    <button type="button" onclick="clearEditSelectedFiles()"
+                                            class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-red-50 hover:border-red-300 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200">
+                                        <i class="fas fa-times mr-2"></i>Очистить
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Выбранные файлы -->
+                            <div id="editSelectedFilesContainer" class="space-y-3 min-h-[100px]">
+                                <div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
+                                    <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
+                                    <p class="text-sm text-gray-500">Файлы не выбраны</p>
+                                    <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
+                                </div>
+                            </div>
+
+                            <!-- Счетчик файлов -->
+                            <div id="editFileCounter" class="hidden text-sm text-gray-600 mt-3">
+                                <i class="fas fa-paperclip mr-1"></i>
+                                <span id="editFileCount">0</span> файлов выбрано
+                            </div>
+                        </div>
+
+                        <!-- Контейнер для загрузки новых файлов -->
+                        <div id="editUploadTabContent" class="tab-content hidden">
+                            <div class="mb-4">
+                                <h4 class="text-sm font-semibold text-gray-700">Загрузите новые файлы</h4>
+                                <p class="text-xs text-gray-500 mt-1">Файлы будут сохранены в хранилище и прикреплены к задаче</p>
+                            </div>
+
+                            <div class="file-upload-area border-2 border-dashed border-gray-300 rounded-xl p-8 text-center transition-all duration-300 bg-gradient-to-br from-gray-50 to-white hover:from-green-50 hover:to-white cursor-pointer group"
+                                 onclick="document.getElementById('editUploadNewFilesInput').click()">
+                                <input type="file" name="new_files[]" multiple class="hidden" id="editUploadNewFilesInput">
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                        <i class="fas fa-cloud-upload-alt text-3xl text-white"></i>
+                                    </div>
+                                    <p class="text-base font-medium text-gray-700 mb-2">Нажмите или перетащите файлы сюда</p>
+                                    <p class="text-sm text-gray-500">Поддерживаются: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF, ZIP</p>
+                                    <p class="text-xs text-gray-400 mt-1">Максимальный размер: 10MB на файл</p>
+                                </div>
+                            </div>
+
+                            <!-- Список новых файлов -->
+                            <div id="editUploadFilesList" class="space-y-3 mt-4 hidden">
+                                <h5 class="text-sm font-semibold text-gray-700">Выбранные файлы:</h5>
+                                <div id="editUploadFilesContainer" class="space-y-2"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- История отказов -->
                     <div class="md:col-span-2 space-y-3">
                         <label class="block text-gray-700 text-sm font-semibold mb-1">
                             <i class="fas fa-history text-green-500 mr-2 text-xs"></i>История отказов от задачи
-                            <span id="rejectionsCount"
-                                class="bg-gradient-to-r from-red-400 to-red-500 text-white text-xs px-2 py-1 rounded-full ml-2 shadow-sm">0</span>
+                            <span id="editRejectionsCount" class="bg-gradient-to-r from-red-400 to-red-500 text-white text-xs px-2 py-1 rounded-full ml-2 shadow-sm">0</span>
                         </label>
-
-                        <div id="rejectionsList"
-                            class="space-y-3 max-h-60 overflow-y-auto border-2 border-gray-200 rounded-xl p-4 bg-gray-50 custom-scrollbar">
-                            <!-- Отказы будут загружаться здесь -->
+                        <div id="editRejectionsList" class="space-y-3 max-h-60 overflow-y-auto border-2 border-gray-200 rounded-xl p-4 bg-gray-50 custom-scrollbar">
                             <div class="text-center py-8">
                                 <i class="fas fa-check-circle text-3xl text-gray-300 mb-2"></i>
                                 <p class="text-gray-500">Отказов нет</p>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- 🔥 БЛОК: Управление файлами -->
-                    <div class="md:col-span-2 space-y-3">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
-                            <i class="fas fa-paperclip text-green-500 mr-2 text-xs"></i>Файлы задачи
-                        </label>
-
-                        <!-- Список существующих файлов -->
-                        <div class="border-2 border-gray-200 rounded-xl overflow-hidden">
-                            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200">
-                                <span class="text-sm font-medium text-gray-700">Текущие файлы</span>
-                            </div>
-                            <div id="existingFiles" class="space-y-2 max-h-40 overflow-y-auto p-3 custom-scrollbar">
-                                <!-- Файлы будут загружаться сюда -->
-                                <div class="text-center py-6">
-                                    <i class="fas fa-folder-open text-3xl text-gray-300 mb-2"></i>
-                                    <p class="text-gray-500 text-sm">Нет прикрепленных файлов</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Добавление новых файлов -->
-                        <div
-                            class="border-2 border-dashed border-gray-300 rounded-xl p-5 transition-all duration-200 hover:border-green-400 hover:bg-green-50/30">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                <i class="fas fa-cloud-upload-alt text-green-500 mr-2"></i>Добавить новые файлы
-                            </label>
-                            <div class="relative">
-                                <input type="file" id="newFilesInput" multiple
-                                    class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all duration-200 bg-white file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer"
-                                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.txt,.zip,.rar">
-                            </div>
-                            <div id="newFilesList" class="mt-3 space-y-2">
-                                <!-- Список выбранных файлов будет здесь -->
-                            </div>
-                            <button type="button" onclick="addNewFiles()"
-                                class="mt-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-5 py-2 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 text-sm font-medium shadow-md hover:shadow-lg inline-flex items-center">
-                                <i class="fas fa-plus mr-2"></i> Добавить файлы
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -1494,11 +1506,11 @@
                 <!-- Кнопки действий -->
                 <div class="flex justify-end space-x-3 pt-6 mt-4 border-t border-gray-200">
                     <button type="button" onclick="closeEditModal()"
-                        class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
+                            class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
                         Отмена
                     </button>
                     <button type="submit"
-                        class="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                            class="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                         <i class="fas fa-save mr-2"></i>Сохранить изменения
                     </button>
                 </div>
@@ -1569,137 +1581,248 @@
         </div>
     </div>
 
+    <!-- Модальное окно файлового менеджера для редактирования -->
+    <div id="fileManagerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[60]">
+        <div class="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+            <!-- Заголовок -->
+            <div class="flex justify-between items-center p-6 border-b border-gray-200 bg-white">
+                <div>
+                    <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Файловое хранилище</h3>
+                    <p class="text-sm text-gray-500 mt-1">Выберите файлы для прикрепления к задаче</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="text-sm text-gray-600 bg-green-50 px-3 py-1 rounded-full">
+                        Выбрано: <span id="selectedCount" class="font-semibold text-green-600">0</span>
+                    </span>
+                    <button onclick="closeFileManager()"
+                            class="text-gray-400 hover:text-gray-600 p-2 rounded-xl hover:bg-gray-100 transition-all duration-200">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Панель поиска и фильтров -->
+            <div class="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="flex-1">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input type="text"
+                                   id="fileManagerSearch"
+                                   placeholder="Поиск по названию файла..."
+                                   class="w-full pl-10 pr-4 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all duration-200 bg-white">
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <select id="fileManagerTypeFilter"
+                                class="px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-sm hover:border-gray-300 transition-all duration-200">
+                            <option value="">Все типы</option>
+                            <option value="image">Изображения</option>
+                            <option value="document">Документы</option>
+                            <option value="video">Видео</option>
+                            <option value="audio">Аудио</option>
+                            <option value="archive">Архивы</option>
+                        </select>
+                        <select id="fileManagerSortBy"
+                                class="px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-sm hover:border-gray-300 transition-all duration-200">
+                            <option value="newest">Сначала новые</option>
+                            <option value="oldest">Сначала старые</option>
+                            <option value="name_asc">По имени (А-Я)</option>
+                            <option value="name_desc">По имени (Я-А)</option>
+                            <option value="size_asc">По размеру (↑)</option>
+                            <option value="size_desc">По размеру (↓)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Контент файлового менеджера -->
+            <div class="flex-1 overflow-hidden">
+                <div class="h-full flex">
+                    <!-- Список файлов -->
+                    <div class="flex-1 overflow-y-auto p-4" id="fileManagerContent">
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                            <div class="col-span-full text-center py-12">
+                                <i class="fas fa-spinner fa-spin text-3xl text-gray-400 mb-4"></i>
+                                <p class="text-gray-600">Загрузка файлов...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Предпросмотр файла -->
+                    <div id="fileManagerPreviewPanel" class="hidden w-96 border-l border-gray-200 bg-gray-50 p-4 overflow-y-auto">
+                        <div class="sticky top-0 bg-gray-50 pb-4">
+                            <button onclick="closeFilePreview()"
+                                    class="mb-4 text-gray-400 hover:text-gray-600 flex items-center transition-colors duration-200">
+                                <i class="fas fa-arrow-left mr-2"></i> Назад
+                            </button>
+                            <div id="filePreviewContent"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Футер с кнопками -->
+            <div class="p-4 border-t border-gray-200 bg-white">
+                <div class="flex justify-between items-center">
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-hdd mr-1"></i>
+                        Файловое хранилище
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="button" onclick="closeFileManager()"
+                                class="px-5 py-2.5 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-medium transition-all duration-200">
+                            Отмена
+                        </button>
+                        <button type="button" id="confirmFileSelectionBtn" onclick="confirmEditFileSelectionForEdit()"
+                                class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-check mr-2"></i>Выбрать (<span id="confirmCount">0</span>)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentTaskId = null;
+        let editSelectedFiles = [];
+        let editAllFiles = [];
+        let editTempSelectedFiles = [];
 
-        // ==================== ОБЩИЕ ФУНКЦИИ ====================
+        window.confirmEditFileSelectionForEdit = function() {
+            console.log('=== confirmEditFileSelectionForEdit вызвана (РЕДАКТИРОВАНИЕ) ===');
+
+            // Собираем выбранные файлы из чекбоксов (это ВСЕ выбранные файлы)
+            const selectedFiles = [];
+            document.querySelectorAll('#fileManagerContent .file-checkbox:checked').forEach(checkbox => {
+                const fileId = parseInt(checkbox.value);
+                let file = window.editAllFiles?.find(f => f.id === fileId);
+                if (!file && typeof editAllFiles !== 'undefined') {
+                    file = editAllFiles.find(f => f.id === fileId);
+                }
+                if (file) {
+                    selectedFiles.push(file);
+                }
+            });
+
+            console.log('Выбрано файлов из чекбоксов (всего):', selectedFiles.length);
+            console.log('Было файлов в задаче (editSelectedFiles):', editSelectedFiles.length);
+
+            // ВАЖНО: selectedFiles уже содержит ВСЕ выбранные файлы (и старые, и новые)
+            // Не нужно добавлять старые файлы отдельно!
+            editSelectedFiles = selectedFiles;
+            editTempSelectedFiles = [...selectedFiles];
+
+            console.log('Сохранено файлов в editSelectedFiles:', editSelectedFiles.length);
+
+            // Обновляем отображение в модалке редактирования
+            updateEditSelectedFilesDisplay();
+
+            // Закрываем файловый менеджер
+            const fileManagerModal = document.getElementById('fileManagerModal');
+            if (fileManagerModal) {
+                fileManagerModal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+
+            console.log('Файлы сохранены для редактирования');
+        };
 
         // Переключение фильтров
-        document.getElementById('filterToggle').addEventListener('click', function () {
-            const panel = document.getElementById('filtersPanel');
-            panel.classList.toggle('hidden');
+        document.getElementById('filterToggle')?.addEventListener('click', function() {
+            document.getElementById('filtersPanel').classList.toggle('hidden');
         });
 
         // Сортировка
-        document.getElementById('sortSelect').addEventListener('change', function () {
+        document.getElementById('sortSelect')?.addEventListener('change', function() {
             const value = this.value;
             let sort, order;
-
             switch (value) {
-                case 'created_at_desc':
-                    sort = 'created_at';
-                    order = 'desc';
-                    break;
-                case 'created_at_asc':
-                    sort = 'created_at';
-                    order = 'asc';
-                    break;
-                case 'deadline_asc':
-                    sort = 'deadline';
-                    order = 'asc';
-                    break;
-                case 'deadline_desc':
-                    sort = 'deadline';
-                    order = 'desc';
-                    break;
-                case 'priority_desc':
-                    sort = 'priority';
-                    order = 'desc';
-                    break;
-                case 'name_asc':
-                    sort = 'name';
-                    order = 'asc';
-                    break;
-                default:
-                    sort = 'created_at';
-                    order = 'desc';
+                case 'created_at_desc': sort = 'created_at'; order = 'desc'; break;
+                case 'created_at_asc': sort = 'created_at'; order = 'asc'; break;
+                case 'deadline_asc': sort = 'deadline'; order = 'asc'; break;
+                case 'deadline_desc': sort = 'deadline'; order = 'desc'; break;
+                case 'priority_desc': sort = 'priority'; order = 'desc'; break;
+                case 'name_asc': sort = 'name'; order = 'asc'; break;
+                default: sort = 'created_at'; order = 'desc';
             }
-
             const url = new URL(window.location.href);
             url.searchParams.set('sort', sort);
             url.searchParams.set('order', order);
             window.location.href = url.toString();
         });
 
-        // Установка правильного значения в селекторе сортировки при загрузке
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const sort = urlParams.get('sort') || 'created_at';
             const order = urlParams.get('order') || 'desc';
-
-            let selectedValue;
-            switch (sort + '_' + order) {
-                case 'created_at_desc':
-                    selectedValue = 'created_at_desc';
-                    break;
-                case 'created_at_asc':
-                    selectedValue = 'created_at_asc';
-                    break;
-                case 'deadline_asc':
-                    selectedValue = 'deadline_asc';
-                    break;
-                case 'deadline_desc':
-                    selectedValue = 'deadline_desc';
-                    break;
-                case 'priority_desc':
-                    selectedValue = 'priority_desc';
-                    break;
-                case 'name_asc':
-                    selectedValue = 'name_asc';
-                    break;
-                default:
-                    selectedValue = 'created_at_desc';
-            }
-
-            document.getElementById('sortSelect').value = selectedValue;
+            let selectedValue = 'created_at_desc';
+            const sortSelect = document.getElementById('sortSelect');
+            if (sortSelect) sortSelect.value = selectedValue;
         });
 
-        // ==================== ФУНКЦИИ ДЛЯ АДМИНОВ ====================
-
-        // Открыть модальное окно редактирования
+        // ==================== ОТКРЫТИЕ МОДАЛКИ ====================
         async function openEditModal(taskId) {
             currentTaskId = taskId;
+            editSelectedFiles = [];
 
             try {
                 const response = await fetch(`/tasks/${taskId}/get`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
                     }
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
-                    // Заполняем форму данными задачи
                     const task = data.task;
+
                     document.getElementById('editTaskName').value = task.name;
                     document.getElementById('editTaskDescription').value = task.description || '';
 
                     // Заполняем отделы
                     const departmentSelect = document.getElementById('editTaskDepartment');
                     departmentSelect.innerHTML = '<option value="">Выберите отдел</option>';
-                    data.departments.forEach(dept => {
-                        const option = new Option(dept.name, dept.id, dept.id == task.department_id, dept.id == task.department_id);
-                        departmentSelect.add(option);
-                    });
+                    if (data.departments) {
+                        data.departments.forEach(dept => {
+                            const option = document.createElement('option');
+                            option.value = dept.id;
+                            option.textContent = dept.name;
+                            if (dept.id == task.department_id) option.selected = true;
+                            departmentSelect.appendChild(option);
+                        });
+                    }
 
                     // Заполняем категории
                     const categorySelect = document.getElementById('editTaskCategory');
                     categorySelect.innerHTML = '<option value="">Без категории</option>';
-                    data.categories.forEach(cat => {
-                        const option = new Option(cat.name, cat.id, cat.id == task.category_id, cat.id == task.category_id);
-                        categorySelect.add(option);
-                    });
+                    if (data.categories) {
+                        data.categories.forEach(cat => {
+                            const option = document.createElement('option');
+                            option.value = cat.id;
+                            option.textContent = cat.name;
+                            if (cat.id == task.category_id) option.selected = true;
+                            categorySelect.appendChild(option);
+                        });
+                    }
 
                     // Заполняем пользователей
                     const userSelect = document.getElementById('editTaskUser');
                     userSelect.innerHTML = '<option value="">Не назначен</option>';
-                    data.users.forEach(user => {
-                        const option = new Option(`${user.name} (${user.email})`, user.id, user.id == task.user_id, user.id == task.user_id);
-                        userSelect.add(option);
-                    });
+                    if (data.users) {
+                        data.users.forEach(user => {
+                            const option = document.createElement('option');
+                            option.value = user.id;
+                            option.textContent = `${user.name} (${user.email})`;
+                            if (user.id == task.user_id) option.selected = true;
+                            userSelect.appendChild(option);
+                        });
+                    }
 
                     document.getElementById('editTaskPriority').value = task.priority;
                     document.getElementById('editTaskStatus').value = task.status;
@@ -1707,15 +1830,11 @@
                     document.getElementById('editTaskEstimatedHours').value = task.estimated_hours || '';
                     document.getElementById('editTaskActualHours').value = task.actual_hours || '';
 
-                    // 🔥 ОТОБРАЖАЕМ СУЩЕСТВУЮЩИЕ ФАЙЛЫ
-                    displayExistingFiles(task.files);
-
-                    // 🔥 ОТОБРАЖАЕМ ИСТОРИЮ ОТКАЗОВ
+                    editSelectedFiles = task.files || [];
+                    updateEditSelectedFilesDisplay();
                     displayRejections(task.rejections);
 
                     document.getElementById('editTaskModal').classList.remove('hidden');
-                } else {
-                    alert(data.message || 'Ошибка при загрузке данных задачи');
                 }
             } catch (error) {
                 console.error('Ошибка:', error);
@@ -1723,38 +1842,386 @@
             }
         }
 
-        // Закрыть модальное окно редактирования
         function closeEditModal() {
             document.getElementById('editTaskModal').classList.add('hidden');
-            // Очищаем списки
-            document.getElementById('existingFiles').innerHTML = '';
-            document.getElementById('newFilesList').innerHTML = '';
-            document.getElementById('rejectionsList').innerHTML = '';
-            document.getElementById('newFilesInput').value = '';
+            document.getElementById('editUploadNewFilesInput').value = '';
+            document.getElementById('editUploadFilesList').classList.add('hidden');
             currentTaskId = null;
+            editSelectedFiles = [];
+            editTempSelectedFiles = [];
         }
 
-        // Сохранить изменения задачи
-        document.getElementById('editTaskForm')?.addEventListener('submit', async function (e) {
-            e.preventDefault();
+        function updateEditSelectedFilesDisplay() {
+            const container = document.getElementById('editSelectedFilesContainer');
+            const fileCounter = document.getElementById('editFileCounter');
+            const fileCount = document.getElementById('editFileCount');
 
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
+            if (!container) return;
+
+            if (editSelectedFiles.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
+                <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
+                <p class="text-sm text-gray-500">Файлы не выбраны</p>
+            </div>`;
+                if (fileCounter) fileCounter.classList.add('hidden');
+            } else {
+                let html = '';
+                editSelectedFiles.forEach(file => {
+                    const fileIcon = getFileIcon(file.extension);
+                    const fileType = getFileTypeClass(file.extension);
+                    html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div class="flex items-center space-x-3 flex-1">
+                        <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
+                            <span class="text-lg">${fileIcon}</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-800">${escapeHtml(file.name)}</p>
+                            <span class="text-xs text-gray-500">${formatFileSize(file.size)}</span>
+                        </div>
+                    </div>
+                    <button onclick="removeEditSelectedFile(${file.id})" class="text-red-500 hover:text-red-700 p-1">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>`;
+                });
+                container.innerHTML = html;
+                if (fileCount) fileCount.textContent = editSelectedFiles.length;
+                if (fileCounter) fileCounter.classList.remove('hidden');
+            }
+        }
+
+        function removeEditSelectedFile(fileId) {
+            editSelectedFiles = editSelectedFiles.filter(f => f.id !== fileId);
+            updateEditSelectedFilesDisplay();
+        }
+
+        function clearEditSelectedFiles() {
+            if (editSelectedFiles.length === 0) return;
+            if (confirm(`Удалить все файлы?`)) {
+                editSelectedFiles = [];
+                updateEditSelectedFilesDisplay();
+            }
+        }
+
+        function switchEditFileTab(tabName) {
+            const tabButtons = document.querySelectorAll('#editTaskModal .tab-button');
+            const tabContents = document.querySelectorAll('#editTaskModal .tab-content');
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-tab') === tabName) btn.classList.add('active');
+            });
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+            const activeContent = document.getElementById('edit' + tabName.charAt(0).toUpperCase() + tabName.slice(1) + 'TabContent');
+            if (activeContent) activeContent.classList.remove('hidden');
+        }
+
+        // ==================== ФАЙЛОВЫЙ МЕНЕДЖЕР ====================
+        async function openEditFileManager() {
+            const modal = document.getElementById('fileManagerModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+                // Копируем ТЕКУЩИЕ файлы задачи во временный массив
+                editTempSelectedFiles = [...editSelectedFiles];
+                console.log('Открыт менеджер, editTempSelectedFiles (текущие файлы задачи):', editTempSelectedFiles.length);
+                await loadEditFiles();
+            }
+        }
+
+        async function loadEditFiles() {
+            const contentDiv = document.getElementById('fileManagerContent');
+            if (!contentDiv) return;
+            contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Загрузка...</div>`;
 
             try {
+                const response = await fetch('/tasks/file-storage/get-files', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    }
+                });
+                if (!response.ok) throw new Error('Ошибка');
+                editAllFiles = await response.json();
+                window.editAllFiles = editAllFiles; // ДОБАВЬТЕ ЭТУ СТРОКУ!
+                renderFileManagerFiles(editAllFiles);
+                updateFileManagerUI();
+                initFileManagerFilters();
+            } catch (error) {
+                contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">Ошибка загрузки</div>`;
+            }
+        }
+
+        function renderFileManagerFiles(files) {
+            const contentDiv = document.getElementById('fileManagerContent');
+            if (!contentDiv) return;
+            if (!files || files.length === 0) {
+                contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Нет файлов</div>`;
+                return;
+            }
+            let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
+            files.forEach(file => {
+                const isSelected = editTempSelectedFiles.some(f => f.id === file.id);
+                const fileIcon = getFileIcon(file.extension);
+                const fileType = getFileTypeClass(file.extension);
+                html += `
+            <div class="file-card bg-white border ${isSelected ? 'border-green-500 shadow-md' : 'border-gray-200'} rounded-lg p-3">
+                <div class="flex justify-end mb-2">
+                    <input type="checkbox"
+                           value="${file.id}"
+                           data-id="${file.id}"
+                           data-name="${escapeHtml(file.name)}"
+                           data-size="${file.size}"
+                           data-ext="${file.extension || ''}"
+                           data-path="${file.file_path || file.path}"
+                           data-created="${file.created_at}"
+                           class="file-checkbox w-5 h-5 rounded border-gray-300"
+                           ${isSelected ? 'checked' : ''}>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <span class="text-2xl">${fileIcon}</span>
+                    </div>
+                    <p class="text-sm font-medium truncate">${escapeHtml(file.name)}</p>
+                    <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                </div>
+            </div>`;
+            });
+            html += '</div>';
+            contentDiv.innerHTML = html;
+
+            // ПРИВЯЗЫВАЕМ ОБРАБОТЧИКИ К ЧЕКБОКСАМ
+            document.querySelectorAll('#fileManagerContent .file-checkbox').forEach(checkbox => {
+                checkbox.removeEventListener('change', handleCheckboxChange);
+                checkbox.addEventListener('change', handleCheckboxChange);
+            });
+
+            updateFileManagerUI();
+        }
+
+        // ОТДЕЛЬНАЯ ФУНКЦИЯ-ОБРАБОТЧИК
+        function handleCheckboxChange(event) {
+            const checkbox = event.target;
+            const fileId = parseInt(checkbox.value);
+            const file = editAllFiles?.find(f => f.id === fileId);
+
+            console.log('Чекбокс кликнут!', fileId, file?.name);
+
+            if (!file) return;
+
+            if (checkbox.checked) {
+                if (!editTempSelectedFiles.some(f => f.id === fileId)) {
+                    editTempSelectedFiles.push(file);
+                    console.log('Файл добавлен, теперь всего:', editTempSelectedFiles.length);
+                }
+            } else {
+                editTempSelectedFiles = editTempSelectedFiles.filter(f => f.id !== fileId);
+                console.log('Файл удален, осталось:', editTempSelectedFiles.length);
+            }
+
+            // Обновляем выделение карточки
+            const card = checkbox.closest('.file-card');
+            if (card) {
+                if (checkbox.checked) {
+                    card.classList.add('border-green-500', 'shadow-md');
+                    card.classList.remove('border-gray-200');
+                } else {
+                    card.classList.remove('border-green-500', 'shadow-md');
+                    card.classList.add('border-gray-200');
+                }
+            }
+
+            updateFileManagerUI();
+        }
+
+        window.toggleFileSelection = function(fileId) {
+            console.log('toggleFileSelection вызвана, fileId:', fileId);
+
+            // Определяем, какое модальное окно открыто
+            const isCreateModal = document.getElementById('taskModal') && !document.getElementById('taskModal').classList.contains('hidden');
+            const isEditModal = document.getElementById('editTaskModal') && !document.getElementById('editTaskModal').classList.contains('hidden');
+
+            if (isCreateModal) {
+                // Логика для создания задачи
+                let file = window.allFiles?.find(f => f.id === fileId);
+                if (!file) {
+                    if (typeof allFiles !== 'undefined' && allFiles) {
+                        file = allFiles.find(f => f.id === fileId);
+                    }
+                }
+                if (!file) return;
+
+                if (typeof window.selectedFiles === 'undefined') window.selectedFiles = [];
+                const index = window.selectedFiles.findIndex(f => f.id === fileId);
+                if (index === -1) {
+                    window.selectedFiles.push(file);
+                } else {
+                    window.selectedFiles.splice(index, 1);
+                }
+
+                if (typeof window.renderFiles === 'function') window.renderFiles(window.allFiles || allFiles);
+                if (typeof window.updateSelectedCount === 'function') window.updateSelectedCount();
+
+                const selectedCountSpan = document.getElementById('selectedCount');
+                const confirmCountSpan = document.getElementById('confirmCount');
+                if (selectedCountSpan) selectedCountSpan.textContent = window.selectedFiles.length;
+                if (confirmCountSpan) confirmCountSpan.textContent = window.selectedFiles.length;
+            }
+            else if (isEditModal) {
+                // Логика для редактирования задачи (существующая)
+                const file = editAllFiles?.find(f => f.id === fileId);
+                if (!file) return;
+
+                if (checkbox) {
+                    if (checkbox.checked) {
+                        if (!editTempSelectedFiles.some(f => f.id === fileId)) {
+                            editTempSelectedFiles.push(file);
+                        }
+                    } else {
+                        editTempSelectedFiles = editTempSelectedFiles.filter(f => f.id !== fileId);
+                    }
+                }
+                updateFileManagerUI();
+            }
+
+            console.log('Выбрано файлов:', isCreateModal ? window.selectedFiles?.length : editTempSelectedFiles?.length);
+        };
+
+        function updateFileManagerUI() {
+            const selectedCount = document.getElementById('selectedCount');
+            const confirmCount = document.getElementById('confirmCount');
+            const confirmBtn = document.getElementById('confirmFileSelectionBtn');
+
+            const count = editTempSelectedFiles.length;
+
+            console.log('updateFileManagerUI: count =', count);
+
+            if (selectedCount) selectedCount.textContent = count;
+            if (confirmCount) confirmCount.textContent = count;
+
+            if (confirmBtn) {
+                confirmBtn.disabled = (count === 0);
+                if (count === 0) {
+                    confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+
+        function closeFileManager() {
+            const modal = document.getElementById('fileManagerModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+            editTempSelectedFiles = [];
+        }
+
+        function initFileManagerFilters() {
+            const searchInput = document.getElementById('fileManagerSearch');
+            const typeFilter = document.getElementById('fileManagerTypeFilter');
+            const sortBy = document.getElementById('fileManagerSortBy');
+
+            const filter = () => {
+                if (!editAllFiles) return;
+                let filtered = [...editAllFiles];
+                const searchTerm = searchInput?.value.toLowerCase() || '';
+                if (searchTerm) filtered = filtered.filter(f => f.name.toLowerCase().includes(searchTerm));
+                renderFileManagerFiles(filtered);
+            };
+
+            if (searchInput) searchInput.addEventListener('input', filter);
+            if (typeFilter) typeFilter.addEventListener('change', filter);
+            if (sortBy) sortBy.addEventListener('change', filter);
+        }
+
+        function downloadFileFromManager(fileId) {
+            window.open(`/file-storage/download/${fileId}`, '_blank');
+        }
+
+        function closeFilePreview() {
+            document.getElementById('fileManagerPreviewPanel')?.classList.add('hidden');
+        }
+
+        // ==================== ЗАГРУЗКА НОВЫХ ФАЙЛОВ ====================
+        document.getElementById('editUploadNewFilesInput')?.addEventListener('change', function(e) {
+            const container = document.getElementById('editUploadFilesContainer');
+            const list = document.getElementById('editUploadFilesList');
+            if (!container) return;
+            container.innerHTML = '';
+            if (this.files.length > 0 && list) {
+                list.classList.remove('hidden');
+                Array.from(this.files).forEach((file, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center justify-between p-2 bg-gray-50 rounded';
+                    div.innerHTML = `
+                    <span class="text-sm truncate">${escapeHtml(file.name)}</span>
+                    <button type="button" onclick="removeEditUploadedFile(${index})" class="text-red-500">✕</button>
+                `;
+                    container.appendChild(div);
+                });
+            } else if (list) {
+                list.classList.add('hidden');
+            }
+        });
+
+        function removeEditUploadedFile(index) {
+            const input = document.getElementById('editUploadNewFilesInput');
+            if (!input) return;
+            const dt = new DataTransfer();
+            Array.from(input.files).forEach((file, i) => { if (i !== index) dt.items.add(file); });
+            input.files = dt.files;
+            input.dispatchEvent(new Event('change'));
+        }
+
+        // ==================== СОХРАНЕНИЕ ====================
+        document.getElementById('editTaskForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn?.innerHTML;
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...';
+                submitBtn.disabled = true;
+            }
+            try {
+                const formData = new FormData(this);
+
+                // Удаляем старые значения
+                formData.delete('selected_file_ids');
+
+                // ОТПРАВЛЯЕМ КАК МАССИВ - ВАШ КОНТРОЛЛЕР ЖДЕТ МАССИВ!
+                const selectedFileIds = editSelectedFiles.map(f => f.id);
+                selectedFileIds.forEach(id => {
+                    formData.append('selected_file_ids[]', id);
+                });
+
+                console.log('Отправляемые ID файлов (массив):', selectedFileIds);
+
+                const newFiles = document.getElementById('editUploadNewFilesInput');
+                if (newFiles?.files.length) {
+                    for (let i = 0; i < newFiles.files.length; i++) {
+                        formData.append('new_files[]', newFiles.files[i]);
+                    }
+                    console.log('Новых файлов:', newFiles.files.length);
+                }
+
                 const response = await fetch(`/tasks/${currentTaskId}/update`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
-                    body: JSON.stringify(data)
+                    body: formData
                 });
 
                 const result = await response.json();
+                console.log('Ответ сервера:', result);
 
                 if (result.success) {
-                    alert('Задача успешно обновлена!');
+                    alert('Задача обновлена!');
                     closeEditModal();
                     location.reload();
                 } else {
@@ -1762,300 +2229,79 @@
                 }
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('Ошибка при обновлении задачи');
+                alert('Ошибка: ' + error.message);
+            } finally {
+                if (submitBtn) {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
             }
         });
 
-        // Открыть модальное окно возврата на доработку
-        function returnToWork(taskId) {
-            currentTaskId = taskId;
-            document.getElementById('returnToWorkModal').classList.remove('hidden');
+        // ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
+        function getFileIcon(ext) {
+            const icons = { 'pdf': '📄', 'doc': '📝', 'docx': '📝', 'xls': '📊', 'xlsx': '📊', 'jpg': '🖼️', 'png': '🖼️', 'gif': '🖼️', 'zip': '📦' };
+            return icons[(ext || '').toLowerCase()] || '📎';
         }
 
-        // Закрыть модальное окно возврата
-        function closeReturnModal() {
-            document.getElementById('returnToWorkModal').classList.add('hidden');
-            document.getElementById('returnComment').value = '';
-            currentTaskId = null;
+        function getFileTypeClass(ext) {
+            return { bg: 'bg-gray-100' };
         }
 
-        // Подтвердить возврат на доработку
-        async function confirmReturnToWork() {
-            const comment = document.getElementById('returnComment').value.trim();
-
-            try {
-                const response = await fetch(`/tasks/${currentTaskId}/return-to-work`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ comment })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert('Задача возвращена на доработку!');
-                    closeReturnModal();
-                    location.reload();
-                } else {
-                    alert(data.message || 'Ошибка при возврате задачи');
-                }
-            } catch (error) {
-                console.error('Ошибка:', error);
-                alert('Ошибка при возврате задачи');
-            }
+        function formatFileSize(bytes) {
+            if (!bytes) return '0 B';
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
-        // Обновленная функция для модального окна удаления
-        function openDeleteModal(taskId) {
-            currentTaskId = taskId;
-            document.getElementById('deleteTaskModal').classList.remove('hidden');
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
-        // Закрыть модальное окно удаления
-        function closeDeleteModal() {
-            document.getElementById('deleteTaskModal').classList.add('hidden');
-            currentTaskId = null;
+        function formatDateTime(date) {
+            if (!date) return '';
+            return new Date(date).toLocaleString('ru-RU');
         }
 
-        // Подтвердить удаление задачи
-        async function confirmDeleteTask() {
-            if (!confirm('Вы уверены, что хотите удалить эту задачу?')) {
-                return;
-            }
-
-            try {
-                const response = await fetch(`/tasks/${currentTaskId}/delete`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert('Задача успешно удалена!');
-                    closeDeleteModal();
-                    location.reload();
-                } else {
-                    alert(data.message || 'Ошибка при удалении задачи');
-                }
-            } catch (error) {
-                console.error('Ошибка:', error);
-                alert('Ошибка при удалении задачи');
-            }
-        }
-
-        // ==================== ФУНКЦИИ ДЛЯ РАБОТЫ С ФАЙЛАМИ ====================
-
-        // Отобразить существующие файлы
-        function displayExistingFiles(files) {
-            const filesContainer = document.getElementById('existingFiles');
-            filesContainer.innerHTML = '';
-
-            if (files && files.length > 0) {
-                files.forEach(file => {
-                    const fileElement = document.createElement('div');
-                    fileElement.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-lg mb-2';
-                    fileElement.innerHTML = `
-                                                                                                                                                                                                                                    <div class="flex items-center space-x-3">
-                                                                                                                                                                                                                                        <i class="fas fa-paperclip text-gray-500"></i>
-                                                                                                                                                                                                                                        <div>
-                                                                                                                                                                                                                                            <a href="/storage/${file.file_path}" target="_blank"
-                                                                                                                                                                                                                                               class="text-blue-600 hover:text-blue-800 font-medium block">
-                                                                                                                                                                                                                                                ${file.name}
-                                                                                                                                                                                                                                            </a>
-                                                                                                                                                                                                                                            <span class="text-xs text-gray-500">
-                                                                                                                                                                                                                                                ${Math.round(file.file_size / 1024)} KB •
-                                                                                                                                                                                                                                                ${formatDateTime(file.created_at)}
-                                                                                                                                                                                                                                            </span>
-                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                    <button type="button" onclick="deleteFile(${file.id})"
-                                                                                                                                                                                                                                            class="text-red-600 hover:text-red-800 p-1 rounded transition">
-                                                                                                                                                                                                                                        <i class="fas fa-trash"></i>
-                                                                                                                                                                                                                                    </button>
-                                                                                                                                                                                                                                `;
-                    filesContainer.appendChild(fileElement);
-                });
-            } else {
-                filesContainer.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Файлы отсутствуют</p>';
-            }
-        }
-
-        // Удалить файл
-        async function deleteFile(fileId) {
-            if (!confirm('Вы уверены, что хотите удалить этот файл?')) {
-                return;
-            }
-
-            try {
-                const response = await fetch(`/files/${fileId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert('Файл успешно удален');
-                    // Перезагружаем данные задачи чтобы обновить список файлов
-                    openEditModal(currentTaskId);
-                } else {
-                    alert(data.message || 'Ошибка при удалении файла');
-                }
-            } catch (error) {
-                console.error('Ошибка:', error);
-                alert('Ошибка при удалении файла');
-            }
-        }
-
-        // Показать выбранные файлы
-        function displaySelectedFiles() {
-            const fileInput = document.getElementById('newFilesInput');
-            const filesList = document.getElementById('newFilesList');
-            filesList.innerHTML = '';
-
-            if (fileInput.files.length > 0) {
-                Array.from(fileInput.files).forEach((file, index) => {
-                    const fileElement = document.createElement('div');
-                    fileElement.className = 'flex items-center justify-between bg-blue-50 p-2 rounded mb-1';
-                    fileElement.innerHTML = `
-                                                                                                                                                                                                                                    <div class="flex items-center space-x-2">
-                                                                                                                                                                                                                                        <i class="fas fa-file text-blue-500"></i>
-                                                                                                                                                                                                                                        <span class="text-blue-700 text-sm">${file.name}</span>
-                                                                                                                                                                                                                                        <span class="text-xs text-blue-600">(${Math.round(file.size / 1024)} KB)</span>
-                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                    <button type="button" onclick="removeSelectedFile(${index})"
-                                                                                                                                                                                                                                            class="text-red-500 hover:text-red-700 text-sm">
-                                                                                                                                                                                                                                        <i class="fas fa-times"></i>
-                                                                                                                                                                                                                                    </button>
-                                                                                                                                                                                                                                `;
-                    filesList.appendChild(fileElement);
-                });
-            }
-        }
-
-        // Удалить выбранный файл из списка
-        function removeSelectedFile(index) {
-            const fileInput = document.getElementById('newFilesInput');
-            const files = Array.from(fileInput.files);
-            files.splice(index, 1);
-
-            // Создаем новый FileList
-            const dataTransfer = new DataTransfer();
-            files.forEach(file => dataTransfer.items.add(file));
-            fileInput.files = dataTransfer.files;
-
-            displaySelectedFiles();
-        }
-
-        // Добавить новые файлы к задаче
-        async function addNewFiles() {
-            const fileInput = document.getElementById('newFilesInput');
-
-            if (!fileInput.files.length) {
-                alert('Пожалуйста, выберите файлы для добавления');
-                return;
-            }
-
-            const formData = new FormData();
-            Array.from(fileInput.files).forEach(file => {
-                formData.append('files[]', file);
-            });
-
-            try {
-                const response = await fetch(`/tasks/${currentTaskId}/add-files`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert('Файлы успешно добавлены!');
-                    // Очищаем input
-                    fileInput.value = '';
-                    document.getElementById('newFilesList').innerHTML = '';
-                    // Перезагружаем данные задачи
-                    openEditModal(currentTaskId);
-                } else {
-                    alert(data.message || 'Ошибка при добавлении файлов');
-                }
-            } catch (error) {
-                console.error('Ошибка:', error);
-                alert('Ошибка при добавлении файлов');
-            }
-        }
-
-        // ==================== ФУНКЦИИ ДЛЯ ОТОБРАЖЕНИЯ ОТКАЗОВ ====================
-
-        // Отобразить историю отказов
         function displayRejections(rejections) {
-            const rejectionsContainer = document.getElementById('rejectionsList');
-            const rejectionsCount = document.getElementById('rejectionsCount');
-
-            if (rejections && rejections.length > 0) {
-                rejectionsCount.textContent = rejections.length;
-
-                rejectionsContainer.innerHTML = rejections.map(rejection => `
-                                                                                                                                                                                                                                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                                                                                                                                                                                                                                        <div class="flex justify-between items-start mb-2">
-                                                                                                                                                                                                                                            <div class="flex items-center space-x-3">
-                                                                                                                                                                                                                                                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600">
-                                                                                                                                                                                                                                                    <i class="fas fa-user-slash text-sm"></i>
-                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                <div>
-                                                                                                                                                                                                                                                    <div class="font-medium text-red-800">${rejection.user?.name || 'Пользователь'}</div>
-                                                                                                                                                                                                                                                    <div class="text-xs text-red-600">${formatDateTime(rejection.created_at)}</div>
-                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                            <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
-                                                                                                                                                                                                                                                Отказ
-                                                                                                                                                                                                                                            </span>
-                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                        <div class="mt-2">
-                                                                                                                                                                                                                                            <p class="text-sm text-red-700 bg-red-100 p-3 rounded-lg">${rejection.reason || 'Причина не указана'}</p>
-                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                `).join('');
+            const container = document.getElementById('editRejectionsList');
+            const countSpan = document.getElementById('editRejectionsCount');
+            if (!container) return;
+            if (rejections?.length) {
+                if (countSpan) countSpan.textContent = rejections.length;
+                container.innerHTML = rejections.map(r => `<div class="bg-red-50 p-3 rounded">${escapeHtml(r.reason || 'Отказ')}</div>`).join('');
             } else {
-                rejectionsCount.textContent = '0';
-                rejectionsContainer.innerHTML = '<p class="text-gray-500 text-center py-4">Отказов нет</p>';
+                if (countSpan) countSpan.textContent = '0';
+                container.innerHTML = '<p class="text-gray-500">Отказов нет</p>';
             }
         }
 
-        // Форматирование даты
-        function formatDateTime(dateString) {
-            if (!dateString) return 'Не указано';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('ru-RU', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
+        function returnToWork(taskId) { currentTaskId = taskId; document.getElementById('returnToWorkModal').classList.remove('hidden'); }
+        function closeReturnModal() { document.getElementById('returnToWorkModal').classList.add('hidden'); document.getElementById('returnComment').value = ''; }
+        async function confirmReturnToWork() {
+            const comment = document.getElementById('returnComment').value;
+            const response = await fetch(`/tasks/${currentTaskId}/return-to-work`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({ comment })
             });
+            if ((await response.json()).success) { alert('Возвращено!'); location.reload(); }
+        }
+        function openDeleteModal(taskId) { currentTaskId = taskId; document.getElementById('deleteTaskModal').classList.remove('hidden'); }
+        function closeDeleteModal() { document.getElementById('deleteTaskModal').classList.add('hidden'); }
+        async function confirmDeleteTask() {
+            if (!confirm('Удалить?')) return;
+            const response = await fetch(`/tasks/${currentTaskId}/delete`, {
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+            });
+            if ((await response.json()).success) { alert('Удалено!'); location.reload(); }
         }
 
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function () {
-            // Обработчик для отображения выбранных файлов
-            const fileInput = document.getElementById('newFilesInput');
-            if (fileInput) {
-                fileInput.addEventListener('change', displaySelectedFiles);
-            }
-        });
     </script>
 
     <style>

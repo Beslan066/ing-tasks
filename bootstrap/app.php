@@ -14,7 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
         App\Providers\EventServiceProvider::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
+        // Только редирект для неавторизованных
+        $middleware->redirectGuestsTo('/login');
+
         $middleware->alias([
+            'require.company' => \App\Http\Middleware\RequireCompany::class,
             'haveCompanies' => \App\Http\Middleware\CheckUserCompanies::class,
             'checkUserRole' => \App\Http\Middleware\CheckUserRole::class,
             'isLeader' => \App\Http\Middleware\LeaderMiddleware::class,
@@ -22,7 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'trackUserActivity' => \App\Http\Middleware\TrackUserActivity::class,
         ]);
 
-        // Добавляем trackUserActivity во все веб-запросы
         $middleware->web(append: [
             'trackUserActivity',
         ]);
