@@ -1,5 +1,5 @@
 @if($backgroundEnabled && $backgroundImage)
-    <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden department-card"
+    <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden department-card flex flex-col justify-between"
          data-name="{{ strtolower($department->name) }}"
          data-status="{{ $department->status }}">
         <div class="p-6">
@@ -197,7 +197,7 @@
         </div>
     </div>
 @else
-    <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden department-card"
+    <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden department-card flex flex-col justify-between"
          data-name="{{ strtolower($department->name) }}"
          data-status="{{ $department->status }}">
         <div class="p-6">
@@ -315,7 +315,7 @@
                     <div class="flex items-center space-x-3">
                         @if($department->supervisor)
                             <div class="flex items-center">
-                                <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold mr-2">
+                                <div class="w-8 h-8 rounded-full bg-primary text-gray-700 flex items-center justify-center text-sm font-bold mr-2 border border-gray-300">
                                     {{ substr($department->supervisor->name, 0, 2) }}
                                 </div>
                                 <div>

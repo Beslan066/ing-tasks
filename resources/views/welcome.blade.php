@@ -165,7 +165,7 @@
                 <div class="relative flex-1 max-w-xs">
                     <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-white text-sm"></i>
                     <input type="text" id="taskSearchInput" placeholder="Поиск по названию..."
-                           class="w-full pl-9 pr-3 py-2 border-none rounded-lg text-sm focus:outline-none bg-transparent/20 placeholder:text-white">
+                           class="w-full pl-9 pr-3 py-2 border-none rounded-lg text-sm text-white focus:outline-none bg-transparent/20 placeholder:text-white">
                 </div>
             @else
                 <div class="relative flex-1 max-w-xs">
