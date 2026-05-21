@@ -24,6 +24,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'isLeader' => \App\Http\Middleware\LeaderMiddleware::class,
             'isManager' => \App\Http\Middleware\ManagerMiddleware::class,
             'trackUserActivity' => \App\Http\Middleware\TrackUserActivity::class,
+            'trackUserSession' => \App\Http\Middleware\TrackUserSession::class,
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
 
         $middleware->web(append: [

@@ -1127,4 +1127,14 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return round($bytes, 2) . ' ' . $units[$i];
     }
+
+    public function sessions()
+    {
+        return $this->hasMany(UserSession::class);
+    }
+
+    public function currentSession()
+    {
+        return $this->hasOne(UserSession::class)->where('is_current', true);
+    }
 }

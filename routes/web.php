@@ -549,4 +549,23 @@ Route::middleware(['auth', 'trackUserActivity'])->group(function () {
     Route::delete('/profile/avatar', [ProfileController::class, 'deleteAvatar'])->name('profile.avatar.delete');
 });
 
+
+// Роуты админки
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+
+    Route::get('/', [\App\Http\Controllers\Admin\IndexController::class, 'index'])->name('admin.index');
+
+    Route::get('/users/tracking', [App\Http\Controllers\Admin\UserTrackingController::class, 'index'])
+        ->name('admin.users.tracking');
+    Route::get('/users/map', [App\Http\Controllers\Admin\UserTrackingController::class, 'map'])
+        ->name('admin.users.map');
+    Route::get('/users/{user}', [App\Http\Controllers\Admin\UserTrackingController::class, 'show'])
+        ->name('admin.users.show');
+
+    Route::delete('/sessions/{session}', [App\Http\Controllers\Admin\UserTrackingController::class, 'deleteSession'])
+        ->name('admin.sessions.delete');
+    Route::delete('/users/{user}/clear-sessions', [App\Http\Controllers\Admin\UserTrackingController::class, 'clearSessions'])
+        ->name('admin.users.clear-sessions');
+});
+
 require __DIR__.'/auth.php';

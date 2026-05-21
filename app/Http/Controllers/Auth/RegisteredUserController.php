@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Traits\DeviceInfoTrait;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,9 @@ use Intervention\Image\Image;
 
 class RegisteredUserController extends Controller
 {
+
+    use DeviceInfoTrait;
+
     /**
      * Display the registration view.
      */
@@ -59,6 +63,22 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'avatar' => $avatarPath,
         ]);
+
+        // ========== ДОБАВЛЯЕМ ОТСЛЕЖИВАНИЕ ПРИ РЕГИСТРАЦИИ ==========
+        // Собираем информацию об устройстве
+        $deviceInfo = $this->getDeviceInfo($request);
+
+        // Получаем геолокацию по IP
+        $geoInfo = $this->getGeolocation($request->ip());
+
+        // Создаем сессию пользователя
+        UserSession::create(array_merge([
+            'user_id' => $user->id,
+            'ip_address' => $request->ip(),
+            'last_activity' => now(),
+            'is_current' => true,
+        ], $deviceInfo, $geoInfo));
+        // =====================================================
 
         event(new Registered($user));
 
@@ -147,4 +167,5 @@ class RegisteredUserController extends Controller
         imagedestroy($sourceImage);
         imagedestroy($thumbnail);
     }
+
 }

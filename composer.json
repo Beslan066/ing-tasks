@@ -15,7 +15,8 @@
         "laravel/tinker": "^2.10.1",
         "maatwebsite/excel": "^1.1",
         "pusher/pusher-php-server": "^7.2",
-        "socialiteproviders/yandex": "^4.1"
+        "socialiteproviders/yandex": "^4.1",
+        "whichbrowser/parser": "^2.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
