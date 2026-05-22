@@ -4,10 +4,172 @@
     @php
         $backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
         $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
+        $company = auth()->check() ? auth()->user()->company : null;
     @endphp
-    <!-- Страница статистики компании -->
+
+        <!-- Страница статистики компании -->
     <div id="company-stats">
-        <!-- Заголовок и кнопка -->
+
+        <!-- ИНФОРМАЦИЯ О КОМПАНИИ И КНОПКА УЛУЧШЕНИЯ -->
+        @if($company)
+            <div class="mb-6 md:mb-8">
+                @if($backgroundEnabled && $backgroundImage)
+                    <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <i class="fas fa-building-columns text-3xl text-white"></i>
+                                    <h2 class="text-2xl md:text-3xl font-bold text-white">{{ $company->name }}</h2>
+                                    @if($company->verified)
+                                        <i class="fas fa-check-circle text-blue-400 text-xl" title="Верифицирована"></i>
+                                    @endif
+                                </div>
+                                <div class="flex flex-wrap gap-3 text-sm text-white/80">
+                                    @if($company->phone)
+                                        <span><i class="fas fa-phone mr-1"></i> {{ $company->phone }}</span>
+                                    @endif
+                                    <span><i class="fas fa-users mr-1"></i> Сотрудников: {{ $company->getActiveUsersCount() }}</span>
+                                    <span><i class="fas fa-tasks mr-1"></i> Всего задач: {{ $company->getTasksCount() }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                @if($company->license_type !== 'premium')
+                                    <button onclick="openUpgradeModal()"
+                                            class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105 flex items-center gap-2 text-sm md:text-base">
+                                        <i class="fas fa-crown"></i>
+                                        <span>Улучшить до Премиум</span>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                @else
+                                    <span class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-lg inline-flex items-center gap-2 text-sm md:text-base">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Премиум</span>
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/20">
+                            <div class="flex flex-wrap justify-between items-center gap-3">
+                                <div>
+                                    <span class="text-sm text-white/70">Тарифный план:</span>
+                                    <span class="ml-2 px-2 py-1 rounded-full text-xs font-semibold
+                                        @if($company->license_type === 'premium') bg-gradient-to-r from-purple-500 to-pink-500 text-white
+                                        @elseif($company->license_type === 'optimal') bg-blue-500 text-white
+                                        @else bg-gray-600 text-white @endif">
+                                        {{ $company->getLicenseTypeName() }}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-white/70">
+                                    <i class="fas fa-database mr-1"></i>
+                                    Хранилище: {{ $company->getFormattedUsedStorage() }} / {{ $company->getFormattedStorageLimit() }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 border border-gray-100">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <i class="fas fa-building text-3xl text-green-600"></i>
+                                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800">{{ $company->name }}</h2>
+                                    @if($company->verified)
+                                        <i class="fas fa-check-circle text-blue-500 text-xl" title="Верифицирована"></i>
+                                    @endif
+                                </div>
+                                <div class="flex flex-wrap gap-3 text-sm text-gray-600">
+                                    @if($company->phone)
+                                        <span><i class="fas fa-phone mr-1 text-green-500"></i> {{ $company->phone }}</span>
+                                    @endif
+                                    <span><i class="fas fa-users mr-1 text-green-500"></i> Сотрудников: {{ $company->getActiveUsersCount() }}</span>
+                                    <span><i class="fas fa-tasks mr-1 text-green-500"></i> Всего задач: {{ $company->getTasksCount() }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                @if($company->license_type !== 'premium')
+                                    <button onclick="openUpgradeModal()"
+                                            class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105 flex items-center gap-2 text-sm md:text-base">
+                                        <i class="fas fa-crown"></i>
+                                        <span>Улучшить до Премиум</span>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                @else
+                                    <span class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-lg inline-flex items-center gap-2 text-sm md:text-base">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Премиум</span>
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <div class="flex flex-wrap justify-between items-center gap-3">
+                                <div>
+                                    <span class="text-sm text-gray-600">Тарифный план:</span>
+                                    <span class="ml-2 px-2 py-1 rounded-full text-xs font-semibold
+                                        @if($company->license_type === 'premium') bg-gradient-to-r from-purple-500 to-pink-500 text-white
+                                        @elseif($company->license_type === 'optimal') bg-blue-500 text-white
+                                        @else bg-gray-500 text-white @endif">
+                                        {{ $company->getLicenseTypeName() }}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    <i class="fas fa-database mr-1 text-green-500"></i>
+                                    Хранилище: {{ $company->getFormattedUsedStorage() }} / {{ $company->getFormattedStorageLimit() }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        @endif
+
+        <!-- Модальное окно улучшения до Премиум -->
+        <div id="upgradeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4 backdrop-blur-md">
+            <div class="bg-white rounded-lg p-4 md:p-6 w-full max-w-md mx-4">
+                <div class="text-center mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-crown text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Улучшение до Премиум</h3>
+                    <p class="text-gray-600 text-sm">
+                        Вы уверены, что хотите перейти на тариф <strong class="text-yellow-600">Премиум</strong>?
+                    </p>
+                </div>
+
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 mb-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-gem text-purple-600"></i>
+                        <span class="font-semibold text-gray-800">Преимущества Премиум:</span>
+                    </div>
+                    <ul class="text-sm text-gray-700 space-y-1 ml-6">
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> 1 ТБ хранилища</li>
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Файлы до 1 ГБ</li>
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Приоритетная поддержка</li>
+                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Расширенная аналитика</li>
+                    </ul>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <form action="" method="POST" class="flex-1">
+                        @csrf
+                        <input type="hidden" name="new_license_type" value="premium">
+                        <button type="submit"
+                                class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2">
+                            <i class="fas fa-crown"></i>
+                            <span>Да, улучшить</span>
+                        </button>
+                    </form>
+                    <button onclick="closeUpgradeModal()"
+                            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg transition duration-200">
+                        Отмена
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Заголовок и кнопка (существующий код) -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
             <div>
                 @if($backgroundEnabled && $backgroundImage)
@@ -36,32 +198,32 @@
                     </button>
                 @endif
                 <button id="newTaskBtn"
-                    class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base">
+                        class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base">
                     <i class="fas fa-plus"></i>
                     <span>Новая задача</span>
                 </button>
             </div>
         </div>
 
-        <!-- Фильтры и поиск -->
+        <!-- Фильтры и поиск (существующий код) -->
         @if($backgroundEnabled && $backgroundImage)
             <div id="filtersPanel" class="backdrop-blur-md bg-transparent/20 rounded-lg border-gray-200 hidden mb-[20px]">
                 <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <form method="GET" action="{{ route('tasks.admin') }}"
-                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                         <!-- Поиск -->
                         <div class="sm:col-span-2 lg:col-span-1">
                             <label class="block text-sm font-medium text-white mb-1">Поиск</label>
                             <input type="text" name="search" value="{{ request('search') }}"
-                                class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10"
-                                placeholder="Название или описание...">
+                                   class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10"
+                                   placeholder="Название или описание...">
                         </div>
 
                         <!-- Статус -->
                         <div>
                             <label class="block text-sm font-medium text-white mb-1">Статус</label>
                             <select name="status"
-                                class="w-full border border-gray-800 rounded-lg appearance-none px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                                    class="w-full border border-gray-800 rounded-lg appearance-none px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
                                 <option value="">Все статусы</option>
                                 @foreach($filterData['statuses'] as $status)
                                     <option class="text-gray-800" value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
@@ -75,7 +237,7 @@
                         <div>
                             <label class="block text-sm font-medium text-white mb-1">Исполнитель</label>
                             <select name="user_id"
-                                class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                                    class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
                                 <option value="">Все исполнители</option>
                                 @foreach($filterData['users'] as $user)
                                     <option class="text-gray-800" value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
@@ -89,7 +251,7 @@
                         <div>
                             <label class="block text-sm font-medium text-white mb-1">Отдел</label>
                             <select name="department_id"
-                                class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                                    class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
                                 <option value="">Все отделы</option>
                                 @foreach($filterData['departments'] as $department)
                                     <option class="text-gray-800" value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
@@ -103,7 +265,7 @@
                         <div>
                             <label class="block text-sm font-medium text-white mb-1">Приоритет</label>
                             <select name="priority"
-                                class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm  text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                                    class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
                                 <option value="">Все приоритеты</option>
                                 @foreach($filterData['priorities'] as $priority)
                                     <option class="text-gray-800" value="{{ $priority }}" {{ request('priority') == $priority ? 'selected' : '' }}>
@@ -115,9 +277,9 @@
 
                         <!-- Категория -->
                         <div>
-                            <label class="block text-sm  text-white mb-1">Категория</label>
+                            <label class="block text-sm text-white mb-1">Категория</label>
                             <select name="category_id"
-                                class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm  text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                                    class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
                                 <option value="">Все категории</option>
                                 @foreach($filterData['categories'] as $category)
                                     <option class="text-gray-800" value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -130,11 +292,11 @@
                         <!-- Кнопки фильтра -->
                         <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
                             <button type="submit"
-                                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base">
+                                    class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base">
                                 Применить фильтры
                             </button>
                             <a href="{{ route('tasks.admin') }}"
-                                class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm md:text-base">
+                               class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm md:text-base">
                                 Сбросить
                             </a>
                         </div>
@@ -145,20 +307,20 @@
             <div id="filtersPanel" class="bg-white rounded-lg border-gray-200 hidden mb-[20px]">
                 <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <form method="GET" action="{{ route('tasks.admin') }}"
-                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                         <!-- Поиск -->
                         <div class="sm:col-span-2 lg:col-span-1">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
                             <input type="text" name="search" value="{{ request('search') }}"
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white"
-                                placeholder="Название или описание...">
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white"
+                                   placeholder="Название или описание...">
                         </div>
 
                         <!-- Статус -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
                             <select name="status"
-                                class="w-full border border-gray-300 rounded-lg appearance-none px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                                    class="w-full border border-gray-300 rounded-lg appearance-none px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
                                 <option value="" class="appearance-none">Все статусы</option>
                                 @foreach($filterData['statuses'] as $status)
                                     <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
@@ -172,7 +334,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Исполнитель</label>
                             <select name="user_id"
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
                                 <option value="">Все исполнители</option>
                                 @foreach($filterData['users'] as $user)
                                     <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
@@ -186,7 +348,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
                             <select name="department_id"
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-500 bg-white">
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-500 bg-white">
                                 <option value="">Все отделы</option>
                                 @foreach($filterData['departments'] as $department)
                                     <option value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
@@ -200,7 +362,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
                             <select name="priority"
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
                                 <option value="">Все приоритеты</option>
                                 @foreach($filterData['priorities'] as $priority)
                                     <option value="{{ $priority }}" {{ request('priority') == $priority ? 'selected' : '' }}>
@@ -214,7 +376,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
                             <select name="category_id"
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
                                 <option value="">Все категории</option>
                                 @foreach($filterData['categories'] as $category)
                                     <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -227,11 +389,11 @@
                         <!-- Кнопки фильтра -->
                         <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
                             <button type="submit"
-                                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base">
+                                    class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base">
                                 Применить фильтры
                             </button>
                             <a href="{{ route('tasks.admin') }}"
-                                class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm md:text-base">
+                               class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm md:text-base">
                                 Сбросить
                             </a>
                         </div>
@@ -255,7 +417,7 @@
                             <i class="fas fa-tasks text-blue-600 text-sm md:text-xl"></i>
                         </div>
                     </div>
-                    <div class="text-xl md:text-3xl font-bold text-white">{{ $stats['total'] }}</div>
+                    <div class="text-xl md:text-2xl font-bold text-white">{{ $stats['total'] }}</div>
                 </div>
 
                 <!-- Назначены -->
@@ -269,7 +431,7 @@
                             <i class="fas fa-user-check text-purple-600 text-sm md:text-xl"></i>
                         </div>
                     </div>
-                    <div class="text-xl md:text-3xl font-bold text-white">{{ $stats['assigned'] }}</div>
+                    <div class="text-xl md:text-2xl font-bold text-white">{{ $stats['assigned'] }}</div>
                 </div>
 
                 <!-- В работе -->
@@ -283,7 +445,7 @@
                             <i class="fas fa-cogs text-white text-sm md:text-xl"></i>
                         </div>
                     </div>
-                    <div class="text-xl md:text-3xl font-bold text-white">{{ $stats['in_progress'] }}</div>
+                    <div class="text-xl md:text-2xl font-bold text-white">{{ $stats['in_progress'] }}</div>
                 </div>
 
                 <!-- На проверке -->
@@ -297,7 +459,7 @@
                             <i class="fas fa-search text-yellow-600 text-sm md:text-xl"></i>
                         </div>
                     </div>
-                    <div class="text-xl md:text-3xl font-bold text-white">{{ $stats['review'] }}</div>
+                    <div class="text-xl md:text-2xl font-bold text-white">{{ $stats['review'] }}</div>
                 </div>
 
                 <!-- Выполнено -->
@@ -311,7 +473,7 @@
                             <i class="fas fa-check-circle text-green-600 text-sm md:text-xl"></i>
                         </div>
                     </div>
-                    <div class="text-xl md:text-3xl font-bold text-white">{{ $stats['completed'] }}</div>
+                    <div class="text-xl md:text-2xl font-bold text-white">{{ $stats['completed'] }}</div>
                 </div>
 
                 <!-- Просрочено -->
@@ -325,7 +487,7 @@
                             <i class="fas fa-exclamation-circle text-red-600 text-sm md:text-xl"></i>
                         </div>
                     </div>
-                    <div class="text-xl md:text-3xl font-bold text-white">{{ $stats['overdue'] }}</div>
+                    <div class="text-xl md:text-2xl font-bold text-white">{{ $stats['overdue'] }}</div>
                 </div>
             </div>
         @else
@@ -425,7 +587,7 @@
                     </div>
                     <div class="w-full sm:w-auto">
                         <select id="sortSelect"
-                            class="w-full  sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
+                                class="w-full  sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
                             <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
                             <option class="text-gray-800" value="created_at_asc">Старые сначала</option>
                             <option class="text-gray-800" value="deadline_asc">Ближайший дедлайн</option>
@@ -443,87 +605,87 @@
                             <!-- Десктопный вид таблицы -->
                             <table class="min-w-full  hidden md:table">
                                 <thead class="bg-transparent/20">
-                                    <tr class="border-none">
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Задача</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Статус</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Исполнитель</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Отдел</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Приоритет</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Автор</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Дедлайн</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Действия</th>
-                                    </tr>
+                                <tr class="border-none">
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Задача</th>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Статус</th>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Исполнитель</th>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Отдел</th>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Приоритет</th>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Автор</th>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Дедлайн</th>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Действия</th>
+                                </tr>
                                 </thead>
                                 <tbody class="bg-transparent/10">
-                                    @forelse($tasks as $task)
-                                        <tr
-                                            class="hover:bg-gray-50 transition text-white  hover:text-gray-900 @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif">
-                                            <td class="px-3 py-4 cursor-pointer   hover:text-gray-900"
-                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                                <div class="flex items-start ">
-                                                    <div class="ml-2 hover:text-gray-900">
-                                                        <div class="text-sm font-medium flex items-center flex-wrap gap-1">
-                                                            <span class="truncate max-w-[250px]">{{ $task->name }}</span>
-                                                            @if($task->trashed())
-                                                                <span
-                                                                    class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap">
+                                @forelse($tasks as $task)
+                                    <tr
+                                        class="hover:bg-gray-50 transition text-white  hover:text-gray-900 @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif">
+                                        <td class="px-3 py-4 cursor-pointer   hover:text-gray-900"
+                                            onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                            <div class="flex items-start ">
+                                                <div class="ml-2 hover:text-gray-900">
+                                                    <div class="text-sm font-medium flex items-center flex-wrap gap-1">
+                                                        <span class="truncate max-w-[250px]">{{ $task->name }}</span>
+                                                        @if($task->trashed())
+                                                            <span
+                                                                class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap">
                                                                     <i class="fas fa-trash mr-1"></i>Удалена
                                                                 </span>
-                                                            @endif
-                                                        </div>
-                                                        <div class="flex flex-wrap gap-1 mt-2">
-                                                            @if($task->category)
-                                                                <span
-                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white">
+                                                        @endif
+                                                    </div>
+                                                    <div class="flex flex-wrap gap-1 mt-2">
+                                                        @if($task->category)
+                                                            <span
+                                                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white">
                                                                     {{ $task->category->name }}
                                                                 </span>
-                                                            @endif
-                                                            @if($task->rejections_count > 0)
-                                                                <span
-                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
-                                                                    title="Количество отказов: {{ $task->rejections_count }}">
+                                                        @endif
+                                                        @if($task->rejections_count > 0)
+                                                            <span
+                                                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                                                                title="Количество отказов: {{ $task->rejections_count }}">
                                                                     <i class="fas fa-user-slash mr-1"></i>
                                                                     {{ $task->rejections_count }}
                                                                 </span>
-                                                            @endif
-                                                            @if($task->trashed() && $task->deletedBy)
-                                                                <span
-                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                                                                    title="Удалил: {{ $task->deletedBy->name }}">
+                                                        @endif
+                                                        @if($task->trashed() && $task->deletedBy)
+                                                            <span
+                                                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                                                title="Удалил: {{ $task->deletedBy->name }}">
                                                                     <i class="fas fa-user-times mr-1"></i>
                                                                     Удалил: {{ $task->deletedBy->name }}
                                                                 </span>
-                                                            @endif
-                                                        </div>
+                                                        @endif
                                                     </div>
                                                 </div>
-                                            </td>
-                                            <td class="px-3 py-4 cursor-pointer whitespace-nowrap"
-                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                                @if($task->trashed())
-                                                    <span
-                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                            </div>
+                                        </td>
+                                        <td class="px-3 py-4 cursor-pointer whitespace-nowrap"
+                                            onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                            @if($task->trashed())
+                                                <span
+                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
                                                         Удалена
                                                     </span>
-                                                @else
-                                                    <span
-                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            @else
+                                                <span
+                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                                                                                                                                                                                                                                                                                 {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
                                                                                                                                                                                                                                                                                                 {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
                                                                                                                                                                                                                                                                                                 {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
@@ -532,112 +694,112 @@
                                                         {{ $task->status }}
                                                     </span>
 
-                                                @endif
-                                            </td>
-                                            <td class="px-3 py-4 cursor-pointer"
-                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                                @if($task->user)
-                                                    <div class="flex items-center">
-                                                        <div
-                                                            class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium">
-                                                            {{ substr($task->user->name, 0, 2) }}
+                                            @endif
+                                        </td>
+                                        <td class="px-3 py-4 cursor-pointer"
+                                            onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                            @if($task->user)
+                                                <div class="flex items-center">
+                                                    <div
+                                                        class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium">
+                                                        {{ substr($task->user->name, 0, 2) }}
+                                                    </div>
+                                                    <div class="ml-2">
+                                                        <div class="text-sm font-medium truncate max-w-[100px]">
+                                                            {{ $task->user->name }}
                                                         </div>
-                                                        <div class="ml-2">
-                                                            <div class="text-sm font-medium truncate max-w-[100px]">
-                                                                {{ $task->user->name }}
-                                                            </div>
-                                                            <div class="text-xs text-gray-500 truncate max-w-[100px]">
-                                                                {{ $task->user->email }}
-                                                            </div>
+                                                        <div class="text-xs text-gray-500 truncate max-w-[100px]">
+                                                            {{ $task->user->email }}
                                                         </div>
                                                     </div>
-                                                @else
-                                                    <span class="text-sm text-gray-500">Не назначен</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-3 py-4 cursor-pointer whitespace-nowrap text-sm text-gray-500"
-                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                                {{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : 'Без отдела') }}
-                                            </td>
-                                            <td class="px-3 py-4 cursor-pointer whitespace-nowrap"
-                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                                @php
-                                                    $priorityColors = [
-                                                        'низкий' => 'bg-gray-100 text-gray-800',
-                                                        'средний' => 'bg-blue-100 text-blue-800',
-                                                        'высокий' => 'bg-orange-100 text-orange-800',
-                                                        'критический' => 'bg-red-100 text-red-800'
-                                                    ];
-                                                @endphp
-                                                @if(!$task->trashed())
-                                                    <span
-                                                        class="px-2 py-1 text-xs font-semibold rounded-full {{ $priorityColors[$task->priority] ?? 'bg-gray-100 text-gray-800' }}">
+                                                </div>
+                                            @else
+                                                <span class="text-sm text-gray-500">Не назначен</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-3 py-4 cursor-pointer whitespace-nowrap text-sm text-gray-500"
+                                            onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                            {{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : 'Без отдела') }}
+                                        </td>
+                                        <td class="px-3 py-4 cursor-pointer whitespace-nowrap"
+                                            onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                            @php
+                                                $priorityColors = [
+                                                    'низкий' => 'bg-gray-100 text-gray-800',
+                                                    'средний' => 'bg-blue-100 text-blue-800',
+                                                    'высокий' => 'bg-orange-100 text-orange-800',
+                                                    'критический' => 'bg-red-100 text-red-800'
+                                                ];
+                                            @endphp
+                                            @if(!$task->trashed())
+                                                <span
+                                                    class="px-2 py-1 text-xs font-semibold rounded-full {{ $priorityColors[$task->priority] ?? 'bg-gray-100 text-gray-800' }}">
                                                         {{ $task->priority }}
                                                     </span>
-                                                @else
-                                                    <span class="text-sm text-gray-400">—</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-3 py-4 cursor-pointer whitespace-nowrap"
-                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                                @if($task->author)
-                                                    <div class="text-sm font-medium truncate max-w-[100px]">{{ $task->author->name }}
-                                                    </div>
-                                                @else
-                                                    <span class="text-sm">Нет автора</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-3 py-4 cursor-pointer"
-                                                onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                                @if($task->deadline && !$task->trashed())
-                                                    <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }} text-sm">
-                                                        {{ $task->deadline->format('d.m.Y H:i') }}
-                                                    </div>
-                                                    <div class="text-xs text-gray-400">
-                                                        {{ $task->getTimeRemaining() }}
-                                                    </div>
-                                                @else
-                                                    <span class="text-gray-400 text-sm">—</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-3 py-4 whitespace-nowrap">
-                                                @if($task->trashed())
-                                                    <span class="text-gray-400 text-sm">Действия недоступны</span>
-                                                @else
-                                                    <div class="flex space-x-2">
-                                                        <button onclick="openEditModal({{ $task->id }})"
+                                            @else
+                                                <span class="text-sm text-gray-400">—</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-3 py-4 cursor-pointer whitespace-nowrap"
+                                            onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                            @if($task->author)
+                                                <div class="text-sm font-medium truncate max-w-[100px]">{{ $task->author->name }}
+                                                </div>
+                                            @else
+                                                <span class="text-sm">Нет автора</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-3 py-4 cursor-pointer"
+                                            onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                            @if($task->deadline && !$task->trashed())
+                                                <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }} text-sm">
+                                                    {{ $task->deadline->format('d.m.Y H:i') }}
+                                                </div>
+                                                <div class="text-xs text-gray-400">
+                                                    {{ $task->getTimeRemaining() }}
+                                                </div>
+                                            @else
+                                                <span class="text-gray-400 text-sm">—</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-3 py-4 whitespace-nowrap">
+                                            @if($task->trashed())
+                                                <span class="text-gray-400 text-sm">Действия недоступны</span>
+                                            @else
+                                                <div class="flex space-x-2">
+                                                    <button onclick="openEditModal({{ $task->id }})"
                                                             class="text-yellow-700 hover:text-yellow-900 p-1" title="Редактировать">
-                                                            <i class="fa-solid fa-file-pen"></i>
-                                                        </button>
-                                                        @if($task->status === 'на проверке')
-                                                            <button onclick="returnToWork({{ $task->id }})"
+                                                        <i class="fa-solid fa-file-pen"></i>
+                                                    </button>
+                                                    @if($task->status === 'на проверке')
+                                                        <button onclick="returnToWork({{ $task->id }})"
                                                                 class="text-orange-600 hover:text-orange-900 p-1 text-sm"
                                                                 title="Вернуть на доработку">
-                                                                <i class="fas fa-redo"></i>
-                                                            </button>
-                                                        @endif
-                                                        @if($task->author_id === Auth::id())
-                                                            <button onclick="openDeleteModal({{ $task->id }})"
+                                                            <i class="fas fa-redo"></i>
+                                                        </button>
+                                                    @endif
+                                                    @if($task->author_id === Auth::id())
+                                                        <button onclick="openDeleteModal({{ $task->id }})"
                                                                 class="text-red-600 hover:text-red-900 p-1" title="Удалить">
-                                                                <i class="fa-solid fa-trash"></i>
-                                                            </button>
-                                                        @else
-                                                            <button class="text-gray-400 cursor-not-allowed p-1"
+                                                            <i class="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    @else
+                                                        <button class="text-gray-400 cursor-not-allowed p-1"
                                                                 title="Можно удалять только свои задачи">
-                                                                <i class="fa-solid fa-trash"></i>
-                                                            </button>
-                                                        @endif
-                                                    </div>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
-                                                Задачи не найдены
-                                            </td>
-                                        </tr>
-                                    @endforelse
+                                                            <i class="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
+                                            Задачи не найдены
+                                        </td>
+                                    </tr>
+                                @endforelse
                                 </tbody>
                             </table>
 
@@ -645,7 +807,7 @@
                             <div class="md:hidden space-y-3">
                                 @forelse($tasks as $task)
                                     <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm cursor-pointer hover:shadow-md transition @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif"
-                                        onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})">
+                                         onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})">
                                         <!-- Заголовок карточки -->
                                         <div class="flex justify-between items-start mb-3">
                                             <div class="flex-1">
@@ -664,12 +826,12 @@
                                             <div class="flex space-x-1">
                                                 @if(!$task->trashed())
                                                     <button onclick="openEditModal({{ $task->id }})"
-                                                        class="text-yellow-700 hover:text-yellow-900 p-1" title="Редактировать">
+                                                            class="text-yellow-700 hover:text-yellow-900 p-1" title="Редактировать">
                                                         <i class="fa-solid fa-file-pen"></i>
                                                     </button>
                                                     @if($task->author_id === Auth::id())
                                                         <button onclick="openDeleteModal({{ $task->id }})"
-                                                            class="text-red-600 hover:text-red-900 p-1" title="Удалить">
+                                                                class="text-red-600 hover:text-red-900 p-1" title="Удалить">
                                                             <i class="fa-solid fa-trash"></i>
                                                         </button>
                                                     @endif
@@ -792,7 +954,7 @@
                                             @if(!$task->trashed() && $task->status === 'на проверке')
                                                 <div class="pt-2 border-t">
                                                     <button onclick="returnToWork({{ $task->id }})"
-                                                        class="w-full bg-orange-100 text-orange-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-200 transition flex items-center justify-center space-x-2">
+                                                            class="w-full bg-orange-100 text-orange-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-200 transition flex items-center justify-center space-x-2">
                                                         <i class="fas fa-redo"></i>
                                                         <span>Вернуть на доработку</span>
                                                     </button>
@@ -826,7 +988,7 @@
                     </div>
                     <div class="w-full sm:w-auto">
                         <select id="sortSelect"
-                            class="w-full sm:w-48 border-none rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
+                                class="w-full sm:w-48 border-none rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
                             <option value="created_at_desc">Новые сначала</option>
                             <option value="created_at_asc">Старые сначала</option>
                             <option value="deadline_asc">Ближайший дедлайн</option>
@@ -844,249 +1006,250 @@
                             <!-- Десктопный вид таблицы -->
                             <table class="min-w-full divide-y divide-gray-300 hidden md:table">
                                 <thead class="bg-gray-50">
-                                    <tr>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Задача</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Статус</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Исполнитель</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Отдел</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Приоритет</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Автор</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Дедлайн</th>
-                                        <th
-                                            class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Действия</th>
-                                    </tr>
+                                <tr>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Задача</th>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Статус</th>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Исполнитель</th>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Отдел</th>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Приоритет</th>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Автор</th>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Дедлайн</th>
+                                    <th
+                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Действия</th>
+                                </tr>
                                 </thead>
                                 <tbody class="bg-white">
-                                    @forelse($tasks as $task)
-                                        <tr
-                                            class="hover:bg-gray-50 transition @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif">
-                                            <td class="px-3 py-4">
-                                                <div class="flex items-start">
-                                                    <div class="ml-2">
-                                                        <div
-                                                            class="text-sm font-medium text-gray-900 flex items-center flex-wrap gap-1">
-                                                            <span class="truncate max-w-[150px]">{{ $task->name }}</span>
-                                                            @if($task->trashed())
-                                                                <span
-                                                                    class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap">
+                                @forelse($tasks as $task)
+                                    <tr
+                                        class="hover:bg-gray-50 transition @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif">
+                                        <td class="px-3 py-4">
+                                            <div class="flex items-start cursor-pointer">
+                                                <div class="ml-2"
+                                                     onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                                    <div
+                                                        class="text-sm font-medium text-gray-900 flex items-center flex-wrap gap-1">
+                                                        <span class="truncate max-w-[150px]">{{ $task->name }}</span>
+                                                        @if($task->trashed())
+                                                            <span
+                                                                class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap">
                                                                     <i class="fas fa-trash mr-1"></i>Удалена
                                                                 </span>
-                                                            @endif
-                                                        </div>
-                                                        <div class="text-xs text-gray-500 truncate max-w-[200px] mt-1">
-                                                            {{ $task->description }}
-                                                        </div>
-                                                        <div class="flex flex-wrap gap-1 mt-2">
-                                                            @if($task->category)
-                                                                <span
-                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white">
+                                                        @endif
+                                                    </div>
+                                                    <div class="text-xs text-gray-500 truncate max-w-[200px] mt-1">
+                                                        {{ $task->description }}
+                                                    </div>
+                                                    <div class="flex flex-wrap gap-1 mt-2">
+                                                        @if($task->category)
+                                                            <span
+                                                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white">
                                                                     {{ $task->category->name }}
                                                                 </span>
-                                                            @endif
-                                                            @if($task->rejections_count > 0)
-                                                                <span
-                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
-                                                                    title="Количество отказов: {{ $task->rejections_count }}">
+                                                        @endif
+                                                        @if($task->rejections_count > 0)
+                                                            <span
+                                                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                                                                title="Количество отказов: {{ $task->rejections_count }}">
                                                                     <i class="fas fa-user-slash mr-1"></i>
                                                                     {{ $task->rejections_count }}
                                                                 </span>
-                                                            @endif
-                                                            @if($task->trashed() && $task->deletedBy)
-                                                                <span
-                                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                                                                    title="Удалил: {{ $task->deletedBy->name }}">
+                                                        @endif
+                                                        @if($task->trashed() && $task->deletedBy)
+                                                            <span
+                                                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                                                title="Удалил: {{ $task->deletedBy->name }}">
                                                                     <i class="fas fa-user-times mr-1"></i>
                                                                     Удалил: {{ $task->deletedBy->name }}
                                                                 </span>
-                                                            @endif
-                                                        </div>
+                                                        @endif
                                                     </div>
                                                 </div>
-                                            </td>
-                                            <td class="px-3 py-4 whitespace-nowrap">
-                                                @if($task->trashed())
-                                                    <span
-                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                            </div>
+                                        </td>
+                                        <td class="px-3 py-4 whitespace-nowrap">
+                                            @if($task->trashed())
+                                                <span
+                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
                                                         Удалена
                                                     </span>
-                                                @else
-                                                    <span
-                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
+                                            @else
+                                                <span
+                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                                {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
+                                                                {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
+                                                                {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                                                {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
+                                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
                                                         {{ $task->status }}
                                                     </span>
 
-                                                @endif
-                                            </td>
-                                            <td class="px-3 py-4">
-                                                @if($task->user)
-                                                    <div class="flex items-center">
-                                                        <div
-                                                            class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium">
-                                                            {{ substr($task->user->name, 0, 2) }}
+                                            @endif
+                                        </td>
+                                        <td class="px-3 py-4">
+                                            @if($task->user)
+                                                <div class="flex items-center">
+                                                    <div
+                                                        class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium">
+                                                        {{ substr($task->user->name, 0, 2) }}
+                                                    </div>
+                                                    <div class="ml-2">
+                                                        <div class="text-sm font-medium text-gray-900 truncate max-w-[100px]">
+                                                            {{ $task->user->name }}
                                                         </div>
-                                                        <div class="ml-2">
-                                                            <div class="text-sm font-medium text-gray-900 truncate max-w-[100px]">
-                                                                {{ $task->user->name }}
-                                                            </div>
-                                                            <div class="text-xs text-gray-500 truncate max-w-[100px]">
-                                                                {{ $task->user->email }}
-                                                            </div>
+                                                        <div class="text-xs text-gray-500 truncate max-w-[100px]">
+                                                            {{ $task->user->email }}
                                                         </div>
                                                     </div>
-                                                @else
-                                                    <span class="text-sm text-gray-500">Не назначен</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : 'Без отдела') }}
-                                            </td>
-                                            <td class="px-3 py-4 whitespace-nowrap">
-                                                @php
-                                                    $priorityColors = [
-                                                        'низкий' => 'bg-gray-100 text-gray-800',
-                                                        'средний' => 'bg-blue-100 text-blue-800',
-                                                        'высокий' => 'bg-orange-100 text-orange-800',
-                                                        'критический' => 'bg-red-100 text-red-800'
-                                                    ];
-                                                @endphp
-                                                @if(!$task->trashed())
-                                                    <span
-                                                        class="px-2 py-1 text-xs font-semibold rounded-full {{ $priorityColors[$task->priority] ?? 'bg-gray-100 text-gray-800' }}">
+                                                </div>
+                                            @else
+                                                <span class="text-sm text-gray-500">Не назначен</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : 'Без отдела') }}
+                                        </td>
+                                        <td class="px-3 py-4 whitespace-nowrap">
+                                            @php
+                                                $priorityColors = [
+                                                    'низкий' => 'bg-gray-100 text-gray-800',
+                                                    'средний' => 'bg-blue-100 text-blue-800',
+                                                    'высокий' => 'bg-orange-100 text-orange-800',
+                                                    'критический' => 'bg-red-100 text-red-800'
+                                                ];
+                                            @endphp
+                                            @if(!$task->trashed())
+                                                <span
+                                                    class="px-2 py-1 text-xs font-semibold rounded-full {{ $priorityColors[$task->priority] ?? 'bg-gray-100 text-gray-800' }}">
                                                         {{ $task->priority }}
                                                     </span>
-                                                @else
-                                                    <span class="text-sm text-gray-400">—</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-3 py-4 whitespace-nowrap">
-                                                @if($task->author)
-                                                    <div class="text-sm font-medium text-gray-900 truncate max-w-[100px]">
-                                                        {{ $task->author->name }}
-                                                    </div>
-                                                @else
-                                                    <span class="text-sm text-gray-500">Нет автора</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-3 py-4">
-                                                @if($task->deadline && !$task->trashed())
-                                                    <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }} text-sm">
-                                                        {{ $task->deadline->format('d.m.Y H:i') }}
-                                                    </div>
-                                                    <div class="text-xs text-gray-400">
-                                                        {{ $task->getTimeRemaining() }}
-                                                    </div>
-                                                @else
-                                                    <span class="text-gray-400 text-sm">—</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-3 py-4 whitespace-nowrap">
-                                                @if($task->trashed())
-                                                    <span class="text-gray-400 text-sm">Действия недоступны</span>
-                                                @else
-                                                    <div class="flex space-x-2">
-                                                        <button onclick="openEditModal({{ $task->id }})"
-                                                            class="text-yellow-700 hover:text-yellow-900 p-1" title="Редактировать">
-                                                            <i class="fa-solid fa-file-pen"></i>
-                                                        </button>
-                                                        @if($task->status === 'на проверке')
-                                                            <button onclick="returnToWork({{ $task->id }})"
-                                                                class="text-orange-600 hover:text-orange-900 p-1 text-sm"
-                                                                title="Вернуть на доработку">
-                                                                <i class="fas fa-redo"></i>
-                                                            </button>
-                                                        @endif
-                                                        @if($task->author_id === Auth::id())
-                                                            <button onclick="openDeleteModal({{ $task->id }})"
-                                                                class="text-red-600 hover:text-red-900 p-1" title="Удалить">
-                                                                <i class="fa-solid fa-trash"></i>
-                                                            </button>
-                                                        @else
-                                                            <button class="text-gray-400 cursor-not-allowed p-1"
-                                                                title="Можно удалять только свои задачи">
-                                                                <i class="fa-solid fa-trash"></i>
-                                                            </button>
-                                                        @endif
-                                                    </div>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
-                                                Задачи не найдены
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-
-                            <!-- Мобильный вид таблицы (карточки) -->
-                            <div class="md:hidden space-y-3">
-                                @forelse($tasks as $task)
-                                    <div
-                                        class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif">
-                                        <!-- Заголовок карточки -->
-                                        <div class="flex justify-between items-start mb-3">
-                                            <div class="flex-1">
-                                                <div class="flex items-center flex-wrap gap-2 mb-1">
-                                                    <h3 class="font-semibold text-gray-900 truncate">{{ $task->name }}</h3>
-                                                    @if($task->trashed())
-                                                        <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
-                                                            <i class="fas fa-trash mr-1"></i>Удалена
-                                                        </span>
-                                                    @endif
+                                            @else
+                                                <span class="text-sm text-gray-400">—</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-3 py-4 whitespace-nowrap">
+                                            @if($task->author)
+                                                <div class="text-sm font-medium text-gray-900 truncate max-w-[100px]">
+                                                    {{ $task->author->name }}
                                                 </div>
-                                                <div class="text-sm text-gray-600 mb-2 line-clamp-2">{{ $task->description }}</div>
-                                            </div>
-                                            <div class="flex space-x-1">
-                                                @if(!$task->trashed())
+                                            @else
+                                                <span class="text-sm text-gray-500">Нет автора</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-3 py-4">
+                                            @if($task->deadline && !$task->trashed())
+                                                <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }} text-sm">
+                                                    {{ $task->deadline->format('d.m.Y H:i') }}
+                                                </div>
+                                                <div class="text-xs text-gray-400">
+                                                    {{ $task->getTimeRemaining() }}
+                                                </div>
+                                            @else
+                                                <span class="text-gray-400 text-sm">—</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-3 py-4 whitespace-nowrap">
+                                            @if($task->trashed())
+                                                <span class="text-gray-400 text-sm">Действия недоступны</span>
+                                            @else
+                                                <div class="flex space-x-2">
                                                     <button onclick="openEditModal({{ $task->id }})"
-                                                        class="text-yellow-700 hover:text-yellow-900 p-1" title="Редактировать">
+                                                            class="text-yellow-700 hover:text-yellow-900 p-1" title="Редактировать">
                                                         <i class="fa-solid fa-file-pen"></i>
                                                     </button>
+                                                    @if($task->status === 'на проверке')
+                                                        <button onclick="returnToWork({{ $task->id }})"
+                                                                class="text-orange-600 hover:text-orange-900 p-1 text-sm"
+                                                                title="Вернуть на доработку">
+                                                            <i class="fas fa-redo"></i>
+                                                        </button>
+                                                    @endif
                                                     @if($task->author_id === Auth::id())
                                                         <button onclick="openDeleteModal({{ $task->id }})"
-                                                            class="text-red-600 hover:text-red-900 p-1" title="Удалить">
+                                                                class="text-red-600 hover:text-red-900 p-1" title="Удалить">
+                                                            <i class="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    @else
+                                                        <button class="text-gray-400 cursor-not-allowed p-1"
+                                                                title="Можно удалять только свои задачи">
                                                             <i class="fa-solid fa-trash"></i>
                                                         </button>
                                                     @endif
-                                                @endif
-                                            </div>
-                                        </div>
+                                                </div>
+                                @endif
+                            </table>
+                            </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
+                                        Задачи не найдены
+                                    </td>
+                                </tr>
+                                @endforelse
+                                </tbody>
+                                </table>
 
-                                        <!-- Информация в карточке -->
-                                        <div class="space-y-2">
-                                            <!-- Статус -->
-                                            <div class="flex items-center">
-                                                <span class="text-sm text-gray-600 w-20">Статус:</span>
-                                                @if($task->trashed())
-                                                    <span
-                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                <!-- Мобильный вид таблицы (карточки) -->
+                                <div class="md:hidden space-y-3">
+                                    @forelse($tasks as $task)
+                                        <div
+                                            class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif">
+                                            <!-- Заголовок карточки -->
+                                            <div class="flex justify-between items-start mb-3">
+                                                <div class="flex-1">
+                                                    <div class="flex items-center flex-wrap gap-2 mb-1">
+                                                        <h3 class="font-semibold text-gray-900 truncate">{{ $task->name }}</h3>
+                                                        @if($task->trashed())
+                                                            <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                                                            <i class="fas fa-trash mr-1"></i>Удалена
+                                                        </span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="text-sm text-gray-600 mb-2 line-clamp-2">{{ $task->description }}</div>
+                                                </div>
+                                                <div class="flex space-x-1">
+                                                    @if(!$task->trashed())
+                                                        <button onclick="openEditModal({{ $task->id }})"
+                                                                class="text-yellow-700 hover:text-yellow-900 p-1" title="Редактировать">
+                                                            <i class="fa-solid fa-file-pen"></i>
+                                                        </button>
+                                                        @if($task->author_id === Auth::id())
+                                                            <button onclick="openDeleteModal({{ $task->id }})"
+                                                                    class="text-red-600 hover:text-red-900 p-1" title="Удалить">
+                                                                <i class="fa-solid fa-trash"></i>
+                                                            </button>
+                                                        @endif
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <!-- Информация в карточке -->
+                                            <div class="space-y-2">
+                                                <!-- Статус -->
+                                                <div class="flex items-center">
+                                                    <span class="text-sm text-gray-600 w-20">Статус:</span>
+                                                    @if($task->trashed())
+                                                        <span
+                                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
                                                         Удалена
                                                     </span>
-                                                @else
-                                                    <span
-                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                    @else
+                                                        <span
+                                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
@@ -1094,116 +1257,116 @@
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
                                                         {{ $task->status }}
                                                     </span>
-                                                @endif
-                                            </div>
-
-                                            <!-- Исполнитель -->
-                                            <div class="flex items-center max-[500px]:gap-1">
-                                                <span class="text-sm text-gray-600 w-20 max-[500px]:w-auto">Исполнитель:</span>
-                                                @if($task->user)
-                                                    <div class="flex items-center">
-                                                        <div
-                                                            class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium mr-2">
-                                                            {{ substr($task->user->name, 0, 2) }}
-                                                        </div>
-                                                        <span class="text-sm font-medium">{{ $task->user->name }}</span>
-                                                    </div>
-                                                @else
-                                                    <span class="text-sm text-gray-500">Не назначен</span>
-                                                @endif
-                                            </div>
-
-                                            <!-- Отдел и Приоритет -->
-                                            <div class="grid grid-cols-2 gap-2">
-                                                <div class="flex items-center">
-                                                    <span class="text-sm text-gray-600 w-16">Отдел:</span>
-                                                    <span class="text-sm">{{ $task->department->name ?? '—' }}</span>
+                                                    @endif
                                                 </div>
+
+                                                <!-- Исполнитель -->
                                                 <div class="flex items-center max-[500px]:gap-1">
-                                                    <span class="text-sm text-gray-600 w-16 max-[500px]:w-auto">Приоритет:</span>
-                                                    @if(!$task->trashed())
-                                                        @php
-                                                            $priorityColors = [
-                                                                'низкий' => 'bg-gray-100 text-gray-800',
-                                                                'средний' => 'bg-blue-100 text-blue-800',
-                                                                'высокий' => 'bg-orange-100 text-orange-800',
-                                                                'критический' => 'bg-red-100 text-red-800'
-                                                            ];
-                                                        @endphp
-                                                        <span
-                                                            class="px-2 py-1 text-xs font-semibold rounded-full {{ $priorityColors[$task->priority] ?? 'bg-gray-100 text-gray-800' }}">
+                                                    <span class="text-sm text-gray-600 w-20 max-[500px]:w-auto">Исполнитель:</span>
+                                                    @if($task->user)
+                                                        <div class="flex items-center">
+                                                            <div
+                                                                class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium mr-2">
+                                                                {{ substr($task->user->name, 0, 2) }}
+                                                            </div>
+                                                            <span class="text-sm font-medium">{{ $task->user->name }}</span>
+                                                        </div>
+                                                    @else
+                                                        <span class="text-sm text-gray-500">Не назначен</span>
+                                                    @endif
+                                                </div>
+
+                                                <!-- Отдел и Приоритет -->
+                                                <div class="grid grid-cols-2 gap-2">
+                                                    <div class="flex items-center">
+                                                        <span class="text-sm text-gray-600 w-16">Отдел:</span>
+                                                        <span class="text-sm">{{ $task->department->name ?? '—' }}</span>
+                                                    </div>
+                                                    <div class="flex items-center max-[500px]:gap-1">
+                                                        <span class="text-sm text-gray-600 w-16 max-[500px]:w-auto">Приоритет:</span>
+                                                        @if(!$task->trashed())
+                                                            @php
+                                                                $priorityColors = [
+                                                                    'низкий' => 'bg-gray-100 text-gray-800',
+                                                                    'средний' => 'bg-blue-100 text-blue-800',
+                                                                    'высокий' => 'bg-orange-100 text-orange-800',
+                                                                    'критический' => 'bg-red-100 text-red-800'
+                                                                ];
+                                                            @endphp
+                                                            <span
+                                                                class="px-2 py-1 text-xs font-semibold rounded-full {{ $priorityColors[$task->priority] ?? 'bg-gray-100 text-gray-800' }}">
                                                             {{ $task->priority }}
                                                         </span>
-                                                    @else
-                                                        <span class="text-sm text-gray-400">—</span>
-                                                    @endif
+                                                        @else
+                                                            <span class="text-sm text-gray-400">—</span>
+                                                        @endif
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <!-- Автор и Дедлайн -->
-                                            <div class="grid grid-cols-2 gap-2">
-                                                <div class="flex items-center">
-                                                    <span class="text-sm text-gray-600 w-16">Автор:</span>
-                                                    <span class="text-sm truncate">{{ $task->author->name ?? '—' }}</span>
+                                                <!-- Автор и Дедлайн -->
+                                                <div class="grid grid-cols-2 gap-2">
+                                                    <div class="flex items-center">
+                                                        <span class="text-sm text-gray-600 w-16">Автор:</span>
+                                                        <span class="text-sm truncate">{{ $task->author->name ?? '—' }}</span>
+                                                    </div>
+                                                    <div class="flex items-center max-[500px]:gap-2">
+                                                        <span class="text-sm text-gray-600 w-16 max-[500px]:w-auto">Дедлайн:</span>
+                                                        @if($task->deadline && !$task->trashed())
+                                                            <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }}">
+                                                                <div class="text-sm">{{ $task->deadline->format('d.m.Y') }}</div>
+                                                                <div class="text-xs text-gray-400">{{ $task->getTimeRemaining() }}</div>
+                                                            </div>
+                                                        @else
+                                                            <span class="text-gray-400 text-sm">—</span>
+                                                        @endif
+                                                    </div>
                                                 </div>
-                                                <div class="flex items-center max-[500px]:gap-2">
-                                                    <span class="text-sm text-gray-600 w-16 max-[500px]:w-auto">Дедлайн:</span>
-                                                    @if($task->deadline && !$task->trashed())
-                                                        <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }}">
-                                                            <div class="text-sm">{{ $task->deadline->format('d.m.Y') }}</div>
-                                                            <div class="text-xs text-gray-400">{{ $task->getTimeRemaining() }}</div>
-                                                        </div>
-                                                    @else
-                                                        <span class="text-gray-400 text-sm">—</span>
-                                                    @endif
-                                                </div>
-                                            </div>
 
-                                            <!-- Дополнительная информация -->
-                                            <div class="flex flex-wrap gap-1 pt-2 border-t">
-                                                @if($task->category)
-                                                    <span
-                                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                <!-- Дополнительная информация -->
+                                                <div class="flex flex-wrap gap-1 pt-2 border-t">
+                                                    @if($task->category)
+                                                        <span
+                                                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                                         {{ $task->category->name }}
                                                     </span>
-                                                @endif
-                                                @if($task->rejections_count > 0)
-                                                    <span
-                                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
-                                                        title="Количество отказов: {{ $task->rejections_count }}">
+                                                    @endif
+                                                    @if($task->rejections_count > 0)
+                                                        <span
+                                                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                                                            title="Количество отказов: {{ $task->rejections_count }}">
                                                         <i class="fas fa-user-slash mr-1"></i>
                                                         {{ $task->rejections_count }}
                                                     </span>
-                                                @endif
-                                                @if($task->trashed() && $task->deletedBy)
-                                                    <span
-                                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                                                        title="Удалил: {{ $task->deletedBy->name }}">
+                                                    @endif
+                                                    @if($task->trashed() && $task->deletedBy)
+                                                        <span
+                                                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                                            title="Удалил: {{ $task->deletedBy->name }}">
                                                         <i class="fas fa-user-times mr-1"></i>
                                                         Удалил: {{ $task->deletedBy->name }}
                                                     </span>
+                                                    @endif
+                                                </div>
+
+                                                <!-- Кнопка "Вернуть" для мобильных -->
+                                                @if(!$task->trashed() && $task->status === 'на проверке')
+                                                    <div class="pt-2 border-t">
+                                                        <button onclick="returnToWork({{ $task->id }})"
+                                                                class="w-full bg-orange-100 text-orange-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-200 transition flex items-center justify-center space-x-2">
+                                                            <i class="fas fa-redo"></i>
+                                                            <span>Вернуть на доработку</span>
+                                                        </button>
+                                                    </div>
                                                 @endif
                                             </div>
-
-                                            <!-- Кнопка "Вернуть" для мобильных -->
-                                            @if(!$task->trashed() && $task->status === 'на проверке')
-                                                <div class="pt-2 border-t">
-                                                    <button onclick="returnToWork({{ $task->id }})"
-                                                        class="w-full bg-orange-100 text-orange-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-200 transition flex items-center justify-center space-x-2">
-                                                        <i class="fas fa-redo"></i>
-                                                        <span>Вернуть на доработку</span>
-                                                    </button>
-                                                </div>
-                                            @endif
                                         </div>
-                                    </div>
-                                @empty
-                                    <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
-                                        <i class="fas fa-tasks text-gray-300 text-4xl mb-3"></i>
-                                        <p class="text-gray-500">Задачи не найдены</p>
-                                    </div>
-                                @endforelse
-                            </div>
+                                    @empty
+                                        <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
+                                            <i class="fas fa-tasks text-gray-300 text-4xl mb-3"></i>
+                                            <p class="text-gray-500">Задачи не найдены</p>
+                                        </div>
+                                    @endforelse
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -1521,19 +1684,19 @@
 
     <!-- Модальное окно возврата на доработку -->
     <div id="returnToWorkModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
         <div class="bg-white rounded-lg p-4 md:p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-3">Возврат задачи на доработку</h3>
             <p class="text-gray-600 mb-3">Укажите комментарий для исполнителя:</p>
             <textarea id="returnComment" placeholder="Комментарий..."
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 h-24 resize-none text-sm md:text-base"></textarea>
+                      class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 h-24 resize-none text-sm md:text-base"></textarea>
             <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                 <button onclick="confirmReturnToWork()"
-                    class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 text-sm md:text-base">
+                        class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 text-sm md:text-base">
                     Вернуть на доработку
                 </button>
                 <button onclick="closeReturnModal()"
-                    class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 text-sm md:text-base">
+                        class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 text-sm md:text-base">
                     Отмена
                 </button>
             </div>
@@ -1542,17 +1705,17 @@
 
     <!-- Модальное окно удаления задачи -->
     <div id="deleteTaskModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
         <div class="bg-white rounded-lg p-4 md:p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-3">Удаление задачи</h3>
             <p class="text-gray-600 mb-4">Вы уверены, что хотите удалить эту задачу? Это действие нельзя отменить.</p>
             <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                 <button onclick="confirmDeleteTask()"
-                    class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 text-sm md:text-base">
+                        class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 text-sm md:text-base">
                     Да, удалить
                 </button>
                 <button onclick="closeDeleteModal()"
-                    class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 text-sm md:text-base">
+                        class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 text-sm md:text-base">
                     Отмена
                 </button>
             </div>
@@ -1561,7 +1724,7 @@
 
     <!-- Модальное окно просмотра задачи -->
     <div id="taskViewModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
                 <h3 class="text-xl font-bold text-gray-800">
@@ -1689,6 +1852,23 @@
         let editSelectedFiles = [];
         let editAllFiles = [];
         let editTempSelectedFiles = [];
+
+        // Функции для модального окна улучшения
+        function openUpgradeModal() {
+            const modal = document.getElementById('upgradeModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeUpgradeModal() {
+            const modal = document.getElementById('upgradeModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
 
         window.confirmEditFileSelectionForEdit = function() {
             console.log('=== confirmEditFileSelectionForEdit вызвана (РЕДАКТИРОВАНИЕ) ===');

@@ -1220,6 +1220,9 @@
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') closeTaskViewModal();
         });
+
+
+
     </script>
 
     <style>
