@@ -35,24 +35,27 @@
             <div class="relative">
                 @if($backgroundEnabled && $backgroundImage)
                     <button onclick="toggleFiltersDropdown()"
-                            class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
+                        class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
                         <i class="fas fa-filter"></i>
                         <span>Фильтры</span>
-                        <span id="activeFiltersCount" class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
+                        <span id="activeFiltersCount"
+                            class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
                         <i class="fas fa-chevron-down ml-1 text-xs transition-transform" id="filtersChevron"></i>
                     </button>
                 @else
                     <button onclick="toggleFiltersDropdown()"
-                            class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
+                        class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
                         <i class="fas fa-filter"></i>
                         <span>Фильтры</span>
-                        <span id="activeFiltersCount" class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
+                        <span id="activeFiltersCount"
+                            class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
                         <i class="fas fa-chevron-down ml-1 text-xs transition-transform" id="filtersChevron"></i>
                     </button>
                 @endif
 
                 <!-- Выпадающая панель фильтров -->
-                <div id="filtersDropdown" class="hidden absolute left-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border z-50">
+                <div id="filtersDropdown"
+                    class="hidden absolute left-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border z-50">
                     <div class="p-4 border-b border-gray-100">
                         <div class="flex justify-between items-center">
                             <h3 class="font-semibold text-gray-800">Фильтрация задач</h3>
@@ -133,18 +136,22 @@
 
                         <!-- Файлы -->
                         <div class="p-4 border-b border-gray-100">
-                            <div class="flex justify-between items-center cursor-pointer" onclick="toggleFilterSection('filesSection')">
+                            <div class="flex justify-between items-center cursor-pointer"
+                                onclick="toggleFilterSection('filesSection')">
                                 <span class="font-medium text-gray-700 text-sm">Файлы</span>
-                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform" id="filesSectionIcon"></i>
+                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform"
+                                    id="filesSectionIcon"></i>
                             </div>
                             <div id="filesSection" class="mt-3 space-y-2">
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="has-files" value="true">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="has-files" value="true">
                                     <span class="text-sm text-gray-700">Есть файлы</span>
                                     <span class="text-sm">📎</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600" data-filter-type="has-files" value="false">
+                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="has-files" value="false">
                                     <span class="text-sm text-gray-700">Нет файлов</span>
                                 </label>
                             </div>
@@ -165,13 +172,13 @@
                 <div class="relative flex-1 max-w-xs">
                     <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-white text-sm"></i>
                     <input type="text" id="taskSearchInput" placeholder="Поиск по названию..."
-                           class="w-full pl-9 pr-3 py-2 border-none rounded-lg text-sm text-white focus:outline-none bg-transparent/20 placeholder:text-white">
+                        class="w-full pl-9 pr-3 py-2 border-none rounded-lg text-sm text-white focus:outline-none bg-transparent/20 placeholder:text-white">
                 </div>
             @else
                 <div class="relative flex-1 max-w-xs">
                     <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
                     <input type="text" id="taskSearchInput" placeholder="Поиск по названию..."
-                           class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
                 </div>
             @endif
         </div>
@@ -203,11 +210,11 @@
 
             <div class="space-y-4 task-container" data-status="new">
                 @foreach($tasksByStatus['new'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move  min-h-[120px] flex flex-col justify-between" draggable="true" data-task="{{ $task->id }}"
-                         data-priority="{{ $task->priority ?? 'medium' }}"
-                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
-                         data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}">
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move  min-h-[100px] flex flex-col justify-between"
+                        draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
+                        data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
+                        data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                        data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}">
                         <div class="flex justify-between items-start mb-2">
                             <h4 class="font-medium cursor-pointer hover:text-blue-600"
                                 onclick="openTaskViewModal({{ $task->id }})">
@@ -220,7 +227,6 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}</p>
                         @if($task->files_count > 0)
                             <div class="mb-2 flex items-center text-xs text-gray-500">
                                 <i class="fas fa-paperclip mr-1"></i>
@@ -278,11 +284,11 @@
 
             <div class="space-y-4 task-container" data-status="in-progress">
                 @foreach($tasksByStatus['in_progress'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[120px] flex flex-col justify-between" draggable="true" data-task="{{ $task->id }}"
-                         data-priority="{{ $task->priority ?? 'medium' }}"
-                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
-                         data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}">
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between"
+                        draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
+                        data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
+                        data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                        data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}">
                         <div class="flex justify-between items-start mb-2">
                             <h4 class="font-medium cursor-pointer hover:text-blue-600"
                                 onclick="openTaskViewModal({{ $task->id }})">
@@ -295,7 +301,6 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}</p>
                         @if($task->files_count > 0)
                             <div class="mb-2 flex items-center text-xs text-gray-500">
                                 <i class="fas fa-paperclip mr-1"></i>
@@ -361,11 +366,11 @@
 
             <div class="space-y-4 task-container" data-status="review">
                 @foreach($tasksByStatus['review'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[120px] flex flex-col justify-between" draggable="true" data-task="{{ $task->id }}"
-                         data-priority="{{ $task->priority ?? 'medium' }}"
-                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
-                         data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}">
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between"
+                        draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
+                        data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
+                        data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                        data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}">
                         <div class="flex justify-between items-start mb-2">
                             <h4 class="font-medium cursor-pointer hover:text-blue-600"
                                 onclick="openTaskViewModal({{ $task->id }})">
@@ -378,7 +383,6 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}</p>
                         @if($task->files_count > 0)
                             <div class="mb-2 flex items-center text-xs text-gray-500">
                                 <i class="fas fa-paperclip mr-1"></i>
@@ -427,11 +431,11 @@
 
             <div class="space-y-4 task-container" data-status="done">
                 @foreach($tasksByStatus['done'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow opacity-80 cursor-move flex flex-col justify-between" draggable="true" data-task="{{ $task->id }}"
-                         data-priority="{{ $task->priority ?? 'medium' }}"
-                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
-                         data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}">
+                    <div class="task-card bg-white p-4 rounded-lg shadow opacity-80 cursor-move flex flex-col justify-between"
+                        draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
+                        data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
+                        data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                        data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}">
                         <div class="flex justify-between items-start mb-2">
                             <h4 class="font-medium cursor-pointer hover:text-blue-600"
                                 onclick="openTaskViewModal({{ $task->id }})">
@@ -444,7 +448,6 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="text-gray-500 text-sm mb-3">{{ Str::limit($task->description, 80) ?: 'Описание отсутствует' }}</p>
                         @if($task->files_count > 0)
                             <div class="mb-2 flex items-center text-xs text-gray-500">
                                 <i class="fas fa-paperclip mr-1"></i>
@@ -643,11 +646,11 @@
             const chip = document.createElement('div');
             chip.className = 'inline-flex items-center bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full';
             chip.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                        <span>${label}</span>
-                                                                                                                                                                                                                                                                                                                                                        <button onclick="removeFilter('${type}', '${value}')" class="ml-2 text-gray-500 hover:text-gray-700">
-                                                                                                                                                                                                                                                                                                                                                            <i class="fas fa-times-circle text-xs"></i>
-                                                                                                                                                                                                                                                                                                                                                        </button>
-                                                                                                                                                                                                                                                                                                                                                    `;
+                                                                                                                                                                                                                                                                                                                                                                    <span>${label}</span>
+                                                                                                                                                                                                                                                                                                                                                                    <button onclick="removeFilter('${type}', '${value}')" class="ml-2 text-gray-500 hover:text-gray-700">
+                                                                                                                                                                                                                                                                                                                                                                        <i class="fas fa-times-circle text-xs"></i>
+                                                                                                                                                                                                                                                                                                                                                                    </button>
+                                                                                                                                                                                                                                                                                                                                                                `;
             container.appendChild(chip);
         }
 
@@ -845,18 +848,18 @@
             taskCards.forEach((card, i) => {
                 const taskName = card.dataset.taskName;
                 const display = card.style.display;
-                console.log(`${i+1}. "${taskName}" - display: ${display}`);
+                console.log(`${i + 1}. "${taskName}" - display: ${display}`);
             });
         }
 
         // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const searchInput = document.getElementById('taskSearchInput');
             if (searchInput) {
-                searchInput.addEventListener('input', function() {
+                searchInput.addEventListener('input', function () {
                     applyFilters();
                 });
-                searchInput.addEventListener('keyup', function() {
+                searchInput.addEventListener('keyup', function () {
                     applyFilters();
                 });
             }
@@ -993,7 +996,7 @@
                     departmentSelect.removeAttribute('required');
                     departmentField.style.display = 'none';
                 @endif
-                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                    }
 
             if (statusField && statusSelect) {
                 statusSelect.innerHTML = `<option value="назначена" selected>назначена</option>`;
@@ -1018,7 +1021,7 @@
                 formData.set('department_id', '{{ $user->department_id }}');
             @endif
 
-            const submitBtn = form.querySelector('button[type="submit"]');
+                        const submitBtn = form.querySelector('button[type="submit"]');
             if (!submitBtn) return;
 
             const originalText = submitBtn.innerHTML;

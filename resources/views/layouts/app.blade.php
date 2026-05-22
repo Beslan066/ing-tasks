@@ -363,9 +363,6 @@ media-src https://meet.jit.si https:;
 
         .burger-btn {
             display: none;
-            position: absolute;
-            top: 25px;
-            right: 15px;
             width: 30px;
             height: 22px; /* Высота уменьшена для ровного баланса трех линий */
             flex-direction: column;
@@ -427,6 +424,7 @@ media-src https://meet.jit.si https:;
     <div id="sidebar-menu" class="sidebar w-64 h-full py-6 px-4 fixed
                                   max-[638px]:!fixed max-[638px]:top-0 max-[638px]:-left-full max-[638px]:h-full
                                   max-[638px]:z-[999] max-[638px]:transition-[left] max-[638px]:duration-300 max-[638px]:ease-in-out max-[638px]:!w-80
+                                  max-[500px]:!w-full
                                   [&.active]:max-[638px]:left-0 max-[638px]:pb-2 {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
 <div class="relative h-full w-full sm:flex flex-col max-[638px]:flex">
 
@@ -644,17 +642,31 @@ media-src https://meet.jit.si https:;
     </div>
     <!-- Оверлей для боковой панели -->
     <div id="sidebar-overlay"
-         class="fixed inset-0 bg-black/50 z-[998] hidden max-[638px]:[&.active]:block transition-opacity duration-300">
-    </div>
+         class="fixed inset-0 bg-black/50 z-[998] hidden max-[638px]:[&.active]:block transition-opacity duration-300 max-[500px]:bg-black/90"></div>
     <!-- Основной контент -->
     <div class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:pt-[30px] max-[638px]:w-full">
 
+    <div class="flex justify-between items-start relative pr-4 pl-4">
+   <!-- Логотип -->
+        <div class="mb-8 hidden max-[638px]:block">
+            <a href="{{route('welcome')}}" class="flex items-center space-x-3 group">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
+                    <i class="fas fa-tasks text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white">Менеджер<span class="text-primary-500">Плюс</span></h1>
+                    <p class="text-xs text-sidebar-text mt-1">Управление задачами</p>
+                </div>
+            </a>
+        </div>
         <!-- Бургер меню -->
-        <button id="burger-btn" class="burger-btn">
+        <button id="burger-btn" class="burger-btn absolute top-1 right-4">
             <span></span>
             <span></span>
             <span></span>
         </button>
+    </div>
 
         <div id="home" class="page active-page p-6 pl-[calc(256px+1.5rem)] max-[638px]:pl-6 max-[550px]:p-3">
             @yield('content')
