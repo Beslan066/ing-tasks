@@ -644,11 +644,11 @@ media-src https://meet.jit.si https:;
     <div id="sidebar-overlay"
          class="fixed inset-0 bg-black/50 z-[998] hidden max-[638px]:[&.active]:block transition-opacity duration-300 max-[500px]:bg-black/90"></div>
     <!-- Основной контент -->
-    <div class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:pt-[30px] max-[638px]:w-full">
+    <div class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:pt-[30px] max-[638px]:w-full max-[500px]:pt-[20px]">
 
-    <div class="flex justify-between items-start relative pr-4 pl-4">
+    <div class="justify-between items-center relative pr-4 pl-4 pb-6 hidden max-[638px]:flex">
    <!-- Логотип -->
-        <div class="mb-8 hidden max-[638px]:block">
+        <div>
             <a href="{{route('welcome')}}" class="flex items-center space-x-3 group">
                 <div
                     class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
@@ -661,7 +661,7 @@ media-src https://meet.jit.si https:;
             </a>
         </div>
         <!-- Бургер меню -->
-        <button id="burger-btn" class="burger-btn absolute top-1 right-4">
+        <button id="burger-btn" class="burger-btn">
             <span></span>
             <span></span>
             <span></span>
