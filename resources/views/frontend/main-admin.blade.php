@@ -470,7 +470,7 @@
                                             Действия</th>
                                     </tr>
                                 </thead>
-                                <tbody class="backdrop-blur-md bg-transparent/10 divide-y divide-gray-200">
+                                <tbody class="bg-transparent/10">
                                     @forelse($tasks as $task)
                                         <tr
                                             class="hover:bg-gray-50 transition text-white  hover:text-gray-900 @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif">
