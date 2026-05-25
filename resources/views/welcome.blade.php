@@ -195,13 +195,13 @@
         <div class="rounded-lg p-4 board-column bg-transparent max-[600px]:p-0" data-status="new">
             @if($backgroundEnabled && $backgroundImage)
                 <div
-                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2 max-[500px]:hidden">
+                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
                     <h3 class="font-semibold text-white">Новые</h3>
                     <span
                         class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['new'] }}</span>
                 </div>
             @else
-                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 max-[500px]:hidden canban-col-title">
+                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title">
                     <h3 class="font-semibold text-white">Новые</h3>
                     <span
                         class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['new'] }}</span>
@@ -255,9 +255,6 @@
                                 @elseif($task->priority === 'критический')
                                     <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">🚨 Критический</span>
                                 @endif
-                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded hidden max-[500px]:inline">
-                                    {{ $task->status ?? 'Без статуса' }}
-                                </span>
                             </div>
                             <div class="flex items-center space-x-2">
                                 @if($task->deadline && $task->deadline->isPast())
@@ -281,13 +278,13 @@
         <div class="rounded-lg p-4 board-column max-[600px]:p-0" data-status="in-progress">
             @if($backgroundEnabled && $backgroundImage)
                 <div
-                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2 max-[500px]:hidden">
+                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
                     <h3 class="font-semibold text-white">В работе</h3>
                     <span
                         class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['in_progress'] }}</span>
                 </div>
             @else
-                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 max-[500px]:hidden canban-col-title">
+                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title">
                     <h3 class="font-semibold text-white">В работе</h3>
                     <span
                         class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['in_progress'] }}</span>
@@ -340,9 +337,6 @@
                                     <span
                                         class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->category->name }}</span>
                                 @endif
-                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded hidden max-[500px]:inline">
-                                    {{ $task->status ?? 'Без статуса' }}
-                                </span>
                             </div>
                             <div class="flex items-center space-x-2">
                                 <button onclick="sendForReview({{ $task->id }})" class=" text-white px-3 py-1 rounded text-sm ">
@@ -363,13 +357,13 @@
         <div class="rounded-lg p-4 board-column max-[600px]:p-0" data-status="review">
             @if($backgroundEnabled && $backgroundImage)
                 <div
-                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2 max-[500px]:hidden">
+                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
                     <h3 class="font-semibold text-white shadow-2xs">На проверке</h3>
                     <span
                         class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['review'] }}</span>
                 </div>
             @else
-                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 max-[500px]:hidden canban-col-title">
+                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title">
                     <h3 class="font-semibold text-white">На проверке</h3>
                     <span
                         class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['review'] }}</span>
@@ -440,13 +434,13 @@
         <div class="rounded-lg p-4 board-column bg-transparent max-[600px]:p-0" data-status="done">
             @if($backgroundEnabled && $backgroundImage)
                 <div
-                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2 max-[500px]:hidden">
+                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
                     <h3 class="font-semibold text-white">Завершено</h3>
                     <span
                         class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['done'] }}</span>
                 </div>
             @else
-                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 max-[500px]:hidden canban-col-title">
+                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title">
                     <h3 class="font-semibold text-white">Завершено</h3>
                     <span
                         class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['done'] }}</span>
@@ -490,9 +484,6 @@
                         <div class="flex justify-between items-center">
                             <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
                                 class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
-                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded hidden max-[500px]:inline">
-                                {{ $task->status ?? 'Без статуса' }}
-                            </span>
                             <span class="text-xs text-gray-500">Завершено</span>
                         </div>
                     </div>
