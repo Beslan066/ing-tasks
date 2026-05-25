@@ -405,6 +405,18 @@ media-src https://meet.jit.si https:;
         .burger-btn.active span:nth-child(3) {
             transform: translateY(-9.5px) rotate(-45deg);
         }
+        @media(max-width:500px) {
+            .sidebar {
+                box-shadow:none;
+            }
+            .main-container:not(:has(.has-background)) {
+
+            }
+.main-container:not(:has(.has-background)):has(.sidebar.active) .burger-btn span{
+    color: #ffffff;
+    background-color: #ffffff;
+}
+        }
     </style>
 </head>
 
@@ -654,9 +666,14 @@ media-src https://meet.jit.si https:;
                     class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
                     <i class="fas fa-tasks text-white text-lg"></i>
                 </div>
-                <div>
+                 <div>
+                    @if($backgroundEnabled && $backgroundImage)
                     <h1 class="text-xl font-bold text-white">Менеджер<span class="text-primary-500">Плюс</span></h1>
                     <p class="text-xs text-sidebar-text mt-1">Управление задачами</p>
+                    @else
+                    <h1 class="text-xl font-bold text-gray-700">Менеджер<span class="text-primary-500">Плюс</span></h1>
+                    <p class="text-xs text-sidebar-text mt-1">Управление задачами</p>
+                    @endif
                 </div>
             </a>
         </div>
