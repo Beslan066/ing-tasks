@@ -115,7 +115,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
+                <div class="flex flex-col px-2 pb-2 sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
                     <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto px-2 mb-2">
                         <button id="applyFilters"
                                 class="bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
@@ -211,7 +211,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
+                <div class="flex flex-col px-2 pb-2 sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
                     <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
                         <button id="applyFilters"
                                 class="bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
