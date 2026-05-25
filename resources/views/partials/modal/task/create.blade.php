@@ -1,6 +1,6 @@
 <div id="taskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
     <div class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl
-            scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden max-[500px]:w-[98%]">
         <!-- Заголовок -->
         <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-100">
             <div class="flex justify-between items-center p-6">
@@ -267,12 +267,12 @@
             </div>
 
             <!-- Кнопки действий -->
-            <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+            <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200  max-[500px]:justify-center max-[500px]:flex-col-reverse max-[500px]:space-x-0 max-[500px]:space-y-3 max-[500px]:gap-3">
                 <button type="button" onclick="closeTaskModal()"
                         class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
                     Отмена
                 </button>
-                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 max-[500px]:w-full max-[500px]:justify-center">
                     <i class="fas fa-plus mr-2"></i>Создать задачу
                 </button>
             </div>

@@ -60,7 +60,7 @@
                     </div>
                 </div>
 
-                <div class="mt-8 flex justify-end space-x-3">
+                <div class="mt-8 flex justify-end space-x-3 max-[500px]:flex-col-reverse max-[500px]:space-x-0 max-[500px]:space-y-3 max-[500px]:gap-3">
                     <button type="button"
                             onclick="closeDepartmentModal()"
                             class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">

@@ -42,18 +42,19 @@
         </div>
 
         <!-- Фильтры и поиск - Скрытый блок -->
+         @if($backgroundEnabled && $backgroundImage)
         <div id="filtersPanel" class="backdrop-blur-md bg-transparent/10 rounded-xl shadow mb-6 p-4 hidden">
             <div class="flex flex-col md:flex-row md:items-center">
-                <div class="">
+                <div>
                     <div class="relative">
                         <input type="text"
                                placeholder="Поиск отделов..."
-                               class="w-full pl-10 pr-4 py-2 border-none rounded-lg  outline-none bg-transparent/20 placeholder:text-white"
+                               class="w-full min-w-[200px] pl-10 pr-4 py-2 border-none rounded-lg  outline-none bg-transparent/20 placeholder:text-white text-white"
                                id="departmentSearch">
                         <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                     </div>
                 </div>
-                <div class="ml-4 flex space-x-4">
+                <div class="ml-4 flex space-x-4 max-[500px]:flex-col max-[500px]:space-y-3 max-[500px]:space-x-0 mt-4 md:mt-0 max-[500px]:w-full max-[500px]:ml-0">
                     <select class="border-none rounded-lg  px-4 py-2 bg-transparent/20 text-white"
                             id="filterStatus"
                             onchange="filterDepartments(this.value)">
@@ -71,7 +72,37 @@
                 </div>
             </div>
         </div>
-
+        @else
+        <div id="filtersPanel" class="bg-white rounded-xl shadow border border-gray-100 mb-6 p-4 hidden">
+            <div class="flex flex-col md:flex-row md:items-center">
+                <div>
+                    <div class="relative">
+                        <input type="text"
+                               placeholder="Поиск отделов..."
+                               class="w-full min-w-[200px] pl-10 pr-4 py-2 border-2 bg-white placeholder:text-gray-300 border-gray-300 rounded-lg px-4 focus:ring-1 focus:ring-green-500 outline-none"
+                               id="departmentSearch">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-300"></i>
+                    </div>
+                </div>
+                <div class="ml-4 flex space-x-4 max-[500px]:flex-col max-[500px]:space-y-3 max-[500px]:space-x-0 mt-4 md:mt-0 max-[500px]:w-full max-[500px]:ml-0">
+                    <select class="rounded-lg  px-4 py-2 bg-white text-black border-2 border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
+                            id="filterStatus"
+                            onchange="filterDepartments(this.value)">
+                        <option class="text-gray-800" value="all">Все отделы</option>
+                        <option class="text-gray-800" value="active">Активные</option>
+                        <option class="text-gray-800" value="inactive">Неактивные</option>
+                    </select>
+                    <select class="rounded-lg  px-4 py-2 bg-white text-black border-2 border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
+                            id="sortBy"
+                            onchange="sortDepartments(this.value)">
+                        <option class="text-gray-800" value="name">Сортировать по названию</option>
+                        <option class="text-gray-800" value="tasks">По количеству задач</option>
+                        <option class="text-gray-800" value="emails">По новым письмам</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        @endif
         <!-- Статистика по отделам -->
         @if($backgroundEnabled && $backgroundImage)
             <div class="grid grid-cols-1 xl:grid-cols-4 md:grid-cols-2 gap-6 mb-8">
