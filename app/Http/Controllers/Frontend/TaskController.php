@@ -82,11 +82,6 @@
          */
         public function store(Request $request)
         {
-            \Log::info('=== START TASK STORE ===');
-            \Log::info('Request data:', $request->except(['_token', 'files', 'new_files', 'selected_file_ids']));
-            \Log::info('Selected file IDs:', $request->input('selected_file_ids', []));
-            \Log::info('Has new files:', ['has_files' => $request->hasFile('new_files')]);
-
             $user = Auth::user();
             \Log::info('User:', [
                 'id' => $user->id,
@@ -107,7 +102,7 @@
             $validator = \Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string',
-                'department_id' => 'required|exists:departments,id',
+                'department_id' => 'nullable|exists:departments,id',
                 'category_id' => 'nullable|exists:categories,id',
                 'user_id' => 'nullable|exists:users,id',
                 'priority' => 'required|in:низкий,средний,высокий,критический',
@@ -564,6 +559,7 @@
         /**
          * Update task (добавляем поддержку файлов)
          */
+
         public function update(Request $request, Task $task)
         {
             $user = Auth::user();
@@ -593,9 +589,6 @@
                 'deadline' => 'nullable|date',
                 'estimated_hours' => 'nullable|numeric|min:0',
                 'actual_hours' => 'nullable|numeric|min:0',
-//                'selected_file_ids' => 'nullable|array',  // Оставляем nullable
-//                'selected_file_ids.*' => 'exists:files,id',
-                'new_files.*' => 'nullable|file|max:10240',
             ]);
 
             if ($validator->fails()) {
@@ -655,56 +648,31 @@
 
                 $task->update($updateData);
 
-                // Обработка файлов из хранилища
-                if ($request->has('selected_file_ids') && is_array($request->selected_file_ids)) {
-                    $selectedFileIds = $request->selected_file_ids;
+                // ==================== ОБРАБОТКА ФАЙЛОВ ====================
+                // Получаем выбранные файлы из поля selected_files
+                $selectedFileIds = [];
 
-                    // Получаем текущие привязанные файлы
-                    $currentFileIds = $task->files()->pluck('files.id')->toArray();
+                if ($request->has('selected_files')) {
+                    $selectedFilesInput = $request->input('selected_files');
 
-                    // Файлы для добавления
-                    $filesToAdd = array_diff($selectedFileIds, $currentFileIds);
-
-                    // Файлы для удаления
-                    $filesToRemove = array_diff($currentFileIds, $selectedFileIds);
-
-                    // Добавляем новые файлы
-                    if (!empty($filesToAdd)) {
-                        $task->files()->attach($filesToAdd);
+                    if (is_string($selectedFilesInput)) {
+                        $decoded = json_decode($selectedFilesInput, true);
+                        if (is_array($decoded)) {
+                            $selectedFileIds = $decoded;
+                        }
+                    } elseif (is_array($selectedFilesInput)) {
+                        $selectedFileIds = $selectedFilesInput;
                     }
-
-                    // Удаляем файлы, которые больше не привязаны
-                    if (!empty($filesToRemove)) {
-                        $task->files()->detach($filesToRemove);
-                    }
-                } else {
-                    // Если не переданы selected_file_ids, удаляем все файлы
-                    $task->files()->detach();
                 }
 
-                // Загружаем новые файлы
-                if ($request->hasFile('new_files')) {
-                    foreach ($request->file('new_files') as $file) {
-                        $path = $file->store("tasks/{$task->id}", 'public');
+                // Убираем дубликаты и пустые значения
+                $selectedFileIds = array_unique(array_filter($selectedFileIds));
 
-                        $fileRecord = File::create([
-                            'name' => $file->getClientOriginalName(),
-                            'file_path' => $path,
-                            'path' => $path,
-                            'file_size' => $file->getSize(),
-                            'size' => $file->getSize(),
-                            'mime_type' => $file->getMimeType(),
-                            'extension' => $file->getClientOriginalExtension(),
-                            'uploaded_by' => $user->id,
-                            'company_id' => $user->company_id,
-                            'department_id' => $task->department_id,
-                            'disk' => 'public',
-                            'folder' => 'tasks',
-                            'is_public' => false,
-                        ]);
-
-                        $task->files()->attach($fileRecord->id);
-                    }
+                // Синхронизируем файлы (если есть)
+                if (!empty($selectedFileIds)) {
+                    $task->files()->sync($selectedFileIds);
+                } else {
+                    $task->files()->detach();
                 }
 
                 // Отправляем уведомление при смене исполнителя
@@ -718,16 +686,16 @@
 
                 DB::commit();
 
+                $task->load(['department', 'category', 'user', 'author', 'files']);
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Задача успешно обновлена',
-                    'task' => $task->load(['department', 'category', 'user', 'author', 'files'])
+                    'task' => $task
                 ]);
 
             } catch (\Exception $e) {
                 DB::rollBack();
-                \Log::error('Ошибка при обновлении задачи: ' . $e->getMessage());
-                \Log::error('Stack trace: ' . $e->getTraceAsString());
 
                 return response()->json([
                     'success' => false,
@@ -1046,32 +1014,9 @@
         {
             $user = Auth::user();
 
+            // Простой запрос без проверки на привязанные задачи
             $files = File::where('company_id', $user->company_id)
-                ->where(function($query) {
-                    if (method_exists(File::class, 'tasks')) {
-                        $query->whereDoesntHave('tasks');
-                    }
-                })
-                ->where(function($query) use ($user) {
-                    if ($user->role->name === 'Руководитель') {
-                        return $query->where('company_id', $user->company_id);
-                    }
-                    if ($user->role->name === 'Менеджер') {
-                        // ИСПРАВЛЕНО: берем ID отделов пользователя
-                        $departmentIds = $user->departments()->pluck('departments.id')->toArray();
-                        return $query->where('company_id', $user->company_id)
-                            ->where(function($q) use ($user, $departmentIds) {
-                                $q->whereIn('department_id', $departmentIds)
-                                    ->orWhere('uploaded_by', $user->id)
-                                    ->orWhere('is_public', true);
-                            });
-                    }
-                    if ($user->role->name === 'Сотрудник') {
-                        return $query->where('company_id', $user->company_id)
-                            ->where('uploaded_by', $user->id);
-                    }
-                })
-                ->select('id', 'name', 'path', 'size', 'mime_type', 'extension', 'created_at', 'department_id', 'uploaded_by')
+                ->select('id', 'name', 'size', 'extension', 'created_at')
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function($file) {

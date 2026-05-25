@@ -34,9 +34,7 @@ class HomeController extends Controller
         }
 
         // Если у пользователя есть компания, но нет company_id (он владелец)
-        // Нужно установить company_id для дальнейшей работы
         if (!$user->company_id && $isOwnerOfCompany) {
-            // Берем первую компанию, которой владеет пользователь
             $firstCompany = $user->ownedCompanies->first();
             $user->company_id = $firstCompany->id;
             $user->company = $firstCompany;
@@ -45,70 +43,44 @@ class HomeController extends Controller
         // Проверяем, хочет ли пользователь перейти в режим руководителя
         $adminMode = $request->get('admin_mode', false);
 
-        // Если пользователь руководитель И запросил режим руководителя - перенаправляем на админку
         if ($user->isLeader() && $adminMode === '1') {
             return redirect()->route('tasks.admin');
         }
 
-        // Получаем задачи пользователя по статусам с КОЛИЧЕСТВОМ ФАЙЛОВ
+        // Обновляем статусы просроченных задач
+        $this->updateOverdueTasks($user->id);
+
+        // Получаем задачи пользователя по статусам
         $tasksByStatus = [
             'new' => Task::with(['author', 'department', 'category', 'files'])
-                ->withCount('files')  // ДОБАВЛЕНО
+                ->withCount('files')
                 ->where('user_id', $user->id)
                 ->where('status', 'назначена')
                 ->orderBy('created_at', 'desc')
                 ->get(),
 
             'in_progress' => Task::with(['author', 'department', 'category', 'files'])
-                ->withCount('files')  // ДОБАВЛЕНО
+                ->withCount('files')
                 ->where('user_id', $user->id)
                 ->where('status', 'в работе')
                 ->orderBy('created_at', 'desc')
                 ->get(),
 
             'review' => Task::with(['author', 'department', 'category', 'files'])
-                ->withCount('files')  // ДОБАВЛЕНО
+                ->withCount('files')
                 ->where('user_id', $user->id)
                 ->where('status', 'на проверке')
                 ->orderBy('created_at', 'desc')
                 ->get(),
 
             'done' => Task::with(['author', 'department', 'category', 'files'])
-                ->withCount('files')  // ДОБАВЛЕНО
+                ->withCount('files')
                 ->where('user_id', $user->id)
                 ->where('status', 'выполнена')
-                ->orderBy('created_at', 'desc')
+                ->orderBy('completed_at', 'desc')
                 ->limit(10)
                 ->get(),
         ];
-
-        // Задачи отделов (доступные для взятия)
-        $availableTasks = collect();
-        if ($user->departments()->count() > 0) {
-            $departmentIds = $user->departments()->pluck('departments.id')->toArray();
-            $availableTasks = Task::with(['author', 'departments', 'category'])
-                ->withCount('files')  // ДОБАВЛЕНО
-                ->whereIn('department_id', $departmentIds)
-                ->whereNull('user_id')
-                ->where('status', 'не назначена')
-                ->where('is_personal', 0)
-                ->orderBy('created_at', 'desc')
-                ->get();
-        }
-
-        // Подсчёт всех завершённых задач для статистики
-        $allDoneTasksCount = Task::where('user_id', $user->id)
-            ->where('status', 'выполнена')
-            ->count();
-
-        // Личные задачи пользователя
-        $personalTasks = Task::with(['author', 'department', 'category', 'files'])
-            ->withCount('files')  // ДОБАВЛЕНО
-            ->where('author_id', $user->id)
-            ->where('user_id', $user->id)
-            ->where('is_personal', true)
-            ->orderBy('created_at', 'desc')
-            ->get();
 
         // Статистика
         $stats = [
@@ -116,11 +88,25 @@ class HomeController extends Controller
             'in_progress' => $tasksByStatus['in_progress']->count(),
             'review' => $tasksByStatus['review']->count(),
             'done' => $tasksByStatus['done']->count(),
-            'available' => $availableTasks->count(),
-            'personal' => $personalTasks->count(),
         ];
 
-        return view('welcome', compact('user', 'tasksByStatus', 'availableTasks', 'personalTasks', 'stats', 'allDoneTasksCount'));
+        return view('welcome', compact('user', 'tasksByStatus', 'stats'));
+    }
+
+    /**
+     * Обновляет статусы просроченных задач для пользователя
+     */
+    private function updateOverdueTasks($userId)
+    {
+        $tasksToUpdate = Task::where('user_id', $userId)
+            ->whereNotNull('deadline')
+            ->where('deadline', '<', now())
+            ->whereNotIn('status', ['выполнена', 'просрочена'])
+            ->get();
+
+        foreach ($tasksToUpdate as $task) {
+            $task->updateOverdueStatus(); // Этот метод меняет статус на 'просрочена'
+        }
     }
 
     public function home()

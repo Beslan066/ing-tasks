@@ -945,6 +945,86 @@ media-src https://meet.jit.si https:;
     window.selectedFiles = [];
     window.allFiles = [];
 
+    (function() {
+        // Функция для проверки - открыта ли модалка личной задачи
+        function isPersonalTaskModal() {
+            const modal = document.getElementById('taskModal');
+            const h3 = modal ? modal.querySelector('h3') : null;
+            return modal && !modal.classList.contains('hidden') && h3 && h3.textContent === 'Новая личная задача';
+        }
+
+        // Сохраняем ссылку на оригинальный обработчик
+        let originalSubmitHandler = null;
+
+        // Ждем загрузки DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('taskForm');
+            if (!form) return;
+
+            // Получаем все обработчики submit (если есть)
+            const oldSubmit = form.submit;
+
+            // Переопределяем submit
+            form.submit = function() {
+                if (isPersonalTaskModal()) {
+                    // Для личных задач - отправляем через AJAX
+                    const formData = new FormData(this);
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn?.innerHTML;
+
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Создание...';
+                        submitBtn.disabled = true;
+                    }
+
+                    fetch('/tasks/personal/store', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Личная задача успешно создана!');
+                                closeTaskModal();
+                                location.reload();
+                            } else {
+                                alert(data.message || 'Ошибка при создании задачи');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Ошибка:', error);
+                            alert('Ошибка при создании задачи');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.innerHTML = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    return false;
+                }
+                // Для обычных задач - вызываем оригинальный submit
+                return oldSubmit ? oldSubmit.call(this) : HTMLFormElement.prototype.submit.call(this);
+            };
+
+            // Добавляем свой обработчик на submit
+            form.addEventListener('submit', function(e) {
+                if (isPersonalTaskModal()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    // Вызываем наш переопределенный submit
+                    form.submit();
+                    return false;
+                }
+            }, true); // true - чтобы выполнился первым
+        });
+    })();
+
     // Добавим интерактивности для сайдбара
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.email-dropdown-item').forEach(item => {
@@ -2270,17 +2350,19 @@ media-src https://meet.jit.si https:;
 
                     <!-- Детали задачи -->
                     <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                            <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(task.status)}">
-                                ${task.status_icon || ''} ${task.status}
+                        <div class="flex align-items-center">
+                            <div class="mr-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
+                                <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(task.status)}">
+                                    ${task.status_icon || ''} ${task.status}
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
-                            <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(task.priority)}">
-                                ${task.priority}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
+                                <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(task.priority)}">
+                                    ${task.priority}
+                                </div>
                             </div>
                         </div>
 
