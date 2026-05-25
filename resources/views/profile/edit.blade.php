@@ -4,10 +4,9 @@
     <div>
         <div class="max-w-7xl mx-auto sm:px-4 lg:px-6">
 
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                <!-- Боковая панель с аватаром и удалением аккаунта -->
+            <div class="grid grid-cols-1 lg:grid-cols-5 xl:grid-cols-4 gap-6">
                 <!-- Основные настройки -->
-                <div class="lg:col-span-3 space-y-2">
+                <div class="lg:col-span-3 xl:col-span-3 space-y-2">
                     <!-- Информация профиля -->
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
                         <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
@@ -42,7 +41,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="lg:col-span-1">
+                  <!-- Боковая панель с аватаром и удалением аккаунта -->
+                <div class="lg:col-span-2 xl:col-span-1">
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
                         <!-- Блок с аватаром -->
                         <div class="p-6 text-center" style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100% 100%);">
