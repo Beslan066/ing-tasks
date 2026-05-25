@@ -201,8 +201,8 @@
                         class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['new'] }}</span>
                 </div>
             @else
-                <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2 max-[500px]:hidden">
-                    <h3 class="font-semibold text-gray-700">Новые</h3>
+                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 max-[500px]:hidden canban-col-title">
+                    <h3 class="font-semibold text-white">Новые</h3>
                     <span
                         class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['new'] }}</span>
                 </div>
@@ -287,8 +287,8 @@
                         class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['in_progress'] }}</span>
                 </div>
             @else
-                <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2 max-[500px]:hidden">
-                    <h3 class="font-semibold text-gray-700">В работе</h3>
+                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 max-[500px]:hidden canban-col-title">
+                    <h3 class="font-semibold text-white">В работе</h3>
                     <span
                         class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['in_progress'] }}</span>
                 </div>
@@ -369,8 +369,8 @@
                         class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['review'] }}</span>
                 </div>
             @else
-                <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2 max-[500px]:hidden">
-                    <h3 class="font-semibold text-gray-700">На проверке</h3>
+                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 max-[500px]:hidden canban-col-title">
+                    <h3 class="font-semibold text-white">На проверке</h3>
                     <span
                         class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['review'] }}</span>
                 </div>
@@ -446,8 +446,8 @@
                         class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['done'] }}</span>
                 </div>
             @else
-                <div class="flex justify-between items-center mb-4 border-2 border-white rounded-lg p-2 max-[500px]:hidden">
-                    <h3 class="font-semibold text-gray-700">Завершено</h3>
+                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 max-[500px]:hidden canban-col-title">
+                    <h3 class="font-semibold text-white">Завершено</h3>
                     <span
                         class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['done'] }}</span>
                 </div>
@@ -1271,6 +1271,10 @@
 
         #filtersDropdown {
             transition: all 0.2s ease;
+        }
+
+        .canban-col-title {
+            background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);
         }
     </style>
 @endsection
