@@ -105,7 +105,7 @@
         @endif
         <!-- Статистика по отделам -->
         @if($backgroundEnabled && $backgroundImage)
-            <div class="grid grid-cols-1 xl:grid-cols-4 md:grid-cols-2 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-4 gap-6 mb-8">
                 <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow p-6 border-none">
                     <div class="flex items-center justify-between">
                         <div>
@@ -143,7 +143,7 @@
                 </div>
             </div>
         @else
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-4 gap-6 mb-8">
                 <div class="bg-white rounded-xl shadow p-6 border border-gray-100">
                     <div class="flex items-center justify-between">
                         <div>
