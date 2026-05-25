@@ -9,13 +9,13 @@
         <!-- Заголовок и кнопки -->
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
 
-            <div>
+             <div>
                 @if($backgroundEnabled && $backgroundImage)
-                    <h2 class="text-3xl font-bold text-white">Фотобанк</h2>
+                    <h2 class="text-3xl font-bold text-white">Инструменты</h2>
                     <p class="text-white text-sm">Инструменты для продуктивной работы</p>
                 @else
                     <h2 class="text-3xl font-bold text-[#16a34a]">Инструменты</h2>
-                    <p class="text-white text-sm">Инструменты для продуктивной работы</p>
+                    <p class="text-gray-700 text-sm">Инструменты для продуктивной работы</p>
                 @endif
             </div>
             <div class="flex gap-3">
