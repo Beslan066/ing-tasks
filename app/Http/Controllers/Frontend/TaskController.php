@@ -82,11 +82,6 @@
          */
         public function store(Request $request)
         {
-            \Log::info('=== START TASK STORE ===');
-            \Log::info('Request data:', $request->except(['_token', 'files', 'new_files', 'selected_file_ids']));
-            \Log::info('Selected file IDs:', $request->input('selected_file_ids', []));
-            \Log::info('Has new files:', ['has_files' => $request->hasFile('new_files')]);
-
             $user = Auth::user();
             \Log::info('User:', [
                 'id' => $user->id,
@@ -107,7 +102,7 @@
             $validator = \Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string',
-                'department_id' => 'required|exists:departments,id',
+                'department_id' => 'nullable|exists:departments,id',
                 'category_id' => 'nullable|exists:categories,id',
                 'user_id' => 'nullable|exists:users,id',
                 'priority' => 'required|in:низкий,средний,высокий,критический',
@@ -1019,32 +1014,9 @@
         {
             $user = Auth::user();
 
+            // Простой запрос без проверки на привязанные задачи
             $files = File::where('company_id', $user->company_id)
-                ->where(function($query) {
-                    if (method_exists(File::class, 'tasks')) {
-                        $query->whereDoesntHave('tasks');
-                    }
-                })
-                ->where(function($query) use ($user) {
-                    if ($user->role->name === 'Руководитель') {
-                        return $query->where('company_id', $user->company_id);
-                    }
-                    if ($user->role->name === 'Менеджер') {
-                        // ИСПРАВЛЕНО: берем ID отделов пользователя
-                        $departmentIds = $user->departments()->pluck('departments.id')->toArray();
-                        return $query->where('company_id', $user->company_id)
-                            ->where(function($q) use ($user, $departmentIds) {
-                                $q->whereIn('department_id', $departmentIds)
-                                    ->orWhere('uploaded_by', $user->id)
-                                    ->orWhere('is_public', true);
-                            });
-                    }
-                    if ($user->role->name === 'Сотрудник') {
-                        return $query->where('company_id', $user->company_id)
-                            ->where('uploaded_by', $user->id);
-                    }
-                })
-                ->select('id', 'name', 'path', 'size', 'mime_type', 'extension', 'created_at', 'department_id', 'uploaded_by')
+                ->select('id', 'name', 'size', 'extension', 'created_at')
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function($file) {
