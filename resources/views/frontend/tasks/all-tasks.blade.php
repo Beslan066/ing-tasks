@@ -21,15 +21,16 @@
             </div>
 
             <div class="flex space-x-3 max-[710px]:w-full">
-                <button onclick="toggleFilters()" class="flex-1 md:flex-none bg-white border border-gray-300 text-gray-700 px-3 py-2
-                                         md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-50
-                                         transition text-sm md:text-base max-[710px]:basis-[50%]">
+                <button onclick="toggleFilters()"
+                    class="flex-1 md:flex-none bg-white border border-gray-300 text-gray-700 px-3 py-2
+                                                                                                                         md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-50
+                                                                                                                          transition text-sm md:text-base max-[710px]:basis-[50%]">
                     <i class="fas fa-filter"></i>
                     <span>Фильтры</span>
                     <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform"></i>
                 </button>
                 <a href="{{ route('welcome') }}"
-                    class="  text-white px-4 py-2 rounded-lg transition flex items-center space-x-2 max-[710px]:basis-[50%]"
+                    class="  text-white px-4 py-2 rounded-lg transition flex items-center space-x-2 max-[710px]:basis-[50%] max-[500px]:text-sm"
                     style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);">
                     <i class="fas fa-arrow-left"></i>
                     <span>Назад к доске</span>
@@ -39,56 +40,56 @@
 
         <!-- Статистика -->
         @if($backgroundEnabled && $backgroundImage)
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8 max-[500px]:grid-cols-1 max-[500px]:gap-2">
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
                     onclick="filterByStatus('')">
                     <div class="text-2xl font-bold text-white">{{ $stats['total'] }}</div>
                     <div class="text-sm text-white">Всего задач</div>
                 </div>
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
                     onclick="filterByStatus('назначена')">
                     <div class="text-2xl font-bold text-white">{{ $stats['new'] }}</div>
                     <div class="text-sm text-white">Новые</div>
                 </div>
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
                     onclick="filterByStatus('в работе')">
                     <div class="text-2xl font-bold text-white">{{ $stats['in_progress'] }}</div>
                     <div class="text-sm text-white">В работе</div>
                 </div>
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
                     onclick="filterByStatus('на проверке')">
                     <div class="text-2xl font-bold text-white">{{ $stats['review'] }}</div>
                     <div class="text-sm text-white">На проверке</div>
                 </div>
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
                     onclick="filterByStatus('выполнена')">
                     <div class="text-2xl font-bold text-white">{{ $stats['done'] }}</div>
                     <div class="text-sm text-white">Завершено</div>
                 </div>
             </div>
         @else
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8 max-[500px]:grid-cols-1 max-[500px]:gap-2">
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
                     onclick="filterByStatus('')">
                     <div class="text-2xl font-bold text-blue-600">{{ $stats['total'] }}</div>
                     <div class="text-sm text-gray-600">Всего задач</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
                     onclick="filterByStatus('назначена')">
                     <div class="text-2xl font-bold text-purple-600">{{ $stats['new'] }}</div>
                     <div class="text-sm text-gray-600">Новые</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
                     onclick="filterByStatus('в работе')">
                     <div class="text-2xl font-bold text-orange-600">{{ $stats['in_progress'] }}</div>
                     <div class="text-sm text-gray-600">В работе</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
                     onclick="filterByStatus('на проверке')">
                     <div class="text-2xl font-bold text-yellow-600">{{ $stats['review'] }}</div>
                     <div class="text-sm text-gray-600">На проверке</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer"
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
                     onclick="filterByStatus('выполнена')">
                     <div class="text-2xl font-bold text-green-600">{{ $stats['done'] }}</div>
                     <div class="text-sm text-gray-600">Завершено</div>
@@ -199,28 +200,21 @@
                             <i class="fas fa-undo mr-2"></i>Сбросить
                         </button>
                     </div>
-
+                </div>
+                  <div class="mt-2">
                     <!-- Сортировка -->
-                    <div class="bg-white rounded-lg shadow mb-6 p-4">
-                        <div class="flex flex-wrap items-center justify-between gap-4">
-                            <div class="flex items-center space-x-4 ">
-                                <span class="font-medium text-gray-700">Сортировать по:</span>
-                                <select id="sortBy" onchange="sortTasks()" class="border border-gray-300 rounded-lg px-3 py-2">
-                                    <option value="created_at_desc">Дате создания (новые сначала)</option>
-                                    <option value="created_at_asc">Дате создания (старые сначала)</option>
-                                    <option value="deadline_asc">Дедлайну (ближайшие)</option>
-                                    <option value="deadline_desc">Дедлайну (дальние)</option>
-                                    <option value="name_asc">Названию (А-Я)</option>
-                                    <option value="name_desc">Названию (Я-А)</option>
-                                    <option value="status_asc">Статусу</option>
-                                    <option value="priority_desc">Приоритету (высокие сначала)</option>
-                                </select>
-                            </div>
-                            <div class="text-sm text-gray-500">
-                                Показано: <span id="visibleCount">{{ $allTasks->count() }}</span> из <span
-                                    id="totalCount">{{ $allTasks->total() }}</span> задач
-                            </div>
-                        </div>
+                    <div class="flex items-center space-x-4 ">
+                        <select id="sortBy" onchange="sortTasks()"
+                            class="border border-gray-300 rounded-lg px-3 py-2">
+                            <option class="text-gray-800" value="created_at_desc">Сортировка: новые сначала</option>
+                            <option class="text-gray-800" value="created_at_asc">Сортировка: старые сначала</option>
+                            <option class="text-gray-800" value="deadline_asc">Сортировка: ближайшие</option>
+                            <option class="text-gray-800" value="deadline_desc">Сортировка: Дедлайн(дальние)</option>
+                            <option class="text-gray-800" value="name_asc">Названию (А-Я)</option>
+                            <option class="text-gray-800" value="name_desc">Названию (Я-А)</option>
+                            <option class="text-gray-800" value="status_asc">Статус</option>
+                            <option class="text-gray-800" value="priority_desc">Приоритет (высокие сначала)</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -231,25 +225,26 @@
             <div class="border-none">
                 <div class="w-full max-w-[100%] overflow-x-auto backdrop-blur-md bg-transparent/20 rounded-lg border-none"
                     style="border-style: unset !important;">
-                    <table class="min-w-[900px] w-full border-none" style="border-style: unset !important;">
+                    <table class="min-w-[900px] w-full border-none max-[500px]:min-w-0" style="border-style: unset !important;">
                         <thead class="backdrop-blur-md bg-transparent/20" style="border-style: unset !important;">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                                     onclick="sortByColumn('name')">
                                     Задача <i class="fas fa-sort ml-1"></i>
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 max-[500px]:hidden"
                                     onclick="sortByColumn('status')">
                                     Статус <i class="fas fa-sort ml-1"></i>
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 max-[500px]:hidden"
                                     onclick="sortByColumn('priority')">
                                     Приоритет <i class="fas fa-sort ml-1"></i>
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider max-[500px]:hidden">
                                     Отдел
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 max-[500px]:hidden"
                                     onclick="sortByColumn('deadline')">
                                     Дедлайн <i class="fas fa-sort ml-1"></i>
                                 </th>
@@ -274,22 +269,22 @@
                                             </a>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4 max-[500px]:hidden">
                                         <span
                                             class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $task->status === 'назначена' ? 'bg-blue-100 text-blue-800' : ($task->status === 'в работе' ? 'bg-purple-100 text-purple-800' : ($task->status === 'на проверке' ? 'bg-yellow-100 text-yellow-800' : ($task->status === 'выполнена' ? 'bg-green-100 text-green-800' : 'bg-red-400 text-white'))) }}">
                                             {{ $task->status }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4 max-[500px]:hidden">
                                         <span
                                             class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $task->priority === 'низкий' ? 'bg-gray-100 text-gray-800' : ($task->priority === 'средний' ? 'bg-blue-100 text-blue-800' : ($task->priority === 'высокий' ? 'bg-orange-100 text-orange-800' : ($task->priority === 'критический' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'))) }}">
                                             {{ $task->priority }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                    <td class="px-6 py-4 text-sm text-gray-500 max-[500px]:hidden">
                                         {{ $task->department->name ?? ($task->is_personal ? 'Личная' : '-') }}
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                    <td class="px-6 py-4 text-sm text-gray-500 max-[500px]:hidden">
                                         @if($task->deadline)
                                             <span
                                                 class="{{ $task->deadline->isPast() && $task->status !== 'выполнена' ? 'text-red-600 font-semibold' : '' }}">
@@ -299,9 +294,9 @@
                                             -
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 text-sm font-medium">
+                                    <td class="px-6 py-4 text-sm font-medium max-[500px]:flex max-[500px]:justify-center max-[500px]:items-center">
                                         <button onclick="openTaskViewModal({{ $task->id }})"
-                                            class="text-green-600 hover:text-green-900 mr-3">
+                                            class="text-green-600 hover:text-green-900 mr-3 max-[500px]:mr-0">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                     </td>
@@ -319,25 +314,26 @@
         @else
             <div>
                 <div class="w-full max-w-[100%] overflow-x-auto bg-white rounded-lg shadow">
-                    <table class="min-w-[900px] w-full divide-y divide-gray-200">
+                    <table class="min-w-[900px] w-full divide-y divide-gray-200 max-[500px]:min-w-0">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                                     onclick="sortByColumn('name')">
                                     Задача <i class="fas fa-sort ml-1"></i>
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 max-[500px]:hidden"
                                     onclick="sortByColumn('status')">
                                     Статус <i class="fas fa-sort ml-1"></i>
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 max-[500px]:hidden"
                                     onclick="sortByColumn('priority')">
                                     Приоритет <i class="fas fa-sort ml-1"></i>
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider max-[500px]:hidden">
                                     Отдел
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 max-[500px]:hidden"
                                     onclick="sortByColumn('deadline')">
                                     Дедлайн <i class="fas fa-sort ml-1"></i>
                                 </th>
@@ -362,22 +358,22 @@
                                         </div>
                                         <div class="text-sm text-gray-500">{{ Str::limit($task->description, 60) }}</div>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4 max-[500px]:hidden">
                                         <span
                                             class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $task->status === 'назначена' ? 'bg-blue-100 text-blue-800' : ($task->status === 'в работе' ? 'bg-purple-100 text-purple-800' : ($task->status === 'на проверке' ? 'bg-yellow-100 text-yellow-800' : ($task->status === 'выполнена' ? 'bg-green-100 text-green-800' : 'bg-red-400 text-white'))) }}">
                                             {{ $task->status }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4 max-[500px]:hidden">
                                         <span
                                             class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $task->priority === 'низкий' ? 'bg-gray-100 text-gray-800' : ($task->priority === 'средний' ? 'bg-blue-100 text-blue-800' : ($task->priority === 'высокий' ? 'bg-orange-100 text-orange-800' : ($task->priority === 'критический' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'))) }}">
                                             {{ $task->priority }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                    <td class="px-6 py-4 text-sm text-gray-500 max-[500px]:hidden">
                                         {{ $task->department->name ?? ($task->is_personal ? 'Личная' : '-') }}
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                    <td class="px-6 py-4 text-sm text-gray-500 max-[500px]:hidden">
                                         @if($task->deadline)
                                             <span
                                                 class="{{ $task->deadline->isPast() && $task->status !== 'выполнена' ? 'text-red-600 font-semibold' : '' }}">
@@ -387,7 +383,7 @@
                                             -
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 text-sm font-medium">
+                                    <td class="px-6 py-4 text-sm font-medium max-[500px]:text-center">
                                         <button onclick="openTaskViewModal({{ $task->id }})"
                                             class="text-green-600 hover:text-green-900 mr-3">
                                             <i class="fas fa-eye"></i>
@@ -632,156 +628,156 @@
                     const modalContent = document.getElementById('taskModalContent');
 
                     modalContent.innerHTML = `
-                                                                                                                                                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                                                                                                                                                <div class="md:col-span-2">
-                                                                                                                                                                                    <h4 class="text-lg font-semibold text-gray-800 mb-2">${escapeHtml(task.name)}</h4>
-                                                                                                                                                                                    <p class="text-gray-600 mb-4">${escapeHtml(task.description) || 'Описание отсутствует'}</p>
-                                                                                                                                                                                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-2">${escapeHtml(task.name)}</h4>
+                        <p class="text-gray-600 mb-4">${escapeHtml(task.description) || 'Описание отсутствует'}</p>
+                    </div>
 
-                                                                                                                                                                                <div class="space-y-4">
-                                                                                                                                                                                    <div>
-                                                                                                                                                                                        <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                                                                                                                                                                                        <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(task.status)}">
-                                                                                                                                                                                            ${task.status}
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
+                            <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(task.status)}">
+                                ${task.status}
+                            </div>
+                        </div>
 
-                                                                                                                                                                                    <div>
-                                                                                                                                                                                        <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
-                                                                                                                                                                                        <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(task.priority)}">
-                                                                                                                                                                                            ${task.priority}
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
+                            <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(task.priority)}">
+                                ${task.priority}
+                            </div>
+                        </div>
 
-                                                                                                                                                                                    ${task.department ? `
-                                                                                                                                                                                        <div>
-                                                                                                                                                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
-                                                                                                                                                                                            <p class="text-gray-900">${escapeHtml(task.department.name)}</p>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    ` : ''}
+                        ${task.department ? `
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
+                                <p class="text-gray-900">${escapeHtml(task.department.name)}</p>
+                            </div>
+                        ` : ''}
 
-                                                                                                                                                                                    ${task.category ? `
-                                                                                                                                                                                        <div>
-                                                                                                                                                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
-                                                                                                                                                                                            <p class="text-gray-900">${escapeHtml(task.category.name)}</p>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    ` : ''}
+                        ${task.category ? `
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
+                                <p class="text-gray-900">${escapeHtml(task.category.name)}</p>
+                            </div>
+                        ` : ''}
 
-                                                                                                                                                                                    <div>
-                                                                                                                                                                                        <label class="block text-sm font-medium text-gray-700 mb-1">Автор</label>
-                                                                                                                                                                                        <p class="text-gray-900">${escapeHtml(task.author.name)}</p>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Автор</label>
+                            <p class="text-gray-900">${escapeHtml(task.author.name)}</p>
+                        </div>
+                    </div>
 
-                                                                                                                                                                                <div class="space-y-4">
-                                                                                                                                                                                    ${task.deadline ? `
-                                                                                                                                                                                        <div>
-                                                                                                                                                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Дедлайн</label>
-                                                                                                                                                                                            <p class="text-gray-900 ${new Date(task.deadline) < new Date() ? 'text-red-600 font-semibold' : ''}">
-                                                                                                                                                                                                ${formatDateTime(task.deadline)}
-                                                                                                                                                                                                ${new Date(task.deadline) < new Date() ? ' (Просрочено)' : ''}
-                                                                                                                                                                                            </p>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    ` : ''}
+                    <div class="space-y-4">
+                        ${task.deadline ? `
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Дедлайн</label>
+                                <p class="text-gray-900 ${new Date(task.deadline) < new Date() ? 'text-red-600 font-semibold' : ''}">
+                                    ${formatDateTime(task.deadline)}
+                                    ${new Date(task.deadline) < new Date() ? ' (Просрочено)' : ''}
+                                </p>
+                            </div>
+                        ` : ''}
 
-                                                                                                                                                                                    ${task.estimated_hours ? `
-                                                                                                                                                                                        <div>
-                                                                                                                                                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Планируемое время</label>
-                                                                                                                                                                                            <p class="text-gray-900">${task.estimated_hours} часов</p>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    ` : ''}
+                        ${task.estimated_hours ? `
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Планируемое время</label>
+                                <p class="text-gray-900">${task.estimated_hours} часов</p>
+                            </div>
+                        ` : ''}
 
-                                                                                                                                                                                    ${task.actual_hours ? `
-                                                                                                                                                                                        <div>
-                                                                                                                                                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Фактическое время</label>
-                                                                                                                                                                                            <p class="text-gray-900">${task.actual_hours} часов</p>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    ` : ''}
+                        ${task.actual_hours ? `
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Фактическое время</label>
+                                <p class="text-gray-900">${task.actual_hours} часов</p>
+                            </div>
+                        ` : ''}
 
-                                                                                                                                                                                    ${task.completed_at ? `
-                                                                                                                                                                                        <div>
-                                                                                                                                                                                            <label class="block text-sm font-medium text-gray-700 mb-1">Завершено</label>
-                                                                                                                                                                                            <p class="text-gray-900">${formatDateTime(task.completed_at)}</p>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    ` : ''}
+                        ${task.completed_at ? `
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Завершено</label>
+                                <p class="text-gray-900">${formatDateTime(task.completed_at)}</p>
+                            </div>
+                        ` : ''}
 
-                                                                                                                                                                                    <div>
-                                                                                                                                                                                        <label class="block text-sm font-medium text-gray-700 mb-1">Создана</label>
-                                                                                                                                                                                        <p class="text-gray-900">${formatDateTime(task.created_at)}</p>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Создана</label>
+                            <p class="text-gray-900">${formatDateTime(task.created_at)}</p>
+                        </div>
+                    </div>
 
-                                                                                                                                                                                <div class="md:col-span-2">
-                                                                                                                                                                                    <label class="block text-sm font-medium text-gray-700 mb-3">Прикрепленные файлы</label>
-                                                                                                                                                                                    ${task.files && task.files.length > 0 ? `
-                                                                                                                                                                                        <div class="space-y-2 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
-                                                                                                                                                                                            ${task.files.map(file => `
-                                                                                                                                                                                                <div class="flex items-center justify-between bg-gray-50 p-3 rounded">
-                                                                                                                                                                                                    <div class="flex items-center space-x-3">
-                                                                                                                                                                                                        <i class="fas fa-paperclip text-gray-500"></i>
-                                                                                                                                                                                                        <div>
-                                                                                                                                                                                                            <a href="/storage/${file.file_path}" target="_blank"
-                                                                                                                                                                                                               class="text-blue-600 hover:text-blue-800 font-medium block">
-                                                                                                                                                                                                                ${escapeHtml(file.name)}
-                                                                                                                                                                                                            </a>
-                                                                                                                                                                                                            <span class="text-xs text-gray-500">
-                                                                                                                                                                                                                ${Math.round(file.file_size / 1024)} KB •
-                                                                                                                                                                                                                ${formatDateTime(file.created_at)}
-                                                                                                                                                                                                            </span>
-                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                            `).join('')}
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    ` : '<p class="text-gray-500 text-center py-4">Файлы отсутствуют</p>'}
-                                                                                                                                                                                </div>
-                                                                                                                                                                            </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Прикрепленные файлы</label>
+                        ${task.files && task.files.length > 0 ? `
+                            <div class="space-y-2 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                                ${task.files.map(file => `
+                                    <div class="flex items-center justify-between bg-gray-50 p-3 rounded">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-paperclip text-gray-500"></i>
+                                            <div>
+                                                <a href="/storage/${file.file_path}" target="_blank"
+                                                    class="text-blue-600 hover:text-blue-800 font-medium block">
+                                                    ${escapeHtml(file.name)}
+                                                </a>
+                                                <span class="text-xs text-gray-500">
+                                                    ${Math.round(file.file_size / 1024)} KB •
+                                                    ${formatDateTime(file.created_at)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : '<p class="text-gray-500 text-center py-4">Файлы отсутствуют</p>'}
+                    </div>
+                </div>
 
-                                                                                                                                                                            ${task.rejections && task.rejections.length > 0 ? `
-                                                                                                                                                                                <div class="mt-4">
-                                                                                                                                                                                    <label class="block text-sm font-medium text-gray-700 mb-3">История отказов</label>
-                                                                                                                                                                                    <div class="space-y-2 max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-3">
-                                                                                                                                                                                        ${task.rejections.map(rejection => `
-                                                                                                                                                                                            <div class="bg-red-50 border border-red-200 rounded p-3">
-                                                                                                                                                                                                <div class="flex justify-between items-start mb-1">
-                                                                                                                                                                                                    <span class="text-sm font-medium text-red-800">${escapeHtml(rejection.user?.name || 'Пользователь')}</span>
-                                                                                                                                                                                                    <span class="text-xs text-red-600">${formatDateTime(rejection.created_at)}</span>
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                                <p class="text-sm text-red-700">${escapeHtml(rejection.reason)}</p>
-                                                                                                                                                                                            </div>
-                                                                                                                                                                                        `).join('')}
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                </div>
-                                                                                                                                                                            ` : ''}
+                ${task.rejections && task.rejections.length > 0 ? `
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">История отказов</label>
+                        <div class="space-y-2 max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                            ${task.rejections.map(rejection => `
+                                <div class="bg-red-50 border border-red-200 rounded p-3">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <span class="text-sm font-medium text-red-800">${escapeHtml(rejection.user?.name || 'Пользователь')}</span>
+                                        <span class="text-xs text-red-600">${formatDateTime(rejection.created_at)}</span>
+                                    </div>
+                                    <p class="text-sm text-red-700">${escapeHtml(rejection.reason)}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
 
-                                                                                                                                                                            <div class="flex space-x-3 mt-6 pt-4 border-t border-gray-200">
-                                                                                                                                                                                ${task.status === 'назначена' ? `
-                                                                                                                                                                                    <button onclick="startTask(${task.id})"
-                                                                                                                                                                                            class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                                                                                                                                                                                        <i class="fas fa-play mr-2"></i>Начать работу
-                                                                                                                                                                                    </button>
-                                                                                                                                                                                ` : ''}
+                <div class="flex space-x-3 mt-6 pt-4 border-t border-gray-200 max-[500px]:flex-col-reverse max-[500px]:space-x-0 max-[500px]:space-y-0 max-[500px]:gap-3">
+                    ${task.status === 'назначена' ? `
+                        <button onclick="startTask(${task.id})"
+                                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                            <i class="fas fa-play mr-2"></i>Начать работу
+                        </button>
+                    ` : ''}
 
-                                                                                                                                                                                ${task.status === 'в работе' ? `
-                                                                                                                                                                                    <button onclick="sendForReview(${task.id})"
-                                                                                                                                                                                            class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition">
-                                                                                                                                                                                        <i class="fas fa-check-circle mr-2"></i>Отправить на проверку
-                                                                                                                                                                                    </button>
-                                                                                                                                                                                ` : ''}
+                    ${task.status === 'в работе' ? `
+                        <button onclick="sendForReview(${task.id})"
+                                class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition">
+                            <i class="fas fa-check-circle mr-2"></i>Отправить на проверку
+                        </button>
+                    ` : ''}
 
-                                                                                                                                                                                ${task.status !== 'выполнена' ? `
-                                                                                                                                                                                    <button onclick="showRejectModal(${task.id})"
-                                                                                                                                                                                            class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">
-                                                                                                                                                                                        <i class="fas fa-times mr-2"></i>Отказаться от задачи
-                                                                                                                                                                                    </button>
-                                                                                                                                                                                ` : ''}
+                    ${task.status !== 'выполнена' ? `
+                        <button onclick="showRejectModal(${task.id})"
+                                class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">
+                            <i class="fas fa-times mr-2"></i>Отказаться от задачи
+                        </button>
+                    ` : ''}
 
-                                                                                                                                                                                <button onclick="closeTaskViewModal()"
-                                                                                                                                                                                        class=" text-white px-4 py-2 rounded-lg transition" style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);">
-                                                                                                                                                                                    Закрыть
-                                                                                                                                                                                </button>
-                                                                                                                                                                            </div>
-                                                                                                                                                                        `;
+                    <button onclick="closeTaskViewModal()"
+                            class=" text-white px-4 py-2 rounded-lg transition" style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);">
+                        Закрыть
+                    </button>
+                </div>
+            `;
 
                     document.getElementById('taskViewModal').classList.remove('hidden');
                 } else {
