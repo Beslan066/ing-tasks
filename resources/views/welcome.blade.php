@@ -234,7 +234,7 @@
                             </div>
                         @endif
                         @if($task->deadline)
-                            <div class="mb-3">
+                            <div class="mb-3 max-[500px]:hidden">
                                 <div
                                     class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
                                     <i class="fas fa-clock mr-2"></i>
@@ -320,7 +320,7 @@
                             </div>
                         @endif
                         @if($task->deadline)
-                            <div class="mb-3">
+                            <div class="mb-3 max-[500px]:hidden">
                                 <div
                                     class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
                                     <i class="fas fa-clock mr-2"></i>
@@ -402,7 +402,7 @@
                             </div>
                         @endif
                         @if($task->deadline)
-                            <div class="mb-3">
+                            <div class="mb-3 max-[500px]:hidden">
                                 <div
                                     class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
                                     <i class="fas fa-clock mr-2"></i>
@@ -479,7 +479,7 @@
                             </div>
                         @endif
                         @if($task->actual_hours)
-                            <div class="mb-3">
+                            <div class="mb-3 max-[500px]:hidden">
                                 <div class="flex items-center text-sm text-gray-500">
                                     <i class="fas fa-hourglass-end mr-2"></i>
                                     Затрачено времени: {{ $task->actual_hours }}ч
@@ -670,11 +670,11 @@
             const chip = document.createElement('div');
             chip.className = 'inline-flex items-center bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full';
             chip.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                            <span>${label}</span>
-                                                                                                                                                                                                                                                                                                                                                                                                            <button onclick="removeFilter('${type}', '${value}')" class="ml-2 text-gray-500 hover:text-gray-700">
-                                                                                                                                                                                                                                                                                                                                                                                                                <i class="fas fa-times-circle text-xs"></i>
-                                                                                                                                                                                                                                                                                                                                                                                                            </button>
-                                                                                                                                                                                                                                                                                                                                                                                                        `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                    <span>${label}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                    <button onclick="removeFilter('${type}', '${value}')" class="ml-2 text-gray-500 hover:text-gray-700">
+                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="fas fa-times-circle text-xs"></i>
+                                                                                                                                                                                                                                                                                                                                                                                                                                    </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                `;
             container.appendChild(chip);
         }
 
@@ -1020,7 +1020,7 @@
                     departmentSelect.removeAttribute('required');
                     departmentField.style.display = 'none';
                 @endif
-                                                                                                                                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                                                                                                                                                                    }
 
             if (statusField && statusSelect) {
                 statusSelect.innerHTML = `<option value="назначена" selected>назначена</option>`;
@@ -1045,7 +1045,7 @@
                 formData.set('department_id', '{{ $user->department_id }}');
             @endif
 
-                                                                const submitBtn = form.querySelector('button[type="submit"]');
+                                                                                        const submitBtn = form.querySelector('button[type="submit"]');
             if (!submitBtn) return;
 
             const originalText = submitBtn.innerHTML;
