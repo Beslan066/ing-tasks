@@ -194,23 +194,20 @@
         <!-- Колонка "Новые" -->
         <div class="rounded-lg p-4 board-column bg-transparent max-[600px]:p-0" data-status="new">
             @if($backgroundEnabled && $backgroundImage)
-                <div
-                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
+                <div class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
                     <h3 class="font-semibold text-white">Новые</h3>
-                    <span
-                        class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['new'] }}</span>
+                    <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['new'] }}</span>
                 </div>
             @else
                 <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title">
                     <h3 class="font-semibold text-white">Новые</h3>
-                    <span
-                        class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['new'] }}</span>
+                    <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['new'] }}</span>
                 </div>
             @endif
 
             <div class="space-y-4 task-container" data-status="new">
                 @foreach($tasksByStatus['new'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between"
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between {{ $task->status == 'просрочена' ? 'border-l-4 border-red-500' : '' }}"
                          draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
                          data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
                          data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
@@ -228,16 +225,17 @@
                                 </div>
                             </div>
                         </div>
+
                         @if($task->files_count > 0)
                             <div class="mb-2 flex items-center text-xs text-gray-500">
                                 <i class="fas fa-paperclip mr-1"></i>
                                 <span>Файлы: {{ $task->files_count }}</span>
                             </div>
                         @endif
+
                         @if($task->deadline)
                             <div class="mb-3 max-[500px]:hidden">
-                                <div
-                                    class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
+                                <div class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
                                     <i class="fas fa-clock mr-2"></i>
                                     {{ $task->deadline->format('d.m.Y H:i') }}
                                     @if($task->deadline->isPast())
@@ -246,21 +244,21 @@
                                 </div>
                             </div>
                         @endif
+
                         <div class="flex justify-between items-center">
                             <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1 max-[500px]:space-x-0">
-                                <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-                                      class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
+                            <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
+                                  class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
                                 @if($task->priority === 'высокий')
                                     <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">‼️ Высокий</span>
                                 @elseif($task->priority === 'критический')
                                     <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">🚨 Критический</span>
                                 @endif
+                                @if($task->status == 'просрочена')
+                                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">⚠️ Просрочена</span>
+                                @endif
                             </div>
                             <div class="flex items-center space-x-2">
-                                @if($task->deadline && $task->deadline->isPast())
-                                    <span class="text-xs text-red-600">⚠️ Просрочена</span>
-                                @endif
-                                <!-- Три точки вместо карандаша -->
                                 <div class="relative">
                                     <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
                                         <i class="fas fa-ellipsis-v"></i>
@@ -291,23 +289,20 @@
         <!-- Колонка "В работе" -->
         <div class="rounded-lg p-4 board-column max-[600px]:p-0" data-status="in-progress">
             @if($backgroundEnabled && $backgroundImage)
-                <div
-                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
+                <div class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
                     <h3 class="font-semibold text-white">В работе</h3>
-                    <span
-                        class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['in_progress'] }}</span>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['in_progress'] }}</span>
                 </div>
             @else
                 <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title">
                     <h3 class="font-semibold text-white">В работе</h3>
-                    <span
-                        class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['in_progress'] }}</span>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['in_progress'] }}</span>
                 </div>
             @endif
 
             <div class="space-y-4 task-container" data-status="in-progress">
                 @foreach($tasksByStatus['in_progress'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between"
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between {{ $task->status == 'просрочена' ? 'border-l-4 border-red-500' : '' }}"
                          draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
                          data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
                          data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
@@ -319,22 +314,23 @@
                                 {{ $task->name }}
                             </h4>
                             <div class="flex space-x-1">
-                                <div class="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs"
+                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
                                      title="{{ $task->author->name }}">
                                     {{ substr($task->author->name, 0, 2) }}
                                 </div>
                             </div>
                         </div>
+
                         @if($task->files_count > 0)
                             <div class="mb-2 flex items-center text-xs text-gray-500">
                                 <i class="fas fa-paperclip mr-1"></i>
                                 <span>Файлы: {{ $task->files_count }}</span>
                             </div>
                         @endif
+
                         @if($task->deadline)
                             <div class="mb-3 max-[500px]:hidden">
-                                <div
-                                    class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
+                                <div class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
                                     <i class="fas fa-clock mr-2"></i>
                                     {{ $task->deadline->format('d.m.Y H:i') }}
                                     @if($task->deadline->isPast())
@@ -343,17 +339,19 @@
                                 </div>
                             </div>
                         @endif
+
                         <div class="flex justify-between items-center">
                             <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1 max-[500px]:space-x-0">
-                                <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-                                      class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
+                            <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
+                                  class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
                                 @if($task->category)
-                                    <span
-                                        class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->category->name }}</span>
+                                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->category->name }}</span>
+                                @endif
+                                @if($task->status == 'просрочена')
+                                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">⚠️ Просрочена</span>
                                 @endif
                             </div>
                             <div class="flex items-center space-x-2">
-                                <!-- Три точки вместо карандаша -->
                                 <div class="relative">
                                     <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
                                         <i class="fas fa-ellipsis-v"></i>
@@ -384,28 +382,20 @@
         <!-- Колонка "На проверке" -->
         <div class="rounded-lg p-4 board-column max-[600px]:p-0" data-status="review">
             @if($backgroundEnabled && $backgroundImage)
-                <div
-<<<<<<< HEAD
-                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2 max-[500px]:hidden">
+                <div class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
                     <h3 class="font-semibold text-white">На проверке</h3>
-=======
-                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
-                    <h3 class="font-semibold text-white shadow-2xs">На проверке</h3>
->>>>>>> d97e9ea781c9151cf43541456ce3f1c33c8c7ebe
-                    <span
-                        class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['review'] }}</span>
+                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['review'] }}</span>
                 </div>
             @else
                 <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title">
                     <h3 class="font-semibold text-white">На проверке</h3>
-                    <span
-                        class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['review'] }}</span>
+                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['review'] }}</span>
                 </div>
             @endif
 
             <div class="space-y-4 task-container" data-status="review">
                 @foreach($tasksByStatus['review'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between"
+                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between {{ $task->status == 'просрочена' ? 'border-l-4 border-red-500' : '' }}"
                          draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
                          data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
                          data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
@@ -417,22 +407,23 @@
                                 {{ $task->name }}
                             </h4>
                             <div class="flex space-x-1">
-                                <div class="w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center text-white text-xs"
+                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
                                      title="{{ $task->author->name }}">
                                     {{ substr($task->author->name, 0, 2) }}
                                 </div>
                             </div>
                         </div>
+
                         @if($task->files_count > 0)
                             <div class="mb-2 flex items-center text-xs text-gray-500">
                                 <i class="fas fa-paperclip mr-1"></i>
                                 <span>Файлы: {{ $task->files_count }}</span>
                             </div>
                         @endif
+
                         @if($task->deadline)
                             <div class="mb-3 max-[500px]:hidden">
-                                <div
-                                    class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
+                                <div class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
                                     <i class="fas fa-clock mr-2"></i>
                                     {{ $task->deadline->format('d.m.Y H:i') }}
                                     @if($task->deadline->isPast())
@@ -441,6 +432,7 @@
                                 </div>
                             </div>
                         @endif
+
                         @if($task->actual_hours)
                             <div class="mb-3">
                                 <div class="flex items-center text-sm text-gray-500">
@@ -449,13 +441,16 @@
                                 </div>
                             </div>
                         @endif
+
                         <div class="flex justify-between items-center">
                             <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1 max-[500px]:space-x-0">
-                                <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-                                      class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
+                            <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
+                                  class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
+                                @if($task->status == 'просрочена')
+                                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">⚠️ Просрочена</span>
+                                @endif
                             </div>
                             <div class="flex items-center space-x-2">
-                                <!-- Три точки вместо карандаша -->
                                 <div class="relative">
                                     <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
                                         <i class="fas fa-ellipsis-v"></i>
@@ -483,17 +478,14 @@
         <!-- Колонка "Завершено" -->
         <div class="rounded-lg p-4 board-column bg-transparent max-[600px]:p-0" data-status="done">
             @if($backgroundEnabled && $backgroundImage)
-                <div
-                    class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
+                <div class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
                     <h3 class="font-semibold text-white">Завершено</h3>
-                    <span
-                        class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['done'] }}</span>
+                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['done'] }}</span>
                 </div>
             @else
                 <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title">
                     <h3 class="font-semibold text-white">Завершено</h3>
-                    <span
-                        class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['done'] }}</span>
+                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['done'] }}</span>
                 </div>
             @endif
 
@@ -511,18 +503,20 @@
                                 {{ $task->name }}
                             </h4>
                             <div class="flex space-x-1">
-                                <div class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs"
+                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
                                      title="{{ $task->author->name }}">
                                     {{ substr($task->author->name, 0, 2) }}
                                 </div>
                             </div>
                         </div>
+
                         @if($task->files_count > 0)
                             <div class="mb-2 flex items-center text-xs text-gray-500">
                                 <i class="fas fa-paperclip mr-1"></i>
                                 <span>Файлы: {{ $task->files_count }}</span>
                             </div>
                         @endif
+
                         @if($task->actual_hours)
                             <div class="mb-3 max-[500px]:hidden">
                                 <div class="flex items-center text-sm text-gray-500">
@@ -531,16 +525,10 @@
                                 </div>
                             </div>
                         @endif
+
                         <div class="flex justify-between items-center">
-                            <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-<<<<<<< HEAD
-                                  class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
-                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded hidden max-[500px]:inline">
-                                {{ $task->status ?? 'Без статуса' }}
-                            </span>
-=======
-                                class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? '' : 'Без отдела') }}</span>
->>>>>>> d97e9ea781c9151cf43541456ce3f1c33c8c7ebe
+                        <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
+                              class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
                             <span class="text-xs text-gray-500">Завершено</span>
                         </div>
                     </div>
@@ -1935,16 +1923,7 @@
         function addFilterChip(container, type, value, label) {
             const chip = document.createElement('div');
             chip.className = 'inline-flex items-center bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full';
-<<<<<<< HEAD
             chip.innerHTML = `<span>${label}</span><button onclick="removeFilter('${type}', '${value}')" class="ml-2 text-gray-500 hover:text-gray-700"><i class="fas fa-times-circle text-xs"></i></button>`;
-=======
-            chip.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                                                    <span>${label}</span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                    <button onclick="removeFilter('${type}', '${value}')" class="ml-2 text-gray-500 hover:text-gray-700">
-                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="fas fa-times-circle text-xs"></i>
-                                                                                                                                                                                                                                                                                                                                                                                                                                    </button>
-                                                                                                                                                                                                                                                                                                                                                                                                                                `;
->>>>>>> d97e9ea781c9151cf43541456ce3f1c33c8c7ebe
             container.appendChild(chip);
         }
 
@@ -2178,7 +2157,6 @@
 
             @if(isset($user) && $user->department_id && $user->department)
             if (departmentField && departmentSelect) {
-<<<<<<< HEAD
                 departmentSelect.removeAttribute('required');
                 departmentSelect.innerHTML = `<option value="{{ $user->department_id }}" selected>{{ $user->department->name }}</option>`;
                 departmentSelect.disabled = true;
@@ -2190,18 +2168,6 @@
                 departmentField.style.display = 'none';
             }
             @endif
-=======
-                @if($user->department_id && $user->department)
-                    departmentSelect.removeAttribute('required');
-                    departmentSelect.innerHTML = `<option value="{{ $user->department_id }}" selected>{{ $user->department->name }}</option>`;
-                    departmentSelect.disabled = true;
-                    departmentField.style.display = 'block';
-                @else
-                    departmentSelect.removeAttribute('required');
-                    departmentField.style.display = 'none';
-                @endif
-                                                                                                                                                                                                                                                                                                                                                                                                                                    }
->>>>>>> d97e9ea781c9151cf43541456ce3f1c33c8c7ebe
 
             if (statusField && statusSelect) {
                 statusSelect.innerHTML = `<option value="назначена" selected>назначена</option>`;
@@ -2226,11 +2192,7 @@
             formData.set('department_id', '{{ $user->department_id }}');
             @endif
 
-<<<<<<< HEAD
             const submitBtn = form.querySelector('button[type="submit"]');
-=======
-                                                                                        const submitBtn = form.querySelector('button[type="submit"]');
->>>>>>> d97e9ea781c9151cf43541456ce3f1c33c8c7ebe
             if (!submitBtn) return;
 
             const originalText = submitBtn.innerHTML;

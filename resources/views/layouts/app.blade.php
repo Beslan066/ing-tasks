@@ -2270,17 +2270,19 @@ media-src https://meet.jit.si https:;
 
                     <!-- Детали задачи -->
                     <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                            <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(task.status)}">
-                                ${task.status_icon || ''} ${task.status}
+                        <div class="flex align-items-center">
+                            <div class="mr-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
+                                <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(task.status)}">
+                                    ${task.status_icon || ''} ${task.status}
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
-                            <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(task.priority)}">
-                                ${task.priority}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
+                                <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(task.priority)}">
+                                    ${task.priority}
+                                </div>
                             </div>
                         </div>
 

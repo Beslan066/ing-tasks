@@ -34,9 +34,7 @@ class HomeController extends Controller
         }
 
         // Если у пользователя есть компания, но нет company_id (он владелец)
-        // Нужно установить company_id для дальнейшей работы
         if (!$user->company_id && $isOwnerOfCompany) {
-            // Берем первую компанию, которой владеет пользователь
             $firstCompany = $user->ownedCompanies->first();
             $user->company_id = $firstCompany->id;
             $user->company = $firstCompany;
@@ -45,16 +43,14 @@ class HomeController extends Controller
         // Проверяем, хочет ли пользователь перейти в режим руководителя
         $adminMode = $request->get('admin_mode', false);
 
-        // Если пользователь руководитель И запросил режим руководителя - перенаправляем на админку
         if ($user->isLeader() && $adminMode === '1') {
             return redirect()->route('tasks.admin');
         }
 
-        // !!! ВАЖНО: Сначала обновляем статусы просроченных задач !!!
+        // Обновляем статусы просроченных задач
         $this->updateOverdueTasks($user->id);
 
-        // Получаем задачи пользователя по статусам с КОЛИЧЕСТВОМ ФАЙЛОВ
-        // НЕ включаем просроченные задачи в обычные статусы, они будут в отдельной колонке или с меткой
+        // Получаем задачи пользователя по статусам
         $tasksByStatus = [
             'new' => Task::with(['author', 'department', 'category', 'files'])
                 ->withCount('files')
@@ -77,13 +73,6 @@ class HomeController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get(),
 
-            'overdue' => Task::with(['author', 'department', 'category', 'files'])
-                ->withCount('files')
-                ->where('user_id', $user->id)
-                ->where('status', 'просрочена')
-                ->orderBy('deadline', 'asc')
-                ->get(),
-
             'done' => Task::with(['author', 'department', 'category', 'files'])
                 ->withCount('files')
                 ->where('user_id', $user->id)
@@ -93,46 +82,15 @@ class HomeController extends Controller
                 ->get(),
         ];
 
-        // Задачи отделов (доступные для взятия)
-        $availableTasks = collect();
-        if ($user->departments()->count() > 0) {
-            $departmentIds = $user->departments()->pluck('departments.id')->toArray();
-            $availableTasks = Task::with(['author', 'departments', 'category'])
-                ->withCount('files')
-                ->whereIn('department_id', $departmentIds)
-                ->whereNull('user_id')
-                ->where('status', 'не назначена')
-                ->where('is_personal', 0)
-                ->orderBy('created_at', 'desc')
-                ->get();
-        }
-
-        // Подсчёт всех завершённых задач для статистики
-        $allDoneTasksCount = Task::where('user_id', $user->id)
-            ->where('status', 'выполнена')
-            ->count();
-
-        // Личные задачи пользователя
-        $personalTasks = Task::with(['author', 'department', 'category', 'files'])
-            ->withCount('files')
-            ->where('author_id', $user->id)
-            ->where('user_id', $user->id)
-            ->where('is_personal', true)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        // Статистика (включая просроченные)
+        // Статистика
         $stats = [
             'new' => $tasksByStatus['new']->count(),
             'in_progress' => $tasksByStatus['in_progress']->count(),
             'review' => $tasksByStatus['review']->count(),
-            'overdue' => $tasksByStatus['overdue']->count(),
             'done' => $tasksByStatus['done']->count(),
-            'available' => $availableTasks->count(),
-            'personal' => $personalTasks->count(),
         ];
 
-        return view('welcome', compact('user', 'tasksByStatus', 'availableTasks', 'personalTasks', 'stats', 'allDoneTasksCount'));
+        return view('welcome', compact('user', 'tasksByStatus', 'stats'));
     }
 
     /**
@@ -140,8 +98,6 @@ class HomeController extends Controller
      */
     private function updateOverdueTasks($userId)
     {
-        // Находим все задачи пользователя, у которых дедлайн прошел,
-        // но статус не "выполнена" и не "просрочена"
         $tasksToUpdate = Task::where('user_id', $userId)
             ->whereNotNull('deadline')
             ->where('deadline', '<', now())
@@ -149,7 +105,7 @@ class HomeController extends Controller
             ->get();
 
         foreach ($tasksToUpdate as $task) {
-            $task->updateOverdueStatus();
+            $task->updateOverdueStatus(); // Этот метод меняет статус на 'просрочена'
         }
     }
 
