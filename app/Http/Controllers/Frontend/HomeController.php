@@ -50,34 +50,45 @@ class HomeController extends Controller
             return redirect()->route('tasks.admin');
         }
 
+        // !!! ВАЖНО: Сначала обновляем статусы просроченных задач !!!
+        $this->updateOverdueTasks($user->id);
+
         // Получаем задачи пользователя по статусам с КОЛИЧЕСТВОМ ФАЙЛОВ
+        // НЕ включаем просроченные задачи в обычные статусы, они будут в отдельной колонке или с меткой
         $tasksByStatus = [
             'new' => Task::with(['author', 'department', 'category', 'files'])
-                ->withCount('files')  // ДОБАВЛЕНО
+                ->withCount('files')
                 ->where('user_id', $user->id)
                 ->where('status', 'назначена')
                 ->orderBy('created_at', 'desc')
                 ->get(),
 
             'in_progress' => Task::with(['author', 'department', 'category', 'files'])
-                ->withCount('files')  // ДОБАВЛЕНО
+                ->withCount('files')
                 ->where('user_id', $user->id)
                 ->where('status', 'в работе')
                 ->orderBy('created_at', 'desc')
                 ->get(),
 
             'review' => Task::with(['author', 'department', 'category', 'files'])
-                ->withCount('files')  // ДОБАВЛЕНО
+                ->withCount('files')
                 ->where('user_id', $user->id)
                 ->where('status', 'на проверке')
                 ->orderBy('created_at', 'desc')
                 ->get(),
 
+            'overdue' => Task::with(['author', 'department', 'category', 'files'])
+                ->withCount('files')
+                ->where('user_id', $user->id)
+                ->where('status', 'просрочена')
+                ->orderBy('deadline', 'asc')
+                ->get(),
+
             'done' => Task::with(['author', 'department', 'category', 'files'])
-                ->withCount('files')  // ДОБАВЛЕНО
+                ->withCount('files')
                 ->where('user_id', $user->id)
                 ->where('status', 'выполнена')
-                ->orderBy('created_at', 'desc')
+                ->orderBy('completed_at', 'desc')
                 ->limit(10)
                 ->get(),
         ];
@@ -87,7 +98,7 @@ class HomeController extends Controller
         if ($user->departments()->count() > 0) {
             $departmentIds = $user->departments()->pluck('departments.id')->toArray();
             $availableTasks = Task::with(['author', 'departments', 'category'])
-                ->withCount('files')  // ДОБАВЛЕНО
+                ->withCount('files')
                 ->whereIn('department_id', $departmentIds)
                 ->whereNull('user_id')
                 ->where('status', 'не назначена')
@@ -103,24 +114,43 @@ class HomeController extends Controller
 
         // Личные задачи пользователя
         $personalTasks = Task::with(['author', 'department', 'category', 'files'])
-            ->withCount('files')  // ДОБАВЛЕНО
+            ->withCount('files')
             ->where('author_id', $user->id)
             ->where('user_id', $user->id)
             ->where('is_personal', true)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Статистика
+        // Статистика (включая просроченные)
         $stats = [
             'new' => $tasksByStatus['new']->count(),
             'in_progress' => $tasksByStatus['in_progress']->count(),
             'review' => $tasksByStatus['review']->count(),
+            'overdue' => $tasksByStatus['overdue']->count(),
             'done' => $tasksByStatus['done']->count(),
             'available' => $availableTasks->count(),
             'personal' => $personalTasks->count(),
         ];
 
         return view('welcome', compact('user', 'tasksByStatus', 'availableTasks', 'personalTasks', 'stats', 'allDoneTasksCount'));
+    }
+
+    /**
+     * Обновляет статусы просроченных задач для пользователя
+     */
+    private function updateOverdueTasks($userId)
+    {
+        // Находим все задачи пользователя, у которых дедлайн прошел,
+        // но статус не "выполнена" и не "просрочена"
+        $tasksToUpdate = Task::where('user_id', $userId)
+            ->whereNotNull('deadline')
+            ->where('deadline', '<', now())
+            ->whereNotIn('status', ['выполнена', 'просрочена'])
+            ->get();
+
+        foreach ($tasksToUpdate as $task) {
+            $task->updateOverdueStatus();
+        }
     }
 
     public function home()
