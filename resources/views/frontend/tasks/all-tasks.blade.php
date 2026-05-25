@@ -200,28 +200,21 @@
                             <i class="fas fa-undo mr-2"></i>Сбросить
                         </button>
                     </div>
-
+                </div>
+                  <div class="mt-2">
                     <!-- Сортировка -->
-                    <div class="bg-white rounded-lg shadow mb-6 p-4">
-                        <div class="flex flex-wrap items-center justify-between gap-4">
-                            <div class="flex items-center space-x-4 ">
-                                <span class="font-medium text-gray-700">Сортировать по:</span>
-                                <select id="sortBy" onchange="sortTasks()" class="border border-gray-300 rounded-lg px-3 py-2">
-                                    <option value="created_at_desc">Дате создания (новые сначала)</option>
-                                    <option value="created_at_asc">Дате создания (старые сначала)</option>
-                                    <option value="deadline_asc">Дедлайну (ближайшие)</option>
-                                    <option value="deadline_desc">Дедлайну (дальние)</option>
-                                    <option value="name_asc">Названию (А-Я)</option>
-                                    <option value="name_desc">Названию (Я-А)</option>
-                                    <option value="status_asc">Статусу</option>
-                                    <option value="priority_desc">Приоритету (высокие сначала)</option>
-                                </select>
-                            </div>
-                            <div class="text-sm text-gray-500">
-                                Показано: <span id="visibleCount">{{ $allTasks->count() }}</span> из <span
-                                    id="totalCount">{{ $allTasks->total() }}</span> задач
-                            </div>
-                        </div>
+                    <div class="flex items-center space-x-4 ">
+                        <select id="sortBy" onchange="sortTasks()"
+                            class="border border-gray-300 rounded-lg px-3 py-2">
+                            <option class="text-gray-800" value="created_at_desc">Сортировка: новые сначала</option>
+                            <option class="text-gray-800" value="created_at_asc">Сортировка: старые сначала</option>
+                            <option class="text-gray-800" value="deadline_asc">Сортировка: ближайшие</option>
+                            <option class="text-gray-800" value="deadline_desc">Сортировка: Дедлайн(дальние)</option>
+                            <option class="text-gray-800" value="name_asc">Названию (А-Я)</option>
+                            <option class="text-gray-800" value="name_desc">Названию (Я-А)</option>
+                            <option class="text-gray-800" value="status_asc">Статус</option>
+                            <option class="text-gray-800" value="priority_desc">Приоритет (высокие сначала)</option>
+                        </select>
                     </div>
                 </div>
             </div>
