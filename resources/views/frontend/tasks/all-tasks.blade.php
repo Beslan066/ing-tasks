@@ -232,7 +232,7 @@
             <div class="border-none">
                 <div class="w-full max-w-[100%] overflow-x-auto backdrop-blur-md bg-transparent/20 rounded-lg border-none"
                     style="border-style: unset !important;">
-                    <table class="min-w-[900px] w-full border-none" style="border-style: unset !important;">
+                    <table class="min-w-[900px] w-full border-none max-[500px]:min-w-0" style="border-style: unset !important;">
                         <thead class="backdrop-blur-md bg-transparent/20" style="border-style: unset !important;">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
@@ -757,7 +757,7 @@
                     </div>
                 ` : ''}
 
-                <div class="flex space-x-3 mt-6 pt-4 border-t border-gray-200">
+                <div class="flex space-x-3 mt-6 pt-4 border-t border-gray-200 max-[500px]:flex-col-reverse max-[500px]:space-x-0 max-[500px]:space-y-0 max-[500px]:gap-3">
                     ${task.status === 'назначена' ? `
                         <button onclick="startTask(${task.id})"
                                 class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
