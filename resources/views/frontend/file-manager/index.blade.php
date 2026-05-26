@@ -472,32 +472,32 @@
                         </div>
 
                         <div class="max-w-full overflow-x-auto">
-                            <div class="min-w-[1026px]">
+                            <div class="min-w-[1026px] max-[500px]:min-w-full">
                                 <!-- table header start -->
-                                <div class="grid grid-cols-11 border-t border-gray-200 px-6 py-3 border-none">
-                                    <div class="col-span-3 flex items-center">
-                                        <p class="text-theme-sm font-medium text-gray-500">
+                                <div class="grid grid-cols-11 border-t border-gray-200 px-6 py-3 border-none max-[500px]:grid-cols-2">
+                                    <div class="col-span-3 flex items-center max-[500px]:col-span-1">
+                                        <p class="text-theme-sm font-medium text-gray-500 max-[500px]:text-left">
                                             Имя файла
                                         </p>
                                     </div>
-                                    <div class="col-span-2 flex items-center">
+                                    <div class="col-span-2 flex items-center max-[500px]:hidden">
                                         <p class="text-theme-sm font-medium text-gray-500 dark:text-gray-400">
                                             Тип
                                         </p>
                                     </div>
-                                    <div class="col-span-2 flex items-center">
+                                    <div class="col-span-2 flex items-center max-[500px]:hidden">
                                         <p class="text-theme-sm font-medium text-gray-500 dark:text-gray-400">
                                             Размер
                                         </p>
                                     </div>
-                                    <div class="col-span-2 flex items-center">
+                                    <div class="col-span-2 flex items-center max-[500px]:hidden">
                                         <p class="text-theme-sm font-medium text-gray-500 dark:text-gray-400">
                                             Дата загрузки
                                         </p>
                                     </div>
-                                    <div class="col-span-2 flex items-center">
+                                    <div class="col-span-2 flex items-center max-[500px]:col-span-1">
                                         <p
-                                            class="w-full text-center text-theme-sm font-medium text-gray-500 dark:text-gray-400">
+                                            class="w-full text-center text-theme-sm font-medium text-gray-500 dark:text-gray-400 max-[500px]:text-right">
                                             Действия
                                         </p>
                                     </div>
@@ -508,9 +508,9 @@
                                 @foreach($files as $file)
                                     @if($backgroundEnabled && $backgroundImage)
                                         <div
-                                            class="grid grid-cols-11 bg-transparent/20 border-none px-6 py-[18px] text-white ">
-                                            <div class="col-span-3 flex items-center">
-                                                <div class="flex w-full items-center gap-2 text-sm ">
+                                            class="grid grid-cols-11 bg-transparent/20 border-none px-6 py-[18px] text-white max-[500px]:grid-cols-2">
+                                            <div class="col-span-3 flex items-center max-[500px]:col-span-1">
+                                                <div class="flex w-full items-center gap-2 text-sm max-[500px]:justify-start">
                                                     <div>
                                                         @if(str_contains($file->mime_type, 'image'))
                                                             <img src="{{ Storage::url($file->path) }}" alt="icon"
@@ -539,7 +539,7 @@
                                                     {{ $file->name }}
                                                 </div>
                                             </div>
-                                            <div class="col-span-2 flex items-center">
+                                            <div class="col-span-2 flex items-center max-[500px]:hidden">
                                                 <p class="text-theme-sm">
                                                     @if(str_contains($file->mime_type, 'image'))
                                                         Изображение
@@ -556,7 +556,7 @@
                                                     @endif
                                                 </p>
                                             </div>
-                                            <div class="col-span-2 flex items-center">
+                                            <div class="col-span-2 flex items-center max-[500px]:hidden">
                                                 <p class="text-theme-sm">
                                                     @php
                                                         $size = $file->size;
@@ -568,13 +568,13 @@
                                                     {{ $size }} {{ $units[$pow] }}
                                                 </p>
                                             </div>
-                                            <div class="col-span-2 flex items-center">
+                                            <div class="col-span-2 flex items-center max-[500px]:hidden">
                                                 <p class="text-theme-sm">
                                                     {{ $file->created_at->format('d.m.Y H:i') }}
                                                 </p>
                                             </div>
-                                            <div class="col-span-2 flex items-center">
-                                                <div class="flex w-full items-center justify-center gap-2">
+                                            <div class="col-span-2 flex items-center max-[500px]:col-span-1">
+                                                <div class="flex w-full items-center justify-center gap-2 max-[500px]:justify-end">
                                                     <a href="{{ route('files.download', $file) }}"
                                                        class=" hover:text-green-500"
                                                        title="Скачать">
@@ -642,7 +642,7 @@
                                                     {{ $file->name }}
                                                 </div>
                                             </div>
-                                            <div class="col-span-2 flex items-center">
+                                            <div class="col-span-2 flex items-center max-[500px]:hidden">
                                                 <p class="text-theme-sm text-gray-700 dark:text-gray-400">
                                                     @if(str_contains($file->mime_type, 'image'))
                                                         Изображение
@@ -659,7 +659,7 @@
                                                     @endif
                                                 </p>
                                             </div>
-                                            <div class="col-span-2 flex items-center">
+                                            <div class="col-span-2 flex items-center max-[500px]:hidden">
                                                 <p class="text-theme-sm text-gray-700 dark:text-gray-400">
                                                     @php
                                                         $size = $file->size;
@@ -671,7 +671,7 @@
                                                     {{ $size }} {{ $units[$pow] }}
                                                 </p>
                                             </div>
-                                            <div class="col-span-2 flex items-center">
+                                            <div class="col-span-2 flex items-center max-[500px]:hidden">
                                                 <p class="text-theme-sm text-gray-700 dark:text-gray-400">
                                                     {{ $file->created_at->format('d.m.Y H:i') }}
                                                 </p>
@@ -923,32 +923,32 @@
                         </div>
 
                         <div class="max-w-full overflow-x-auto">
-                            <div class="min-w-[1026px]">
+                            <div class="min-w-[1026px] max-[500px]:min-w-full">
                                 <!-- table header start -->
-                                <div class="grid grid-cols-11 border-t border-gray-200 px-6 py-3 dark:border-gray-800">
-                                    <div class="col-span-3 flex items-center">
-                                        <p class="text-theme-sm font-medium text-gray-500 dark:text-gray-400">
+                                <div class="grid grid-cols-11 border-t border-gray-200 px-6 py-3 dark:border-gray-800 max-[500px]:grid-cols-2">
+                                    <div class="col-span-3 flex items-center max-[500px]:col-span-1">
+                                        <p class="text-theme-sm font-medium text-gray-500 dark:text-gray-400 max-[500px]:text-left">
                                             Имя файла
                                         </p>
                                     </div>
-                                    <div class="col-span-2 flex items-center">
+                                    <div class="col-span-2 flex items-center max-[500px]:hidden">
                                         <p class="text-theme-sm font-medium text-gray-500 dark:text-gray-400">
                                             Тип
                                         </p>
                                     </div>
-                                    <div class="col-span-2 flex items-center">
+                                    <div class="col-span-2 flex items-center max-[500px]:hidden">
                                         <p class="text-theme-sm font-medium text-gray-500 dark:text-gray-400">
                                             Размер
                                         </p>
                                     </div>
-                                    <div class="col-span-2 flex items-center">
+                                    <div class="col-span-2 flex items-center max-[500px]:hidden">
                                         <p class="text-theme-sm font-medium text-gray-500 dark:text-gray-400">
                                             Дата загрузки
                                         </p>
                                     </div>
-                                    <div class="col-span-2 flex items-center">
+                                    <div class="col-span-2 flex items-center max-[500px]:col-span-1">
                                         <p
-                                            class="w-full text-center text-theme-sm font-medium text-gray-500 dark:text-gray-400">
+                                            class="w-full text-center text-theme-sm font-medium text-gray-500 dark:text-gray-400 max-[500px]:text-right">
                                             Действия
                                         </p>
                                     </div>
@@ -958,10 +958,10 @@
                                 <!-- table body start -->
                                 @foreach($files as $file)
                                     <div
-                                        class="grid grid-cols-11 border-t border-gray-100 px-6 py-[18px] dark:border-gray-800">
-                                        <div class="col-span-3 flex items-center">
+                                        class="grid grid-cols-11 border-t border-gray-100 px-6 py-[18px] dark:border-gray-800 max-[500px]:grid-cols-2">
+                                        <div class="col-span-3 flex items-center max-[500px]:col-span-1">
                                             <div
-                                                class="flex w-full items-center gap-2 text-sm text-gray-700 dark:text-gray-400">
+                                                class="flex w-full items-center gap-2 text-sm text-gray-700 dark:text-gray-400 max-[500px]:justify-start">
                                                 <div>
                                                     @if(str_contains($file->mime_type, 'image'))
                                                         <img src="{{ Storage::url($file->path) }}" alt="icon"
@@ -990,7 +990,7 @@
                                                 {{ $file->name }}
                                             </div>
                                         </div>
-                                        <div class="col-span-2 flex items-center">
+                                        <div class="col-span-2 flex items-center max-[500px]:hidden">
                                             <p class="text-theme-sm text-gray-700 dark:text-gray-400">
                                                 @if(str_contains($file->mime_type, 'image'))
                                                     Изображение
@@ -1007,7 +1007,7 @@
                                                 @endif
                                             </p>
                                         </div>
-                                        <div class="col-span-2 flex items-center">
+                                        <div class="col-span-2 flex items-center max-[500px]:hidden">
                                             <p class="text-theme-sm text-gray-700 dark:text-gray-400">
                                                 @php
                                                     $size = $file->size;
@@ -1019,13 +1019,13 @@
                                                 {{ $size }} {{ $units[$pow] }}
                                             </p>
                                         </div>
-                                        <div class="col-span-2 flex items-center">
+                                        <div class="col-span-2 flex items-center max-[500px]:hidden">
                                             <p class="text-theme-sm text-gray-700 dark:text-gray-400">
                                                 {{ $file->created_at->format('d.m.Y H:i') }}
                                             </p>
                                         </div>
-                                        <div class="col-span-2 flex items-center">
-                                            <div class="flex w-full items-center justify-center gap-2">
+                                        <div class="col-span-2 flex items-center max-[500px]:col-span-1">
+                                            <div class="flex w-full items-center justify-center gap-2  max-[500px]:justify-end">
                                                 <a href="{{ route('files.download', $file) }}"
                                                    class="text-gray-500 hover:text-green-500"
                                                    title="Скачать">

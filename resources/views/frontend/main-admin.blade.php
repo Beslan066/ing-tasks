@@ -405,10 +405,10 @@
         <!-- Статистика в виде карточек -->
         @if($backgroundEnabled && $backgroundImage)
             <div
-                class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 min-[1370px]:grid-cols-4 min-[1600px]:grid-cols-6 gap-3 md:gap-6 mb-6 md:mb-8">
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 min-[1370px]:grid-cols-4 min-[1600px]:grid-cols-6 gap-3 md:gap-6 mb-6 md:mb-8">
                 <!-- Всего задач -->
                 <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
-                    <div class="flex items-start justify-between mb-3 md:mb-4">
+                    <div class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">Всего задач</h3>
                         </div>
@@ -422,7 +422,7 @@
 
                 <!-- Назначены -->
                 <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
-                    <div class="flex items-start justify-between mb-3 md:mb-4">
+                    <div class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">Назначены</h3>
                         </div>
@@ -436,7 +436,7 @@
 
                 <!-- В работе -->
                 <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
-                    <div class="flex items-start justify-between mb-3 md:mb-4">
+                    <div class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">В работе</h3>
                         </div>
@@ -450,7 +450,7 @@
 
                 <!-- На проверке -->
                 <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
-                    <div class="flex items-start justify-between mb-3 md:mb-4">
+                    <div class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">На проверке</h3>
                         </div>
@@ -464,7 +464,7 @@
 
                 <!-- Выполнено -->
                 <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
-                    <div class="flex items-start justify-between mb-3 md:mb-4">
+                    <div class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">Выполнено</h3>
                         </div>
@@ -478,7 +478,7 @@
 
                 <!-- Просрочено -->
                 <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
-                    <div class="flex items-start justify-between mb-3 md:mb-4">
+                    <div class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-white">Просрочено</h3>
                         </div>
@@ -491,10 +491,10 @@
                 </div>
             </div>
         @else
-            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-6 mb-6 md:mb-8">
+            <div  class="grid grid-cols-1 min-[550px]:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 min-[1370px]:grid-cols-4 min-[1600px]:grid-cols-6 gap-3 md:gap-6 mb-6 md:mb-8">
                 <!-- Всего задач -->
-                <div class=" bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
-                    <div class="flex items-start justify-between mb-3 md:mb-4">
+                <div class=" bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:flex-row max-[500px]:items-center max-[500px]:py-2">
+                    <div class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">Всего задач</h3>
                         </div>
@@ -507,8 +507,8 @@
                 </div>
 
                 <!-- Назначены -->
-                <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
-                    <div class="flex items-start justify-between mb-3 md:mb-4">
+                <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:flex-row max-[500px]:items-center max-[500px]:py-2">
+                    <div class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">Назначены</h3>
                         </div>
@@ -521,8 +521,8 @@
                 </div>
 
                 <!-- В работе -->
-                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
-                    <div class="flex items-start justify-between mb-3 md:mb-4">
+                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:flex-row max-[500px]:items-center max-[500px]:py-2">
+                    <div class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">В работе</h3>
                         </div>
@@ -535,8 +535,8 @@
                 </div>
 
                 <!-- На проверке -->
-                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
-                    <div class="flex items-start justify-between mb-3 md:mb-4">
+                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:flex-row max-[500px]:items-center max-[500px]:py-2">
+                    <div class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">На проверке</h3>
                         </div>
@@ -549,8 +549,8 @@
                 </div>
 
                 <!-- Выполнено -->
-                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
-                    <div class="flex items-start justify-between mb-3 md:mb-4">
+                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:flex-row max-[500px]:items-center max-[500px]:py-2">
+                    <div class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">Выполнено</h3>
                         </div>
@@ -563,8 +563,8 @@
                 </div>
 
                 <!-- Просрочено -->
-                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
-                    <div class="flex items-start justify-between mb-3 md:mb-4">
+                <div class="backdrop-blur-md bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:flex-row max-[500px]:items-center max-[500px]:py-2">
+                    <div class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center">
                         <div>
                             <h3 class="font-bold text-sm md:text-lg text-gray-800">Просрочено</h3>
                         </div>
