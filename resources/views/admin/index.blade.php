@@ -157,32 +157,11 @@
                 <!-- Performance Chart -->
                 <div class="col-12 col-xxl-4 col-md-6">
                     <div class="card h-100">
-                        <div class="card-header">
-                            <div class="d-flex justify-content-between">
-                                <h5 class="mb-1">Performance</h5>
-                                <div class="dropdown">
-                                    <button
-                                        class="btn btn-text-secondary rounded-pill text-muted border-0 p-1"
-                                        type="button"
-                                        id="performanceDropdown"
-                                        data-bs-toggle="dropdown"
-                                        aria-haspopup="true"
-                                        aria-expanded="false">
-                                        <i class="ri-more-2-line ri-20px"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="performanceDropdown">
-                                        <a class="dropdown-item" href="javascript:void(0);">Last 28 Days</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Last Month</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Last Year</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div id="performanceChart"></div>
-                        </div>
+                        @include('admin.support.widget')
                     </div>
                 </div>
+
+
                 <!--/ Performance Chart -->
 
                 <!-- Project Statistics -->

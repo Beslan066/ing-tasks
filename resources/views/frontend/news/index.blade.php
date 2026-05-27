@@ -6,7 +6,7 @@
         $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
     @endphp
 
-    <div id="news" class="container mx-auto px-4 py-6">
+    <div id="news" class="container ">
         <!-- Заголовок -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
             <div>
@@ -93,7 +93,7 @@
             @if($backgroundEnabled && $backgroundImage)
                 <div class="backdrop-blur-md bg-black/30 rounded-lg shadow-sm md:shadow-md p-4 md:p-5">
                     <h3 class="text-lg font-bold text-white border-b border-white/30 pb-2 mb-3">✉️ Поддержка</h3>
-                    <form action="" method="POST" enctype="multipart/form-data" class="space-y-3">
+                    <form action="{{route('support.send')}}" method="POST" enctype="multipart/form-data" class="space-y-3">
                         @csrf
                         <div>
                             <label for="name" class="block text-white/90 text-xs font-medium mb-1">Имя *</label>
@@ -118,19 +118,37 @@
                         <div>
                             <label for="attachment" class="block text-white/90 text-xs font-medium mb-1">Файл</label>
                             <input type="file" name="attachment" id="attachment"
-                                   class="w-full text-xs text-white/70 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:bg-[#16a34a] file:text-white hover:file:bg-[#15803d] cursor-pointer">
+                                   class="w-full text-xs text-white/70 file:mr-2 file:py-1   file:px-3 file:rounded-md file:border-0 file:text-sm file:bg-[#16a34a] file:text-white hover:file:bg-[#15803d] cursor-pointer">
                             <p class="text-white/50 text-[10px] mt-1">Max 10MB (jpg, png, pdf, zip, doc)</p>
                         </div>
                         <button type="submit"
-                                class="w-full bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-1.5 px-4 rounded-md text-sm transition duration-200">
+                                class=" bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-1.5 px-4 rounded-md text-sm transition duration-200">
                             Отправить
                         </button>
                     </form>
+
+                    @if ($errors->any())
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                            <strong class="font-bold">Ошибка!</strong>
+                            <ul class="mt-2 list-disc list-inside">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    @if(session('success'))
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 mt-2" role="alert">
+                            <strong class="font-bold">Успешно!</strong>
+                            <span class="block sm:inline">{{ session('success') }}</span>
+                        </div>
+                    @endif
                 </div>
             @else
                 <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-5">
                     <h3 class="text-lg font-bold text-gray-800 border-b border-gray-200 pb-2 mb-3">✉️ Поддержка</h3>
-                    <form action="" method="POST" enctype="multipart/form-data" class="space-y-3">
+                    <form action="{{route('support.send')}}" method="POST" enctype="multipart/form-data" class="space-y-3">
                         @csrf
                         <div>
                             <label for="name" class="block text-gray-700 text-xs font-medium mb-1">Имя *</label>
@@ -158,10 +176,12 @@
                                    class="w-full text-xs text-gray-600 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:bg-[#16a34a] file:text-white hover:file:bg-[#15803d] cursor-pointer">
                             <p class="text-gray-400 text-[10px] mt-1">Max 10MB (jpg, png, pdf, zip, doc)</p>
                         </div>
-                        <button type="submit"
-                                class="w-full bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-1.5 px-4 rounded-md text-sm transition duration-200">
-                            Отправить
-                        </button>
+                        <div>
+                            <button type="submit"
+                                    class="w-20 bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-1.5 px-4 rounded-lg text-sm transition">
+                                Отправить
+                            </button>
+                        </div>
                     </form>
                 </div>
             @endif

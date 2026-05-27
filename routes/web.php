@@ -11,6 +11,7 @@ use App\Http\Controllers\Frontend\UserController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Frontend\SmtpSettingController;
+use App\Http\Controllers\SupportController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -77,6 +78,8 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
     Route::get('/home', [\App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('welcome');
     Route::get('/all-tasks', [App\Http\Controllers\Frontend\HomeController::class, 'allTasks'])->middleware('require.company')->name('allTasks');
     Route::get('/tools', [\App\Http\Controllers\Frontend\ToolController::class, 'index'])->middleware('require.company')->name('tools.index');
+
+    Route::post('/support/send', [SupportController::class, 'send'])->name('support.send');
 
     //Индексная страница для новостей на фронте
     Route::get('/news', [\App\Http\Controllers\Frontend\NewsController::class, 'index'])->middleware('require.company')->name('frontend.news.index');
@@ -567,6 +570,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
         Route::patch('/edit', [\App\Http\Controllers\Admin\NewsController::class, 'update'])->name('admin.news.update');
         Route::delete('/edit', [\App\Http\Controllers\Admin\NewsController::class, 'destroy'])->name('admin.news.delete');
     });
+
+    // Роуты поддержки
+    Route::get('/support', [\App\Http\Controllers\Admin\SupportController::class, 'index'])->name('admin.support.index');
+    Route::get('/support/{ticket}', [\App\Http\Controllers\Admin\SupportController::class, 'show'])->name('admin.support.show');
+    Route::patch('/support/{ticket}/status', [\App\Http\Controllers\Admin\SupportController::class, 'updateStatus'])->name('support.status');
+    Route::post('/support/{ticket}/reply', [\App\Http\Controllers\Admin\SupportController::class, 'reply'])->name('admin.support.reply');
+    Route::get('/support/{ticket}/download', [\App\Http\Controllers\Admin\SupportController::class, 'download'])->name('admin.support.download');
+    Route::delete('/support/{ticket}', [\App\Http\Controllers\Admin\SupportController::class, 'destroy'])->name('admin.support.destroy');
 
     Route::get('/users/tracking', [App\Http\Controllers\Admin\UserTrackingController::class, 'index'])
         ->name('admin.users.tracking');

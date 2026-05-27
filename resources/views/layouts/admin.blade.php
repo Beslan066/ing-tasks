@@ -145,9 +145,9 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="app-chat.html" class="menu-link">
+                    <a href="{{route('admin.support.index')}}" class="menu-link">
                         <i class="menu-icon tf-icons ri-wechat-line"></i>
-                        <div data-i18n="Chat">Chat</div>
+                        <div data-i18n="Chat">Обращения</div>
                     </a>
                 </li>
                 <li class="menu-item">
