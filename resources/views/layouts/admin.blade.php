@@ -50,6 +50,9 @@
     <link rel="stylesheet" href="{{asset('main/assets/vendor/css/pages/cards-statistics.css')}}" />
     <link rel="stylesheet" href="{{asset('main/assets/vendor/css/pages/cards-analytics.css')}}" />
 
+    <link rel="stylesheet" href="{{asset('main/assets/vendor/libs/quill/katex.css')}}" />
+    <link rel="stylesheet" href="{{asset('main/assets/vendor/libs/quill/editor.css')}}" />
+
     <!-- Helpers -->
     <script src="{{asset('assets/assets/vendor/js/helpers.js')}}"></script>
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
@@ -139,6 +142,13 @@
                     <span class="menu-header-text" data-i18n="Apps & Pages">Apps &amp; Pages</span>
                 </li>
                 <li class="menu-item">
+                    <a href="{{route('admin.news.index')}}" class="menu-link">
+                        <i class="menu-icon tf-icons ri-news-line"></i>
+                        <div data-i18n="Calendar">Новости</div>
+                    </a>
+                </li>
+
+                <li class="menu-item">
                     <a href="{{route('admin.users.tracking')}}" class="menu-link">
                         <i class="menu-icon tf-icons ri-group-line"></i>
                         <div data-i18n="Email">Пользователи</div>
@@ -148,12 +158,6 @@
                     <a href="{{route('admin.support.index')}}" class="menu-link">
                         <i class="menu-icon tf-icons ri-wechat-line"></i>
                         <div data-i18n="Chat">Обращения</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="app-calendar.html" class="menu-link">
-                        <i class="menu-icon tf-icons ri-calendar-line"></i>
-                        <div data-i18n="Calendar">Calendar</div>
                     </a>
                 </li>
             </ul>
@@ -714,6 +718,12 @@
 
 <!-- Page JS -->
 <script src="{{asset('main/assets/js/dashboards-analytics.js')}}"></script>
+
+
+<script src="{{asset('main/assets/vendor/libs/quill/katex.js')}}"></script>
+<script src="{{asset('main/assets/vendor/libs/quill/quill.js')}}"></script>
+<script src="{{asset('main/assets/js/forms-editors.js')}}"></script>
+
 <script>
     setInterval(function() {
         fetch('/online-users')

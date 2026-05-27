@@ -30,6 +30,7 @@
                                 <div class="border-b border-white/20 pb-3 last:border-0 cursor-pointer transition hover:bg-white/5 rounded p-2 -mx-2"
                                      onclick="openNewsModal({
                                          title: '{{ addslashes($news['title']) }}',
+                                         lead: '{{ addslashes($news['lead']) }}',
                                          content: '{{ addslashes($news['content']) }}',
                                          date: '{{ $news['date'] ?? '—' }}',
                                          author: '{{ addslashes($news['author'] ?? '') }}'
@@ -38,6 +39,7 @@
                                         <h4 class="font-semibold text-white">{{ $news['title'] }}</h4>
                                         <span class="text-xs text-white/60 whitespace-nowrap">{{ $news['date'] ?? '—' }}</span>
                                     </div>
+                                    <p class="text-white/80 text-sm mt-1 line-clamp-2">{{ $news['lead'] }}</p>
                                     <p class="text-white/80 text-sm mt-1 line-clamp-2">{{ $news['content'] }}</p>
                                     @if(!empty($news['author']))
                                         <p class="text-white/50 text-xs mt-1">Автор: {{ $news['author'] }}</p>
@@ -64,6 +66,7 @@
                                  onclick="openNewsModal({
                                      title: '{{ addslashes($news['title']) }}',
                                      content: '{{ addslashes($news['content']) }}',
+                                     lead: '{{ addslashes($news['lead']) }}',
                                      date: '{{ $news['date'] ?? '—' }}',
                                      author: '{{ addslashes($news['author'] ?? '') }}'
                                  })">
@@ -71,6 +74,7 @@
                                     <h4 class="font-semibold text-gray-800">{{ $news['title'] }}</h4>
                                     <span class="text-xs text-gray-400 whitespace-nowrap">{{ $news['date'] ?? '—' }}</span>
                                 </div>
+                                <p class="text-gray-600 text-sm mt-1 line-clamp-2">{{ $news['lead'] }}</p>
                                 <p class="text-gray-600 text-sm mt-1 line-clamp-2">{{ $news['content'] }}</p>
                                 @if(!empty($news['author']))
                                     <p class="text-gray-400 text-xs mt-1">Автор: {{ $news['author'] }}</p>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\UserLocationController;
 use App\Http\Controllers\Frontend\ChatController;
 use App\Http\Controllers\Frontend\EmailTrashController;
 use App\Http\Controllers\Frontend\FileStorageController;
@@ -562,13 +563,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\IndexController::class, 'index'])->name('admin.index');
 
 
-    Route::group(['namespace' => 'News', 'as' => 'news.', 'prefix' => 'news'], function () {
+    Route::group(['namespace' => 'News', 'prefix' => 'news'], function () {
         Route::get('/', [\App\Http\Controllers\Admin\NewsController::class, 'index'])->name('admin.news.index');
         Route::get('/create', [\App\Http\Controllers\Admin\NewsController::class, 'create'])->name('admin.news.create');
         Route::post('/', [\App\Http\Controllers\Admin\NewsController::class, 'store'])->name('admin.news.store');
-        Route::get('/edit', [\App\Http\Controllers\Admin\NewsController::class, 'edit'])->name('index');
-        Route::patch('/edit', [\App\Http\Controllers\Admin\NewsController::class, 'update'])->name('admin.news.update');
-        Route::delete('/edit', [\App\Http\Controllers\Admin\NewsController::class, 'destroy'])->name('admin.news.delete');
+        Route::get('/{news}/edit', [\App\Http\Controllers\Admin\NewsController::class, 'edit'])->name('admin.news.edit');
+        Route::patch('/{news}', [\App\Http\Controllers\Admin\NewsController::class, 'update'])->name('admin.news.update');
+        Route::delete('/{news}', [\App\Http\Controllers\Admin\NewsController::class, 'destroy'])->name('admin.news.delete');
     });
 
     // Роуты поддержки
@@ -596,7 +597,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
             ->name('online.users');
     });
 
-    Route::post('/update-user-location', [App\Http\Controllers\UserLocationController::class, 'update'])->middleware('auth');
+    Route::post('/update-user-location', [UserLocationController::class, 'update'])->middleware('auth');
 });
 
 require __DIR__.'/auth.php';

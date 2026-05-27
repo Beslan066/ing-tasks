@@ -22,7 +22,7 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
+            'title' => 'required|string',
             'lead' => 'required|string',
             'content' => 'nullable',
             'image' => 'nullable',
@@ -32,8 +32,8 @@ class StoreRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'Заголовок обязателен для заполнения.',
-            'name.string' => 'Заголовок должен быть строкой.',
+            'title.required' => 'Заголовок обязателен для заполнения.',
+            'title.string' => 'Заголовок должен быть строкой.',
             'lead.required' => 'Лид обязателен для заполнения.',
             'lead.string' => 'Лид должен быть строкой.',
         ];
