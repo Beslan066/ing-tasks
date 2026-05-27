@@ -85,7 +85,7 @@
             <div class="ba md _g nn 2xl:ud-px-0">
                 <div class="qb ro to gq">
                     <div class="animate_left vm/2">
-                        <h4 class="ej dm oi bj ra">Выведите свой менеджмент на другой уровень</h4>
+                        <h4 class="ej dm oi bj ra">Выведите свой менеджмент на новый уровень</h4>
                         <h1 class="ej dm ri jr cj ga">
                             Современная система управления <span
                                 class="pb h ik jk kk pk nk sk im before:-ud-z-1">командами</span> и <span
