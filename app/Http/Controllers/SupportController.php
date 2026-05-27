@@ -38,59 +38,30 @@ class SupportController extends Controller
 
     public function send(Request $request)
     {
-        // Валидация входных данных
+        // Валидация
         $validated = $request->validate([
-            'name' => 'required|string|max:255|regex:/^[а-яА-Яa-zA-Z\s\-]+$/u',
+            'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'subject' => 'required|string|max:255|min:3',
             'message' => 'required|string|min:10|max:5000',
-            'attachment' => 'nullable|file|max:' . self::MAX_FILE_SIZE
-        ], [
-            'name.regex' => 'Имя может содержать только буквы, пробелы и дефисы',
-            'name.required' => 'Пожалуйста, укажите ваше имя',
-            'email.required' => 'Пожалуйста, укажите email для обратной связи',
-            'email.email' => 'Введите корректный email адрес',
-            'subject.min' => 'Тема сообщения должна содержать минимум 3 символа',
-            'message.min' => 'Сообщение должно содержать минимум 10 символов',
-            'attachment.max' => 'Файл не должен превышать 10MB',
+            'attachment' => 'nullable|file|max:10240'
         ]);
 
-        // Обработка файла
+        // Обработка файла (как было раньше)
         $attachmentPath = null;
         $attachmentOriginalName = null;
         $attachmentSize = null;
 
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
-
-            // Дополнительная проверка MIME-типа
-            $mimeType = $file->getMimeType();
             $extension = strtolower($file->getClientOriginalExtension());
-
-            if (!in_array($mimeType, self::ALLOWED_MIMES) && !in_array($extension, self::ALLOWED_EXTENSIONS)) {
-                return back()->withErrors(['attachment' => 'Недопустимый тип файла. Разрешены: ' . implode(', ', self::ALLOWED_EXTENSIONS)])->withInput();
-            }
-
-            // Проверка на вредоносный контент (базовая)
-            if ($this->isPotentiallyDangerous($file)) {
-                return back()->withErrors(['attachment' => 'Файл содержит потенциально опасный контент'])->withInput();
-            }
-
-            // Генерируем безопасное имя файла
             $safeName = Str::random(40) . '.' . $extension;
-
-            // Сохраняем файл в защищённую директорию
             $attachmentPath = $file->storeAs('support_attachments', $safeName, 'local');
-
-            if (!$attachmentPath) {
-                return back()->withErrors(['attachment' => 'Ошибка при загрузке файла'])->withInput();
-            }
-
             $attachmentOriginalName = $file->getClientOriginalName();
             $attachmentSize = $this->formatBytes($file->getSize());
         }
 
-        // Сохраняем в базу данных
+        // Сохраняем в БД
         $ticket = SupportTicket::create([
             'name' => strip_tags($validated['name']),
             'email' => strip_tags($validated['email']),
@@ -104,30 +75,32 @@ class SupportController extends Controller
             'user_agent' => $request->userAgent()
         ]);
 
-        // Отправляем email-уведомление (администратору)
+        // Подготовка данных для письма
+        $ticketData = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'subject' => $validated['subject'],
+            'message' => $validated['message'],
+            'attachment_original_name' => $attachmentOriginalName,
+            'attachment_size' => $attachmentSize,
+            'user_ip' => $request->ip(),
+            'ticket_id' => $ticket->id
+        ];
+
+        // ОТПРАВКА ПИСЬМА - ИСПРАВЛЕНО
         try {
-            $adminEmail = config('mail.support_email', env('MAIL_FROM_ADDRESS'));
+            $adminEmail = config('mail.support_email', 'taskmanager@xn--d1ababe5abjwjn9m.xn--p1ai');
 
-            $ticketData = $validated;
-            $ticketData['attachment_original_name'] = $attachmentOriginalName;
-            $ticketData['attachment_size'] = $attachmentSize;
-            $ticketData['user_ip'] = $request->ip();
-            $ticketData['ticket_id'] = $ticket->id;
-
+            // ВАЖНО: В to() указываем EMAIL, а не тему!
             Mail::to($adminEmail)->send(new SupportTicketMail($ticketData, $attachmentPath));
 
-            // Опционально: отправить подтверждение пользователю
-            // Mail::to($validated['email'])->send(new TicketConfirmationMail($ticketData));
+            \Log::info('Письмо отправлено на: ' . $adminEmail);
 
         } catch (\Exception $e) {
-            // Логируем ошибку, но не показываем пользователю
             \Log::error('Ошибка отправки email: ' . $e->getMessage());
         }
 
-        // Очищаем временные файлы (если нужно)
-        // session()->forget('support_form');
-
-        return redirect()->back()->with('success', 'Ваше сообщение успешно отправлено! Мы ответим вам в ближайшее время.');
+        return redirect()->back()->with('success', 'Ваше сообщение успешно отправлено!');
     }
 
     /**

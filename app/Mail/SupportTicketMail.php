@@ -13,20 +13,20 @@ class SupportTicketMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $ticket;
+    public $ticketData;
     public $attachmentPath;
 
-    public function __construct($ticket, $attachmentPath = null)
+    public function __construct($ticketData, $attachmentPath = null)
     {
-        $this->ticket = $ticket;
+        $this->ticketData = $ticketData;
         $this->attachmentPath = $attachmentPath;
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Новое обращение в поддержку: ' . $this->ticket['subject'],
-            replyTo: [$this->ticket['email'] => $this->ticket['name']],
+            subject: 'Новое обращение в поддержку: ' . ($this->ticketData['subject'] ?? 'Без темы'),
+            replyTo: [$this->ticketData['email'] => $this->ticketData['name']],
         );
     }
 
@@ -42,10 +42,9 @@ class SupportTicketMail extends Mailable
         if ($this->attachmentPath && file_exists(storage_path('app/' . $this->attachmentPath))) {
             return [
                 Attachment::fromPath(storage_path('app/' . $this->attachmentPath))
-                    ->as($this->ticket['attachment_original_name'] ?? basename($this->attachmentPath)),
+                    ->as($this->ticketData['attachment_original_name'] ?? 'attachment')
             ];
         }
-
         return [];
     }
 }
