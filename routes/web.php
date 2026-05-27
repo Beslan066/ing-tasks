@@ -78,6 +78,9 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
     Route::get('/all-tasks', [App\Http\Controllers\Frontend\HomeController::class, 'allTasks'])->middleware('require.company')->name('allTasks');
     Route::get('/tools', [\App\Http\Controllers\Frontend\ToolController::class, 'index'])->middleware('require.company')->name('tools.index');
 
+    //Индексная страница для новостей на фронте
+    Route::get('/news', [\App\Http\Controllers\Frontend\NewsController::class, 'index'])->middleware('require.company')->name('frontend.news.index');
+
 
     // Админская страница для руководителей и менеджеров
     Route::get('/admin/tasks', [\App\Http\Controllers\Frontend\HomeController::class, 'indexAdmin'])->name('tasks.admin');
@@ -554,6 +557,16 @@ Route::middleware(['auth', 'trackUserActivity'])->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     Route::get('/', [\App\Http\Controllers\Admin\IndexController::class, 'index'])->name('admin.index');
+
+
+    Route::group(['namespace' => 'News', 'as' => 'news.', 'prefix' => 'news'], function () {
+        Route::get('/', [\App\Http\Controllers\Admin\NewsController::class, 'index'])->name('admin.news.index');
+        Route::get('/create', [\App\Http\Controllers\Admin\NewsController::class, 'create'])->name('admin.news.create');
+        Route::post('/', [\App\Http\Controllers\Admin\NewsController::class, 'store'])->name('admin.news.store');
+        Route::get('/edit', [\App\Http\Controllers\Admin\NewsController::class, 'edit'])->name('index');
+        Route::patch('/edit', [\App\Http\Controllers\Admin\NewsController::class, 'update'])->name('admin.news.update');
+        Route::delete('/edit', [\App\Http\Controllers\Admin\NewsController::class, 'destroy'])->name('admin.news.delete');
+    });
 
     Route::get('/users/tracking', [App\Http\Controllers\Admin\UserTrackingController::class, 'index'])
         ->name('admin.users.tracking');

@@ -556,7 +556,7 @@ media-src https://meet.jit.si https:;
 
                 <!-- Выпадающее подменю для Дополнительно -->
                 <div id="extraSubmenu" class="ml-8 mt-1 space-y-1 overflow-hidden transition-all duration-300" style="max-height: 0px; opacity: 0;">
-                    <a href=""
+                    <a href="{{route('frontend.news.index')}}"
                        class="nav-item flex items-center px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg text-sm {{request()->routeIs('news.index*') ? 'active' : ''}}">
                         <div class="w-6 h-6 rounded-lg bg-green-500/10 flex items-center justify-center mr-2">
                             <i class="fas fa-newspaper text-green-500 text-xs"></i>
