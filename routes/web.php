@@ -16,6 +16,7 @@ use App\Http\Controllers\SupportController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 
@@ -194,6 +195,26 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
     });
 
 
+});
+
+Route::get('/test-support-mail', function () {
+    $testData = [
+        'name' => 'Тестовый Пользователь',
+        'email' => 'taskmanager@xn--d1ababe5abjwjn9m.xn--p1ai',  // ВАЖНО: настоящий email
+        'subject' => 'Тестовое обращение',
+        'message' => 'Проверка работы почты после исправлений',
+        'attachment_original_name' => null,
+        'attachment_size' => null,
+        'user_ip' => '127.0.0.1',
+        'ticket_id' => 999
+    ];
+
+    try {
+        Mail::to('taskmanager@xn--d1ababe5abjwjn9m.xn--p1ai')->send(new \App\Mail\SupportTicketMail($testData));
+        return '✅ Письмо отправлено! Проверь почту taskmanager@менеджерплюс.рф';
+    } catch (\Exception $e) {
+        return '❌ Ошибка: ' . $e->getMessage();
+    }
 });
 
 Route::middleware(['auth', 'verified', 'trackUserActivity', 'require.company'])->group(function () {

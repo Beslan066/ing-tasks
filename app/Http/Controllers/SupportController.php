@@ -41,13 +41,13 @@ class SupportController extends Controller
         // Валидация
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|max:255',  // ВАЖНО: проверяем что это email
             'subject' => 'required|string|max:255|min:3',
             'message' => 'required|string|min:10|max:5000',
             'attachment' => 'nullable|file|max:10240'
         ]);
 
-        // Обработка файла (как было раньше)
+        // Обработка файла
         $attachmentPath = null;
         $attachmentOriginalName = null;
         $attachmentSize = null;
@@ -87,11 +87,11 @@ class SupportController extends Controller
             'ticket_id' => $ticket->id
         ];
 
-        // ОТПРАВКА ПИСЬМА - ИСПРАВЛЕНО
+        // Отправка письма
         try {
             $adminEmail = config('mail.support_email', 'taskmanager@xn--d1ababe5abjwjn9m.xn--p1ai');
 
-            // ВАЖНО: В to() указываем EMAIL, а не тему!
+            // ВАЖНО: В to() передаём email, а не тему!
             Mail::to($adminEmail)->send(new SupportTicketMail($ticketData, $attachmentPath));
 
             \Log::info('Письмо отправлено на: ' . $adminEmail);

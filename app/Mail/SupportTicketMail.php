@@ -13,7 +13,7 @@ class SupportTicketMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $ticketData;
+    public $ticketData;  // Переименовал с $ticket на $ticketData
     public $attachmentPath;
 
     public function __construct($ticketData, $attachmentPath = null)

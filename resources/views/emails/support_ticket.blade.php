@@ -54,23 +54,23 @@
 <div class="content">
     <div class="field">
         <div class="label">👤 Отправитель:</div>
-        <div class="value">{{ $ticket['name'] }} ({{ $ticket['email'] }})</div>
+        <div class="value">{{ $ticketData['name'] ?? 'Не указан' }} ({{ $ticketData['email'] ?? 'Не указан' }})</div>
     </div>
 
     <div class="field">
         <div class="label">📌 Тема:</div>
-        <div class="value">{{ $ticket['subject'] }}</div>
+        <div class="value">{{ $ticketData['subject'] ?? 'Без темы' }}</div>
     </div>
 
     <div class="field">
         <div class="label">💬 Сообщение:</div>
-        <div class="value" style="white-space: pre-wrap;">{{ $ticket['message'] }}</div>
+        <div class="value" style="white-space: pre-wrap;">{{ $ticketData['message'] ?? 'Нет сообщения' }}</div>
     </div>
 
-    @if(!empty($ticket['attachment_original_name']))
+    @if(!empty($ticketData['attachment_original_name']))
         <div class="field">
             <div class="label">📎 Вложение:</div>
-            <div class="value">{{ $ticket['attachment_original_name'] }} ({{ $ticket['attachment_size'] }})</div>
+            <div class="value">{{ $ticketData['attachment_original_name'] }} ({{ $ticketData['attachment_size'] ?? '0 B' }})</div>
         </div>
     @endif
 
@@ -81,12 +81,17 @@
 
     <div class="field">
         <div class="label">🌐 IP адрес:</div>
-        <div class="value">{{ $ticket['user_ip'] ?? 'Не определен' }}</div>
+        <div class="value">{{ $ticketData['user_ip'] ?? 'Не определен' }}</div>
+    </div>
+
+    <div class="field">
+        <div class="label">🆔 Номер обращения:</div>
+        <div class="value">#{{ $ticketData['ticket_id'] ?? 'Нет' }}</div>
     </div>
 </div>
 <div class="footer">
     <p>Это письмо было отправлено автоматически с сайта. Пожалуйста, не отвечайте на него.</p>
-    <p>Для ответа отправителю используйте email: {{ $ticket['email'] }}</p>
+    <p>Для ответа отправителю используйте email: {{ $ticketData['email'] ?? 'не указан' }}</p>
 </div>
 </body>
 </html>
