@@ -656,7 +656,7 @@ media-src https://meet.jit.si https:;
     <div id="sidebar-overlay"
          class="fixed inset-0 bg-black/50 z-[998] hidden max-[638px]:[&.active]:block transition-opacity duration-300 max-[500px]:bg-black/90"></div>
     <!-- Основной контент -->
-    <div class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:pt-[30px] max-[638px]:w-full max-[500px]:pt-[20px] bg-gray-100">
+    <div class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:pt-[30px] max-[638px]:w-full max-[500px]:pt-[20px] {{ $backgroundEnabled && $backgroundImage ? '' : 'bg-gray-100' }}">
 
     <div class="justify-between items-center relative pr-4 pl-4 pb-6 hidden max-[638px]:flex">
    <!-- Логотип -->
