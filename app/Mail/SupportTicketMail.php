@@ -13,7 +13,7 @@ class SupportTicketMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $ticketData;  // Переименовал с $ticket на $ticketData
+    public $ticketData;
     public $attachmentPath;
 
     public function __construct($ticketData, $attachmentPath = null)
@@ -24,9 +24,9 @@ class SupportTicketMail extends Mailable
 
     public function envelope(): Envelope
     {
+        // Убираем replyTo - он вызывает ошибку
         return new Envelope(
             subject: 'Новое обращение в поддержку: ' . ($this->ticketData['subject'] ?? 'Без темы'),
-            replyTo: [$this->ticketData['email'] => $this->ticketData['name']],
         );
     }
 

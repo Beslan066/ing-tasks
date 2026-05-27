@@ -197,21 +197,24 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
 
 });
 
-Route::get('/test-support-mail', function () {
-    $testData = [
-        'name' => 'Тестовый Пользователь',
-        'email' => 'taskmanager@xn--d1ababe5abjwjn9m.xn--p1ai',  // ВАЖНО: настоящий email
-        'subject' => 'Тестовое обращение',
-        'message' => 'Проверка работы почты после исправлений',
-        'attachment_original_name' => null,
-        'attachment_size' => null,
-        'user_ip' => '127.0.0.1',
-        'ticket_id' => 999
-    ];
-
+Route::get('/test-mailable-fixed', function () {
     try {
-        Mail::to('taskmanager@xn--d1ababe5abjwjn9m.xn--p1ai')->send(new \App\Mail\SupportTicketMail($testData));
-        return '✅ Письмо отправлено! Проверь почту taskmanager@менеджерплюс.рф';
+        $testData = [
+            'name' => 'Тестовый Пользователь',
+            'email' => 'test@example.com',
+            'subject' => 'Тестовое обращение',
+            'message' => 'Проверка работы Mailable',
+            'attachment_original_name' => null,
+            'attachment_size' => null,
+            'user_ip' => '127.0.0.1',
+            'ticket_id' => 999
+        ];
+
+        $mailable = new \App\Mail\SupportTicketMail($testData);
+
+        Mail::to('taskmanager@xn--d1ababe5abjwjn9m.xn--p1ai')->send($mailable);
+
+        return '✅ Mailable успешно отправлен! Проверь почту.';
     } catch (\Exception $e) {
         return '❌ Ошибка: ' . $e->getMessage();
     }
