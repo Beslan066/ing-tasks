@@ -412,10 +412,37 @@ media-src https://meet.jit.si https:;
             .main-container:not(:has(.has-background)) {
 
             }
-.main-container:not(:has(.has-background)):has(.sidebar.active) .burger-btn span{
-    color: #ffffff;
-    background-color: #ffffff;
-}
+            .main-container:not(:has(.has-background)):has(.sidebar.active) .burger-btn span{
+                color: #ffffff;
+                background-color: #ffffff;
+            }
+        }
+
+        /* Стили для подменю */
+        #extraSubmenu {
+            transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+            opacity 0.3s ease;
+            overflow-y: hidden;
+        }
+
+        /* Скроллбар для подменю если много пунктов */
+        #extraSubmenu::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        #extraSubmenu::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        #extraSubmenu::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        /* Анимация для иконки */
+        #extraMenuIcon {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 </head>
@@ -515,9 +542,59 @@ media-src https://meet.jit.si https:;
                         <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Инструменты</span>
                     </a>
                 </div>
+
+                <!-- Дополнительные страницы (скрыты по умолчанию) -->
+                <a href="#"
+                   onclick="toggleExtraMenu(event)"
+                   class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg">
+                    <div class="w-8 h-8 rounded-lg bg-gray-500/10 flex items-center justify-center mr-3">
+                        <i class="fas fa-ellipsis-h text-gray-500 text-sm"></i>
+                    </div>
+                    <span class="flex-1 font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Дополнительно</span>
+                    <i id="extraMenuIcon" class="fas fa-chevron-down text-sidebar-text text-xs transition-transform duration-300"></i>
+                </a>
+
+                <!-- Выпадающее подменю для Дополнительно -->
+                <div id="extraSubmenu" class="ml-8 mt-1 space-y-1 overflow-hidden transition-all duration-300" style="max-height: 0px; opacity: 0;">
+                    <a href=""
+                       class="nav-item flex items-center px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg text-sm {{request()->routeIs('news.index*') ? 'active' : ''}}">
+                        <div class="w-6 h-6 rounded-lg bg-green-500/10 flex items-center justify-center mr-2">
+                            <i class="fas fa-newspaper text-green-500 text-xs"></i>
+                        </div>
+                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Новости</span>
+                    </a>
+
+                    <a href=""
+                       class="nav-item flex items-center px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg text-sm {{request()->routeIs('support.index*') ? 'active' : ''}}">
+                        <div class="w-6 h-6 rounded-lg bg-red-500/10 flex items-center justify-center mr-2">
+                            <i class="fas fa-headset text-red-500 text-xs"></i>
+                        </div>
+                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Поддержка</span>
+                    </a>
+
+                    <div class="border-t border-white/10 my-1"></div>
+
+                    <a href=""
+                       class="nav-item flex items-center px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg text-sm {{request()->routeIs('license.index*') ? 'active' : ''}}">
+                        <div class="w-6 h-6 rounded-lg bg-purple-500/10 flex items-center justify-center mr-2">
+                            <i class="fas fa-certificate text-purple-500 text-xs"></i>
+                        </div>
+                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Лицензия</span>
+                    </a>
+
+                    <a href=""
+                       class="nav-item flex items-center px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg text-sm {{request()->routeIs('payment.index*') ? 'active' : ''}}">
+                        <div class="w-6 h-6 rounded-lg bg-yellow-500/10 flex items-center justify-center mr-2">
+                            <i class="fas fa-credit-card text-yellow-500 text-xs"></i>
+                        </div>
+                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Оплата</span>
+                    </a>
+                </div>
+
+
             </div>
 
-            <!-- Теги -->
+           <!-- Теги -->
             <div class="mb-6">
                 <div class="flex items-center justify-between mb-4 px-2">
                     <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider">ТЕГИ</h3>
@@ -606,6 +683,7 @@ media-src https://meet.jit.si https:;
             </div>
         </div>
 
+
         <!-- Нижняя часть -->
         <div class="mt-auto space-y-4 pt-4 border-t border-white/10">
 
@@ -650,7 +728,7 @@ media-src https://meet.jit.si https:;
         <!-- Индикатор активности -->
         <div
             class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-500 to-transparent opacity-20 max-[638px]:static max-[638px]:mt-3"></div>
-             </div>
+        </div>
     </div>
     <!-- Оверлей для боковой панели -->
     <div id="sidebar-overlay"
@@ -745,6 +823,54 @@ media-src https://meet.jit.si https:;
     let workLastActivity = Date.now();
     let sendInterval = null;
     let activityInterval = null;
+
+    function toggleExtraMenu(event) {
+        event.preventDefault();
+
+        const submenu = document.getElementById('extraSubmenu');
+        const icon = document.getElementById('extraMenuIcon');
+
+        if (!submenu || !icon) return;
+
+        if (submenu.style.maxHeight === '0px' || submenu.style.maxHeight === '0') {
+            // Открываем подменю
+            submenu.style.maxHeight = submenu.scrollHeight + 'px';
+            submenu.style.opacity = '1';
+            icon.style.transform = 'rotate(180deg)';
+
+            // Включаем скролл если нужно
+            setTimeout(() => {
+                if (submenu.scrollHeight > 200) {
+                    submenu.style.overflowY = 'auto';
+                }
+            }, 300);
+        } else {
+            // Закрываем подменю
+            submenu.style.overflowY = 'hidden';
+            submenu.style.maxHeight = '0px';
+            submenu.style.opacity = '0';
+            icon.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    // Опционально: подсветка активного пункта в подменю
+    document.addEventListener('DOMContentLoaded', function() {
+        // Проверяем, открыт ли какой-то из подпунктов
+        const currentRoute = window.location.pathname;
+        const extraLinks = ['news', 'support', 'license', 'payment'];
+
+        if (extraLinks.some(link => currentRoute.includes(link))) {
+            // Автоматически открываем подменю если активен подпункт
+            const submenu = document.getElementById('extraSubmenu');
+            const icon = document.getElementById('extraMenuIcon');
+
+            if (submenu && icon && submenu.style.maxHeight === '0px') {
+                submenu.style.maxHeight = submenu.scrollHeight + 'px';
+                submenu.style.opacity = '1';
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+    });
 
     function sendWorkTimeToServer(seconds, isFinal = false) {
         if (seconds <= 0) return;
