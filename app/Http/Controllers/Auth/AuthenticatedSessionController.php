@@ -40,27 +40,25 @@ class AuthenticatedSessionController extends Controller
             $fingerprint = $this->generateFingerprint($request);
 
             try {
-                $session = UserSession::create([
+                UserOnlineSession::create([
                     'user_id' => $user->id,
+                    'login_at' => now(),
+                    'session_id' => $request->session()->getId(),
+                    'date' => now()->toDateString(),
                     'ip_address' => $request->ip(),
-                    'user_agent' => $deviceInfo['user_agent'],
-                    'device_type' => $deviceInfo['device_type'],
-                    'browser' => $deviceInfo['browser'],
-                    'os' => $deviceInfo['os'],
+                    'user_agent' => $request->userAgent(),
+                    'last_activity_at' => now(),
+                    // ДОБАВЛЯЕМ ГЕОДАННЫЕ
                     'country' => $geoInfo['country'],
                     'city' => $geoInfo['city'],
                     'latitude' => $geoInfo['latitude'],
                     'longitude' => $geoInfo['longitude'],
-                    'address' => $geoInfo['address'],
-                    'device_fingerprint' => $fingerprint,
-                    'last_activity' => now(),
-                    'is_current' => true,
                 ]);
 
-                $request->session()->put('user_session_id', $session->id);
+                \Log::info('UserOnlineSession created with geo', $geoInfo);
 
             } catch (\Exception $e) {
-                \Log::error('Error creating UserSession: ' . $e->getMessage());
+                \Log::error('Error creating UserOnlineSession: ' . $e->getMessage());
             }
 
             // ===== СОЗДАЕМ ОНЛАЙН СЕССИЮ (UserOnlineSession) =====

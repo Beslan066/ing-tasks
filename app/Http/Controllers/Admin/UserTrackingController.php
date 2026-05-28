@@ -65,6 +65,11 @@ class UserTrackingController extends Controller
             $uniqueDevices = (int) $uniqueDevices;
             $countriesCount = (int) $countriesCount;
 
+            $uniqueCountries = UserSession::whereNotNull('country')
+                ->distinct()
+                ->pluck('country')
+                ->toArray();
+
             return view('admin.users-tracking', compact(
                 'users',
                 'totalUsers',
@@ -73,7 +78,8 @@ class UserTrackingController extends Controller
                 'onlineUsersCount',
                 'activePercentage',
                 'uniqueDevices',
-                'countriesCount'
+                'countriesCount',
+                'uniqueCountries' // Добавьте эту переменную
             ));
 
         } catch (\Exception $e) {
@@ -109,22 +115,35 @@ class UserTrackingController extends Controller
     public function map()
     {
         try {
-            $sessions = UserOnlineSession::whereNotNull('ip_address')
-                ->whereDate('date', today())
+            // Берем данные из UserSession (где есть геолокация)
+            $sessions = UserSession::whereNotNull('latitude')
+                ->whereNotNull('longitude')
                 ->with('user')
+                ->orderBy('last_activity', 'desc')
                 ->get()
                 ->map(function($session) {
-                    // Добавляем тестовые координаты для демонстрации (если нет реальных)
-                    if ($session->ip_address && !in_array($session->ip_address, ['127.0.0.1', '::1', 'localhost'])) {
-                        if (!$session->latitude) {
-                            $session->latitude = 55.751244;
-                            $session->longitude = 37.618423;
-                            $session->address = "Москва, Россия";
-                            $session->city = "Москва";
-                            $session->country = "Россия";
-                        }
-                    }
-                    return $session;
+                    // Добавляем информацию о пользователе
+                    return [
+                        'id' => $session->id,
+                        'user_id' => $session->user_id,
+                        'user' => $session->user ? [
+                            'id' => $session->user->id,
+                            'name' => $session->user->name,
+                            'email' => $session->user->email,
+                            'avatar' => $session->user->avatar,
+                        ] : null,
+                        'ip_address' => $session->ip_address,
+                        'latitude' => $session->latitude,
+                        'longitude' => $session->longitude,
+                        'city' => $session->city,
+                        'country' => $session->country,
+                        'address' => $session->address,
+                        'device_type' => $session->device_type,
+                        'browser' => $session->browser,
+                        'os' => $session->os,
+                        'last_activity' => $session->last_activity,
+                        'is_current' => $session->is_current,
+                    ];
                 });
 
             return view('admin.users-map', compact('sessions'));
