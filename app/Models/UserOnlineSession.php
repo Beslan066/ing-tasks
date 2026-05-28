@@ -49,4 +49,12 @@ class UserOnlineSession extends Model
         return $query->whereNull('logout_at')
             ->where('last_activity_at', '>=', now()->subMinutes(5));
     }
+
+    public function endSession(): void
+    {
+        $this->update([
+            'logout_at' => now(),
+            'last_activity_at' => now(),
+        ]);
+    }
 }

@@ -48,7 +48,9 @@ class RegisteredUserController extends Controller
             'avatar' => $avatarPath,
         ]);
 
-        // Создаем сессию для нового пользователя
+
+
+        // Создаем UserSession (подробная сессия)
         $deviceInfo = $this->getDeviceInfo($request);
         $geoInfo = $this->getGeolocation($request->ip());
         $fingerprint = $this->generateFingerprint($request);
@@ -71,16 +73,26 @@ class RegisteredUserController extends Controller
                 'is_current' => true,
             ]);
 
-            \Log::info('User registered and session created', [
-                'user_id' => $user->id,
-                'session_id' => $session->id
-            ]);
-
-            // Сохраняем ID сессии
             session()->put('user_session_id', $session->id);
 
         } catch (\Exception $e) {
-            \Log::error('Failed to create session during registration: ' . $e->getMessage());
+            \Log::error('Failed to create UserSession: ' . $e->getMessage());
+        }
+
+        // Создаем UserOnlineSession
+        try {
+            UserOnlineSession::create([
+                'user_id' => $user->id,
+                'login_at' => now(),
+                'session_id' => session()->getId(),
+                'date' => now()->toDateString(),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'last_activity_at' => now(),
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Failed to create UserOnlineSession: ' . $e->getMessage());
         }
 
         event(new Registered($user));

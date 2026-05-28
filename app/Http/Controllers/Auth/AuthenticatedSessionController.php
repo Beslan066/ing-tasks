@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\UserSession;
+use App\Models\UserOnlineSession; // ДОБАВИТЬ
 use App\Traits\DeviceInfoTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -33,26 +34,11 @@ class AuthenticatedSessionController extends Controller
                 'is_active' => true
             ]);
 
-            // Отладка
-            \Log::info('User logged in: ' . $user->email);
-
-            // Собираем информацию
+            // ===== СОЗДАЕМ ПОДРОБНУЮ СЕССИЮ (UserSession) =====
             $deviceInfo = $this->getDeviceInfo($request);
             $geoInfo = $this->getGeolocation($request->ip());
             $fingerprint = $this->generateFingerprint($request);
 
-            // Отладка
-            \Log::info('Device info: ', $deviceInfo);
-            \Log::info('Geo info: ', $geoInfo);
-            \Log::info('IP: ' . $request->ip());
-            \Log::info('Fingerprint: ' . $fingerprint);
-
-            // Деактивируем все предыдущие сессии этого пользователя
-            UserSession::where('user_id', $user->id)
-                ->where('is_current', true)
-                ->update(['is_current' => false]);
-
-            // Создаем новую сессию
             try {
                 $session = UserSession::create([
                     'user_id' => $user->id,
@@ -71,14 +57,28 @@ class AuthenticatedSessionController extends Controller
                     'is_current' => true,
                 ]);
 
-                \Log::info('Session created with ID: ' . $session->id);
-
-                // Сохраняем ID сессии в сессию Laravel
                 $request->session()->put('user_session_id', $session->id);
 
             } catch (\Exception $e) {
-                \Log::error('Error creating session: ' . $e->getMessage());
-                // Не прерываем выполнение, просто логируем ошибку
+                \Log::error('Error creating UserSession: ' . $e->getMessage());
+            }
+
+            // ===== СОЗДАЕМ ОНЛАЙН СЕССИЮ (UserOnlineSession) =====
+            try {
+                UserOnlineSession::create([
+                    'user_id' => $user->id,
+                    'login_at' => now(),
+                    'session_id' => $request->session()->getId(),
+                    'date' => now()->toDateString(),
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                    'last_activity_at' => now(),
+                ]);
+
+                \Log::info('UserOnlineSession created for user: ' . $user->id);
+
+            } catch (\Exception $e) {
+                \Log::error('Error creating UserOnlineSession: ' . $e->getMessage());
             }
         }
 
@@ -90,10 +90,9 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
 
         if ($user) {
-            // Обновляем время активности при выходе
             $user->update(['last_activity_at' => now()]);
 
-            // Получаем ID сессии из сессии Laravel
+            // ===== ЗАКРЫВАЕМ ПОДРОБНУЮ СЕССИЮ (UserSession) =====
             $sessionId = $request->session()->get('user_session_id');
 
             if ($sessionId) {
@@ -104,17 +103,31 @@ class AuthenticatedSessionController extends Controller
                             'is_current' => false,
                             'last_activity' => now(),
                         ]);
-                        \Log::info('Session deactivated: ' . $sessionId);
                     }
                 } catch (\Exception $e) {
-                    \Log::error('Error deactivating session: ' . $e->getMessage());
+                    \Log::error('Error closing UserSession: ' . $e->getMessage());
                 }
             }
 
-            // Страховка: деактивируем все активные сессии этого пользователя
+            // Деактивируем все UserSession
             UserSession::where('user_id', $user->id)
                 ->where('is_current', true)
                 ->update(['is_current' => false]);
+
+            // ===== ЗАКРЫВАЕМ ОНЛАЙН СЕССИЮ (UserOnlineSession) =====
+            try {
+                // Находим активную онлайн сессию
+                $onlineSession = UserOnlineSession::where('user_id', $user->id)
+                    ->whereNull('logout_at')
+                    ->first();
+
+                if ($onlineSession) {
+                    $onlineSession->endSession(); // Теперь этот метод существует!
+                    \Log::info('UserOnlineSession closed for user: ' . $user->id);
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error closing UserOnlineSession: ' . $e->getMessage());
+            }
         }
 
         Auth::guard('web')->logout();
