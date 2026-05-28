@@ -10,11 +10,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "erriourru/laravel-tinkoff": "^1.0",
         "laravel/framework": "^12.0",
         "laravel/socialite": "^5.24",
         "laravel/tinker": "^2.10.1",
         "maatwebsite/excel": "^1.1",
         "pusher/pusher-php-server": "^7.2",
+        "robokassa/sdk-php": "^1.0",
         "socialiteproviders/yandex": "^4.1",
         "whichbrowser/parser": "^2.1"
     },

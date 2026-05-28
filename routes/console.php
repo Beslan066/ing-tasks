@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use App\Models\Task;
+use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -17,3 +18,6 @@ Artisan::command('tasks:check-overdue', function () {
     $this->info("Updated {$count} tasks to overdue status.");
     \Log::info("Automatically updated {$count} tasks to overdue status.");
 })->purpose('Check and update status of overdue tasks');
+
+// Проверка подписок каждый час
+Schedule::command('subscriptions:check')->hourly();

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f21453c2a34ad861f334e8265a147c10",
+    "content-hash": "bdeb2aafd3c64f5ef2d20b98ef04dfea",
     "packages": [
         {
             "name": "brick/math",
@@ -508,6 +508,64 @@
                 }
             ],
             "time": "2025-03-06T22:45:56+00:00"
+        },
+        {
+            "name": "erriourru/laravel-tinkoff",
+            "version": "1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ErriourMe/laravel-tinkoff.git",
+                "reference": "012af1d1ec1e0d2d7257bfdf1894e88ddddbd42d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ErriourMe/laravel-tinkoff/zipball/012af1d1ec1e0d2d7257bfdf1894e88ddddbd42d",
+                "reference": "012af1d1ec1e0d2d7257bfdf1894e88ddddbd42d",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "php": "^7.1|^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ErriourRU\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Kenvel",
+                    "email": "dimult@yahoo.com",
+                    "homepage": "https://github.com/kenvel/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Vladimir Gonchar",
+                    "email": "erriour.me@gmail.com",
+                    "homepage": "https://github.com/ErriourRU/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Simple Tinkoff bank acquiring library.",
+            "homepage": "https://github.com/kenvel/laravel-tinkoff",
+            "keywords": [
+                "acquiring",
+                "tinkoff"
+            ],
+            "support": {
+                "source": "https://github.com/ErriourMe/laravel-tinkoff/tree/1.0.4"
+            },
+            "time": "2023-09-03T11:32:14+00:00"
         },
         {
             "name": "firebase/php-jwt",
@@ -4060,6 +4118,62 @@
                 "source": "https://github.com/ramsey/uuid/tree/4.9.1"
             },
             "time": "2025-09-04T20:59:21+00:00"
+        },
+        {
+            "name": "robokassa/sdk-php",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/robokassa/sdk-php.git",
+                "reference": "44cbcb2b4a18681c80e2d4101311c06afd26aef4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/robokassa/sdk-php/zipball/44cbcb2b4a18681c80e2d4101311c06afd26aef4",
+                "reference": "44cbcb2b4a18681c80e2d4101311c06afd26aef4",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.0",
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Robokassa\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Robokassa",
+                    "email": "support@robokassa.ru"
+                }
+            ],
+            "description": "SDK для работы с Robokassa в PHP",
+            "homepage": "https://robokassa.com/",
+            "keywords": [
+                "payment",
+                "robokassa",
+                "sdk"
+            ],
+            "support": {
+                "issues": "https://github.com/robokassa/sdk-php/issues",
+                "source": "https://github.com/robokassa/sdk-php/tree/1.0.1"
+            },
+            "time": "2025-09-29T16:15:58+00:00"
         },
         {
             "name": "socialiteproviders/manager",

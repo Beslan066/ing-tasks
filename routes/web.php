@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\Admin\UserLocationController;
 use App\Http\Controllers\Frontend\ChatController;
+use App\Http\Controllers\Frontend\CompanyController;
 use App\Http\Controllers\Frontend\EmailTrashController;
 use App\Http\Controllers\Frontend\FileStorageController;
 use App\Http\Controllers\Frontend\DepartmentEmailController;
 use App\Http\Controllers\Frontend\EmailTemplateController;
+use App\Http\Controllers\Frontend\LicenceAndPaymentController;
 use App\Http\Controllers\Frontend\PersonalEmailController;
 use App\Http\Controllers\Frontend\TeamController;
 use App\Http\Controllers\Frontend\UserController;
@@ -80,6 +82,28 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
     Route::get('/home', [\App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('welcome');
     Route::get('/all-tasks', [App\Http\Controllers\Frontend\HomeController::class, 'allTasks'])->middleware('require.company')->name('allTasks');
     Route::get('/tools', [\App\Http\Controllers\Frontend\ToolController::class, 'index'])->middleware('require.company')->name('tools.index');
+
+    // Лицензия и оплата
+    Route::get('/licence-and-payments', [LicenceAndPaymentController::class, 'index'])->middleware('require.company')->name('licence.index');
+    Route::post('/licence/payment/premium', [LicenceAndPaymentController::class, 'createPremiumPayment'])
+        ->name('licence.payment.premium');
+
+    Route::post('/licence/payment/additional-users', [LicenceAndPaymentController::class, 'createAdditionalUsersPayment'])
+        ->name('licence.payment.additional-users');
+
+    // Маршрут для улучшения подписки компании
+    Route::post('/company/upgrade-license', [CompanyController::class, 'upgradeLicense'])
+        ->name('company.upgrade-license');
+
+    Route::get('/licence/payment/callback', [LicenceAndPaymentController::class, 'paymentCallback'])
+        ->name('payment.callback');
+
+    Route::post('/licence/payment/webhook', [LicenceAndPaymentController::class, 'paymentWebhook'])
+        ->name('payment.webhook');
+
+    Route::get('/licence/payment/info', [LicenceAndPaymentController::class, 'getPaymentInfo'])
+        ->name('licence.payment.info');
+
 
     Route::post('/support/send', [SupportController::class, 'send'])->name('support.send');
 

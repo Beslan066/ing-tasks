@@ -1138,4 +1138,49 @@ class User extends Authenticatable implements MustVerifyEmail
             ->latest('last_activity_at');
     }
 
+    public function canJoinCompany(Company $company): bool
+    {
+        $activeUsersCount = $company->getActiveUsersCount();
+        $maxUsers = $company->license_type === 'premium' ? 15 : 5;
+
+        // Для премиум проверяем дополнительные слоты
+        if ($company->license_type === 'premium') {
+            $subscription = Subscription::where('company_id', $company->id)
+                ->where('status', 'active')
+                ->first();
+
+            if ($subscription) {
+                $maxUsers = $subscription->getTotalUserSlots();
+            }
+        }
+
+        return $activeUsersCount < $maxUsers;
+    }
+
+    public function getCompanyAttribute()
+    {
+        if ($this->company_id) {
+            return $this->company()->first();
+        }
+
+        // Если company_id = null, ищем компанию через владельца
+        $company = Company::where('user_id', $this->id)->first();
+        if ($company) {
+            $this->update(['company_id' => $company->id]);
+            return $company;
+        }
+
+        // Ищем компанию, где есть этот пользователь
+        $company = Company::whereHas('users', function($query) {
+            $query->where('users.id', $this->id);
+        })->first();
+
+        if ($company) {
+            $this->update(['company_id' => $company->id]);
+            return $company;
+        }
+
+        return null;
+    }
+
 }

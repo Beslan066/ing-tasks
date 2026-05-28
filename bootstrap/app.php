@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\CheckSubscriptions;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -26,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'trackUserActivity' => \App\Http\Middleware\TrackUserActivity::class,
             'trackUserSession' => \App\Http\Middleware\TrackUserSession::class,
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'subscription' => \App\Http\Middleware\CheckSubscription::class,
         ]);
 
         $middleware->web(append: [
@@ -35,4 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })
+    ->withCommands([
+        CheckSubscriptions::class,
+    ])
     ->create();

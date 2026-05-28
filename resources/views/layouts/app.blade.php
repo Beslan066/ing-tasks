@@ -566,7 +566,7 @@ media-src https://meet.jit.si https:;
 
                     <div class="border-t border-white/10 my-1"></div>
 
-                    <a href=""
+                    <a href="{{route('licence.index')}}"
                        class="nav-item flex items-center px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg text-sm {{request()->routeIs('license.index*') ? 'active' : ''}}">
                         <div class="w-6 h-6 rounded-lg bg-yellow-500/10 flex items-center justify-center mr-2">
                             <i class="fas fa-credit-card text-yellow-500 text-xs"></i>

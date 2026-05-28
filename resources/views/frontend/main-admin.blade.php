@@ -62,7 +62,18 @@
                                 </div>
                                 <div class="text-sm text-white/70">
                                     <i class="fas fa-database mr-1"></i>
-                                    Хранилище: {{ $company->getFormattedUsedStorage() }} / {{ $company->getFormattedStorageLimit() }}
+                                    Хранилище:
+                                    @php
+                                        $usedBytes = $company->getStorageStats()['used'] ?? 0;
+                                        $limitBytes = $company->getStorageLimit();
+                                        $usedGB = round($usedBytes / 1073741824, 2);
+                                        $limitGB = $company->license_type === 'premium' ? 1024 : 2;
+                                    @endphp
+                                    @if($usedGB < 1)
+                                        {{ round($usedBytes / 1048576, 2) }} МБ / {{ $limitGB }} ГБ
+                                    @else
+                                        {{ number_format($usedGB, 2) }} ГБ / {{ $limitGB }} ГБ
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -116,7 +127,18 @@
                                 </div>
                                 <div class="text-sm text-gray-600">
                                     <i class="fas fa-database mr-1 text-green-500"></i>
-                                    Хранилище: {{ $company->getFormattedUsedStorage() }} / {{ $company->getFormattedStorageLimit() }}
+                                    Хранилище:
+                                    @php
+                                        $usedBytes = $company->getStorageStats()['used'] ?? 0;
+                                        $limitBytes = $company->getStorageLimit();
+                                        $usedGB = round($usedBytes / 1073741824, 2);
+                                        $limitGB = $company->license_type === 'premium' ? 1024 : 2;
+                                    @endphp
+                                    @if($usedGB < 1)
+                                        {{ round($usedBytes / 1048576, 2) }} МБ / {{ $limitGB }} ГБ
+                                    @else
+                                        {{ number_format($usedGB, 2) }} ГБ / {{ $limitGB }} ГБ
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -152,7 +174,7 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <form action="" method="POST" class="flex-1">
+                    <form action="{{ route('company.upgrade-license') }}" method="POST" class="flex-1">
                         @csrf
                         <input type="hidden" name="new_license_type" value="premium">
                         <button type="submit"
@@ -204,6 +226,7 @@
                 </button>
             </div>
         </div>
+
 
         <!-- Фильтры и поиск -->
         @if($backgroundEnabled && $backgroundImage)

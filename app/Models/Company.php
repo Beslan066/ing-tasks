@@ -85,7 +85,6 @@ class Company extends Model
     {
         return match($this->license_type) {
             'basic' => 'Базовый',
-            'optimal' => 'Оптимальный',
             'premium' => 'Премиум',
             default => 'Базовый'
         };
@@ -98,7 +97,6 @@ class Company extends Model
     {
         return match($this->license_type) {
             'basic' => 1073741824,      // 1GB
-            'optimal' => 107374182400,   // 100GB
             'premium' => 1073741824000,  // 1000GB (1TB)
             default => 1073741824
         };
@@ -111,7 +109,6 @@ class Company extends Model
     {
         return match($this->license_type) {
             'basic' => 104857600,      // 100MB
-            'optimal' => 536870912,     // 500MB
             'premium' => 1073741824,    // 1GB
             default => 104857600
         };
@@ -247,7 +244,7 @@ class Company extends Model
      */
     public function changeLicenseType(string $newLicenseType, bool $force = false): array
     {
-        $allowedTypes = ['basic', 'optimal', 'premium'];
+        $allowedTypes = ['basic', 'premium'];
 
         if (!in_array($newLicenseType, $allowedTypes)) {
             return [
@@ -258,7 +255,6 @@ class Company extends Model
 
         $newLimit = match($newLicenseType) {
             'basic' => 1073741824,
-            'optimal' => 107374182400,
             'premium' => 1073741824000,
             default => 1073741824
         };
@@ -287,5 +283,107 @@ class Company extends Model
             'success' => true,
             'message' => 'Тариф успешно изменен на ' . $this->getLicenseTypeName()
         ];
+    }
+
+    /**
+     * Связь с подпиской
+     */
+    public function subscription()
+    {
+        return $this->hasOne(Subscription::class)->where('status', 'active')->latest();
+    }
+
+    /**
+     * Связь со всеми подписками
+     */
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    /**
+     * Связь с покупками дополнительных пользователей
+     */
+    public function additionalUserPurchases()
+    {
+        return $this->hasMany(AdditionalUserPurchase::class);
+    }
+
+    /**
+     * Получить максимальное количество пользователей с учетом доп. покупок
+     */
+    public function getMaxUsersAttribute(): int
+    {
+        if ($this->license_type !== 'premium') {
+            return 5;
+        }
+
+        $subscription = $this->subscription;
+        if (!$subscription) {
+            return 15;
+        }
+
+        $baseSlots = $subscription->base_user_slots;
+        $additionalSlots = $this->additionalUserPurchases()
+            ->where('is_active', true)
+            ->where('expires_at', '>', now())
+            ->sum('user_count');
+
+        return $baseSlots + $additionalSlots;
+    }
+
+    /**
+     * Проверить, можно ли добавить пользователя
+     */
+    public function canAddUser(): bool
+    {
+        return $this->getActiveUsersCount() < $this->max_users;
+    }
+
+    /**
+     * Получить информацию о текущей подписке
+     */
+    public function getCurrentSubscriptionInfo(): ?array
+    {
+        $subscription = $this->subscription;
+
+        if (!$subscription) {
+            return null;
+        }
+
+        return [
+            'type' => $subscription->type,
+            'expires_at' => $subscription->expires_at,
+            'days_remaining' => $subscription->expires_at->diffInDays(now()),
+            'is_expired' => $subscription->expires_at->isPast(),
+            'base_user_slots' => $subscription->base_user_slots,
+            'additional_users' => $this->additionalUserPurchases()
+                ->where('is_active', true)
+                ->where('expires_at', '>', now())
+                ->sum('user_count'),
+            'total_user_slots' => $this->max_users,
+            'storage_limit_formatted' => $this->getFormattedStorageLimit(),
+            'used_storage_formatted' => $this->getFormattedUsedStorage(),
+            'storage_percentage' => $this->storageUsage?->getUsagePercentage() ?? 0
+        ];
+    }
+
+    /**
+     * Понизить тариф до базового
+     */
+    public function downgradeToBasic(): bool
+    {
+        $this->license_type = 'basic';
+        $this->save();
+
+        // Обновляем лимит хранилища
+        if ($this->storageUsage) {
+            $this->storageUsage->update([
+                'total_storage_limit' => 1073741824, // 1GB
+                'license_type' => 'basic'
+            ]);
+        }
+
+        return true;
     }
 }
