@@ -75,6 +75,45 @@
                         </div>
                     </div>
 
+                    @php
+                        $pendingPayment = \App\Models\Payment::where('company_id', $company->id)
+                            ->where('status', 'pending')
+                            ->latest()
+                            ->first();
+                    @endphp
+
+                    @if($pendingPayment && $currentPlan !== 'premium')
+                        <div class="mt-5 pt-4 border-t border-yellow-500/30">
+                            <div class="bg-yellow-500/10 rounded-lg p-4 border border-yellow-500/30">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-hourglass-half text-yellow-400 text-xl"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-yellow-300 text-sm font-medium mb-2">
+                                            У вас есть незавершенный платеж на сумму {{ number_format($pendingPayment->amount, 2) }} ₽
+                                        </p>
+                                        <p class="text-yellow-200/70 text-xs mb-3">
+                                            ID платежа: {{ $pendingPayment->provider_payment_id }}
+                                        </p>
+                                        <div class="flex gap-3">
+                                            <a href="{{ route('licence.payment.activate', $pendingPayment->id) }}"
+                                               class="inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm transition">
+                                                <i class="fas fa-check-circle mr-2"></i>
+                                                Активировать подписку
+                                            </a>
+                                            <a href="{{ route('licence.payment.check', $pendingPayment->id) }}"
+                                               class="inline-flex items-center px-4 py-2 bg-gray-500/30 hover:bg-gray-500/50 text-white rounded-lg text-sm transition">
+                                                <i class="fas fa-sync-alt mr-2"></i>
+                                                Проверить статус
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     <!-- Доступные инструменты -->
                     <div class="mt-5 pt-4 border-t border-white/20">
                         <h4 class="text-white font-medium mb-2">Доступные возможности</h4>

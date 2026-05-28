@@ -71,6 +71,12 @@ class LicenceAndPaymentController extends Controller
                 ? $this->getPremiumFeaturesList()
                 : $this->getBasicFeaturesList();
 
+            $pendingPayment = Payment::where('company_id', $company->id)
+                ->where('status', 'pending')
+                ->latest()
+                ->first();
+
+// И добавьте в compact:
             return view('frontend.licence_and_payments.index', compact(
                 'company',
                 'subscription',
@@ -81,7 +87,8 @@ class LicenceAndPaymentController extends Controller
                 'maxStorageGB',
                 'storageStats',
                 'premiumUntil',
-                'features'
+                'features',
+                'pendingPayment'  // Добавьте эту переменную
             ));
 
         } catch (\Exception $e) {
