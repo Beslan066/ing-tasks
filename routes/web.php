@@ -22,6 +22,18 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 
+Route::post('/licence/payment/webhook', [LicenceAndPaymentController::class, 'paymentWebhook'])
+    ->name('payment.webhook');
+
+// Тестовый маршрут для ручного подтверждения платежа (для отладки)
+Route::get('/licence/payment/check/{paymentId}', [LicenceAndPaymentController::class, 'checkPaymentStatus'])
+    ->name('licence.payment.check')
+    ->middleware(['auth', 'verified']);
+
+Route::get('/licence/payment/activate/{paymentId}', [LicenceAndPaymentController::class, 'manualActivate'])
+    ->name('licence.payment.activate')
+    ->middleware(['auth', 'verified']);
+
 Route::middleware(['auth', 'verified'])->post('/track-work-time', function (Request $request) {
     $user = auth()->user();
     $workSeconds = (int)$request->input('work_seconds', 0);
@@ -97,12 +109,6 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
 
     Route::get('/licence/payment/callback', [LicenceAndPaymentController::class, 'paymentCallback'])
         ->name('payment.callback');
-
-    Route::post('/licence/payment/webhook', [LicenceAndPaymentController::class, 'paymentWebhook'])
-        ->name('payment.webhook');
-
-    Route::get('/licence/payment/info', [LicenceAndPaymentController::class, 'getPaymentInfo'])
-        ->name('licence.payment.info');
 
 
     Route::post('/support/send', [SupportController::class, 'send'])->name('support.send');

@@ -19,8 +19,8 @@ class PaymentService
     protected $testMode;
 
     // Цены
-    const PREMIUM_MONTHLY_PRICE = 2490;
-    const PRICE_PER_USER = 400;
+    const PREMIUM_MONTHLY_PRICE = 1;
+    const PRICE_PER_USER = 1;
 
     // Скидки
     const DISCOUNT_6_MONTHS = 10;
