@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         App\Providers\EventServiceProvider::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
+
+        $middleware->validateCsrfTokens(except: [
+            '/licence/payment/webhook',
+            'licence/payment/webhook',
+        ]);
         // Только редирект для неавторизованных
         $middleware->redirectGuestsTo('/login');
 
