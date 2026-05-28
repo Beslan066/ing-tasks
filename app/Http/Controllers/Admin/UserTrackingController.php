@@ -16,11 +16,16 @@ class UserTrackingController extends Controller
     public function index()
     {
         try {
-            // Получаем пользователей с их сессиями
-            $users = User::with(['onlineSessions' => function($query) {
-                $query->whereNull('logout_at')
-                    ->orderBy('last_activity_at', 'desc');
-            }])->get();
+            // Загружаем пользователей с ОБОИМИ типами сессий
+            $users = User::with([
+                'sessions' => function($query) {
+                    $query->orderBy('last_activity', 'desc');
+                },
+                'onlineSessions' => function($query) {
+                    $query->whereNull('logout_at')
+                        ->orderBy('last_activity_at', 'desc');
+                }
+            ])->get();
 
             // Базовая статистика
             $totalUsers = User::count();
@@ -41,30 +46,17 @@ class UserTrackingController extends Controller
             $activePercentage = $totalUsers > 0 ? round(($onlineUsersCount / $totalUsers) * 100) : 0;
 
             // Уникальные устройства за сегодня
-            $uniqueDevices = UserOnlineSession::whereDate('date', today())
-                ->distinct('user_agent')
-                ->count('user_agent');
+            $uniqueDevices = UserSession::whereDate('last_activity', today())
+                ->distinct('device_type')
+                ->count('device_type');
 
-            // Страны (если есть поле country в таблице)
-            $countriesCount = 0;
-            try {
-                $countriesCount = UserOnlineSession::whereNotNull('country')
-                    ->whereDate('date', today())
-                    ->distinct('country')
-                    ->count('country');
-            } catch (\Exception $e) {
-                $countriesCount = 0;
-            }
+            // Страны из UserSession
+            $countriesCount = UserSession::whereNotNull('country')
+                ->whereDate('last_activity', today())
+                ->distinct('country')
+                ->count('country');
 
-            // Преобразуем все в числа на всякий случай
-            $totalUsers = (int) $totalUsers;
-            $newUsersCount = (int) $newUsersCount;
-            $activeSessions = (int) $activeSessions;
-            $onlineUsersCount = (int) $onlineUsersCount;
-            $activePercentage = (int) $activePercentage;
-            $uniqueDevices = (int) $uniqueDevices;
-            $countriesCount = (int) $countriesCount;
-
+            // Для фильтра стран используем UserSession
             $uniqueCountries = UserSession::whereNotNull('country')
                 ->distinct()
                 ->pluck('country')
@@ -79,11 +71,12 @@ class UserTrackingController extends Controller
                 'activePercentage',
                 'uniqueDevices',
                 'countriesCount',
-                'uniqueCountries' // Добавьте эту переменную
+                'uniqueCountries'
             ));
 
         } catch (\Exception $e) {
             Log::error('UserTrackingController index error: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
 
             // Возвращаем пустые данные в случае ошибки
             return view('admin.users-tracking', [
@@ -95,6 +88,7 @@ class UserTrackingController extends Controller
                 'activePercentage' => 0,
                 'uniqueDevices' => 0,
                 'countriesCount' => 0,
+                'uniqueCountries' => [],
             ]);
         }
     }

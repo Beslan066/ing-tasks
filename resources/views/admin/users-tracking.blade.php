@@ -90,15 +90,15 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <div class="me-1">
-                                    <p class="text-heading mb-1">Устройств сегодня</p>
+                                    <p class="text-heading mb-1">Стран сегодня</p>
                                     <div class="d-flex align-items-center">
-                                        <h4 class="mb-1 me-1">{{ $uniqueDevices ?? 0 }}</h4>
+                                        <h4 class="mb-1 me-1">{{ $countriesCount ?? 0 }}</h4>
                                     </div>
-                                    <small class="mb-0">Уникальных устройств</small>
+                                    <small class="mb-0">География посещений</small>
                                 </div>
                                 <div class="avatar">
                                     <div class="avatar-initial bg-label-warning rounded-3">
-                                        <i class="ri-smartphone-line ri-26px"></i>
+                                        <i class="ri-earth-line ri-26px"></i>
                                     </div>
                                 </div>
                             </div>
@@ -128,6 +128,14 @@
                             </select>
                         </div>
                         <div class="col-md-3">
+                            <select class="form-select" id="filterCountry">
+                                <option value="">Все страны</option>
+                                @foreach($uniqueCountries ?? [] as $country)
+                                    <option value="{{ $country }}">{{ $country }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
                             <a href="{{ route('admin.users.map') }}" class="btn btn-primary w-100">
                                 <i class="ri-map-pin-line me-1"></i> Показать карту
                             </a>
@@ -151,46 +159,48 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($users as $user)
+                        @forelse($users ?? [] as $user)
                             @php
-                                // Получаем последнюю сессию
-                                $sessions = $user->onlineSessions ?? collect();
-                                $lastSession = $sessions->isNotEmpty() ? $sessions->first() : null;
+                                // Получаем данные из UserSession (геолокация, устройство)
+                                $lastSession = $user->sessions->first();
 
-                                // Проверяем онлайн статус
-                                $isOnline = $lastSession && !$lastSession->logout_at &&
-                                           $lastSession->last_activity_at &&
-                                           $lastSession->last_activity_at->diffInMinutes(now()) < 5;
+                                // Получаем онлайн статус из UserOnlineSession
+                                $onlineSession = $user->onlineSessions->first();
+                                $isOnline = $onlineSession && !$onlineSession->logout_at &&
+                                           $onlineSession->last_activity_at &&
+                                           $onlineSession->last_activity_at->diffInMinutes(now()) < 5;
 
-                                // Определяем тип устройства
-                                $deviceIcon = 'ri-computer-line';
-                                $deviceType = 'Десктоп';
-                                if ($lastSession && $lastSession->user_agent) {
-                                    $ua = $lastSession->user_agent;
-                                    if (strpos($ua, 'Mobile') !== false) {
-                                        $deviceIcon = 'ri-smartphone-line';
-                                        $deviceType = 'Мобильный';
-                                    } elseif (strpos($ua, 'iPad') !== false || strpos($ua, 'Tablet') !== false) {
-                                        $deviceIcon = 'ri-tablet-line';
-                                        $deviceType = 'Планшет';
-                                    }
-                                }
-
-                                // Определяем браузер
-                                $browser = 'Unknown';
-                                if ($lastSession && $lastSession->user_agent) {
-                                    $ua = $lastSession->user_agent;
-                                    if (strpos($ua, 'Chrome') !== false) $browser = 'Chrome';
-                                    elseif (strpos($ua, 'Firefox') !== false) $browser = 'Firefox';
-                                    elseif (strpos($ua, 'Safari') !== false) $browser = 'Safari';
-                                    elseif (strpos($ua, 'Edge') !== false) $browser = 'Edge';
-                                }
-
-                                // Геолокация
+                                // Геолокация из UserSession
                                 $hasLocation = $lastSession && $lastSession->latitude && $lastSession->longitude;
+                                $city = $lastSession ? $lastSession->city : null;
+                                $country = $lastSession ? $lastSession->country : null;
+                                $latitude = $lastSession ? $lastSession->latitude : null;
+                                $longitude = $lastSession ? $lastSession->longitude : null;
+                                $ipAddress = $lastSession ? $lastSession->ip_address : ($onlineSession ? $onlineSession->ip_address : null);
+
+                                // Тип устройства
+                                $deviceType = $lastSession ? ($lastSession->device_type ?? 'desktop') : 'desktop';
+                                $browser = $lastSession ? ($lastSession->browser ?? 'Unknown') : 'Unknown';
+                                $os = $lastSession ? ($lastSession->os ?? 'Unknown') : 'Unknown';
+
+                                // Иконка устройства
+                                $deviceIcon = 'ri-computer-line';
+                                $deviceTypeText = 'Десктоп';
+                                if ($deviceType === 'mobile') {
+                                    $deviceIcon = 'ri-smartphone-line';
+                                    $deviceTypeText = 'Мобильный';
+                                } elseif ($deviceType === 'tablet') {
+                                    $deviceIcon = 'ri-tablet-line';
+                                    $deviceTypeText = 'Планшет';
+                                }
 
                                 // Последняя активность
-                                $lastActivity = $lastSession ? $lastSession->last_activity_at : null;
+                                $lastActivity = $lastSession ? $lastSession->last_activity : ($onlineSession ? $onlineSession->last_activity_at : null);
+
+                                // Инициалы для аватара
+                                $initials = $user->name ? implode('', array_map(function($word) {
+                                    return mb_substr($word, 0, 1);
+                                }, explode(' ', trim($user->name)))) : strtoupper(mb_substr($user->email, 0, 1));
                             @endphp
 
                             <tr @if($isOnline) class="table-success" @endif>
@@ -206,13 +216,13 @@
                                             @if($user->avatar)
                                                 <img src="{{ Storage::url($user->avatar) }}" alt="Avatar" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
                                             @else
-                                                <div class="avatar-initial rounded-circle bg-label-primary" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                                                    {{ $user->getInitials() }}
+                                                <div class="avatar-initial rounded-circle bg-label-primary" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                                                    {{ $initials }}
                                                 </div>
                                             @endif
                                         </div>
                                         <div>
-                                            <span class="fw-medium">{{ $user->name }}</span>
+                                            <span class="fw-medium">{{ $user->name ?? 'Без имени' }}</span>
                                             <div class="small text-muted">ID: {{ $user->id }}</div>
                                         </div>
                                     </div>
@@ -241,20 +251,13 @@
                                             <span class="badge bg-success me-2">
                                                 <i class="ri-circle-fill me-1" style="font-size: 8px;"></i> Онлайн
                                             </span>
-                                            @if($lastActivity)
-                                                <div class="small text-muted">
-                                                    {{ $lastActivity->diffForHumans() }}
-                                                </div>
-                                            @endif
                                         @else
                                             <span class="badge bg-secondary me-2">Офлайн</span>
-                                            @if($lastActivity)
-                                                <div class="small text-muted">
-                                                    Был(а) {{ $lastActivity->diffForHumans() }}
-                                                </div>
-                                            @else
-                                                <div class="small text-muted">Нет данных</div>
-                                            @endif
+                                        @endif
+                                        @if($lastActivity)
+                                            <div class="small text-muted">
+                                                {{ is_string($lastActivity) ? $lastActivity : $lastActivity->diffForHumans() }}
+                                            </div>
                                         @endif
                                     </div>
                                 </td>
@@ -264,11 +267,16 @@
                                     <div class="d-flex flex-column">
                                         <div class="d-flex align-items-center">
                                             <i class="{{ $deviceIcon }} me-1 text-primary"></i>
-                                            <span>{{ $deviceType }}</span>
+                                            <span>{{ $deviceTypeText }}</span>
                                         </div>
-                                        @if($browser != 'Unknown')
+                                        @if($browser && $browser != 'Unknown')
                                             <div class="small text-muted mt-1">
                                                 <i class="ri-browser-line me-1"></i> {{ $browser }}
+                                            </div>
+                                        @endif
+                                        @if($os && $os != 'Unknown')
+                                            <div class="small text-muted">
+                                                <i class="ri-computer-line me-1"></i> {{ $os }}
                                             </div>
                                         @endif
                                     </div>
@@ -276,8 +284,15 @@
 
                                 <!-- IP адрес -->
                                 <td>
-                                    @if($lastSession && $lastSession->ip_address)
-                                        <code class="small">{{ $lastSession->ip_address }}</code>
+                                    @if($ipAddress)
+                                        <code class="small">{{ $ipAddress }}</code>
+                                        @if(!in_array($ipAddress, ['127.0.0.1', '::1', 'localhost']))
+                                            <div class="small text-muted mt-1">
+                                                <a href="https://whatismyipaddress.com/ip/{{ $ipAddress }}" target="_blank" class="text-info">
+                                                    <i class="ri-shield-cross-line"></i> Инфо об IP
+                                                </a>
+                                            </div>
+                                        @endif
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
@@ -285,13 +300,34 @@
 
                                 <!-- Геолокация -->
                                 <td>
-                                    @if($hasLocation)
+                                    @if($hasLocation && $city)
+                                        <div>
+                                            <div class="d-flex align-items-center">
+                                                <i class="ri-map-pin-line text-danger me-1"></i>
+                                                <strong>{{ $city }}</strong>
+                                            </div>
+                                            <div class="small text-muted">
+                                                {{ $country ?? 'Россия' }}
+                                            </div>
+                                            @if($latitude && $longitude)
+                                                <div class="small text-info mt-1">
+                                                    <i class="ri-crosshair-line"></i>
+                                                    {{ number_format($latitude, 4) }}, {{ number_format($longitude, 4) }}
+                                                </div>
+                                                <div class="small mt-1">
+                                                    <a href="https://www.google.com/maps?q={{ $latitude }},{{ $longitude }}" target="_blank" class="text-primary">
+                                                        <i class="ri-map-2-line"></i> Открыть на карте
+                                                    </a>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @elseif($country)
                                         <div class="d-flex align-items-center">
                                             <i class="ri-map-pin-line text-danger me-1"></i>
-                                            <span>{{ $lastSession->city ?? 'По IP' }}</span>
-                                        </div>
-                                        <div class="small text-muted">
-                                            {{ $lastSession->country ?? '' }}
+                                            <div>
+                                                {{ $country }}
+                                                <div class="small text-muted">По стране</div>
+                                            </div>
                                         </div>
                                     @else
                                         <span class="text-muted">
@@ -304,10 +340,10 @@
                                 <td>
                                     @if($lastActivity)
                                         <div class="small">
-                                            {{ $lastActivity->diffForHumans() }}
+                                            {{ is_string($lastActivity) ? $lastActivity : $lastActivity->diffForHumans() }}
                                         </div>
                                         <div class="small text-muted">
-                                            {{ $lastActivity->format('d.m.Y H:i:s') }}
+                                            {{ is_string($lastActivity) ? $lastActivity : $lastActivity->format('d.m.Y H:i:s') }}
                                         </div>
                                     @else
                                         <span class="text-muted">-</span>
@@ -326,10 +362,10 @@
                                                     <i class="ri-eye-line me-1"></i> Детали
                                                 </a>
                                             </li>
-                                            @if($lastSession && $lastSession->ip_address && !in_array($lastSession->ip_address, ['127.0.0.1', '::1', 'localhost']))
+                                            @if($hasLocation && $latitude && $longitude)
                                                 <li>
-                                                    <a class="dropdown-item" href="https://whatismyipaddress.com/ip/{{ $lastSession->ip_address }}" target="_blank">
-                                                        <i class="ri-shield-cross-line me-1"></i> Информация об IP
+                                                    <a class="dropdown-item" href="https://www.google.com/maps?q={{ $latitude }},{{ $longitude }}" target="_blank">
+                                                        <i class="ri-map-2-line me-1"></i> Открыть на карте
                                                     </a>
                                                 </li>
                                             @endif
@@ -345,7 +381,14 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="9" class="text-center py-5">
+                                    <i class="ri-user-unfollow-line ri-3x text-muted mb-3"></i>
+                                    <p class="text-muted mb-0">Пользователи не найдены</p>
+                                </td>
+                            </tr>
+                        @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -360,27 +403,37 @@
         document.addEventListener('DOMContentLoaded', function() {
             const filterDevice = document.getElementById('filterDevice');
             const filterStatus = document.getElementById('filterStatus');
+            const filterCountry = document.getElementById('filterCountry');
             const tableRows = document.querySelectorAll('#users-table tbody tr');
 
             function filterTable() {
-                const deviceValue = filterDevice.value;
-                const statusValue = filterStatus.value;
+                const deviceValue = filterDevice ? filterDevice.value : '';
+                const statusValue = filterStatus ? filterStatus.value : '';
+                const countryValue = filterCountry ? filterCountry.value : '';
 
                 tableRows.forEach(row => {
                     let showRow = true;
 
-                    // Фильтр по устройству
-                    if (deviceValue) {
+                    // Фильтр по устройству (5-я колонка)
+                    if (deviceValue && showRow) {
                         const deviceCell = row.cells[4];
                         if (deviceCell && !deviceCell.innerText.toLowerCase().includes(deviceValue)) {
                             showRow = false;
                         }
                     }
 
-                    // Фильтр по статусу
+                    // Фильтр по статусу (4-я колонка)
                     if (statusValue && showRow) {
                         const statusCell = row.cells[3];
                         if (statusCell && !statusCell.innerText.toLowerCase().includes(statusValue)) {
+                            showRow = false;
+                        }
+                    }
+
+                    // Фильтр по стране (7-я колонка)
+                    if (countryValue && showRow) {
+                        const geoCell = row.cells[6];
+                        if (geoCell && !geoCell.innerText.toLowerCase().includes(countryValue.toLowerCase())) {
                             showRow = false;
                         }
                     }
@@ -391,9 +444,10 @@
 
             if (filterDevice) filterDevice.addEventListener('change', filterTable);
             if (filterStatus) filterStatus.addEventListener('change', filterTable);
+            if (filterCountry) filterCountry.addEventListener('change', filterTable);
 
-            // Инициализация DataTable
-            if (typeof $.fn.DataTable !== 'undefined') {
+            // Инициализация DataTable (если подключен)
+            if (typeof $.fn !== 'undefined' && $.fn.DataTable) {
                 $('#users-table').DataTable({
                     order: [[7, 'desc']],
                     pageLength: 10,
@@ -413,21 +467,26 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         'Content-Type': 'application/json'
                     }
-                }).then(response => {
-                    if (response.ok) {
-                        if (typeof toastr !== 'undefined') {
-                            toastr.success('Пользователь отключен');
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (typeof toastr !== 'undefined') {
+                                toastr.success('Сессии пользователя завершены');
+                            } else {
+                                alert('Сессии пользователя завершены');
+                            }
+                            setTimeout(() => location.reload(), 1000);
                         } else {
-                            alert('Пользователь отключен');
+                            const errorMsg = data.error || 'Ошибка при отключении';
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error(errorMsg);
+                            } else {
+                                alert(errorMsg);
+                            }
                         }
-                        setTimeout(() => location.reload(), 1000);
-                    } else {
-                        if (typeof toastr !== 'undefined') {
-                            toastr.error('Ошибка при отключении');
-                        } else {
-                            alert('Ошибка при отключении');
-                        }
-                    }
+                    }).catch(error => {
+                    console.error('Error:', error);
+                    alert('Ошибка при выполнении запроса');
                 });
             }
         }
@@ -448,6 +507,15 @@
             background: #f5f5f5;
             padding: 2px 4px;
             border-radius: 4px;
+        }
+        .badge {
+            font-weight: 500;
+        }
+        .ri-map-pin-line, .ri-crosshair-line {
+            font-size: 12px;
+        }
+        .dropdown-menu .dropdown-item i {
+            font-size: 14px;
         }
     </style>
 @endpush

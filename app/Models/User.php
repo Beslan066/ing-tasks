@@ -960,7 +960,15 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Связь с сессиями
+     * Связь с детальными сессиями (геолокация, устройство)
+     */
+    public function sessions()
+    {
+        return $this->hasMany(UserSession::class)->orderBy('last_activity', 'desc');
+    }
+
+    /**
+     * Связь с онлайн сессиями (статус онлайн/офлайн)
      */
     public function onlineSessions()
     {
