@@ -634,6 +634,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/support/{ticket}/download', [\App\Http\Controllers\Admin\SupportController::class, 'download'])->name('admin.support.download');
     Route::delete('/support/{ticket}', [\App\Http\Controllers\Admin\SupportController::class, 'destroy'])->name('admin.support.destroy');
 
+    Route::group(['namespace' => 'Subscription'], function () {
+        Route::get('/subscriptions', [App\Http\Controllers\Admin\SubscriptionController::class, 'index'])->name('admin.subscriptions.index');
+        Route::get('/companies/{id}/info', [App\Http\Controllers\Admin\SubscriptionController::class, 'companyInfo'])->name('admin.companies.info');
+        Route::post('/subscriptions/{subscriptionId}/add-users', [App\Http\Controllers\Admin\SubscriptionController::class, 'addUsers'])->name('admin.subscriptions.add-users');
+        Route::post('/subscriptions/{subscriptionId}/cancel', [App\Http\Controllers\Admin\SubscriptionController::class, 'cancel'])->name('admin.subscriptions.cancel');
+        Route::delete('/subscriptions/{subscriptionId}', [App\Http\Controllers\Admin\SubscriptionController::class, 'destroy'])->name('admin.subscriptions.destroy');
+    });
+
     Route::get('/users/tracking', [App\Http\Controllers\Admin\UserTrackingController::class, 'index'])
         ->name('admin.users.tracking');
     Route::get('/users/map', [App\Http\Controllers\Admin\UserTrackingController::class, 'map'])
