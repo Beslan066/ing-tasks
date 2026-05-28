@@ -590,7 +590,7 @@ Route::middleware(['auth', 'verified', 'trackUserActivity', 'require.company'])-
     });
 });
 
-Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'verified', 'trackUserActivity', 'require.company']], function () {
+Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'verified', 'trackUserActivity']], function () {
     Route::get('/', [App\Http\Controllers\Frontend\CompanyController::class, 'index'])->name('companies.index');
     Route::get('/create', [App\Http\Controllers\Frontend\CompanyController::class, 'create'])->name('companies.create');
     Route::post('/store', [App\Http\Controllers\Frontend\CompanyController::class, 'store'])->name('companies.store');
