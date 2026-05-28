@@ -82,7 +82,7 @@ class PaymentService
 
             return [
                 'success' => true,
-                'payment' => $payment,
+                'payment' => $payment,  // Это важно!
                 'payment_url' => $yooKassaResponse['confirmation']['confirmation_url'],
                 'amount' => $priceData['total']
             ];

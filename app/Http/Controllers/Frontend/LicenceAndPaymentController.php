@@ -132,13 +132,11 @@ class LicenceAndPaymentController extends Controller
             ]);
 
             $user = Auth::user();
-
             if (!$user) {
                 return response()->json(['error' => 'Не авторизован'], 401);
             }
 
             $company = $this->getUserCompany($user);
-
             if (!$company) {
                 return response()->json(['error' => 'Компания не найдена'], 404);
             }
@@ -151,18 +149,9 @@ class LicenceAndPaymentController extends Controller
             $result = $this->paymentService->createPremiumPayment($company, $request->period);
 
             if ($result['success']) {
-                return response()->json([
-                    'success' => true,
-                    'payment_url' => $result['payment_url'],
-                    'amount' => $result['amount']
-                ]);
-            }
-
-            $result = $this->paymentService->createPremiumPayment($company, $request->period);
-
-            if ($result['success']) {
                 // Сохраняем ID платежа в сессию
                 session(['last_payment_id' => $result['payment']->provider_payment_id]);
+                session(['last_payment_db_id' => $result['payment']->id]);
 
                 return response()->json([
                     'success' => true,
@@ -173,8 +162,6 @@ class LicenceAndPaymentController extends Controller
 
             return response()->json(['error' => $result['error']], 500);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['error' => $e->errors()], 422);
         } catch (\Exception $e) {
             Log::error('Premium payment error: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
@@ -231,39 +218,70 @@ class LicenceAndPaymentController extends Controller
 
     public function paymentCallback(Request $request)
     {
-        \Log::info('Payment callback received', [
+        Log::info('Payment callback received', [
             'full_url' => $request->fullUrl(),
-            'all' => $request->all(),
             'session_payment_id' => session('last_payment_id'),
+            'session_payment_db_id' => session('last_payment_db_id'),
+            'all_params' => $request->all()
         ]);
 
-        // Берем ID из сессии
+        // Берем ID платежа из сессии
+        $paymentDbId = session('last_payment_db_id');
         $paymentId = session('last_payment_id');
-
-        if (!$paymentId) {
-            return redirect()->route('licence.index')->with('error', 'Параметры платежа не найдены');
-        }
-
-        // Ищем платеж
-        $payment = Payment::where('provider_payment_id', $paymentId)->first();
-
-        if (!$payment) {
-            return redirect()->route('licence.index')->with('error', 'Платеж не найден');
-        }
 
         // Очищаем сессию
         session()->forget('last_payment_id');
+        session()->forget('last_payment_db_id');
+
+        if (!$paymentDbId && !$paymentId) {
+            // Если нет в сессии, ищем последний незавершенный платеж компании
+            $user = Auth::user();
+            if ($user && $user->company) {
+                $payment = Payment::where('company_id', $user->company->id)
+                    ->where('status', 'pending')
+                    ->latest()
+                    ->first();
+
+                if ($payment) {
+                    $paymentDbId = $payment->id;
+                    $paymentId = $payment->provider_payment_id;
+                }
+            }
+        }
+
+        if (!$paymentDbId) {
+            return redirect()->route('licence.index')->with('error', 'Платеж не найден. Пожалуйста, обратитесь в поддержку.');
+        }
+
+        // Находим платеж
+        $payment = Payment::find($paymentDbId);
+
+        if (!$payment) {
+            return redirect()->route('licence.index')->with('error', 'Платеж не найден в базе данных');
+        }
+
+        Log::info('Payment found, checking status', [
+            'payment_id' => $payment->id,
+            'provider_payment_id' => $payment->provider_payment_id,
+            'current_status' => $payment->status
+        ]);
 
         // Проверяем статус через API YooKassa
         $yooKassaApi = app(YooKassaApiService::class);
-        $paymentInfo = $yooKassaApi->getPayment($paymentId);
+        $paymentInfo = $yooKassaApi->getPayment($payment->provider_payment_id);
 
-        if ($paymentInfo && $paymentInfo['status'] === 'succeeded' && !$payment->isCompleted()) {
+        if ($paymentInfo && $paymentInfo['status'] === 'succeeded') {
+            Log::info('Payment succeeded, activating subscription');
             $this->paymentService->handleSuccessfulPayment($payment, $paymentInfo);
             return redirect()->route('licence.index')->with('success', 'Подписка успешно активирована!');
         }
 
-        return redirect()->route('licence.index')->with('info', 'Платеж в обработке');
+        Log::warning('Payment not succeeded yet', [
+            'status' => $paymentInfo['status'] ?? 'unknown',
+            'payment_id' => $payment->id
+        ]);
+
+        return redirect()->route('licence.index')->with('warning', 'Платеж обрабатывается. Статус: ' . ($paymentInfo['status'] ?? 'ожидание'));
     }
 
     public function paymentWebhook(Request $request)
