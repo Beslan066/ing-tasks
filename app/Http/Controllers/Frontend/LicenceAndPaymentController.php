@@ -151,6 +151,19 @@ class LicenceAndPaymentController extends Controller
                 ]);
             }
 
+            $result = $this->paymentService->createPremiumPayment($company, $request->period);
+
+            if ($result['success']) {
+                // Сохраняем ID платежа в сессию
+                session(['last_payment_id' => $result['payment']->provider_payment_id]);
+
+                return response()->json([
+                    'success' => true,
+                    'payment_url' => $result['payment_url'],
+                    'amount' => $result['amount']
+                ]);
+            }
+
             return response()->json(['error' => $result['error']], 500);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -214,15 +227,13 @@ class LicenceAndPaymentController extends Controller
         \Log::info('Payment callback received', [
             'full_url' => $request->fullUrl(),
             'all' => $request->all(),
-            'paymentId' => $request->get('paymentId'),
-            'orderId' => $request->get('orderId'),
+            'session_payment_id' => session('last_payment_id'),
         ]);
 
-        // YooKassa может передавать ID платежа в разных параметрах
-        $paymentId = $request->get('paymentId') ?: $request->get('orderId');
+        // Берем ID из сессии
+        $paymentId = session('last_payment_id');
 
         if (!$paymentId) {
-            \Log::error('No payment ID in callback');
             return redirect()->route('licence.index')->with('error', 'Параметры платежа не найдены');
         }
 
@@ -230,35 +241,22 @@ class LicenceAndPaymentController extends Controller
         $payment = Payment::where('provider_payment_id', $paymentId)->first();
 
         if (!$payment) {
-            \Log::error('Payment not found', ['provider_payment_id' => $paymentId]);
             return redirect()->route('licence.index')->with('error', 'Платеж не найден');
         }
 
-        \Log::info('Payment found', [
-            'payment_id' => $payment->id,
-            'status' => $payment->status,
-            'is_completed' => $payment->isCompleted()
-        ]);
+        // Очищаем сессию
+        session()->forget('last_payment_id');
 
-        // Если платеж еще не завершен, активируем
-        if (!$payment->isCompleted()) {
-            \Log::info('Activating subscription from callback', ['payment_id' => $payment->id]);
+        // Проверяем статус через API YooKassa
+        $yooKassaApi = app(YooKassaApiService::class);
+        $paymentInfo = $yooKassaApi->getPayment($paymentId);
 
-            // Проверяем статус через API YooKassa
-            $yooKassaApi = app(\App\Services\YooKassaApiService::class);
-            $paymentInfo = $yooKassaApi->getPayment($paymentId);
-
-            if ($paymentInfo && $paymentInfo['status'] === 'succeeded') {
-                $this->paymentService->handleSuccessfulPayment($payment, $paymentInfo);
-                return redirect()->route('licence.index')->with('success', 'Подписка успешно активирована!');
-            } else {
-                // Если API не работает, активируем принудительно (для теста)
-                $this->paymentService->handleSuccessfulPayment($payment, ['callback_forced' => true]);
-                return redirect()->route('licence.index')->with('success', 'Подписка активирована!');
-            }
+        if ($paymentInfo && $paymentInfo['status'] === 'succeeded' && !$payment->isCompleted()) {
+            $this->paymentService->handleSuccessfulPayment($payment, $paymentInfo);
+            return redirect()->route('licence.index')->with('success', 'Подписка успешно активирована!');
         }
 
-        return redirect()->route('licence.index')->with('success', 'Платеж уже обработан');
+        return redirect()->route('licence.index')->with('info', 'Платеж в обработке');
     }
 
     public function paymentWebhook(Request $request)

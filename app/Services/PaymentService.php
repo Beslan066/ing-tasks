@@ -521,4 +521,32 @@ class PaymentService
             default => 1
         };
     }
+
+    /**
+     * Принудительная активация подписки через API (для callback)
+     */
+    public function activateFromCallback(string $providerPaymentId): array
+    {
+        \Log::info('Activating from callback', ['provider_payment_id' => $providerPaymentId]);
+
+        $payment = Payment::where('provider_payment_id', $providerPaymentId)->first();
+
+        if (!$payment) {
+            return ['success' => false, 'error' => 'Payment not found'];
+        }
+
+        if ($payment->isCompleted()) {
+            return ['success' => true, 'message' => 'Payment already completed'];
+        }
+
+        // Проверяем статус через API YooKassa
+        $paymentInfo = $this->yooKassaApi->getPayment($providerPaymentId);
+
+        if ($paymentInfo && $paymentInfo['status'] === 'succeeded') {
+            $this->handleSuccessfulPayment($payment, $paymentInfo);
+            return ['success' => true, 'message' => 'Subscription activated'];
+        }
+
+        return ['success' => false, 'error' => 'Payment not succeeded'];
+    }
 }
