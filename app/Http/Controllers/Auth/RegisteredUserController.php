@@ -4,35 +4,25 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserSession; // ВАЖНО: добавить этот импорт
 use App\Traits\DeviceInfoTrait;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
-use Intervention\Image\Image;
 
 class RegisteredUserController extends Controller
 {
-
     use DeviceInfoTrait;
 
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -46,14 +36,8 @@ class RegisteredUserController extends Controller
 
         if ($request->hasFile('avatar')) {
             $avatar = $request->file('avatar');
-
-            // Создаем уникальное имя для файла
             $avatarName = time() . '_' . uniqid() . '.' . $avatar->getClientOriginalExtension();
-
-            // Сохраняем оригинальный файл
             $avatarPath = $avatar->storeAs('avatars', $avatarName, 'public');
-
-            // Создаем миниатюру используя базовый PHP
             $this->createThumbnail($avatar, $avatarName);
         }
 
@@ -64,43 +48,56 @@ class RegisteredUserController extends Controller
             'avatar' => $avatarPath,
         ]);
 
-        // ========== ДОБАВЛЯЕМ ОТСЛЕЖИВАНИЕ ПРИ РЕГИСТРАЦИИ ==========
-        // Собираем информацию об устройстве
+        // Создаем сессию для нового пользователя
         $deviceInfo = $this->getDeviceInfo($request);
-
-        // Получаем геолокацию по IP
         $geoInfo = $this->getGeolocation($request->ip());
+        $fingerprint = $this->generateFingerprint($request);
 
-        // Создаем сессию пользователя
-        UserSession::create(array_merge([
-            'user_id' => $user->id,
-            'ip_address' => $request->ip(),
-            'last_activity' => now(),
-            'is_current' => true,
-        ], $deviceInfo, $geoInfo));
-        // =====================================================
+        try {
+            $session = UserSession::create([
+                'user_id' => $user->id,
+                'ip_address' => $request->ip(),
+                'user_agent' => $deviceInfo['user_agent'],
+                'device_type' => $deviceInfo['device_type'],
+                'browser' => $deviceInfo['browser'],
+                'os' => $deviceInfo['os'],
+                'country' => $geoInfo['country'],
+                'city' => $geoInfo['city'],
+                'latitude' => $geoInfo['latitude'],
+                'longitude' => $geoInfo['longitude'],
+                'address' => $geoInfo['address'],
+                'device_fingerprint' => $fingerprint,
+                'last_activity' => now(),
+                'is_current' => true,
+            ]);
+
+            \Log::info('User registered and session created', [
+                'user_id' => $user->id,
+                'session_id' => $session->id
+            ]);
+
+            // Сохраняем ID сессии
+            session()->put('user_session_id', $session->id);
+
+        } catch (\Exception $e) {
+            \Log::error('Failed to create session during registration: ' . $e->getMessage());
+        }
 
         event(new Registered($user));
-
         Auth::login($user);
 
         return redirect(route('welcome', absolute: false));
     }
 
-    /**
-     * Создание миниатюры с помощью GD
-     */
     private function createThumbnail($avatar, $avatarName): void
     {
         $originalPath = $avatar->getRealPath();
         $thumbnailPath = storage_path('app/public/avatars/thumbnails/' . $avatarName);
 
-        // Создаем директорию если не существует
         if (!file_exists(dirname($thumbnailPath))) {
             mkdir(dirname($thumbnailPath), 0755, true);
         }
 
-        // Получаем информацию об изображении
         $imageInfo = getimagesize($originalPath);
         if (!$imageInfo) {
             return;
@@ -110,7 +107,6 @@ class RegisteredUserController extends Controller
         $height = $imageInfo[1];
         $mime = $imageInfo['mime'];
 
-        // Создаем изображение из файла в зависимости от типа
         switch ($mime) {
             case 'image/jpeg':
                 $sourceImage = imagecreatefromjpeg($originalPath);
@@ -128,14 +124,10 @@ class RegisteredUserController extends Controller
                 return;
         }
 
-        // Размеры миниатюры
         $thumbWidth = 100;
         $thumbHeight = 100;
-
-        // Создаем новое изображение для миниатюры
         $thumbnail = imagecreatetruecolor($thumbWidth, $thumbHeight);
 
-        // Для PNG и GIF сохраняем прозрачность
         if ($mime == 'image/png' || $mime == 'image/gif' || $mime == 'image/webp') {
             imagealphablending($thumbnail, false);
             imagesavealpha($thumbnail, true);
@@ -143,11 +135,9 @@ class RegisteredUserController extends Controller
             imagefilledrectangle($thumbnail, 0, 0, $thumbWidth, $thumbHeight, $transparent);
         }
 
-        // Копируем и изменяем размер
         imagecopyresampled($thumbnail, $sourceImage, 0, 0, 0, 0,
             $thumbWidth, $thumbHeight, $width, $height);
 
-        // Сохраняем миниатюру
         switch ($mime) {
             case 'image/jpeg':
                 imagejpeg($thumbnail, $thumbnailPath, 90);
@@ -163,9 +153,7 @@ class RegisteredUserController extends Controller
                 break;
         }
 
-        // Освобождаем память
         imagedestroy($sourceImage);
         imagedestroy($thumbnail);
     }
-
 }

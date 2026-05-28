@@ -13,19 +13,13 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
-    use DeviceInfoTrait; // Добавляем трейт для сбора информации
+    use DeviceInfoTrait;
 
-    /**
-     * Display the login view.
-     */
     public function create(): View
     {
         return view('auth.login');
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
@@ -39,7 +33,7 @@ class AuthenticatedSessionController extends Controller
                 'is_active' => true
             ]);
 
-            // ОТЛАДКА: проверяем, доходит ли код до этого места
+            // Отладка
             \Log::info('User logged in: ' . $user->email);
 
             // Собираем информацию
@@ -47,19 +41,22 @@ class AuthenticatedSessionController extends Controller
             $geoInfo = $this->getGeolocation($request->ip());
             $fingerprint = $this->generateFingerprint($request);
 
-            // ОТЛАДКА: смотрим, какие данные собираются
+            // Отладка
             \Log::info('Device info: ', $deviceInfo);
             \Log::info('Geo info: ', $geoInfo);
             \Log::info('IP: ' . $request->ip());
+            \Log::info('Fingerprint: ' . $fingerprint);
 
-            // Создаем сессию
+            // Деактивируем все предыдущие сессии этого пользователя
+            UserSession::where('user_id', $user->id)
+                ->where('is_current', true)
+                ->update(['is_current' => false]);
+
+            // Создаем новую сессию
             try {
                 $session = UserSession::create([
                     'user_id' => $user->id,
                     'ip_address' => $request->ip(),
-                    'last_activity' => now(),
-                    'is_current' => true,
-                    'device_fingerprint' => $fingerprint,
                     'user_agent' => $deviceInfo['user_agent'],
                     'device_type' => $deviceInfo['device_type'],
                     'browser' => $deviceInfo['browser'],
@@ -69,24 +66,25 @@ class AuthenticatedSessionController extends Controller
                     'latitude' => $geoInfo['latitude'],
                     'longitude' => $geoInfo['longitude'],
                     'address' => $geoInfo['address'],
+                    'device_fingerprint' => $fingerprint,
+                    'last_activity' => now(),
+                    'is_current' => true,
                 ]);
 
                 \Log::info('Session created with ID: ' . $session->id);
 
+                // Сохраняем ID сессии в сессию Laravel
+                $request->session()->put('user_session_id', $session->id);
+
             } catch (\Exception $e) {
                 \Log::error('Error creating session: ' . $e->getMessage());
-                dd($e->getMessage()); // Временная остановка для просмотра ошибки
+                // Не прерываем выполнение, просто логируем ошибку
             }
-
-            $request->session()->put('user_session_id', $session->id);
         }
 
         return redirect()->intended(route('welcome', absolute: false));
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         $user = Auth::user();
@@ -95,32 +93,32 @@ class AuthenticatedSessionController extends Controller
             // Обновляем время активности при выходе
             $user->update(['last_activity_at' => now()]);
 
-            // ========== ОБНОВЛЯЕМ СЕССИЮ ПРИ ВЫХОДЕ ==========
             // Получаем ID сессии из сессии Laravel
             $sessionId = $request->session()->get('user_session_id');
 
             if ($sessionId) {
-                $userSession = UserSession::find($sessionId);
-                if ($userSession) {
-                    // Помечаем сессию как неактивную
-                    $userSession->update([
-                        'is_current' => false,
-                        'last_activity' => now(),
-                    ]);
+                try {
+                    $userSession = UserSession::find($sessionId);
+                    if ($userSession) {
+                        $userSession->update([
+                            'is_current' => false,
+                            'last_activity' => now(),
+                        ]);
+                        \Log::info('Session deactivated: ' . $sessionId);
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Error deactivating session: ' . $e->getMessage());
                 }
             }
 
-            // Или обновляем все сессии этого пользователя, помечая их как неактивные
+            // Страховка: деактивируем все активные сессии этого пользователя
             UserSession::where('user_id', $user->id)
                 ->where('is_current', true)
                 ->update(['is_current' => false]);
-            // =================================================
         }
 
         Auth::guard('web')->logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         return redirect('/');
