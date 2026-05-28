@@ -233,27 +233,29 @@ class LicenceAndPaymentController extends Controller
 
     public function paymentWebhook(Request $request)
     {
-        Log::info('Webhook received', [
-            'headers' => $request->headers->all(),
-            'body' => $request->all(),
-            'ip' => $request->ip()
-        ]);
+        \Log::info('Webhook received', ['payload' => $request->all()]);
 
         try {
             $payload = $request->all();
 
-            // Проверяем наличие объекта платежа
-            if (!isset($payload['object']) || !isset($payload['object']['id'])) {
-                Log::warning('Invalid webhook data');
-                return response()->json(['error' => 'Invalid data'], 400);
+            // Проверяем наличие объекта платежа в разных форматах
+            if (isset($payload['object']) && isset($payload['object']['id'])) {
+                // Стандартный формат YooKassa
+                $paymentObject = $payload['object'];
+                $providerPaymentId = $paymentObject['id'];
+                $status = $paymentObject['status'];
+                $paid = $paymentObject['paid'] ?? false;
+            } elseif (isset($payload['id']) && isset($payload['status'])) {
+                // Альтернативный формат (прямой объект платежа)
+                $providerPaymentId = $payload['id'];
+                $status = $payload['status'];
+                $paid = $payload['paid'] ?? false;
+            } else {
+                \Log::warning('Invalid webhook format', ['payload' => $payload]);
+                return response()->json(['error' => 'Invalid data format'], 400);
             }
 
-            $paymentObject = $payload['object'];
-            $providerPaymentId = $paymentObject['id'];
-            $status = $paymentObject['status'];
-            $paid = $paymentObject['paid'] ?? false;
-
-            Log::info('Processing webhook', [
+            \Log::info('Processing webhook', [
                 'provider_payment_id' => $providerPaymentId,
                 'status' => $status,
                 'paid' => $paid
@@ -263,35 +265,21 @@ class LicenceAndPaymentController extends Controller
             $payment = Payment::where('provider_payment_id', $providerPaymentId)->first();
 
             if (!$payment) {
-                Log::warning('Payment not found', ['provider_payment_id' => $providerPaymentId]);
+                \Log::warning('Payment not found', ['provider_payment_id' => $providerPaymentId]);
                 return response()->json(['error' => 'Payment not found'], 404);
             }
 
-            // Обрабатываем успешный платеж
-            if ($status === 'succeeded' && $paid === true) {
-                $success = $this->paymentService->handleSuccessfulPayment($payment, $paymentObject);
-
-                if ($success) {
-                    Log::info('Payment activated successfully', ['payment_id' => $payment->id]);
-                    return response()->json(['status' => 'ok'], 200);
-                } else {
-                    Log::error('Payment activation failed', ['payment_id' => $payment->id]);
-                    return response()->json(['error' => 'Activation failed'], 500);
-                }
+            // Если платеж успешен, активируем подписку
+            if ($status === 'succeeded' && $paid === true && !$payment->isCompleted()) {
+                \Log::info('Activating subscription from webhook', ['payment_id' => $payment->id]);
+                $this->paymentService->handleSuccessfulPayment($payment, $paymentObject);
+                return response()->json(['status' => 'ok', 'message' => 'Subscription activated'], 200);
             }
 
-            if ($status === 'canceled') {
-                $payment->markAsFailed('Payment cancelled');
-                Log::info('Payment cancelled', ['payment_id' => $payment->id]);
-                return response()->json(['status' => 'cancelled'], 200);
-            }
-
-            return response()->json(['status' => 'ok'], 200);
+            return response()->json(['status' => 'ok', 'message' => 'Webhook received'], 200);
 
         } catch (\Exception $e) {
-            Log::error('Webhook error: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
-            ]);
+            \Log::error('Webhook error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
