@@ -199,16 +199,39 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <span class="badge bg-label-{{ $statusColor }}">
-                                            {{ $statusText }}
+                                        @php
+                                            $isActive = $subscription->status === 'active' && $subscription->expires_at > now();
+                                            $isExpired = $subscription->expires_at < now() || $subscription->status === 'expired';
+
+                                            if ($isActive) {
+                                                $badgeClass = 'bg-label-success';
+                                                $statusText = 'Активна';
+                                                $icon = 'ri-checkbox-circle-line';
+                                                $iconColor = 'text-success';
+                                            } elseif ($isExpired) {
+                                                $badgeClass = 'bg-label-danger';
+                                                $statusText = 'Истекла';
+                                                $icon = 'ri-error-warning-line';
+                                                $iconColor = 'text-danger';
+                                            } else {
+                                                $badgeClass = 'bg-label-secondary';
+                                                $statusText = 'Отменена';
+                                                $icon = 'ri-stop-circle-line';
+                                                $iconColor = 'text-secondary';
+                                            }
+                                        @endphp
+                                        <span class="badge {{ $badgeClass }}">
+                                            <i class="{{ $icon }} me-1"></i> {{ $statusText }}
                                         </span>
-                                        @if($subscription->status === 'active' && !$isExpired)
-                                            <small class="d-block text-success">
-                                                <i class="ri-checkbox-circle-line"></i> Действует
+                                        @if($isActive)
+                                            <small class="d-block {{ $iconColor }} mt-1">
+                                                <i class="ri-time-line me-1"></i> Действует
+                                                до {{ $subscription->expires_at->format('d.m.Y') }}
                                             </small>
                                         @elseif($isExpired)
-                                            <small class="d-block text-danger">
-                                                <i class="ri-error-warning-line"></i> Просрочена
+                                            <small class="d-block text-danger mt-1">
+                                                <i class="ri-calendar-close-line me-1"></i>
+                                                Истекла {{ $subscription->expires_at->format('d.m.Y') }}
                                             </small>
                                         @endif
                                     </td>
