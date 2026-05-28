@@ -49,12 +49,15 @@ class LicenceAndPaymentController extends Controller
 
             if ($currentPlan === 'premium') {
                 if ($subscription) {
-                    $baseSlots = $subscription->base_user_slots ?? 15;
-                    $additionalSlots = AdditionalUserPurchase::where('company_id', $company->id)
-                        ->where('is_active', true)
-                        ->where('expires_at', '>', now())
-                        ->sum('user_count');
-                    $maxUsers = $baseSlots + $additionalSlots;
+                    // Используем метод getTotalUserSlots()
+                    $maxUsers = $subscription->getTotalUserSlots();
+
+                    // Для отладки
+                    \Log::info('Premium user slots', [
+                        'subscription_id' => $subscription->id,
+                        'base_slots' => $subscription->base_user_slots,
+                        'total_slots' => $maxUsers
+                    ]);
                 } else {
                     $maxUsers = 15;
                 }

@@ -213,17 +213,31 @@ class PaymentService
         $period = $payment->period;
         $months = $this->getMonthsFromPeriod($period);
 
-        // Деактивируем старые подписки
-        Subscription::where('company_id', $company->id)
+        // Деактивируем старые подписки и сохраняем их покупки
+        $oldSubscriptions = Subscription::where('company_id', $company->id)
             ->where('status', 'active')
-            ->each(function ($subscription) {
-                $subscription->update(['status' => 'expired']);
-            });
+            ->get();
 
-        // Деактивируем старые покупки пользователей
-        AdditionalUserPurchase::where('company_id', $company->id)
-            ->where('is_active', true)
-            ->update(['is_active' => false]);
+        // Сохраняем активные покупки пользователей перед деактивацией
+        $activePurchases = collect();
+        foreach ($oldSubscriptions as $oldSubscription) {
+            $oldSubscription->update(['status' => 'expired']);
+
+            // Получаем активные покупки для старой подписки
+            $purchases = AdditionalUserPurchase::where('subscription_id', $oldSubscription->id)
+                ->where('is_active', true)
+                ->where('expires_at', '>', now())
+                ->get();
+
+            foreach ($purchases as $purchase) {
+                $activePurchases->push($purchase);
+            }
+
+            // Деактивируем покупки пользователей для старой подписки
+            AdditionalUserPurchase::where('subscription_id', $oldSubscription->id)
+                ->where('is_active', true)
+                ->update(['is_active' => false]);
+        }
 
         // Создаем новую подписку
         $subscription = Subscription::create([
@@ -242,11 +256,41 @@ class PaymentService
 
         $payment->update(['subscription_id' => $subscription->id]);
 
+        // ПЕРЕНОСИМ АКТИВНЫЕ ПОКУПКИ НА НОВУЮ ПОДПИСКУ (ЭТОТ КОД НУЖНО ВСТАВИТЬ)
+        foreach ($activePurchases as $purchase) {
+            // Создаем копию покупки для новой подписки
+            AdditionalUserPurchase::create([
+                'company_id' => $company->id,
+                'subscription_id' => $subscription->id,
+                'user_count' => $purchase->user_count,
+                'period' => $purchase->period,
+                'expires_at' => $purchase->expires_at,
+                'is_active' => true
+            ]);
+
+            // Деактивируем старую (уже деактивирована выше, но для надежности)
+            $purchase->update(['is_active' => false]);
+
+            \Log::info('Additional users transferred to new subscription', [
+                'old_purchase_id' => $purchase->id,
+                'new_subscription_id' => $subscription->id,
+                'user_count' => $purchase->user_count
+            ]);
+        }
+
         // Обновляем компанию
         $company->update(['license_type' => 'premium']);
 
         // Обновляем хранилище
         $this->updateStorageLimit($company, $subscription->storage_limit);
+
+        \Log::info('Subscription activated', [
+            'company_id' => $company->id,
+            'subscription_id' => $subscription->id,
+            'period' => $period,
+            'months' => $months,
+            'transferred_purchases' => $activePurchases->count()
+        ]);
     }
 
     /**
@@ -265,13 +309,21 @@ class PaymentService
 
         $months = $this->getMonthsFromPeriod($payment->period);
 
-        AdditionalUserPurchase::create([
+        $additionalPurchase = AdditionalUserPurchase::create([
             'company_id' => $company->id,
             'subscription_id' => $subscription->id,
             'user_count' => $payment->user_count,
             'period' => $payment->period,
             'expires_at' => now()->addMonths($months),
             'is_active' => true
+        ]);
+
+        // Добавьте логирование
+        \Log::info('Additional users activated', [
+            'subscription_id' => $subscription->id,
+            'user_count' => $payment->user_count,
+            'expires_at' => now()->addMonths($months),
+            'purchase_id' => $additionalPurchase->id
         ]);
     }
 

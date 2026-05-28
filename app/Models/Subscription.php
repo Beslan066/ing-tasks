@@ -85,4 +85,21 @@ class Subscription extends Model
             'payment_provider_id' => $paymentId ?? $this->payment_provider_id
         ]);
     }
+
+    public function getTotalUserSlots(): int
+    {
+        $additionalSlots = $this->additionalUserPurchases()
+            ->where('is_active', true)
+            ->where('expires_at', '>', now())
+            ->sum('user_count');
+
+        \Log::info('getTotalUserSlots', [
+            'subscription_id' => $this->id,
+            'base_slots' => $this->base_user_slots,
+            'additional_slots' => $additionalSlots,
+            'total' => $this->base_user_slots + $additionalSlots
+        ]);
+
+        return $this->base_user_slots + $additionalSlots;
+    }
 }
