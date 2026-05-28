@@ -193,7 +193,7 @@
                                 $lastActivity = $lastSession ? $lastSession->last_activity_at : null;
                             @endphp
 
-                            <tr> @if($isOnline) class="table-success" @endif
+                            <tr @if($isOnline) class="table-success" @endif>
                                 <!-- ID -->
                                 <td>
                                     <span class="fw-medium">#{{ $user->id }}</span>

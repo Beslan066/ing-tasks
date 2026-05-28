@@ -50,82 +50,44 @@ trait DeviceInfoTrait
     {
         // Пропускаем локальные IP
         if ($this->isLocalIp($ip)) {
-            return [
-                'country' => 'Локальный',
-                'city' => 'Локальная сеть',
-                'latitude' => null,
-                'longitude' => null,
-                'address' => 'Локальный IP',
-            ];
+            return ['country' => null, 'city' => null, 'latitude' => null, 'longitude' => null, 'address' => null];
         }
 
-        // Пробуем получить из кэша
         $cacheKey = 'geo_ip_' . $ip;
         if (Cache::has($cacheKey)) {
             return Cache::get($cacheKey);
         }
 
-        // Список API для получения геолокации
-        $apis = [
-            [
-                'url' => "http://ip-api.com/json/{$ip}?fields=status,country,city,lat,lon,query",
-                'parse' => function($data) {
-                    if ($data && isset($data['status']) && $data['status'] === 'success') {
-                        return [
-                            'country' => $data['country'] ?? null,
-                            'city' => $data['city'] ?? null,
-                            'latitude' => $data['lat'] ?? null,
-                            'longitude' => $data['lon'] ?? null,
-                            'address' => isset($data['city']) ? "{$data['city']}, {$data['country']}" : null,
-                        ];
-                    }
-                    return null;
-                }
-            ],
-            [
-                'url' => "https://freeipapi.com/api/json/{$ip}",
-                'parse' => function($data) {
-                    if ($data && !isset($data['error'])) {
-                        return [
-                            'country' => $data['countryName'] ?? null,
-                            'city' => $data['cityName'] ?? null,
-                            'latitude' => $data['latitude'] ?? null,
-                            'longitude' => $data['longitude'] ?? null,
-                            'address' => isset($data['cityName']) ? "{$data['cityName']}, {$data['countryName']}" : null,
-                        ];
-                    }
-                    return null;
-                }
-            ]
+        $services = [
+            'ipapi' => ['url' => "https://ipapi.co/{$ip}/json/", 'parse' => function($d) {
+                return ['country' => $d['country_name'] ?? null, 'city' => $d['city'] ?? null, 'latitude' => $d['latitude'] ?? null, 'longitude' => $d['longitude'] ?? null, 'address' => isset($d['city']) ? "{$d['city']}, {$d['country_name']}" : null];
+            }],
+            'ipwhois' => ['url' => "https://ipwho.is/{$ip}", 'parse' => function($d) {
+                return ['country' => $d['country'] ?? null, 'city' => $d['city'] ?? null, 'latitude' => $d['latitude'] ?? null, 'longitude' => $d['longitude'] ?? null, 'address' => isset($d['city']) ? "{$d['city']}, {$d['country']}" : null];
+            }],
+            'ip-api' => ['url' => "http://ip-api.com/json/{$ip}", 'parse' => function($d) {
+                if ($d['status'] === 'success') return ['country' => $d['country'] ?? null, 'city' => $d['city'] ?? null, 'latitude' => $d['lat'] ?? null, 'longitude' => $d['lon'] ?? null, 'address' => isset($d['city']) ? "{$d['city']}, {$d['country']}" : null];
+                return null;
+            }],
         ];
 
-        foreach ($apis as $api) {
+        foreach ($services as $service) {
             try {
-                $response = Http::timeout(5)->get($api['url']);
-
+                $response = Http::timeout(3)->get($service['url']);
                 if ($response->successful()) {
                     $data = $response->json();
-                    $result = $api['parse']($data);
-
-                    if ($result && ($result['latitude'] || $result['country'])) {
+                    $result = $service['parse']($data);
+                    if ($result && ($result['country'] || $result['city'])) {
                         Cache::put($cacheKey, $result, now()->addDay());
                         return $result;
                     }
                 }
             } catch (\Exception $e) {
-                Log::warning("Geolocation API failed: " . $e->getMessage());
-                continue;
+                \Log::warning("Geo service {$service['url']} failed: " . $e->getMessage());
             }
         }
 
-        // Если ничего не сработало, возвращаем null значения
-        return [
-            'country' => null,
-            'city' => null,
-            'latitude' => null,
-            'longitude' => null,
-            'address' => null,
-        ];
+        return ['country' => null, 'city' => null, 'latitude' => null, 'longitude' => null, 'address' => null];
     }
 
     /**
