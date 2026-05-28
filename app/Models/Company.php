@@ -180,11 +180,14 @@ class Company extends Model
             ];
         }
 
+        // Явно получаем used_storage из базы
+        $usedBytes = (int)$storageUsage->used_storage;
+
         return [
-            'used' => $storageUsage->used_storage,
-            'formatted_used' => $storageUsage->getFormattedUsedStorage(),
+            'used' => $usedBytes,
+            'formatted_used' => $this->formatBytes($usedBytes),
             'limit' => $storageUsage->total_storage_limit,
-            'formatted_limit' => $storageUsage->getFormattedTotalStorage(),
+            'formatted_limit' => $this->formatBytes($storageUsage->total_storage_limit),
             'free' => $storageUsage->getFreeStorage(),
             'formatted_free' => $storageUsage->getFormattedFreeStorage(),
             'percentage' => $storageUsage->getUsagePercentage(),
@@ -193,9 +196,6 @@ class Company extends Model
         ];
     }
 
-    /**
-     * Форматирует байты в читаемый вид
-     */
     private function formatBytes($bytes, $precision = 2): string
     {
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];

@@ -14,20 +14,14 @@ class SubscriptionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Subscription::with(['company', 'additionalUserPurchases']);
+        // Показываем ТОЛЬКО активные подписки (по одной на компанию)
+        $query = Subscription::with(['company', 'additionalUserPurchases'])
+            ->where('status', 'active')  // Только активные подписки
+            ->where('expires_at', '>', now());  // Только не истекшие
 
         // Фильтр по типу
         if ($request->type && in_array($request->type, ['premium', 'basic'])) {
             $query->where('type', $request->type);
-        }
-
-        // Фильтр по статусу
-        if ($request->status === 'active') {
-            $query->where('status', 'active')->where('expires_at', '>', now());
-        } elseif ($request->status === 'expired') {
-            $query->where(function($q) {
-                $q->where('status', 'expired')->orWhere('expires_at', '<', now());
-            });
         }
 
         // Поиск по названию компании
@@ -39,13 +33,13 @@ class SubscriptionController extends Controller
 
         $subscriptions = $query->orderBy('id', 'desc')->paginate($request->per_page ?? 20);
 
-        // Статистика
+        // Статистика (только активные подписки)
         $totalCompanies = Company::count();
-        $premiumCount = Subscription::where('type', 'premium')->where('status', 'active')->count();
+        $premiumCount = Subscription::where('type', 'premium')->where('status', 'active')->where('expires_at', '>', now())->count();
         $basicCount = Company::where('license_type', 'basic')->count();
         $totalUsers = User::count();
 
-        return view('admin.subscribe.index', compact(
+        return view('admin.subscriptions.index', compact(
             'subscriptions',
             'totalCompanies',
             'premiumCount',

@@ -252,9 +252,19 @@
                                     </td>
                                     <td>
                                         @php
-                                            $usedStorage = $company ? $company->getFormattedUsedStorage() : '0 B';
+                                            $usedStorage = $company ? $company->getStorageStats()['formatted_used'] ?? '0 B' : '0 B';
                                             $totalStorage = $company ? $company->getFormattedStorageLimit() : '0 B';
                                             $storagePercent = $company && $company->storageUsage ? $company->storageUsage->getUsagePercentage() : 0;
+
+                                            // Если хранилище показывает неправильно, получаем напрямую
+                                            if ($company && $company->storageUsage && $company->storageUsage->used_storage > 0) {
+                                                $usedBytes = $company->storageUsage->used_storage;
+                                                if ($usedBytes > 1073741824) { // больше 1GB
+                                                    $usedStorage = round($usedBytes / 1073741824, 2) . ' GB';
+                                                } else {
+                                                    $usedStorage = round($usedBytes / 1048576, 2) . ' MB';
+                                                }
+                                            }
                                         @endphp
                                         <div class="d-flex flex-column">
                                             <span>{{ $usedStorage }} / {{ $totalStorage }}</span>
