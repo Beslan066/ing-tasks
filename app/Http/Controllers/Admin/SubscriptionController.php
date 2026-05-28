@@ -39,7 +39,7 @@ class SubscriptionController extends Controller
         $basicCount = Company::where('license_type', 'basic')->count();
         $totalUsers = User::count();
 
-        return view('admin.subscriptions.index', compact(
+        return view('admin.subscribe.index', compact(
             'subscriptions',
             'totalCompanies',
             'premiumCount',
