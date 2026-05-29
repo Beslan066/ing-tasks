@@ -483,9 +483,9 @@ media-src https://meet.jit.si https:;
         </div>
 
         <!-- Навигация -->
-        <div class="space-y-2 flex-1 scrollbar-thin overflow-x-hidden overflow-y-auto">
+        <div class="flex-1 space-y-2 overflow-x-hidden overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <!-- Главное меню -->
-            <div class="mb-6">
+            <div class="mb-4">
 
                 <div class="space-y-1">
                     <a href="{{route('welcome')}}"
@@ -543,84 +543,22 @@ media-src https://meet.jit.si https:;
                     </a>
                 </div>
 
-                <!-- Дополнительные страницы (скрыты по умолчанию) -->
-                <a href="#"
-                   onclick="toggleExtraMenu(event)"
-                   class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg">
-                    <div class="w-8 h-8 rounded-lg bg-gray-500/10 flex items-center justify-center mr-3">
-                        <i class="fas fa-ellipsis-h text-gray-500 text-sm"></i>
+                <a href="{{route('frontend.news.index')}}"
+                   class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('news.index*') ? 'active' : ''}}">
+                    <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
+                        <i class="fas fa-newspaper text-green-500 text-sm"></i>
                     </div>
-                    <span class="flex-1 font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Дополнительно</span>
-                    <i id="extraMenuIcon" class="fas fa-chevron-down text-sidebar-text text-xs transition-transform duration-300"></i>
+                    <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Новости, поддержка</span>
                 </a>
 
-                <!-- Выпадающее подменю для Дополнительно -->
-                <div id="extraSubmenu" class="ml-4 mt-1 space-y-1 overflow-hidden transition-all duration-300" style="max-height: 0px; opacity: 0;">
-                    <a href="{{route('frontend.news.index')}}"
-                       class="nav-item flex items-center px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg text-sm {{request()->routeIs('news.index*') ? 'active' : ''}}">
-                        <div class="w-6 h-6 rounded-lg bg-green-500/10 flex items-center justify-center mr-2">
-                            <i class="fas fa-newspaper text-green-500 text-xs"></i>
-                        </div>
-                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Новости, поддержка</span>
-                    </a>
+                <a href="{{route('licence.index')}}"
+                   class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('license.index*') ? 'active' : ''}}">
+                    <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
+                        <i class="fas fa-credit-card text-yellow-500 text-sm"></i>
+                    </div>
+                    <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Лицензия и оплата</span>
+                </a>
 
-                    <div class="border-t border-white/10 my-1"></div>
-
-                    <a href="{{route('licence.index')}}"
-                       class="nav-item flex items-center px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg text-sm {{request()->routeIs('license.index*') ? 'active' : ''}}">
-                        <div class="w-6 h-6 rounded-lg bg-yellow-500/10 flex items-center justify-center mr-2">
-                            <i class="fas fa-credit-card text-yellow-500 text-xs"></i>
-                        </div>
-                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Лицензия и оплата</span>
-                    </a>
-                </div>
-
-
-            </div>
-
-           <!-- Теги -->
-            <div class="mb-6">
-                <div class="flex items-center justify-between mb-4 px-2">
-                    <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider">ТЕГИ</h3>
-                    <button onclick="openCategoryModal()"
-                            class="w-6 h-6 rounded-full bg-transparent/20 flex items-center justify-center text-sidebar-text hover:text-white hover:bg-primary-600 transition-colors">
-                        <i class="fas fa-plus text-xs"></i>
-                    </button>
-                </div>
-
-                <div class="space-y-1">
-                    @if(isset($categories) && $categories->count() > 0)
-                        @foreach($categories as $category)
-                            <div
-                                class="group flex items-center justify-between px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-transparent/20 rounded-lg cursor-pointer transition-all duration-200">
-                                <div class="flex items-center">
-                                    <div class="category-dot" style="background-color: {{ $category->color }}"></div>
-                                    <span class="font-medium">{{ $category->name }}</span>
-                                </div>
-                                @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
-                                    <div
-                                        class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button onclick="openEditCategoryModal({{ $category->id }})"
-                                                class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center"
-                                                title="Редактировать">
-                                            <i class="fas fa-edit text-xs"></i>
-                                        </button>
-                                        <button
-                                            onclick="openDeleteCategoryModal({{ $category->id }}, {{ json_encode($category->name) }})"
-                                            class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center"
-                                            title="Удалить">
-                                            <i class="fas fa-trash text-xs"></i>
-                                        </button>
-                                    </div>
-                                @endif
-                            </div>
-                        @endforeach
-                    @else
-                        <div class="px-4 py-3 text-center">
-                            <p class="text-sm text-sidebar-text">Нет доступных тегов</p>
-                        </div>
-                    @endif
-                </div>
             </div>
 
             <!-- Онлайн пользователи -->
@@ -664,6 +602,51 @@ media-src https://meet.jit.si https:;
                         <p class="text-xs text-sidebar-text">Сейчас никого нет в сети</p>
                     </div>
                 @endif
+            </div>
+
+            <!-- Теги -->
+            <div class="mb-4">
+                <div class="flex items-center justify-between mb-4 px-2">
+                    <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider">ТЕГИ</h3>
+                    <button onclick="openCategoryModal()"
+                            class="w-6 h-6 rounded-full bg-transparent/20 flex items-center justify-center text-sidebar-text hover:text-white hover:bg-primary-600 transition-colors">
+                        <i class="fas fa-plus text-xs"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-1">
+                    @if(isset($categories) && $categories->count() > 0)
+                        @foreach($categories as $category)
+                            <div
+                                class="group flex items-center justify-between px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-transparent/20 rounded-lg cursor-pointer transition-all duration-200">
+                                <div class="flex items-center">
+                                    <div class="category-dot" style="background-color: {{ $category->color }}"></div>
+                                    <span class="font-medium">{{ $category->name }}</span>
+                                </div>
+                                @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
+                                    <div
+                                        class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button onclick="openEditCategoryModal({{ $category->id }})"
+                                                class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center"
+                                                title="Редактировать">
+                                            <i class="fas fa-edit text-xs"></i>
+                                        </button>
+                                        <button
+                                            onclick="openDeleteCategoryModal({{ $category->id }}, {{ json_encode($category->name) }})"
+                                            class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center"
+                                            title="Удалить">
+                                            <i class="fas fa-trash text-xs"></i>
+                                        </button>
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="px-4 py-3 text-center">
+                            <p class="text-sm text-sidebar-text">Нет доступных тегов</p>
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
 
@@ -808,36 +791,9 @@ media-src https://meet.jit.si https:;
     let sendInterval = null;
     let activityInterval = null;
 
-    function toggleExtraMenu(event) {
-        event.preventDefault();
 
-        const submenu = document.getElementById('extraSubmenu');
-        const icon = document.getElementById('extraMenuIcon');
 
-        if (!submenu || !icon) return;
-
-        if (submenu.style.maxHeight === '0px' || submenu.style.maxHeight === '0') {
-            // Открываем подменю
-            submenu.style.maxHeight = submenu.scrollHeight + 'px';
-            submenu.style.opacity = '1';
-            icon.style.transform = 'rotate(180deg)';
-
-            // Включаем скролл если нужно
-            setTimeout(() => {
-                if (submenu.scrollHeight > 200) {
-                    submenu.style.overflowY = 'auto';
-                }
-            }, 300);
-        } else {
-            // Закрываем подменю
-            submenu.style.overflowY = 'hidden';
-            submenu.style.maxHeight = '0px';
-            submenu.style.opacity = '0';
-            icon.style.transform = 'rotate(0deg)';
-        }
-    }
-
-    // Опционально: подсветка активного пункта в подменю
+    // Подсветка активного пункта в подменю
     document.addEventListener('DOMContentLoaded', function() {
         // Проверяем, открыт ли какой-то из подпунктов
         const currentRoute = window.location.pathname;
