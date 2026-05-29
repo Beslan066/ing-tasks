@@ -36,122 +36,140 @@
         </div>
         <!-- Breadcrumb End -->
 
-        <!-- Информация о хранилище -->
-        @if($backgroundEnabled && $backgroundImage)
-            <div class="mb-6 rounded-2xl border-none backdrop-blur-md bg-transparent/20 text-white p-6 ">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                        <h3 class="text-lg font-semibold text-white  mb-2">
-                            Лимиты хранилища
-                        </h3>
-                        <div class="flex items-center gap-4">
-                            <div class="flex items-center gap-2">
-                                <span class="text-sm text-white">Тариф:</span>
-                                <span class="px-3 py-1 rounded-full text-sm font-medium
-                                @if($company->license_type == 'basic') bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300
-                                @elseif($company->license_type == 'optimal') bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300
-                                @else bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300
-                                @endif">
-                                {{ $company->getLicenseTypeName() }}
-                            </span>
-                            </div>
-                            <div class="text-sm text-white">
-                                Макс. размер файла:
-                                @php
-                                    $maxFileSize = match($company->license_type) {
-                                        'basic' => '100 MB',
-                                        'optimal' => '500 MB',
-                                        'premium' => '1 GB',
-                                        default => '100 MB'
-                                    };
-                                @endphp
-                                <span class="font-medium">{{ $maxFileSize }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-6">
-                        <div class="text-right">
-                            <div class="text-2xl font-bold text-white">
-                                {{ $storageUsage->getFormattedUsedStorage() }}
-                            </div>
-                            <div class="text-sm text-gray-500">
-                                из {{ $storageUsage->getFormattedTotalStorage() }}
-                            </div>
-                        </div>
-                        <div class="relative w-32">
-                            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                <div class="h-2.5 rounded-full
-                                @if($storageUsage->getUsagePercentage() > 90) bg-red-600
-                                @elseif($storageUsage->getUsagePercentage() > 70) bg-yellow-500
-                                @else bg-green-600
-                                @endif"
-                                     style="width: {{ min($storageUsage->getUsagePercentage(), 100) }}%">
+        <!-- ИНФОРМАЦИЯ О КОМПАНИИ И КНОПКА УЛУЧШЕНИЯ -->
+        @if($company)
+            <div class="mb-6 md:mb-8">
+                @if($backgroundEnabled && $backgroundImage)
+                    <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <i class="fas fa-building-columns text-3xl text-white"></i>
+                                    <h2 class="text-2xl md:text-3xl font-bold text-white">{{ $company->name }}</h2>
+                                    @if($company->verified)
+                                        <i class="fas fa-check-circle text-blue-400 text-xl" title="Верифицирована"></i>
+                                    @endif
+                                </div>
+                                <div class="flex flex-wrap gap-3 text-sm text-white/80">
+                                    @if($company->phone)
+                                        <span><i class="fas fa-phone mr-1"></i> {{ $company->phone }}</span>
+                                    @endif
+                                    <span><i class="fas fa-users mr-1"></i> Сотрудников: {{ $company->getActiveUsersCount() }}</span>
+                                    <span><i class="fas fa-tasks mr-1"></i> Всего задач: {{ $company->getTasksCount() }}</span>
                                 </div>
                             </div>
-                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">
-                                {{ round($storageUsage->getUsagePercentage(), 1) }}%
+                            <div>
+                                @if($company->license_type !== 'premium')
+                                    <button onclick="openUpgradeModal()"
+                                            class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105 flex items-center gap-2 text-sm md:text-base">
+                                        <i class="fas fa-crown"></i>
+                                        <span>Улучшить подписку</span>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                @else
+                                    <span class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-lg inline-flex items-center gap-2 text-sm md:text-base">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Премиум</span>
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                @endif
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        @else
-            <div class="mb-6 rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90 mb-2">
-                            Лимиты хранилища
-                        </h3>
-                        <div class="flex items-center gap-4">
-                            <div class="flex items-center gap-2">
-                                <span class="text-sm text-gray-600 dark:text-gray-400">Тариф:</span>
-                                <span class="px-3 py-1 rounded-full text-sm font-medium
-                                @if($company->license_type == 'basic') bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300
-                                @elseif($company->license_type == 'optimal') bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300
-                                @else bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300
-                                @endif">
-                                {{ $company->getLicenseTypeName() }}
-                            </span>
-                            </div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">
-                                Макс. размер файла:
-                                @php
-                                    $maxFileSizeValue = match($company->license_type) {
-                                        'basic' => '100 MB',
-                                        'optimal' => '500 MB',
-                                        'premium' => '1 GB',
-                                        default => '100 MB'
-                                    };
-                                @endphp
-                                <span class="font-medium">{{ $maxFileSizeValue }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-6">
-                        <div class="text-right">
-                            <div class="text-2xl font-bold text-gray-800 dark:text-white/90">
-                                {{ $storageUsage->getFormattedUsedStorage() }}
-                            </div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">
-                                из {{ $storageUsage->getFormattedTotalStorage() }}
-                            </div>
-                        </div>
-                        <div class="relative w-32">
-                            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                <div class="h-2.5 rounded-full
-                                @if($storageUsage->getUsagePercentage() > 90) bg-red-600
-                                @elseif($storageUsage->getUsagePercentage() > 70) bg-yellow-500
-                                @else bg-green-600
-                                @endif"
-                                     style="width: {{ min($storageUsage->getUsagePercentage(), 100) }}%">
+                        <div class="mt-4 pt-4 border-t border-white/20">
+                            <div class="flex flex-wrap justify-between items-center gap-3">
+                                <div>
+                                    <span class="text-sm text-white/70">Тарифный план:</span>
+                                    <span class="ml-2 px-2 py-1 rounded-full text-xs font-semibold
+                                        @if($company->license_type === 'premium') bg-gradient-to-r from-purple-500 to-pink-500 text-white
+                                        @elseif($company->license_type === 'optimal') bg-blue-500 text-white
+                                        @else bg-gray-600 text-white @endif">
+                                        {{ $company->getLicenseTypeName() }}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-white/70">
+                                    <i class="fas fa-database mr-1"></i>
+                                    Хранилище:
+                                    @php
+                                        $usedBytes = $company->getStorageStats()['used'] ?? 0;
+                                        $limitBytes = $company->getStorageLimit();
+                                        $usedGB = round($usedBytes / 1073741824, 2);
+                                        $limitGB = $company->license_type === 'premium' ? 1024 : 2;
+                                    @endphp
+                                    @if($usedGB < 1)
+                                        {{ round($usedBytes / 1048576, 2) }} МБ / {{ $limitGB }} ГБ
+                                    @else
+                                        {{ number_format($usedGB, 2) }} ГБ / {{ $limitGB }} ГБ
+                                    @endif
                                 </div>
                             </div>
-                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">
-                                {{ round($storageUsage->getUsagePercentage(), 1) }}%
+                        </div>
+                    </div>
+                @else
+                    <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 border border-gray-100">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <i class="fas fa-building text-3xl text-green-600"></i>
+                                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800">{{ $company->name }}</h2>
+                                    @if($company->verified)
+                                        <i class="fas fa-check-circle text-blue-500 text-xl" title="Верифицирована"></i>
+                                    @endif
+                                </div>
+                                <div class="flex flex-wrap gap-3 text-sm text-gray-600">
+                                    @if($company->phone)
+                                        <span><i class="fas fa-phone mr-1 text-green-500"></i> {{ $company->phone }}</span>
+                                    @endif
+                                    <span><i class="fas fa-users mr-1 text-green-500"></i> Сотрудников: {{ $company->getActiveUsersCount() }}</span>
+                                    <span><i class="fas fa-tasks mr-1 text-green-500"></i> Всего задач: {{ $company->getTasksCount() }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                @if($company->license_type !== 'premium')
+                                    <button onclick="openUpgradeModal()"
+                                            class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105 flex items-center gap-2 text-sm md:text-base">
+                                        <i class="fas fa-crown"></i>
+                                        <span>Улучшить подписку</span>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                @else
+                                    <span class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-lg inline-flex items-center gap-2 text-sm md:text-base">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Премиум</span>
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <div class="flex flex-wrap justify-between items-center gap-3">
+                                <div>
+                                    <span class="text-sm text-gray-600">Тарифный план:</span>
+                                    <span class="ml-2 px-2 py-1 rounded-full text-xs font-semibold
+                                        @if($company->license_type === 'premium') bg-gradient-to-r from-purple-500 to-pink-500 text-white
+                                        @elseif($company->license_type === 'optimal') bg-blue-500 text-white
+                                        @else bg-gray-500 text-white @endif">
+                                        {{ $company->getLicenseTypeName() }}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    <i class="fas fa-database mr-1 text-green-500"></i>
+                                    Хранилище:
+                                    @php
+                                        $usedBytes = $company->getStorageStats()['used'] ?? 0;
+                                        $limitBytes = $company->getStorageLimit();
+                                        $usedGB = round($usedBytes / 1073741824, 2);
+                                        $limitGB = $company->license_type === 'premium' ? 1024 : 2;
+                                    @endphp
+                                    @if($usedGB < 1)
+                                        {{ round($usedBytes / 1048576, 2) }} МБ / {{ $limitGB }} ГБ
+                                    @else
+                                        {{ number_format($usedGB, 2) }} ГБ / {{ $limitGB }} ГБ
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                @endif
             </div>
         @endif
 
@@ -165,7 +183,6 @@
                                 <h3 class="text-lg font-semibold text-white">
                                     Статистика по типам файлов
                                 </h3>
-
                                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                                     <!-- Search Input -->
                                     <div class="relative">
@@ -184,8 +201,6 @@
                                                  placeholder:text-white outline-none
                                                    {{ $backgroundEnabled && $backgroundImage ? 'text-white bg-transparent/20  border-none border-[1px]' : 'text-gray-800 dark:text-white/90 border-gray-500' }}">
                                     </div>
-
-                                    <!-- Upload Button with Modal -->
                                     <button onclick="openUploadModal()"
                                             class="flex w-full items-center justify-center gap-2 rounded-lg bg-green-500 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-green-600 sm:w-auto">
                                         <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -245,7 +260,6 @@
                                         </div>
                                     </div>
                                 @else
-                                    <!-- Image Statistics -->
                                     <div
                                         class="flex items-center justify-between rounded-2xl border border-gray-100 bg-white py-4 pl-4 pr-4 dark:border-gray-800 dark:bg-white/[0.03] xl:pr-5">
                                         <div class="flex items-center gap-4">
@@ -287,7 +301,6 @@
                                         </div>
                                     </div>
                                 @endif
-                                <!-- Video Statistics -->
                                 @if($backgroundEnabled && $backgroundImage)
 
                                     <div
@@ -343,40 +356,37 @@
                                                         stroke="" stroke-width="1.5" stroke-linejoin="round"></path>
                                                 </svg>
                                             </div>
-
                                             <div>
                                                 <h4 class="mb-1 text-sm font-medium text-gray-800 dark:text-white/90">
                                                     Видео
                                                 </h4>
                                                 <span class="block text-sm text-gray-500 dark:text-gray-400">
-                                            {{ $fileStats['videos']['count'] }} файлов
-                                        </span>
+                                                    {{ $fileStats['videos']['count'] }} файлов
+                                                </span>
                                             </div>
                                         </div>
-
                                         <div>
-                                    <span class="mb-1 block text-right text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $fileStats['videos']['count'] }}
-                                    </span>
-                                            <span class="block text-right text-sm text-gray-500 dark:text-gray-400">
-                                        @php
-                                            $size = $fileStats['videos']['size'];
-                                            $pow = floor(($size ? log($size) : 0) / log(1024));
-                                            $pow = min($pow, count($units) - 1);
-                                            $size = round($size / pow(1024, $pow), 2);
-                                        @endphp
-                                                {{ $size }} {{ $units[$pow] }}
-                                    </span>
+                                        <span class="mb-1 block text-right text-sm text-gray-500 dark:text-gray-400">
+                                            {{ $fileStats['videos']['count'] }}
+                                        </span>
+                                        <span class="block text-right text-sm text-gray-500 dark:text-gray-400">
+                                            @php
+                                                $size = $fileStats['videos']['size'];
+                                                $pow = floor(($size ? log($size) : 0) / log(1024));
+                                                $pow = min($pow, count($units) - 1);
+                                                $size = round($size / pow(1024, $pow), 2);
+                                            @endphp
+                                                    {{ $size }} {{ $units[$pow] }}
+                                        </span>
                                         </div>
                                     </div>
                                 @endif
-                                <!-- Documents Statistics -->
                                 @if($backgroundEnabled && $backgroundImage)
                                     <div
                                         class="flex items-center justify-between rounded-2xl border-none py-4 pl-4 pr-4 backdrop-blur-md bg-transparent/20 text-white">
                                         <div class="flex items-center gap-4">
                                             <div
-                                                class="flex h-[52px] w-[52px] items-center justify-center rounded-xl bg-warning-500/[0.08] text-warning-500">
+                                                class="flex h-[52px] w-[52px] items-center justify-center rounded-xl bg-green-600/[0.08] text-green-600">
                                                 <svg class="fill-current" width="25" height="24" viewBox="0 0 25 24"
                                                      fill="none"
                                                      xmlns="http://www.w3.org/2000/svg">
@@ -502,9 +512,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <!-- table header end -->
 
-                                <!-- table body start -->
                                 @foreach($files as $file)
                                     @if($backgroundEnabled && $backgroundImage)
                                         <div
@@ -530,7 +538,7 @@
                                                             </div>
                                                         @else
                                                             <div
-                                                                class="w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded">
+                                                                class="w-8 h-8 flex items-center justify-center bg-gray-500 dark:bg-gray-800 rounded">
                                                                 <span
                                                                     class="text-xs font-medium">{{ strtoupper(substr($file->extension, 0, 3)) }}</span>
                                                             </div>
@@ -738,14 +746,12 @@
         @else
             <div class="grid grid-cols-12 gap-6">
                 <div class="col-span-12">
-                    <!-- Media Card -->
                     <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
                         <div class="px-4 py-4 sm:pl-6 sm:pr-4">
                             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                 <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
                                     Статистика по типам файлов
                                 </h3>
-
                                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                                     <!-- Search Input -->
                                     <div class="relative">
@@ -836,14 +842,13 @@
                                                     stroke="" stroke-width="1.5" stroke-linejoin="round"></path>
                                             </svg>
                                         </div>
-
                                         <div>
                                             <h4 class="mb-1 text-sm font-medium text-gray-800 dark:text-white/90">
                                                 Видео
                                             </h4>
                                             <span class="block text-sm text-gray-500 dark:text-gray-400">
-                                            {{ $fileStats['videos']['count'] }} файлов
-                                        </span>
+                                                {{ $fileStats['videos']['count'] }} файлов
+                                            </span>
                                         </div>
                                     </div>
 
@@ -877,7 +882,6 @@
                                                       fill=""></path>
                                             </svg>
                                         </div>
-
                                         <div>
                                             <h4 class="mb-1 text-sm font-medium text-gray-800 dark:text-white/90">
                                                 Документы
@@ -953,9 +957,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <!-- table header end -->
 
-                                <!-- table body start -->
                                 @foreach($files as $file)
                                     <div
                                         class="grid grid-cols-11 border-t border-gray-100 px-6 py-[18px] dark:border-gray-800 max-[500px]:grid-cols-2">

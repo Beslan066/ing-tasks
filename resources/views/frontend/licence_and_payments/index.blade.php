@@ -78,7 +78,7 @@
                             @php
                                 $storagePercentage = $maxStorageGB > 0 ? ($usedStorageGB / $maxStorageGB) * 100 : 0;
                             @endphp
-                            <div class="bg-blue-500 h-2 rounded-full" style="width: {{ min($storagePercentage, 100) }}%"></div>
+                            <div class="bg-[#16a34a] h-2 rounded-full" style="width: {{ min($storagePercentage, 100) }}%"></div>
                         </div>
                     </div>
 
@@ -147,7 +147,7 @@
                             </span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-blue-500 h-2 rounded-full" style="width: {{ ($usedStorageGB ?? 0) / ($maxStorageGB ?? 2) * 100 }}%"></div>
+                            <div class="bg-[#16a34a] h-2 rounded-full" style="width: {{ ($usedStorageGB ?? 0) / ($maxStorageGB ?? 2) * 100 }}%"></div>
                         </div>
                     </div>
 
