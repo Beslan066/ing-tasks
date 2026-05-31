@@ -303,4 +303,31 @@ class HomeController extends Controller
 
         return view('frontend.tasks.all-tasks', compact('user', 'allTasks', 'stats'));
     }
+
+    /**
+     * Страница со всеми задачами команды (архив)
+     */
+    public function allTeamTasks(Request $request)
+    {
+        $user = Auth::user();
+
+        // Получаем все задачи пользователя с пагинацией
+        $allTasks = Task::with(['author', 'department', 'category', 'files'])
+            ->where('company_id', $user->company_id)
+            ->where('is_personal', 0)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10); // По 20 задач на странице
+
+        // Статистика по статусам
+        $stats = [
+            'total' => Task::where('user_id', $user->id)->count(),
+            'new' => Task::where('user_id', $user->id)->where('status', 'назначена')->count(),
+            'in_progress' => Task::where('user_id', $user->id)->where('status', 'в работе')->count(),
+            'review' => Task::where('user_id', $user->id)->where('status', 'на проверке')->count(),
+            'done' => Task::where('user_id', $user->id)->where('status', 'выполнена')->count(),
+            'archived' => Task::onlyTrashed()->where('user_id', $user->id)->count(), // если есть мягкое удаление
+        ];
+
+        return view('frontend.tasks.all-team-task', compact('user', 'allTasks', 'stats'));
+    }
 }

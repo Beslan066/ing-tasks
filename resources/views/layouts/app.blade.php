@@ -460,7 +460,7 @@ media-src https://meet.jit.si https:;
     @endif>
 
     <!-- Боковая панель -->
-    <div id="sidebar-menu" class="sidebar w-64 h-full py-6 px-4 fixed
+    <div id="sidebar-menu" class="sidebar w-64 h-full py-2 px-4 fixed
                                   max-[638px]:!fixed max-[638px]:top-0 max-[638px]:-left-full max-[638px]:h-full
                                   max-[638px]:z-[999] max-[638px]:transition-[left] max-[638px]:duration-300 max-[638px]:ease-in-out max-[638px]:!w-80
                                   max-[500px]:!w-full

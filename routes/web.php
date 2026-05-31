@@ -93,6 +93,7 @@ Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class, 'home'])-
 Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->group(function () {
     Route::get('/home', [\App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('welcome');
     Route::get('/all-tasks', [App\Http\Controllers\Frontend\HomeController::class, 'allTasks'])->middleware('require.company')->name('allTasks');
+    Route::get('/team/all-tasks', [App\Http\Controllers\Frontend\HomeController::class, 'allTeamTasks'])->middleware('require.company')->name('allTeamTasks');
     Route::get('/tools', [\App\Http\Controllers\Frontend\ToolController::class, 'index'])->middleware('require.company')->name('tools.index');
 
     // Лицензия и оплата

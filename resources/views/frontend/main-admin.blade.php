@@ -433,14 +433,21 @@
                 <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between">
                     <div class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center">
                         <div>
-                            <h3 class="font-bold text-sm md:text-lg text-white">Всего задач</h3>
+                            <a href="{{route('allTeamTasks')}}">
+                                <h3 class="font-bold text-sm md:text-lg text-white">Всего задач</h3>
+                            </a>
                         </div>
                         <div
                             class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0">
                             <i class="fas fa-tasks text-blue-600 text-sm md:text-xl"></i>
                         </div>
                     </div>
-                    <div class="text-xl md:text-2xl font-bold text-white">{{ $stats['total'] }}</div>
+                    <div class="flex items-center justify-between">
+                        <div class="text-xl md:text-2xl font-bold text-white">{{ $stats['total'] }}</div>
+                        <div class="text-white text-md underline">
+                            <a href="{{route('allTeamTasks')}}">Все задачи</a>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Назначены -->
