@@ -967,7 +967,7 @@
                             <i class="fas fa-building text-green-500 mr-2 text-xs"></i>Отдел *
                         </label>
                         <select name="department_id" id="editTaskDepartment" required
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400">
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:outline-none focus:border-green-400">
                             <option value="">Выберите отдел</option>
                             @foreach($departments ?? [] as $department)
                                 <option value="{{ $department->id }}">{{ $department->name }}</option>
@@ -980,7 +980,7 @@
                             <i class="fas fa-folder text-green-500 mr-2 text-xs"></i>Категория
                         </label>
                         <select name="category_id" id="editTaskCategory"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400">
+                                class="w-full px-4 py-3 border-2 border-gray-200 bg-white rounded-xl focus:outline-none focus:border-green-400">
                             <option value="">Без категории</option>
                             @foreach($categories ?? [] as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -993,7 +993,7 @@
                             <i class="fas fa-user-check text-green-500 mr-2 text-xs"></i>Исполнитель
                         </label>
                         <select name="user_id" id="editTaskUser"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400">
+                                class="w-full px-4 py-3 border-2 border-gray-200 bg-white rounded-xl focus:outline-none focus:border-green-400">
                             <option value="">Не назначен</option>
                             @foreach($assignableUsers ?? [] as $user)
                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
@@ -1006,7 +1006,7 @@
                             <i class="fas fa-flag text-green-500 mr-2 text-xs"></i>Приоритет *
                         </label>
                         <select name="priority" id="editTaskPriority" required
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400">
+                                class="w-full px-4 py-3 border-2 border-gray-200 bg-white rounded-xl focus:outline-none focus:border-green-400">
                             <option value="низкий">Низкий</option>
                             <option value="средний">Средний</option>
                             <option value="высокий">Высокий</option>
@@ -1019,7 +1019,7 @@
                             <i class="fas fa-chart-line text-green-500 mr-2 text-xs"></i>Статус *
                         </label>
                         <select name="status" id="editTaskStatus" required
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400">
+                                class="w-full px-4 py-3 border-2 border-gray-200 bg-white rounded-xl focus:outline-none focus:border-green-400">
                             <option value="назначена">Назначена</option>
                             <option value="в работе">В работе</option>
                             <option value="на проверке">На проверке</option>
@@ -1144,7 +1144,7 @@
                         Отмена
                     </button>
                     <button type="submit"
-                            class="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 transition">
+                            class="px-6 py-3 bg-green-600 transition">
                         <i class="fas fa-save mr-2"></i>Сохранить изменения
                     </button>
                 </div>

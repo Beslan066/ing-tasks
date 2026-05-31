@@ -1417,7 +1417,7 @@
                                 <i class="fas fa-tasks text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
                             </div>
                             <input type="text" name="name" id="editTaskName"
-                                   class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400 hover:border-gray-300"
+                                   class="w-full pl-10 pr-4 py-3 border-2 outline-none border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400 hover:border-gray-300"
                                    placeholder="Введите название задачи" required>
                         </div>
                     </div>
@@ -1428,7 +1428,7 @@
                             <i class="fas fa-align-left text-green-500 mr-2 text-xs"></i>Описание
                         </label>
                         <textarea name="description" id="editTaskDescription" rows="4"
-                                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 resize-none bg-white placeholder-gray-400"
+                                  class="w-full px-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 resize-none bg-white placeholder-gray-400"
                                   placeholder="Подробное описание задачи..."></textarea>
                     </div>
 
@@ -1439,7 +1439,7 @@
                         </label>
                         <div class="relative group">
                             <select name="department_id" id="editTaskDepartment"
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl outline-none focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
                                     required>
                                 <option value="">Выберите отдел</option>
                             </select>
@@ -1456,7 +1456,7 @@
                         </label>
                         <div class="relative group">
                             <select name="category_id" id="editTaskCategory"
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
+                                    class="w-full px-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
                                 <option value="">Без категории</option>
                             </select>
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -1472,7 +1472,7 @@
                         </label>
                         <div class="relative group">
                             <select name="user_id" id="editTaskUser"
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
+                                    class="w-full px-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
                                 <option value="">Не назначен</option>
                             </select>
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -1488,7 +1488,7 @@
                         </label>
                         <div class="relative group">
                             <select name="priority" id="editTaskPriority"
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
                                     required>
                                 <option value="низкий">Низкий</option>
                                 <option value="средний">Средний</option>
@@ -1508,7 +1508,7 @@
                         </label>
                         <div class="relative group">
                             <select name="status" id="editTaskStatus"
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
                                     required>
                                 <option value="не назначена">Не назначена</option>
                                 <option value="назначена">Назначена</option>
@@ -1533,7 +1533,7 @@
                                 <i class="fas fa-clock text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
                             </div>
                             <input type="datetime-local" name="deadline" id="editTaskDeadline"
-                                   class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white cursor-pointer hover:border-gray-300">
+                                   class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white cursor-pointer hover:border-gray-300">
                         </div>
                     </div>
 
@@ -1547,7 +1547,7 @@
                                 <i class="fas fa-stopwatch text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
                             </div>
                             <input type="number" name="estimated_hours" id="editTaskEstimatedHours" step="0.5" min="0"
-                                   class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
+                                   class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
                                    placeholder="0.0">
                             <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium text-sm">часов</span>
                         </div>
@@ -1563,7 +1563,7 @@
                                 <i class="fas fa-chart-simple text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
                             </div>
                             <input type="number" name="actual_hours" id="editTaskActualHours" step="0.5" min="0"
-                                   class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
+                                   class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
                                    placeholder="0.0">
                             <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium text-sm">часов</span>
                         </div>
@@ -1675,7 +1675,7 @@
                         Отмена
                     </button>
                     <button type="submit"
-                            class="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                            class="px-6 py-3 bg-green-600  text-white rounded-xl  font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                         <i class="fas fa-save mr-2"></i>Сохранить изменения
                     </button>
                 </div>
