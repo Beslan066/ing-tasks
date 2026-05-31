@@ -11,6 +11,7 @@
     use App\Models\Category;
     use App\Models\Company;
     use App\Notifications\TaskAssignedNotification;
+    use App\Services\ActivityLogger;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\DB;
@@ -179,6 +180,8 @@
                 $task = Task::create($taskData);
                 \Log::info('Task created:', ['task_id' => $task->id]);
 
+
+
                 // Привязываем выбранные файлы из хранилища
                 if ($request->has('selected_file_ids')) {
                     \Log::info('Attaching selected files:', $request->input('selected_file_ids'));
@@ -222,6 +225,14 @@
                             $task->files()->attach($fileRecord->id);
                         }
                     }
+                }
+
+                ActivityLogger::taskCreated($task, $user);
+
+                // Если задача сразу назначена на пользователя
+                if ($request->user_id && $request->user_id != $user->id) {
+                    $assignedUser = User::find($request->user_id);
+                    ActivityLogger::taskAssigned($task, $assignedUser, $user);
                 }
 
                 // Отправляем уведомление
@@ -328,7 +339,7 @@
                     ], 422);
                 }
 
-                // ИСПРАВЛЕНО: проверяем, состоит ли пользователь в отделе задачи
+                // проверяем, состоит ли пользователь в отделе задачи
                 if (!$user->isInDepartment($task->department_id)) {
                     return response()->json([
                         'success' => false,
@@ -340,6 +351,9 @@
                     'user_id' => $user->id,
                     'status' => 'в работе'
                 ]);
+
+                // Логируем назначение задачи (пользователь сам взял задачу)
+                ActivityLogger::taskAssigned($task, $user, $user);
 
                 return response()->json([
                     'success' => true,
@@ -360,6 +374,8 @@
         {
             try {
                 $user = Auth::user();
+                $oldStatus = $task->status;
+
 
                 \Log::info('=== updateTaskStatus START ===');
                 \Log::info('Task ID: ' . $task->id);
@@ -399,6 +415,16 @@
                 }
 
                 $task->update($updateData);
+
+                // Логируем изменение статуса
+                if ($oldStatus != $request->status) {
+                    ActivityLogger::taskStatusChanged($task, $oldStatus, $request->status, $user);
+                }
+
+                // Если статус changed на 'выполнена'
+                if ($request->status === 'выполнена' && $oldStatus !== 'выполнена') {
+                    ActivityLogger::taskCompleted($task, $user);
+                }
 
                 \Log::info('Task status updated to: ' . $task->status);
 
@@ -444,6 +470,8 @@
                     'user_id' => null,
                     'status' => 'не назначена'
                 ]);
+                // Логируем отказ от задачи
+                ActivityLogger::taskRejected($task, $user, $request->reason);
 
                 \Log::info("Пользователь {$user->name} отказался от задачи #{$task->id}. Причина: {$request->reason}");
 
@@ -563,6 +591,8 @@
         public function update(Request $request, Task $task)
         {
             $user = Auth::user();
+            $oldUserId = $task->user_id;
+            $oldStatus = $task->status;
 
             if (!$user->canViewAllCompanyTasks()) {
                 return response()->json([
@@ -682,6 +712,18 @@
                     } catch (\Exception $e) {
                         \Log::error('Notification error: ' . $e->getMessage());
                     }
+                }
+
+                // Логируем обновление задачи
+                ActivityLogger::taskUpdated($task, $user, [
+                    'old' => ['status' => $oldStatus, 'user_id' => $oldUserId],
+                    'new' => ['status' => $request->status, 'user_id' => $request->user_id]
+                ]);
+
+                // Если изменился исполнитель
+                if ($oldUserId != $request->user_id && $request->user_id) {
+                    $newUser = User::find($request->user_id);
+                    ActivityLogger::taskAssigned($task, $newUser, $user);
                 }
 
                 DB::commit();
@@ -891,6 +933,9 @@
 
                 $task->update(['deleted_by' => $user->id]);
                 $task->delete();
+
+                // Логируем удаление задачи
+                ActivityLogger::taskDeleted($task, $user);
 
                 return response()->json([
                     'success' => true,

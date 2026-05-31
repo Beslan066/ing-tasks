@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -382,5 +383,16 @@ class Task extends Model
                 ->where('is_personal', true);
         }
         return $query->where('is_personal', true);
+    }
+
+    // Переопределяем генерацию описания для кастомных действий
+    public function logAssignment(User $assignedTo, User $assignedBy)
+    {
+        return \App\Services\ActivityLogger::taskAssigned($this, $assignedTo, $assignedBy);
+    }
+
+    public function logCompletion(User $user)
+    {
+        return \App\Services\ActivityLogger::taskCompleted($this, $user);
     }
 }

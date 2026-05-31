@@ -8,6 +8,7 @@ use App\Models\Department;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -134,6 +135,9 @@ class TeamController extends Controller
             }
 
             DB::beginTransaction();
+
+            // Логируем удаление пользователя из команды
+            ActivityLogger::userRemoved($userToRemove, $authUser);
 
             try {
                 // 1. ОТПРАВКА ПИСЬМА

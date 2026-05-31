@@ -218,10 +218,26 @@
                                 onclick="openTaskViewModal({{ $task->id }})">
                                 {{ $task->name }}
                             </h4>
-                            <div class="flex space-x-1">
-                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
-                                     title="{{ $task->author->name }}">
-                                    {{ substr($task->author->name, 0, 2) }}
+                            <div class="flex items-center space-x-2">
+                                <div class="relative">
+                                    <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div id="taskMenu-{{ $task->id }}" class="task-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50">
+                                        <div class="py-1">
+                                            @if($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                <button onclick="openEditModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                                                    <i class="fas fa-edit mr-2 text-blue-500"></i> Редактировать
+                                                </button>
+                                            @endif
+                                            <button onclick="startTask({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                                                <i class="fas fa-play mr-2 text-green-500"></i> Начать
+                                            </button>
+                                            <button onclick="showRejectModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center">
+                                                <i class="fas fa-times-circle mr-2"></i> Отказаться
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -258,26 +274,10 @@
                                     <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">⚠️ Просрочена</span>
                                 @endif
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="relative">
-                                    <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <div id="taskMenu-{{ $task->id }}" class="task-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50">
-                                        <div class="py-1">
-                                            @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                <button onclick="openEditModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                                    <i class="fas fa-edit mr-2 text-blue-500"></i> Редактировать
-                                                </button>
-                                            @endif
-                                            <button onclick="startTask({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                                <i class="fas fa-play mr-2 text-green-500"></i> Начать
-                                            </button>
-                                            <button onclick="showRejectModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center">
-                                                <i class="fas fa-times-circle mr-2"></i> Отказаться
-                                            </button>
-                                        </div>
-                                    </div>
+                            <div class="flex space-x-1">
+                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
+                                     title="{{ $task->author->name }}">
+                                    {{ substr($task->author->name, 0, 2) }}
                                 </div>
                             </div>
                         </div>
@@ -313,10 +313,26 @@
                                 onclick="openTaskViewModal({{ $task->id }})">
                                 {{ $task->name }}
                             </h4>
-                            <div class="flex space-x-1">
-                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
-                                     title="{{ $task->author->name }}">
-                                    {{ substr($task->author->name, 0, 2) }}
+                            <div class="flex items-center space-x-2">
+                                <div class="relative">
+                                    <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div id="taskMenu-{{ $task->id }}" class="task-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50">
+                                        <div class="py-1">
+                                            @if($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                <button onclick="openEditModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                                                    <i class="fas fa-edit mr-2 text-blue-500"></i> Редактировать
+                                                </button>
+                                            @endif
+                                            <button onclick="sendForReview({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                                                <i class="fas fa-check-circle mr-2 text-green-500"></i> Отправить на проверку
+                                            </button>
+                                            <button onclick="showRejectModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center">
+                                                <i class="fas fa-times-circle mr-2"></i> Отказаться
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -351,26 +367,10 @@
                                     <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">⚠️ Просрочена</span>
                                 @endif
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="relative">
-                                    <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <div id="taskMenu-{{ $task->id }}" class="task-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50">
-                                        <div class="py-1">
-                                            @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                <button onclick="openEditModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                                    <i class="fas fa-edit mr-2 text-blue-500"></i> Редактировать
-                                                </button>
-                                            @endif
-                                            <button onclick="sendForReview({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                                <i class="fas fa-check-circle mr-2 text-green-500"></i> Отправить на проверку
-                                            </button>
-                                            <button onclick="showRejectModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center">
-                                                <i class="fas fa-times-circle mr-2"></i> Отказаться
-                                            </button>
-                                        </div>
-                                    </div>
+                            <div class="flex space-x-1">
+                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
+                                     title="{{ $task->author->name }}">
+                                    {{ substr($task->author->name, 0, 2) }}
                                 </div>
                             </div>
                         </div>
@@ -406,10 +406,23 @@
                                 onclick="openTaskViewModal({{ $task->id }})">
                                 {{ $task->name }}
                             </h4>
-                            <div class="flex space-x-1">
-                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
-                                     title="{{ $task->author->name }}">
-                                    {{ substr($task->author->name, 0, 2) }}
+                            <div class="flex items-center space-x-2">
+                                <div class="relative">
+                                    <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div id="taskMenu-{{ $task->id }}" class="task-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50">
+                                        <div class="py-1">
+                                            @if($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                <button onclick="openEditModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                                                    <i class="fas fa-edit mr-2 text-blue-500"></i> Редактировать
+                                                </button>
+                                            @endif
+                                            <button onclick="showRejectModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center">
+                                                <i class="fas fa-times-circle mr-2"></i> Отказаться
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -450,25 +463,13 @@
                                     <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">⚠️ Просрочена</span>
                                 @endif
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="relative">
-                                    <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <div id="taskMenu-{{ $task->id }}" class="task-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50">
-                                        <div class="py-1">
-                                            @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                <button onclick="openEditModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                                    <i class="fas fa-edit mr-2 text-blue-500"></i> Редактировать
-                                                </button>
-                                            @endif
-                                            <button onclick="showRejectModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center">
-                                                <i class="fas fa-times-circle mr-2"></i> Отказаться
-                                            </button>
-                                        </div>
-                                    </div>
+                            <div class="flex space-x-1">
+                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
+                                     title="{{ $task->author->name }}">
+                                    {{ substr($task->author->name, 0, 2) }}
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 @endforeach

@@ -111,6 +111,13 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
     Route::get('/licence/payment/callback', [LicenceAndPaymentController::class, 'paymentCallback'])
         ->name('payment.callback');
 
+    // Лента событий
+    Route::get('/activity', [App\Http\Controllers\Frontend\ActivityFeedController::class, 'index'])
+        ->name('activity.index');
+
+    Route::get('/activity/{activity}', [App\Http\Controllers\Frontend\ActivityFeedController::class, 'show'])
+        ->name('activity.show');
+
 
     Route::post('/support/send', [SupportController::class, 'send'])->name('support.send');
 
@@ -119,7 +126,7 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
 
 
     // Админская страница для руководителей и менеджеров
-    Route::get('/admin/tasks', [\App\Http\Controllers\Frontend\HomeController::class, 'indexAdmin'])->name('tasks.admin');
+    Route::get('/team/tasks', [\App\Http\Controllers\Frontend\HomeController::class, 'indexAdmin'])->name('tasks.admin');
 
     Route::post('/update-activity', function () {
         $user = auth()->user();

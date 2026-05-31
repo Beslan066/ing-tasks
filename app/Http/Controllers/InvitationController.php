@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Mail\UserInvitationMail;
+use App\Services\ActivityLogger;
 
 class InvitationController extends Controller
 {
@@ -58,6 +59,7 @@ class InvitationController extends Controller
 
         $invitedCount = 0;
         $alreadyInvited = [];
+        $createdInvitations = [];
 
         foreach ($validEmails as $email) {
             // Проверяем, не приглашен ли уже пользователь
@@ -84,14 +86,27 @@ class InvitationController extends Controller
 
             // Создаем приглашение
             $invitation = $company->inviteUser($email, $authUser, $role, $department);
+            $createdInvitations[] = $invitation;
+
+            // Логируем создание приглашения
+            ActivityLogger::userInvited($invitation, $authUser);
 
             // Отправляем email
             try {
                 Mail::to($email)->send(new UserInvitationMail($invitation, $authUser));
                 $invitedCount++;
+
+                // Логируем отправку email
+                Log::info('Invitation email sent', [
+                    'invitation_id' => $invitation->id,
+                    'email' => $email,
+                    'invited_by' => $authUser->id
+                ]);
             } catch (\Exception $e) {
-                Log::error('Failed to send invitation email: ' . $e->getMessage());
-                // Приглашение все равно создаем, но логируем ошибку отправки
+                Log::error('Failed to send invitation email: ' . $e->getMessage(), [
+                    'invitation_id' => $invitation->id,
+                    'email' => $email
+                ]);
                 $invitedCount++;
             }
         }
@@ -171,6 +186,10 @@ class InvitationController extends Controller
     {
         try {
             DB::transaction(function () use ($user, $invitation) {
+                $oldCompanyId = $user->company_id;
+                $oldRoleId = $user->role_id;
+                $oldDepartmentId = $user->department_id;
+
                 // Обновляем пользователя
                 $user->update([
                     'company_id' => $invitation->company_id,
@@ -178,10 +197,29 @@ class InvitationController extends Controller
                     'department_id' => $invitation->department_id,
                 ]);
 
+                // Если пользователь был в другом отделе, открепляем его от старых отделов
+                if ($oldCompanyId && $oldCompanyId !== $invitation->company_id) {
+                    // Открепляем от всех старых отделов
+                    $user->departments()->detach();
+                }
+
+                // Добавляем в новый отдел (если указан)
+                if ($invitation->department_id) {
+                    $user->departments()->syncWithoutDetaching([$invitation->department_id]);
+                }
+
                 // Отмечаем приглашение как принятое
                 $invitation->markAsAccepted();
 
-                // Логируем событие в файл
+                // Логируем присоединение пользователя к компании
+                ActivityLogger::userJoined($user, $invitation->company);
+
+                // Дополнительное логирование если пользователь покинул старую компанию
+                if ($oldCompanyId && $oldCompanyId !== $invitation->company_id) {
+                    ActivityLogger::userLeftCompany($user, $oldCompanyId);
+                }
+
+                // Логируем в файл
                 Log::info('User accepted invitation', [
                     'user_id' => $user->id,
                     'user_email' => $user->email,
@@ -202,9 +240,10 @@ class InvitationController extends Controller
                 'user_id' => $user->id ?? null,
                 'invitation_id' => $invitation->id,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
 
-            return back()->with('error', 'Произошла ошибка при принятии приглашения.');
+            return back()->with('error', 'Произошла ошибка при принятии приглашения: ' . $e->getMessage());
         }
     }
 
@@ -220,7 +259,19 @@ class InvitationController extends Controller
             ], 404);
         }
 
-        $invitations = $company->getActiveInvitations();
+        $invitations = $company->getActiveInvitations()
+            ->map(function($invitation) {
+                return [
+                    'id' => $invitation->id,
+                    'email' => $invitation->email,
+                    'role' => $invitation->role ? $invitation->role->name : null,
+                    'department' => $invitation->department ? $invitation->department->name : null,
+                    'invited_by' => $invitation->inviter ? $invitation->inviter->name : null,
+                    'expires_at' => $invitation->expires_at->format('d.m.Y H:i'),
+                    'is_expired' => $invitation->isExpired(),
+                    'invitation_url' => $invitation->getInvitationUrl()
+                ];
+            });
 
         return response()->json([
             'success' => true,
@@ -237,19 +288,24 @@ class InvitationController extends Controller
             })
             ->firstOrFail();
 
+        $email = $invitation->email;
+
         $invitation->update(['expires_at' => now()]);
 
         // Логируем отмену приглашения
+        ActivityLogger::invitationCancelled($invitation, $authUser);
+
+        // Логируем в файл
         Log::info('Invitation cancelled', [
             'invitation_id' => $invitation->id,
             'cancelled_by' => $authUser->id,
-            'email' => $invitation->email,
+            'email' => $email,
             'cancelled_at' => now()->toDateTimeString(),
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Приглашение отменено'
+            'message' => 'Приглашение для ' . $email . ' отменено'
         ]);
     }
 
@@ -299,16 +355,68 @@ class InvitationController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'avatar' => $user->getAvatarUrlAttribute(),
                 'is_in_company' => $isInCompany,
                 'has_active_invitation' => $hasActiveInvitation,
                 'status' => $isInCompany ? 'already_member' :
-                    ($hasActiveInvitation ? 'already_invited' : 'can_invite')
+                    ($hasActiveInvitation ? 'already_invited' : 'can_invite'),
+                'status_text' => $isInCompany ? 'Уже в компании' :
+                    ($hasActiveInvitation ? 'Уже приглашен' : 'Можно пригласить')
             ];
         }
 
         return response()->json([
             'success' => true,
-            'users' => $results
+            'users' => $results,
+            'search_term' => $searchTerm
         ]);
+    }
+
+    /**
+     * Отправить повторное приглашение
+     */
+    public function resendInvitation($id)
+    {
+        $authUser = auth()->user();
+        $invitation = Invitation::where('id', $id)
+            ->whereHas('company', function($query) use ($authUser) {
+                $query->where('id', $authUser->company_id);
+            })
+            ->firstOrFail();
+
+        if (!$invitation->isValid()) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Приглашение истекло или уже использовано'
+            ], 422);
+        }
+
+        try {
+            // Отправляем email повторно
+            Mail::to($invitation->email)->send(new UserInvitationMail($invitation, $authUser));
+
+            // Логируем повторную отправку
+            Log::info('Invitation resent', [
+                'invitation_id' => $invitation->id,
+                'email' => $invitation->email,
+                'resent_by' => $authUser->id
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Приглашение повторно отправлено на ' . $invitation->email
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to resend invitation: ' . $e->getMessage(), [
+                'invitation_id' => $invitation->id,
+                'email' => $invitation->email
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'error' => 'Не удалось отправить приглашение: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

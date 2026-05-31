@@ -19,6 +19,8 @@
             </div>
         </div>
 
+
+
         <!-- Основной контейнер -->
         @if($backgroundEnabled && $backgroundImage)
             <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6">

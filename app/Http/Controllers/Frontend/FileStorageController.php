@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\File;
 use App\Models\StorageUsage;
 use App\Models\Company;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -135,6 +136,9 @@ class FileStorageController extends Controller
             'folder' => $folder,
             'is_public' => false,
         ]);
+
+        // Логируем загрузку файла
+        ActivityLogger::fileUploaded($fileRecord, $user);
 
         // Обновляем статистику использования хранилища
         $storageUsage->increment('used_storage', $fileSize);
@@ -318,6 +322,9 @@ class FileStorageController extends Controller
             $storageUsage->decrement('used_storage', $file->size);
             $storageUsage->decrement('file_count');
         }
+
+        // Логируем удаление файла
+        ActivityLogger::fileDeleted($file, $user);
 
         // Удаляем физический файл
         Storage::disk($file->disk)->delete($file->path);
