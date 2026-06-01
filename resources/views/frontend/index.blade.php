@@ -35,7 +35,7 @@
         <div class="ba md _g nn 2xl:ud-px-0 do ee he h">
             <div class="rc ko/4 qb ee he">
                 <a href="index.html">
-                    <img class="nl" src="images/logoM.svg" alt="Logo Light" />
+                        <img class="nl" src="images/logoM.svg" alt="Logo Light" />
                     <img class="ub ml" src="images/logoM.svg" alt="Logo Dark" />
                 </a>
 
@@ -169,8 +169,8 @@
                             <a href="#" class="xf fj si sb xe gh hh wa sa">New</a> start tracking visitors
                         </h4>
                         <h2 class="h cj ej dm ri jr xa">
-                            Создавайте <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">команды</span> или
-                            <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">организации</span>
+                            Создавайте <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">команды</span> и назначайте
+                            <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">задачи</span>
                         </h2>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ultricies lacus non fermentum
                             ultrices. Fusce consectetur le.</p>
@@ -227,6 +227,47 @@
         </section>
         <!-- ===== About Two End ===== -->
 
+
+        <div class="ba od _g nn pq">
+            <div class="qb ee te wo">
+                <div class="animate_left ub sm vm/2" data-sr-id="29" style="visibility: visible; opacity: 1; transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); transition: all, opacity 2.8s cubic-bezier(0.5, 0, 0, 1), transform 2.8s cubic-bezier(0.5, 0, 0, 1);">
+                    <img src="images/about-light-01.png" alt="About" class="nl">
+                    <img src="images/about-dark-01.png" alt="About" class="ub ml">
+                </div>
+                <div class="animate_right vm/2" data-sr-id="35" style="visibility: visible; opacity: 1; transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); transition: all, opacity 2.8s cubic-bezier(0.5, 0, 0, 1), transform 2.8s cubic-bezier(0.5, 0, 0, 1);">
+                    <h4 class="ej dm bj dj">
+                        <a href="#" class="xf fj si sb xe gh hh wa sa">New</a> start tracking visitors
+                    </h4>
+                    <h2 class="h cj ej dm ri jr xa">
+                        Оставайтесь на связи команды или<span class="pb h ik jk kk pk nk tk im before:-ud-z-1"></span>
+                        <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">организации</span>
+                    </h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ultricies lacus non fermentum
+                        ultrices. Fusce consectetur le.</p>
+
+                    <div class="ia qb ee qe">
+                        <div class="tc yb af hf nf pl sl qb ee ge">
+                            <p class="ej dm aj ti">01</p>
+                        </div>
+                        <div class="uc/4">
+                            <h5 class="ej dm ti ya">Lorem ipsum dolor.</h5>
+                            <p>Ut ultricies lacus non fermentum ultrices.</p>
+                        </div>
+                    </div>
+                    <div class="ia qb ee qe">
+                        <div class="tc yb af hf nf pl sl qb ee ge">
+                            <p class="ej dm aj ti">02</p>
+                        </div>
+                        <div class="uc/4">
+                            <h5 class="ej dm ti ya">Fusce consectetur le.</h5>
+                            <p>consectetur adipiscing elit fermentum ultricies.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <!-- ===== Features Tab Start ===== -->
         <section class="vh uh qp h" x-data="{ featuresTab: 'tabOne' }">
             <div class="ba md _g nn 2xl:ud-px-0">
@@ -264,7 +305,7 @@
                             <p class="ej dm bj ui">03</p>
                         </div>
                         <div class="io xm/5">
-                            <h5 class="ej dm vi lr bj">Безопасность и производительность</h5>
+                            <h5 class="ej dm vi lr bj">Выгрузка статистики</h5>
                         </div>
                     </div>
                 </div>
@@ -275,9 +316,8 @@
                     <div x-show="featuresTab === 'tabOne'">
                         <div class="qb ee te _o">
                             <div class="vm/2">
-                                <h2 class="ej dm ri mr cj fa">Solid Has Neat & Clean User Interface.</h2>
-                                <p class="ga">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ultricies
-                                    lacus non fermentum ultrices. Fusce consectetur le.</p>
+                                <h2 class="ej dm ri mr cj fa">Удобный и понятный интерфейс.</h2>
+                                <p class="ga">Удобная нави .</p>
                                 <p class="xc/12">Nam id eleifend dui, id iaculis purus. Etiam lobortis neque nec finibus
                                     sagittis. Nulla ligula nunc egestas ut.</p>
                             </div>
@@ -347,10 +387,10 @@
                     </div>
                     <div class="animate_top mi">
                         <h3 class="cj ej dm ri nr cb">{{$usersCount}}</h3>
-                        <p class="oi up">2 компаний</p>
+                        <p class="oi up"> Компаний</p>
                     </div>
                     <div class="animate_top mi">
-                        <h3 class="cj ej dm ri nr cb">30</h3>
+                        <h3 class="cj ej dm ri nr cb">6</h3>
                         <p class="oi up">Подписок</p>
                     </div>
                 </div>
@@ -377,7 +417,7 @@
                 </div>
                 <div class="qb de qo ge le eq">
                     <!-- Pricing Item -->
-                    <div class="animate_top an ko/3 b h uf sl ye vj gm hf nf pl ug lq">
+                    <div class="animate_top an ko/5 b h uf sl ye vj gm hf nf pl ug lq">
                         <h3 class="ej dm cj ri nr ea">
                             0₽<span class="wi gj fm">/месяц</span>
                         </h3>
@@ -405,9 +445,9 @@
                     </div>
 
                     <!-- Pricing Item -->
-                    <div class="animate_top an ko/3 b h uf sl ye vj gm hf nf pl ug lq">
+                    <div class="animate_top an ko/5 b h uf sl ye vj gm hf nf pl ug lq">
                         <div class="g m -ud-right-3.5 -ud-rotate-90 ff gf wf bj fj si dj oh hh">
-                            Популярный
+                            Рекомендуем
                         </div>
 
                         <h3 class="ej dm cj ri nr ea">
@@ -436,31 +476,6 @@
                         </a>
                     </div>
 
-                    <!-- Pricing Item -->
-                    <div class="animate_top an ko/3 b h uf sl ye vj gm hf nf pl ug lq">
-                        <h3 class="ej dm cj ri nr ea">
-                            ₽<span class="wi gj fm">/месяц</span>
-                        </h3>
-                        <h4 class="ej dm bj xi cb">Премиум</h4>
-                        <p>Lorem ipsum dolor sit amet, consec adipisicing elit.</p>
-
-                        <div class="lf nf pl hb ci di">
-                            <ul>
-                                <li class="ej fm sa vk">До 10ГБ хранилище</li>
-                                <li class="ej fm sa vk kj">Корпоративная почта(скоро)</li>
-                            </ul>
-                        </div>
-
-                        <a href="#" class="sb ee je hj dm om bj yj ek">
-                            Попробовать
-                            <svg class="lg bm nm yj ek" width="14" height="14" viewBox="0 0 14 14" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M10.4767 6.17348L6.00668 1.70348L7.18501 0.525146L13.6667 7.00681L7.18501 13.4885L6.00668 12.3101L10.4767 7.84015H0.333344V6.17348H10.4767Z"
-                                    fill="" />
-                            </svg>
-                        </a>
-                    </div>
                 </div>
             </div>
         </section>
@@ -470,7 +485,7 @@
         <section class="zg ep oq _g nn 2xl:ud-px-0 ve">
             <div class="ba md dh pn vq kh wq ye fg gg hg xl yl _l sl cm">
                 <div class="qb de en fn gn te hn">
-                    <div class="animate_left zm ko/2">
+                    <div class="animate_left zm ko/3">
                         <h2 class="ej dm ri or cj sa xc/12">Начните уже сегодня чтобы повысить вашу продуктивность</h2>
                         <p>Вам доступна бесплатная версия до 5 пользователей. Протестируйте и решите для себя, стоит ли
                             пользоваться нашими инструментами.</p>
@@ -794,16 +809,11 @@
             <div class="zg ep">
                 <div class="qb de so te cp">
                     <div class="animate_top yc/2 ko/4">
-                        <a href="index.html">
-                            <img src="images/logo-light.svg" alt="Logo" class="nl" />
-                            <img src="images/logo-dark.svg" alt="Logo" class="ub ml" />
+                        <a href="{{route('welcome')}}">
+                            <img src="images/logoM.svg" alt="Logo" class="nl" />
                         </a>
 
-                        <p class="ta na">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-
-                        <p class="dj tracking-[5px] yi fb">contact</p>
-                        <a href="#" class="ej dm bj zi"><span class="__cf_email__"
-                                data-cfemail="c9a1aca5a5a689baa6a5a0ade7aaa6a4">[email&#160;protected]</span></a>
+                        <p class="ta na">Современная система управления командами и задачами.</p>
                     </div>
 
                     <div class="rc ho/3 _p/12 qb be dn gn te hn">
@@ -819,19 +829,8 @@
                         </div>
 
                         <div class="animate_top">
-                            <h4 class="bj ej dm _i pa">Support</h4>
-
-                            <ul>
-                                <li><a href="#" class="pb bl la">Company</a></li>
-                                <li><a href="#" class="pb bl la">Press media</a></li>
-                                <li><a href="#" class="pb bl la">Our Blog</a></li>
-                                <li><a href="#" class="pb bl la">Contact Us</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="animate_top">
-                            <h4 class="bj ej dm _i pa">Newsletter</h4>
-                            <p class="sa cd">Subscribe to receive future updates</p>
+                            <h4 class="bj ej dm _i pa">Рассылка</h4>
+                            <p class="sa cd" style="max-width: 230px;">Подпишитесь, чтобы получать последние новости и обновления.</p>
 
                             <form action="#">
                                 <div class="h">
@@ -865,14 +864,14 @@
             <div class="lf nf pl qb de be po ee ge so qe cp ph">
                 <div class="animate_top">
                     <ul class="qb ee te">
-                        <li><a href="#" class="bl">English</a></li>
-                        <li><a href="#" class="bl">Privacy Policy</a></li>
-                        <li><a href="#" class="bl">Support</a></li>
+                        <li><a href="#" class="bl">Документы</a></li>
+                        <li><a href="#" class="bl">О нас</a></li>
+                        <li><a href="#" class="bl">Контакты</a></li>
                     </ul>
                 </div>
 
                 <div class="animate_top">
-                    <p>&copy; 2025 Solid. All rights reserved</p>
+                    <p>&copy; 2026 МенеджерПлюс. Все права зарегистрированы</p>
                 </div>
 
                 <div class="animate_top">

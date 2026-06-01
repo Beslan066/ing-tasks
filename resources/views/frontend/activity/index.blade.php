@@ -27,7 +27,7 @@
                         <div class="flex items-start space-x-4">
                             <!-- Иконка -->
                             <div class="flex-shrink-0">
-                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-xl {{ $activity->getColorClass() }}">
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center text-xl {{ $activity->getColorClass() }}">
                                     {{ $activity->getIcon() }}
                                 </div>
                             </div>

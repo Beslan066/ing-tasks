@@ -2434,8 +2434,14 @@ media-src https://meet.jit.si https:;
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
-                                <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(task.priority)}">
-                                    ${task.priority}
+                                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md ${getPriorityStyle(task.priority).bg} border ${getPriorityStyle(task.priority).border}">
+                                    <div class="flex items-end gap-[3px] h-5">
+                                        <div class="w-1.5 rounded-sm ${getPriorityStyle(task.priority).level >= 1 ? getPriorityStyle(task.priority).filled : getPriorityStyle(task.priority).empty} h-2"></div>
+                                        <div class="w-1.5 rounded-sm ${getPriorityStyle(task.priority).level >= 2 ? getPriorityStyle(task.priority).filled : getPriorityStyle(task.priority).empty} h-3"></div>
+                                        <div class="w-1.5 rounded-sm ${getPriorityStyle(task.priority).level >= 3 ? getPriorityStyle(task.priority).filled : getPriorityStyle(task.priority).empty} h-4"></div>
+                                        <div class="w-1.5 rounded-sm ${getPriorityStyle(task.priority).level >= 4 ? getPriorityStyle(task.priority).filled : getPriorityStyle(task.priority).empty} h-5"></div>
+                                    </div>
+                                    <span class="text-xs font-medium ${getPriorityStyle(task.priority).text}">${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span>
                                 </div>
                             </div>
                         </div>
@@ -2528,22 +2534,22 @@ media-src https://meet.jit.si https:;
                     </div>
                 </div>
 
-${task.rejections && task.rejections.length > 0 ? `
-<div class="md:col-span-2">
-    <label class="block text-sm font-medium text-gray-700 mb-3">История отказов</label>
-    <div class="space-y-2 max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-3">
-        ${task.rejections.map(rejection => `
-            <div class="bg-red-50 border border-red-200 rounded p-3">
-                <div class="flex justify-between items-start mb-1">
-                    <span class="text-sm font-medium text-red-800">${rejection.user?.name || 'Пользователь'}</span>
-                    <span class="text-xs text-red-600">${formatDateTime(rejection.created_at)}</span>
+                ${task.rejections && task.rejections.length > 0 ? `
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">История отказов</label>
+                    <div class="space-y-2 max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                        ${task.rejections.map(rejection => `
+                            <div class="bg-red-50 border border-red-200 rounded p-3">
+                                <div class="flex justify-between items-start mb-1">
+                                    <span class="text-sm font-medium text-red-800">${rejection.user?.name || 'Пользователь'}</span>
+                                    <span class="text-xs text-red-600">${formatDateTime(rejection.created_at)}</span>
+                                </div>
+                                <p class="text-sm text-red-700">${rejection.reason}</p>
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
-                <p class="text-sm text-red-700">${rejection.reason}</p>
-            </div>
-        `).join('')}
-    </div>
-</div>
-` : ''}
+                ` : ''}
 
                 <!-- Кнопки действий -->
                 <div class="flex space-x-3 mt-6 pt-4 border-t border-gray-200 max-[500px]:flex-col max-[500px]:space-x-0 max-[500px]:space-y-3">
@@ -2584,7 +2590,8 @@ ${task.rejections && task.rejections.length > 0 ? `
             alert('Ошибка при загрузке данных задачи');
         }
     }
- async function startTask(taskId) {
+
+    async function startTask(taskId) {
             try {
                 const response = await fetch(`/tasks/${taskId}/status`, {
                     method: 'PATCH',
@@ -2633,14 +2640,44 @@ ${task.rejections && task.rejections.length > 0 ? `
         return colors[status] || colors['не назначена'];
     }
 
-    function getPriorityColor(priority) {
-        const colors = {
-            'низкий': 'bg-gray-100 text-gray-800',
-            'средний': 'bg-blue-100 text-blue-800',
-            'высокий': 'bg-orange-100 text-orange-800',
-            'критический': 'bg-red-100 text-red-800'
+
+    function getPriorityStyle(priority) {
+        const styles = {
+            'низкий': {
+                level: 1,
+                bg: 'bg-green-50',
+                border: 'border-green-200',
+                filled: 'bg-green-500',
+                empty: 'bg-green-200',
+                text: 'text-green-700'
+            },
+            'средний': {
+                level: 2,
+                bg: 'bg-blue-50',
+                border: 'border-blue-200',
+                filled: 'bg-blue-500',
+                empty: 'bg-blue-100',
+                text: 'text-blue-700'
+            },
+            'высокий': {
+                level: 3,
+                bg: 'bg-orange-50',
+                border: 'border-orange-200',
+                filled: 'bg-orange-500',
+                empty: 'bg-orange-100',
+                text: 'text-orange-700'
+            },
+            'критический': {
+                level: 4,
+                bg: 'bg-red-50',
+                border: 'border-red-200',
+                filled: 'bg-red-500',
+                empty: 'bg-red-100',
+                text: 'text-red-700'
+            }
         };
-        return colors[priority] || colors['средний'];
+
+        return styles[priority] || styles['средний'];
     }
 
     function formatDateTime(dateString) {

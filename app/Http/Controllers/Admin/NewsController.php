@@ -37,7 +37,6 @@ class NewsController extends Controller
 
         // Обработка изображения
         if ($request->hasFile('image')) {
-            // Явно указываем диск 'public'
             $path = $request->file('image')->store('images', 'public');
             $data['image'] = $path;
         }
@@ -53,7 +52,7 @@ class NewsController extends Controller
     }
 
     public function update(UpdateRequest $request, News $news) {
-        // Логируем для отладки
+        // Логирование для отладки
         Log::info('Update request received', $request->all());
 
         $data = $request->validated();
@@ -72,7 +71,7 @@ class NewsController extends Controller
             unset($data['image']);
         }
 
-        // Обновляем новость
+        // Обновление новости
         $news->update($data);
 
         Log::info('News updated successfully', ['id' => $news->id, 'content_length' => strlen($news->content)]);

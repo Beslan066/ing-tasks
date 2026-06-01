@@ -46,7 +46,7 @@ class Task extends Model
         'completed_at',
         'estimated_hours',
         'actual_hours',
-        'deleted_by', // Добавляем поле для отслеживания кто удалил
+        'deleted_by',
         'is_personal',
     ];
 
