@@ -2413,7 +2413,7 @@ media-src https://meet.jit.si https:;
             if (data.success) {
                 const task = data.task;
                 const modalContent = document.getElementById('taskModalContent');
-
+// Модалка Информация о задача на странице /team/tasks
                 modalContent.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Основная информация -->
@@ -2584,7 +2584,31 @@ ${task.rejections && task.rejections.length > 0 ? `
             alert('Ошибка при загрузке данных задачи');
         }
     }
+ async function startTask(taskId) {
+            try {
+                const response = await fetch(`/tasks/${taskId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ status: 'в работе' })
+                });
 
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Задача переведена в работу!');
+                    closeTaskViewModal();
+                    location.reload();
+                } else {
+                    alert(data.message || 'Ошибка при обновлении статуса');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка при обновлении статуса');
+            }
+        }
     // Закрыть модальное окно просмотра задачи
     function closeTaskViewModal() {
         document.getElementById('taskViewModal').classList.add('hidden');
