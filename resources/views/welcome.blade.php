@@ -14,7 +14,7 @@
                 <h2 class="text-3xl font-bold text-white">Мои задачи</h2>
                 <p class="text-white text-sm">Ваши личные задачи не видны на странице Команда</p>
             @else
-                <h2 class="text-3xl font-bold text-[#16a34a]">Мои задачи</h2>
+                <h2 class="text-3xl font-bold text-[#16a34a]">Мои зфадачи</h2>
                 <p class="text-gray-700 text-sm">Ваши личные задачи не видны на странице Команда</p>
             @endif
         </div>
@@ -1860,16 +1860,19 @@
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
-                                    alert('Личная задача успешно создана!');
+                                    // alert('Личная задача успешно создана!');
+                                    showNotification("Личная задача успешно создана!","success");
                                     closeTaskModal();
-                                    location.reload();
+                                    setTimeout(() => {
+                                        location.reload();
+                                    },1000)
                                 } else {
-                                    alert(data.message || 'Ошибка при создании задачи');
+                                    showNotification(data.message || 'Ошибка при создании задачи',"error");
                                 }
                             })
                             .catch(error => {
                                 console.error('Ошибка:', error);
-                                alert('Ошибка при создании задачи');
+                                showNotification("Ошибка при создании задачи","error");
                             })
                             .finally(() => {
                                 if (submitBtn) {
@@ -2538,6 +2541,44 @@
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') closeTaskViewModal();
         });
+
+
+        // ==================== УВЕДОМЛЕНИЯ ====================
+        //   function showNotification(type, message) {
+        //     const notification = document.createElement('div');
+        //     notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-transform duration-300 ${
+        //         type === 'success' ? 'bg-green-500 text-white' :
+        //             type === 'error' ? 'bg-red-500 text-white' :
+        //                 type === 'warning' ? 'bg-yellow-500 text-white' :
+        //                     'bg-blue-500 text-white'
+        //     }`;
+        //     notification.innerHTML = `<div class="flex items-center space-x-2">
+        //         <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+        //         <span>${escapeHtml(message)}</span>
+        //     </div>`;
+        //     document.body.appendChild(notification);
+        //     setTimeout(() => {
+        //         notification.style.transform = 'translateX(100%)';
+        //         setTimeout(() => {
+        //             if (document.body.contains(notification)) document.body.removeChild(notification);
+        //         }, 300);
+        //     }, 5000);
+        // }
+        function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${type === 'success' ? 'bg-green-500 text-white' : type === 'error' ? 'bg-red-500 text-white' : type === 'warning' ? 'bg-yellow-500 text-white' : 'bg-blue-500 text-white'}`;
+        notification.innerHTML = `<div class="flex items-center"><i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} mr-2"></i><span>йййййй${message}</span></div>`;
+        document.body.appendChild(notification);
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (notification.parentNode) notification.parentNode.removeChild(notification);
+            }, 300);
+        }, 5000);
+    }
     </script>
 
     <style>
