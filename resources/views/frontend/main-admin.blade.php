@@ -1848,7 +1848,43 @@
             </div>
         </div>
     </div>
-
+    <!-- Модальное окно для указания фактически затраченного времени -->
+    <div id="timeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-lg font-semibold mb-4">Отправка на проверку</h3>
+            <p class="text-gray-600 mb-4">Укажите фактическое время работы над задачей:</p>
+            <input type="number" id="actualHours" step="0.5" min="0" placeholder="Часы"
+                   class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4">
+            <div class="flex space-x-3">
+                <button onclick="submitForReview()"
+                        class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">
+                    Отправить на проверку
+                </button>
+                <button onclick="closeTimeModal()"
+                        class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Модально окно отказа от задачи -->
+     <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-lg font-semibold mb-4">Отказ от задачи</h3>
+            <p class="text-gray-600 mb-4">Пожалуйста, укажите причину отказа от задачи:</p>
+            <textarea id="rejectReason" placeholder="Причина отказа..."
+                      class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 h-24 resize-none"></textarea>
+            <div class="flex space-x-3">
+                <button onclick="submitRejection()" class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">
+                    Подтвердить отказ
+                </button>
+                <button onclick="closeRejectModal()"
+                        class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
     <script>
         let currentTaskId = null;
         let editSelectedFiles = [];
@@ -2475,17 +2511,136 @@
         }
         function openDeleteModal(taskId) { currentTaskId = taskId; document.getElementById('deleteTaskModal').classList.remove('hidden'); }
         function closeDeleteModal() { document.getElementById('deleteTaskModal').classList.add('hidden'); }
+
         async function confirmDeleteTask() {
-            if (!confirm('Удалить?')) return;
-            const response = await fetch(`/tasks/${currentTaskId}/delete`, {
-                method: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-            });
-            if ((await response.json()).success) { alert('Удалено!'); location.reload(); }
+            try{
+                if (!confirm('Удалить?')) return;
+                const response = await fetch(`/tasks/${currentTaskId}/delete`, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                });
+                if ((await response.json()).success) { alert('Удалено!'); }
+            }catch(e) {
+                console.log(e)
+            }finally {
+                location.reload();
+            }
+
         }
 
     </script>
 
+<!-- Скрипты для модального окна Информация о задаче -->
+<script>
+ async function startTask(taskId) {
+            try {
+                const response = await fetch(`/tasks/${taskId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ status: 'в работе' })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Задача переведена в работу!');
+                    closeTaskViewModal();
+                    location.reload();
+                } else {
+                    alert(data.message || 'Ошибка при обновлении статуса');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка при обновлении статуса');
+            }
+        }
+
+         function sendForReview(taskId) {
+            currentTaskId = taskId;
+            closeTaskViewModal();
+            document.getElementById('timeModal').classList.remove('hidden');
+        }
+         async function submitForReview() {
+            const actualHours = document.getElementById('actualHours')?.value;
+            if (!actualHours || actualHours <= 0) {
+                alert('Пожалуйста, укажите корректное время работы');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/tasks/${currentTaskId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ status: 'на проверке', actual_hours: actualHours })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Задача отправлена на проверку!');
+                    closeTimeModal();
+                    location.reload();
+                } else {
+                    alert(data.message || 'Ошибка при отправке на проверку');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка при отправке на проверку');
+            }
+        }
+ function closeTimeModal() {
+            const timeModal = document.getElementById('timeModal');
+            const actualHours = document.getElementById('actualHours');
+            if (timeModal) timeModal.classList.add('hidden');
+            if (actualHours) actualHours.value = '';
+            currentTaskId = null;
+        }
+         function showRejectModal(taskId) {
+            currentTaskId = taskId;
+            closeTaskViewModal();
+            document.getElementById('rejectModal').classList.remove('hidden');
+        }
+        async function submitRejection() {
+            const reason = document.getElementById('rejectReason')?.value.trim();
+            if (!reason) {
+                alert('Пожалуйста, укажите причину отказа');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/tasks/${currentTaskId}/reject`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ reason })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Вы отказались от задачи');
+                    closeRejectModal();
+                    location.reload();
+                } else {
+                    alert(data.message || 'Ошибка при отказе от задачи');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка при отказе от задачи');
+            }
+        }
+          function closeRejectModal() {
+            const rejectModal = document.getElementById('rejectModal');
+            const rejectReason = document.getElementById('rejectReason');
+            if (rejectModal) rejectModal.classList.add('hidden');
+            if (rejectReason) rejectReason.value = '';
+            currentTaskId = null;
+        }
+</script>
     <style>
         /* Дополнительные стили для адаптивности */
         .line-clamp-2 {
