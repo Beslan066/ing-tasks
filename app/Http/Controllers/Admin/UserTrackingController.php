@@ -16,7 +16,7 @@ class UserTrackingController extends Controller
     public function index()
     {
         try {
-            // Загружаем пользователей с ОБОИМИ типами сессий
+            // Загружаем пользователей с обоими типами сессий
             $users = User::with([
                 'sessions' => function($query) {
                     $query->orderBy('last_activity', 'desc');

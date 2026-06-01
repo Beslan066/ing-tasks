@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\UserSession;
-use App\Models\UserOnlineSession; // ДОБАВИТЬ
+use App\Models\UserOnlineSession;
 use App\Traits\DeviceInfoTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,7 +34,7 @@ class AuthenticatedSessionController extends Controller
                 'is_active' => true
             ]);
 
-            // ===== СОЗДАЕМ ПОДРОБНУЮ СЕССИЮ (UserSession) =====
+            // Создаем подробную сессию (UserSession)
             $deviceInfo = $this->getDeviceInfo($request);
             $geoInfo = $this->getGeolocation($request->ip());
             $fingerprint = $this->generateFingerprint($request);
@@ -48,7 +48,6 @@ class AuthenticatedSessionController extends Controller
                     'ip_address' => $request->ip(),
                     'user_agent' => $request->userAgent(),
                     'last_activity_at' => now(),
-                    // ДОБАВЛЯЕМ ГЕОДАННЫЕ
                     'country' => $geoInfo['country'],
                     'city' => $geoInfo['city'],
                     'latitude' => $geoInfo['latitude'],
@@ -61,7 +60,7 @@ class AuthenticatedSessionController extends Controller
                 \Log::error('Error creating UserOnlineSession: ' . $e->getMessage());
             }
 
-            // ===== СОЗДАЕМ ОНЛАЙН СЕССИЮ (UserOnlineSession) =====
+            // Создаем онлайн сессию (UserOnlineSession)
             try {
                 UserOnlineSession::create([
                     'user_id' => $user->id,
@@ -90,7 +89,7 @@ class AuthenticatedSessionController extends Controller
         if ($user) {
             $user->update(['last_activity_at' => now()]);
 
-            // ===== ЗАКРЫВАЕМ ПОДРОБНУЮ СЕССИЮ (UserSession) =====
+            // Закрываем подробную сессию (UserSession)
             $sessionId = $request->session()->get('user_session_id');
 
             if ($sessionId) {
@@ -112,15 +111,15 @@ class AuthenticatedSessionController extends Controller
                 ->where('is_current', true)
                 ->update(['is_current' => false]);
 
-            // ===== ЗАКРЫВАЕМ ОНЛАЙН СЕССИЮ (UserOnlineSession) =====
+            // Закрываем онлайн сессию (UserOnlineSession)
             try {
-                // Находим активную онлайн сессию
+                // Находим активную онлайн-сессию
                 $onlineSession = UserOnlineSession::where('user_id', $user->id)
                     ->whereNull('logout_at')
                     ->first();
 
                 if ($onlineSession) {
-                    $onlineSession->endSession(); // Теперь этот метод существует!
+                    $onlineSession->endSession();
                     \Log::info('UserOnlineSession closed for user: ' . $user->id);
                 }
             } catch (\Exception $e) {

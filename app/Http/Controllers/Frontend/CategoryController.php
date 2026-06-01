@@ -62,7 +62,7 @@ class CategoryController extends Controller
         }
     }
 
-// Метод для обновления категории
+    // Метод для обновления категории
     public function update(Request $request)
     {
         $request->validate([

@@ -42,7 +42,7 @@ class OAuthController extends Controller
         $url = 'https://oauth.yandex.ru/authorize?' . http_build_query([
                 'client_id' => config('services.yandex.client_id'),
                 'response_type' => 'code',
-                'redirect_uri' => config('services.yandex.redirect'), // Уже должно быть закодировано в конфиге
+                'redirect_uri' => config('services.yandex.redirect'),
                 'state' => Str::random(40),
             ]);
 

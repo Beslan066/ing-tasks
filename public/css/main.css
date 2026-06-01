@@ -407,7 +407,7 @@ body{
     position: relative;
     z-index: 1;
     font-family: Inter, sans-serif;
-    font-size: 16px;
+    font-size: 1.125rem;
     line-height: 26px;
     font-weight: 400;
     --tw-text-opacity: 1;
@@ -1880,7 +1880,7 @@ body{
 
 .zk:hover{
     --tw-bg-opacity: 1;
-    background-color: rgb(15, 71, 36)
+    background-color: #00b23e;
 }
 
 ._k:hover{

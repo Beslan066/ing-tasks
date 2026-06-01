@@ -5,9 +5,9 @@ namespace App\Observers;
 use App\Models\Email;
 use App\Models\EmailNotification;
 use App\Notifications\NewEmailNotification;
-use Illuminate\Support\Facades\Log; // Добавить эту строку
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage; // И эту
+use Illuminate\Support\Facades\Storage;
 
 class EmailObserver
 {

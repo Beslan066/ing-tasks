@@ -716,14 +716,14 @@
                                             @else
                                                 <span
                                                     class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                                                                                                                                                                                                                                                                {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
-                                                                                                                                                                                                                                                                                                {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
-                                                                                                                                                                                                                                                                                                {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                                                                                                                                                                                                                                                                                {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                                                                                                                                                                                                                                                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
+                                                        {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
+                                                        {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
+                                                        {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                                        {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
+                                                        {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
+
                                                         {{ $task->status }}
                                                     </span>
-
                                             @endif
                                         </td>
                                         <td class="px-3 py-4 cursor-pointer"
@@ -754,18 +754,25 @@
                                         <td class="px-3 py-4 cursor-pointer whitespace-nowrap"
                                             onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
                                             @php
-                                                $priorityColors = [
-                                                    'низкий' => 'bg-gray-100 text-gray-800',
-                                                    'средний' => 'bg-blue-100 text-blue-800',
-                                                    'высокий' => 'bg-orange-100 text-orange-800',
-                                                    'критический' => 'bg-red-100 text-red-800'
+                                                $prioritySignals = [
+                                                    'низкий' => ['level' => 1, 'color' => 'green', 'bg' => 'bg-green-50', 'border' => 'border-green-200', 'filled' => 'bg-green-500', 'empty' => 'bg-green-200', 'text' => 'text-green-700'],
+                                                    'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
+                                                    'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
+                                                    'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
                                                 ];
+                                                $signal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
                                             @endphp
+
                                             @if(!$task->trashed())
-                                                <span
-                                                    class="px-2 py-1 text-xs font-semibold rounded-full {{ $priorityColors[$task->priority] ?? 'bg-gray-100 text-gray-800' }}">
-                                                        {{ $task->priority }}
-                                                    </span>
+                                                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $signal['bg'] }} border {{ $signal['border'] }}">
+                                                    <div class="flex items-end gap-[3px] h-5">
+                                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 1 ? $signal['filled'] : $signal['empty'] }} h-2"></div>
+                                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 2 ? $signal['filled'] : $signal['empty'] }} h-3"></div>
+                                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 3 ? $signal['filled'] : $signal['empty'] }} h-4"></div>
+                                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 4 ? $signal['filled'] : $signal['empty'] }} h-5"></div>
+                                                    </div>
+                                                    <span class="text-xs font-medium {{ $signal['text'] }}">{{ ucfirst($task->priority) }}</span>
+                                                </div>
                                             @else
                                                 <span class="text-sm text-gray-400">—</span>
                                             @endif
@@ -914,24 +921,56 @@
                                                     <span class="text-sm text-gray-600">Отдел:</span>
                                                     <span class="text-sm">{{ $task->department->name ?? '—' }}</span>
                                                 </div>
-                                                <div class="flex items-center gap-2">
-                                                    <span class="text-sm text-gray-600">Приоритет:</span>
-                                                    @if(!$task->trashed())
-                                                        @php
-                                                            $priorityColors = [
-                                                                'низкий' => 'bg-gray-100 text-gray-800',
-                                                                'средний' => 'bg-blue-100 text-blue-800',
-                                                                'высокий' => 'bg-orange-100 text-orange-800',
-                                                                'критический' => 'bg-red-100 text-red-800'
-                                                            ];
-                                                        @endphp
-                                                        <span
-                                                            class="px-2 py-1 text-xs font-semibold rounded-full {{ $priorityColors[$task->priority] ?? 'bg-gray-100 text-gray-800' }}">
-                                                            {{ $task->priority }}
-                                                        </span>
-                                                    @else
-                                                        <span class="text-sm text-gray-400">—</span>
-                                                    @endif
+                                                @php
+                                                    $priorityStyles = [
+                                                        'низкий' => [
+                                                            'level' => 1,
+                                                            'color' => 'gray',
+                                                            'bg' => 'bg-gray-50',
+                                                            'border' => 'border-gray-200',
+                                                            'filled' => 'bg-gray-500',
+                                                            'empty' => 'bg-gray-200',
+                                                            'text' => 'text-gray-700'
+                                                        ],
+                                                        'средний' => [
+                                                            'level' => 2,
+                                                            'color' => 'blue',
+                                                            'bg' => 'bg-blue-50',
+                                                            'border' => 'border-blue-200',
+                                                            'filled' => 'bg-blue-500',
+                                                            'empty' => 'bg-blue-100',
+                                                            'text' => 'text-blue-700'
+                                                        ],
+                                                        'высокий' => [
+                                                            'level' => 3,
+                                                            'color' => 'orange',
+                                                            'bg' => 'bg-orange-50',
+                                                            'border' => 'border-orange-200',
+                                                            'filled' => 'bg-orange-500',
+                                                            'empty' => 'bg-orange-100',
+                                                            'text' => 'text-orange-700'
+                                                        ],
+                                                        'критический' => [
+                                                            'level' => 4,
+                                                            'color' => 'red',
+                                                            'bg' => 'bg-red-50',
+                                                            'border' => 'border-red-200',
+                                                            'filled' => 'bg-red-500',
+                                                            'empty' => 'bg-red-100',
+                                                            'text' => 'text-red-700'
+                                                        ],
+                                                    ];
+                                                    $style = $priorityStyles[$task->priority] ?? $priorityStyles['средний'];
+                                                @endphp
+
+                                                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $style['bg'] }} border {{ $style['border'] }}">
+                                                    <div class="flex items-end gap-[3px] h-5">
+                                                        <div class="w-1.5 rounded-sm {{ $style['level'] >= 1 ? $style['filled'] : $style['empty'] }} h-2"></div>
+                                                        <div class="w-1.5 rounded-sm {{ $style['level'] >= 2 ? $style['filled'] : $style['empty'] }} h-3"></div>
+                                                        <div class="w-1.5 rounded-sm {{ $style['level'] >= 3 ? $style['filled'] : $style['empty'] }} h-4"></div>
+                                                        <div class="w-1.5 rounded-sm {{ $style['level'] >= 4 ? $style['filled'] : $style['empty'] }} h-5"></div>
+                                                    </div>
+                                                    <span class="text-xs font-medium {{ $style['text'] }}">{{ ucfirst($task->priority) }}</span>
                                                 </div>
                                             </div>
 

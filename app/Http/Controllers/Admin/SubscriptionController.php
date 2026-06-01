@@ -14,7 +14,7 @@ class SubscriptionController extends Controller
 {
     public function index(Request $request)
     {
-        // Показываем ТОЛЬКО активные подписки (по одной на компанию)
+        // Показываем только активные подписки
         $query = Subscription::with(['company', 'additionalUserPurchases'])
             ->where('status', 'active')  // Только активные подписки
             ->where('expires_at', '>', now());  // Только не истекшие
