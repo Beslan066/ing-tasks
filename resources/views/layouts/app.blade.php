@@ -1062,16 +1062,21 @@ media-src https://meet.jit.si https:;
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                alert('Личная задача успешно создана!');
+                                // alert('Личная задача успешно создана!');
+                                showNotification('Личная задача успешно создана', 'success');
                                 closeTaskModal();
-                                location.reload();
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 600);
                             } else {
-                                alert(data.message || 'Ошибка при создании задачи');
+                                // alert(data.message || 'Ошибка при создании задачи');
+                                showNotification(data.message || 'Ошибка при создании задачи', 'error');
                             }
                         })
                         .catch(error => {
                             console.error('Ошибка:', error);
-                            alert('Ошибка при создании задачи');
+                            // alert('Ошибка при создании задачи');
+                            showNotification('Ошибка при создании задачи', 'error');
                         })
                         .finally(() => {
                             if (submitBtn) {
@@ -2583,11 +2588,11 @@ media-src https://meet.jit.si https:;
 
                 document.getElementById('taskViewModal').classList.remove('hidden');
             } else {
-                alert(data.message || 'Ошибка при загрузке данных задачи');
+                showNotification(data.message || 'Ошибка при загрузке данных задачи', 'error');
             }
         } catch (error) {
             console.error('Ошибка:', error);
-            alert('Ошибка при загрузке данных задачи');
+            showNotification('Ошибка при загрузке данных задачи', 'error');
         }
     }
 
@@ -2605,15 +2610,15 @@ media-src https://meet.jit.si https:;
                 const data = await response.json();
 
                 if (data.success) {
-                    alert('Задача переведена в работу!');
+                    showNotification('Задача переведена в работу!', 'success');
                     closeTaskViewModal();
                     location.reload();
                 } else {
-                    alert(data.message || 'Ошибка при обновлении статуса');
+                    showNotification(data.message || 'Ошибка при обновлении статуса', 'error');
                 }
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('Ошибка при обновлении статуса');
+                showNotification('Ошибка при обновлении статуса', 'error');
             }
         }
     // Закрыть модальное окно просмотра задачи
