@@ -26,21 +26,21 @@
                 <div class="space-y-1">
                     <a href="{{route('welcome')}}"
                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('welcome*') ? 'active' : ''}}">
-                        <div class="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center mr-3">
+                        <div class="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-check text-primary-500 text-sm"></i>
                         </div>
                         <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Мои задачи</span>
                     </a>
                     <a href="{{route('tasks.admin')}}"
                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:rounded-lg hover:bg-transparent/20 {{request()->routeIs('tasks.admin*') ? 'active' : ''}}">
-                        <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3">
+                        <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-landmark text-purple-500 text-sm"></i>
                         </div>
                         <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Моя компания</span>
                     </a>
                     <a href="{{route('departments.index')}}"
                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('departments.index*') ? 'active' : ''}}">
-                        <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center mr-3">
+                        <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-building text-orange-500 text-sm"></i>
                         </div>
                         <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Отделы</span>
@@ -48,7 +48,7 @@
 
                     <a href="{{route('team.index')}}"
                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('team.index*') ? 'active' : ''}}">
-                        <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center mr-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-users text-blue-500 text-sm"></i>
                         </div>
                         <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Пользователи</span>
@@ -56,7 +56,7 @@
 
                     <a href="{{route('chat.index')}}"
                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('chat.index*') ? 'active' : ''}}">
-                        <div class="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center mr-3">
+                        <div class="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-comments text-pink-500 text-sm"></i>
                         </div>
                         <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Мессенджер</span>
@@ -64,7 +64,7 @@
 
                     <a href="{{route('files.index')}}"
                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('files.index*') ? 'active' : ''}}">
-                        <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
+                        <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-hard-drive text-brown-500 text-sm"></i>
                         </div>
                         <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Хранилище</span>
@@ -72,14 +72,14 @@
 
                     <a href="{{route('tools.index')}}"
                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('tools.index*') ? 'active' : ''}}">
-                        <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
+                        <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-tools text-yellow-500 text-sm"></i>
                         </div>
                         <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Инструменты</span>
                     </a>
                      <a href="{{route('frontend.news.index')}}"
                    class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('news.index*') ? 'active' : ''}}">
-                    <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
+                    <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                         <i class="fas fa-newspaper text-green-500 text-sm"></i>
                     </div>
                     <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Новости, поддержка</span>
@@ -87,7 +87,7 @@
 
                 <a href="{{route('licence.index')}}"
                    class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('license.index*') ? 'active' : ''}}">
-                    <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
+                    <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                         <i class="fas fa-credit-card text-yellow-500 text-sm"></i>
                     </div>
                     <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Лицензия и оплата</span>
@@ -95,7 +95,7 @@
 
                 <a href="{{route('activity.index')}}"
                    class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('license.index*') ? 'active' : ''}}">
-                    <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3">
+                    <div class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                         <i class="fas fa-list text-gray-300 text-sm"></i>
                     </div>
                     <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Лента событий</span>
@@ -287,7 +287,13 @@
                 box-shadow: 0 0 50px rgba(34, 197, 94, 0.1);
             }
 }
-
+.nav-item {
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.nav-item > span{
+white-space: nowrap;
+}
         .sidebar {
             background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);
             backdrop-filter: blur(20px);
@@ -320,8 +326,10 @@
             box-shadow: 10px 0 15px -3px rgba(0, 0, 0, 0.1);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-@media(min-width: 1000px) {
+#logo-icon {
+    pointer-events: none;
+}
+@media(min-width: 638px) {
       .main-container.sidebar-mode-collapsed {
 .sidebar {
             width: 4.5rem !important;
@@ -418,6 +426,12 @@
 	border: 0;
         }
 }
+#logo-icon {
+    pointer-events: all;
+}
+#sidebar-overlay {
+    display: none !important;
+}
 }
 @media (max-width: 638px) {
   .sidebar {
@@ -432,6 +446,7 @@
     transition-property: left;
     transition-duration: 300ms;
     transition-timing-function: ease-in-out;
+     box-shadow: none;
   }
 
   .sidebar.active {
@@ -449,11 +464,17 @@
     </style>
 
      <script>
-    const logoIcon = document.getElementById('logo-icon');
-    const mainContainer = document.querySelector('.main-container')
-    logoIcon.addEventListener('click', function () {
-        mainContainer.classList.toggle('sidebar-mode-collapsed');
-    })
+   document.addEventListener('DOMContentLoaded', function () {
+        const logoIcon = document.getElementById('logo-icon');
+        const mainContainer = document.querySelector('.main-container');
+        if (logoIcon && mainContainer) {
+            logoIcon.addEventListener('click', function () {
+                if (window.innerWidth > 638) {
+                    mainContainer.classList.toggle('sidebar-mode-collapsed');
+                }
+            });
+        }
+    });
  </script>
 @endonce
 
