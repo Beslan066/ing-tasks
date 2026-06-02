@@ -398,7 +398,7 @@ media-src https://meet.jit.si https:;
     $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
 @endphp
 
-<div class="flex min-h-screen main-container sidebar-mode-collapsed max-[500px]:pb-[50px] {{ $backgroundEnabled && $backgroundImage ? 'has-background' : '' }}"
+<div class="flex min-h-screen main-container max-[500px]:pb-[50px] {{ $backgroundEnabled && $backgroundImage ? 'has-background' : '' }}"
      @if($backgroundEnabled && $backgroundImage)
          style="background-image: url('{{ $backgroundImage }}')"
     @endif>
@@ -654,15 +654,6 @@ media-src https://meet.jit.si https:;
     console.log('🎯 Трекинг времени загружен');
 </script>
 
-<!-- sidebar scripts start-->
- <script>
-    const logoIcon = document.getElementById('logo-icon');
-    const mainContainer = document.querySelector('.main-container')
-    logoIcon.addEventListener('click', function () {
-        mainContainer.classList.toggle('sidebar-mode-collapsed');
-    })
- </script>
-<!-- sidebar scripts end-->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const mainContainer = document.querySelector('.main-container');
