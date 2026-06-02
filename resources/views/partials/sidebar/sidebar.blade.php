@@ -321,7 +321,9 @@
             border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .main-container.sidebar-mode-collapsed .sidebar {
+@media(min-width: 1000px) {
+      .main-container.sidebar-mode-collapsed {
+.sidebar {
             width: 4.5rem !important;
 
             .logotype__text {
@@ -335,8 +337,6 @@
 	border: 0;
             }
         }
-        .main-container.sidebar-mode-collapsed {
-
         .active-page {
             padding-left: calc(1.5rem + 4.5rem);
         }
@@ -418,6 +418,7 @@
 	border: 0;
         }
 }
+}
 @media (max-width: 638px) {
   .sidebar {
     position: fixed !important;
@@ -446,4 +447,13 @@
 }
 
     </style>
+
+     <script>
+    const logoIcon = document.getElementById('logo-icon');
+    const mainContainer = document.querySelector('.main-container')
+    logoIcon.addEventListener('click', function () {
+        mainContainer.classList.toggle('sidebar-mode-collapsed');
+    })
+ </script>
 @endonce
+
