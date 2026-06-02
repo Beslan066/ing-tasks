@@ -398,7 +398,7 @@ media-src https://meet.jit.si https:;
     $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
 @endphp
 
-<div class="flex min-h-screen main-container max-[500px]:pb-[50px] {{ $backgroundEnabled && $backgroundImage ? 'has-background' : '' }}"
+<div class="flex min-h-screen main-container {{ $backgroundEnabled && $backgroundImage ? 'has-background' : '' }}"
      @if($backgroundEnabled && $backgroundImage)
          style="background-image: url('{{ $backgroundImage }}')"
     @endif>
@@ -406,7 +406,7 @@ media-src https://meet.jit.si https:;
     <!-- Боковая панель -->
    @include('partials.sidebar.sidebar')
     <!-- Основной контент -->
-    <div class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:pt-[30px] max-[638px]:w-full max-[500px]:pt-[20px] {{ $backgroundEnabled && $backgroundImage ? '' : 'bg-gray-100' }}">
+    <div class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:pt-[30px] max-[638px]:w-full max-[500px]:pt-[20px] max-[500px]:pb-[20px] {{ $backgroundEnabled && $backgroundImage ? '' : 'bg-gray-100' }}">
 
     <div class="justify-between items-center relative pr-4 pl-4 pb-6 hidden max-[638px]:flex">
    <!-- Логотип -->
