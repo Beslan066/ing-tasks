@@ -2054,7 +2054,7 @@ media-src https://meet.jit.si https:;
         });
     }
 
-    // ==================== УВЕДОМЛЕНИЯ ====================
+    //УВЕДОМЛЕНИЯ
 
     function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
@@ -2072,7 +2072,7 @@ media-src https://meet.jit.si https:;
         }, 5000);
     }
 
-    // ==================== DRAG AND DROP ДЛЯ ЗАДАЧ (ИСПРАВЛЕННАЯ ВЕРСИЯ) ====================
+    // DRAG AND DROP ДЛЯ ЗАДАЧ
 
     function mapStatusForServer(status) {
         const statusMap = {

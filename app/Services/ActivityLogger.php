@@ -108,6 +108,38 @@ class ActivityLogger
     }
 
     /**
+     * Логируем удаление задачи
+     */
+    public static function taskDeleted(Task $task, User $user): Activity
+    {
+        // Проверяем дубликаты
+        $exists = Activity::where('subject_type', Task::class)
+            ->where('subject_id', $task->id)
+            ->where('action', 'task_deleted')
+            ->where('created_at', '>=', now()->subSeconds(5))
+            ->exists();
+
+        if ($exists) {
+            return null;
+        }
+
+        return Activity::create([
+            'user_id' => $user->id,
+            'company_id' => $task->company_id,
+            'subject_type' => Task::class,
+            'subject_id' => $task->id,
+            'action' => 'task_deleted',
+            'description' => "{$user->name} удалил задачу «{$task->name}»",
+            'properties' => [
+                'task_name' => $task->name,
+                'task_id' => $task->id,
+                'deleted_by_id' => $user->id,
+                'deleted_by_name' => $user->name
+            ]
+        ]);
+    }
+
+    /**
      * Логируем загрузку файла
      */
     public static function fileUploaded(File $file, User $user): Activity

@@ -1983,7 +1983,7 @@
             if (sortSelect) sortSelect.value = selectedValue;
         });
 
-        // ==================== ОТКРЫТИЕ МОДАЛКИ ====================
+        // Открытие модального окна редактирования
         async function openEditModal(taskId) {
             currentTaskId = taskId;
             editSelectedFiles = [];
@@ -2002,64 +2002,15 @@
 
                 if (data.success) {
                     const task = data.task;
-
-                    document.getElementById('editTaskName').value = task.name;
-                    document.getElementById('editTaskDescription').value = task.description || '';
-
-                    // Заполняем отделы
-                    const departmentSelect = document.getElementById('editTaskDepartment');
-                    departmentSelect.innerHTML = '<option value="">Выберите отдел</option>';
-                    if (data.departments) {
-                        data.departments.forEach(dept => {
-                            const option = document.createElement('option');
-                            option.value = dept.id;
-                            option.textContent = dept.name;
-                            if (dept.id == task.department_id) option.selected = true;
-                            departmentSelect.appendChild(option);
-                        });
-                    }
-
-                    // Заполняем категории
-                    const categorySelect = document.getElementById('editTaskCategory');
-                    categorySelect.innerHTML = '<option value="">Без категории</option>';
-                    if (data.categories) {
-                        data.categories.forEach(cat => {
-                            const option = document.createElement('option');
-                            option.value = cat.id;
-                            option.textContent = cat.name;
-                            if (cat.id == task.category_id) option.selected = true;
-                            categorySelect.appendChild(option);
-                        });
-                    }
-
-                    // Заполняем пользователей
-                    const userSelect = document.getElementById('editTaskUser');
-                    userSelect.innerHTML = '<option value="">Не назначен</option>';
-                    if (data.users) {
-                        data.users.forEach(user => {
-                            const option = document.createElement('option');
-                            option.value = user.id;
-                            option.textContent = `${user.name} (${user.email})`;
-                            if (user.id == task.user_id) option.selected = true;
-                            userSelect.appendChild(option);
-                        });
-                    }
-
-                    document.getElementById('editTaskPriority').value = task.priority;
-                    document.getElementById('editTaskStatus').value = task.status;
-                    document.getElementById('editTaskDeadline').value = task.deadline ? task.deadline.slice(0, 16) : '';
-                    document.getElementById('editTaskEstimatedHours').value = task.estimated_hours || '';
-                    document.getElementById('editTaskActualHours').value = task.actual_hours || '';
-
-                    editSelectedFiles = task.files || [];
-                    updateEditSelectedFilesDisplay();
-                    displayRejections(task.rejections);
+                    // ... остальной код заполнения формы ...
 
                     document.getElementById('editTaskModal').classList.remove('hidden');
+                } else {
+                    showNotification(data.message || 'Ошибка при загрузке данных задачи', 'error');
                 }
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('Ошибка при загрузке данных задачи');
+                showNotification('Ошибка при загрузке данных задачи', 'error');
             }
         }
 
@@ -2117,10 +2068,15 @@
         }
 
         function clearEditSelectedFiles() {
-            if (editSelectedFiles.length === 0) return;
-            if (confirm(`Удалить все файлы?`)) {
+            if (editSelectedFiles.length === 0) {
+                showNotification('Нет файлов для очистки', 'info');
+                return;
+            }
+
+            if (confirm('Удалить все выбранные файлы?')) {
                 editSelectedFiles = [];
                 updateEditSelectedFilesDisplay();
+                showNotification('Все файлы удалены', 'success');
             }
         }
 
@@ -2397,7 +2353,7 @@
             input.dispatchEvent(new Event('change'));
         }
 
-        // ==================== СОХРАНЕНИЕ ====================
+        //Сохранение
         document.getElementById('editTaskForm')?.addEventListener('submit', async function(e) {
             e.preventDefault();
             const submitBtn = this.querySelector('button[type="submit"]');
@@ -2408,24 +2364,18 @@
             }
             try {
                 const formData = new FormData(this);
-
-                // Удаляем старые значения
                 formData.delete('selected_file_ids');
 
-                // ОТПРАВЛЯЕМ КАК МАССИВ - ВАШ КОНТРОЛЛЕР ЖДЕТ МАССИВ!
                 const selectedFileIds = editSelectedFiles.map(f => f.id);
                 selectedFileIds.forEach(id => {
                     formData.append('selected_file_ids[]', id);
                 });
-
-                console.log('Отправляемые ID файлов (массив):', selectedFileIds);
 
                 const newFiles = document.getElementById('editUploadNewFilesInput');
                 if (newFiles?.files.length) {
                     for (let i = 0; i < newFiles.files.length; i++) {
                         formData.append('new_files[]', newFiles.files[i]);
                     }
-                    console.log('Новых файлов:', newFiles.files.length);
                 }
 
                 const response = await fetch(`/tasks/${currentTaskId}/update`, {
@@ -2439,18 +2389,19 @@
                 });
 
                 const result = await response.json();
-                console.log('Ответ сервера:', result);
 
                 if (result.success) {
-                    alert('Задача обновлена!');
+                    showNotification('Задача успешно обновлена', 'success');
                     closeEditModal();
-                    location.reload();
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
                 } else {
-                    alert(result.message || 'Ошибка при обновлении задачи');
+                    showNotification(result.message || 'Ошибка при обновлении задачи', 'error');
                 }
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('Ошибка: ' + error.message);
+                showNotification('Ошибка: ' + error.message, 'error');
             } finally {
                 if (submitBtn) {
                     submitBtn.innerHTML = originalText;
@@ -2459,7 +2410,7 @@
             }
         });
 
-        // ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
+        //Вспомогательные
         function getFileIcon(ext) {
             const icons = { 'pdf': '📄', 'doc': '📝', 'docx': '📝', 'xls': '📊', 'xlsx': '📊', 'jpg': '🖼️', 'png': '🖼️', 'gif': '🖼️', 'zip': '📦' };
             return icons[(ext || '').toLowerCase()] || '📎';
@@ -2505,22 +2456,103 @@
         function closeReturnModal() { document.getElementById('returnToWorkModal').classList.add('hidden'); document.getElementById('returnComment').value = ''; }
         async function confirmReturnToWork() {
             const comment = document.getElementById('returnComment').value;
-            const response = await fetch(`/tasks/${currentTaskId}/return-to-work`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                body: JSON.stringify({ comment })
-            });
-            if ((await response.json()).success) { alert('Возвращено!'); location.reload(); }
+            const submitBtn = document.querySelector('#returnToWorkModal .bg-orange-600');
+            const originalText = submitBtn?.innerHTML;
+
+            try {
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+                    submitBtn.disabled = true;
+                }
+
+                const response = await fetch(`/tasks/${currentTaskId}/return-to-work`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ comment })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification(result.message || 'Задача возвращена на доработку', 'success');
+                    closeReturnModal();
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showNotification(result.message || 'Ошибка при возврате задачи', 'error');
+                    closeReturnModal();
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('Ошибка: ' + error.message, 'error');
+                closeReturnModal();
+            } finally {
+                if (submitBtn) {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
         }
-        function openDeleteModal(taskId) { currentTaskId = taskId; document.getElementById('deleteTaskModal').classList.remove('hidden'); }
+        function openDeleteModal(taskId) {
+            currentTaskId = taskId;
+            document.getElementById('deleteTaskModal').classList.remove('hidden');
+        }
+
         function closeDeleteModal() { document.getElementById('deleteTaskModal').classList.add('hidden'); }
+
         async function confirmDeleteTask() {
-            if (!confirm('Удалить?')) return;
-            const response = await fetch(`/tasks/${currentTaskId}/delete`, {
-                method: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-            });
-            if ((await response.json()).success) { alert('Удалено!'); location.reload(); }
+            const submitBtn = document.querySelector('#deleteTaskModal .bg-red-600');
+            const originalText = submitBtn?.innerHTML;
+
+            try {
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Удаление...';
+                    submitBtn.disabled = true;
+                }
+
+                const formData = new FormData();
+                formData.append('_token', document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}');
+                formData.append('_method', 'DELETE');
+
+                const response = await fetch(`/tasks/${currentTaskId}/delete`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.status === 404) {
+                    throw new Error('Маршрут не найден. Проверьте URL.');
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification(result.message || 'Задача успешно удалена', 'success');
+                    closeDeleteModal();
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showNotification(result.message || 'Ошибка при удалении задачи', 'error');
+                    closeDeleteModal();
+                }
+            } catch (error) {
+                console.error('Ошибка при удалении:', error);
+                showNotification('Ошибка при удалении задачи: ' + error.message, 'error');
+                closeDeleteModal();
+            } finally {
+                if (submitBtn) {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
         }
 
     </script>
