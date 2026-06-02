@@ -14,7 +14,7 @@
                 <h2 class="text-3xl font-bold text-white">Мои задачи</h2>
                 <p class="text-white text-sm">Ваши личные задачи не видны на странице Команда</p>
             @else
-                <h2 class="text-3xl font-bold text-[#16a34a]">Мои зфадачи</h2>
+                <h2 class="text-3xl font-bold text-[#16a34a]">Мои задачи</h2>
                 <p class="text-gray-700 text-sm">Ваши личные задачи не видны на странице Команда</p>
             @endif
         </div>

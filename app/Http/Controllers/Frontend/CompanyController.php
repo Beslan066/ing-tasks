@@ -28,7 +28,7 @@ class CompanyController extends Controller
         $company->save();
 
 
-        return to_route('companies.index');
+        return to_route('tasks.admin');
 
 
     }

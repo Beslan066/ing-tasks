@@ -18,7 +18,6 @@ class Role extends Model
         'permissions' => 'array',
     ];
 
-    // === СВЯЗИ ===
 
     /**
      * Отдел, к которому принадлежит роль

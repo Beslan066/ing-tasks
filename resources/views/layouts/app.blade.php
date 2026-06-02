@@ -2217,7 +2217,7 @@ media-src https://meet.jit.si https:;
         });
     }
 
-    // ==================== ФУНКЦИИ ДЛЯ УДАЛЕНИЯ КАТЕГОРИИ ====================
+    // Функции для удаления категории
 
     let currentDeletingCategoryId = null;
 
