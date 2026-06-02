@@ -138,7 +138,7 @@
                         </div>
                         <div>
                             <div class="text-white font-medium text-sm">{{ $onlineUsersCount }} онлайн</div>
-                            <div class="text-sidebar-text text-xs">Активные сейчас</div>
+                            <div class="text-sidebar-text text-xs flex-shrink-0 whitespace-nowrap">Активные сейчас</div>
                         </div>
                     </div>
                 @else
@@ -226,9 +226,9 @@
                         </div>
                         <div class="ml-3 user-profile__name">
                             <div
-                                class="text-white font-medium text-sm">{{ auth()->user()->name }} {{ auth()->user()->surname }}</div>
+                                class="text-white font-medium text-sm flex-shrink-0 whitespace-nowrap">{{ auth()->user()->name }} {{ auth()->user()->surname }}</div>
                             @if(auth()->user()->role)
-                                <div class="text-sidebar-text text-xs">{{ auth()->user()->role->name }}</div>
+                                <div class="text-sidebar-text text-xs flex-shrink-0 whitespace-nowrap">{{ auth()->user()->role->name }}</div>
                             @endif
                         </div>
                     </div>
@@ -343,6 +343,7 @@ white-space: nowrap;
 	overflow: hidden;
 	clip: rect(0, 0, 0, 0);
 	border: 0;
+      transition:transform 1.15s  ease-in-out;
             }
         }
         .active-page {
@@ -352,7 +353,7 @@ white-space: nowrap;
             padding-left: 0;
             padding-right: 0;
             justify-content: center;
-            transition:transform 0.15s  ease-in-out;
+            transition:transform 1.15s  ease-in-out;
         }
         .nav-item span {
             	position: absolute;
@@ -363,6 +364,7 @@ white-space: nowrap;
 	overflow: hidden;
 	clip: rect(0, 0, 0, 0);
 	border: 0;
+    transition:transform 1.15s  ease-in-out;
         }
         .nav-item > div {
             margin-right: 0;
