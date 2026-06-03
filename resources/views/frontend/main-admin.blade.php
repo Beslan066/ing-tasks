@@ -1714,7 +1714,7 @@
                         Отмена
                     </button>
                     <button type="submit"
-                            class="px-6 py-3 bg-green-600  text-white rounded-xl  font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                      class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                         <i class="fas fa-save mr-2"></i>Сохранить изменения
                     </button>
                 </div>

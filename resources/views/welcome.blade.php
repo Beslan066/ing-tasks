@@ -738,7 +738,7 @@
                                 <i class="fas fa-stopwatch text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
                             </div>
                             <input type="number" name="estimated_hours" min="0" step="0.5"
-                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
+                                   class="w-full px-4 py-3 pl-8 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
                                    placeholder="0.0">
                             <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium text-sm">часов</span>
                         </div>
@@ -1042,7 +1042,7 @@
                             <i class="fas fa-hourglass-half text-green-500 mr-2 text-xs"></i>Планируемые часы
                         </label>
                         <input type="number" name="estimated_hours" id="editTaskEstimatedHours" step="0.5" min="0"
-                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400">
+                               class="w-full px-4 pl-8 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400">
                     </div>
 
                     <div class="space-y-2">
@@ -1144,8 +1144,8 @@
                             class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition">
                         Отмена
                     </button>
-                    <button type="submit"
-                            class="px-6 py-3 bg-green-600 transition">
+                     <button type="submit"
+                      class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                         <i class="fas fa-save mr-2"></i>Сохранить изменения
                     </button>
                 </div>
