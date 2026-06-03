@@ -508,7 +508,11 @@
                 }
                 }
             }
-
+            .main-container.has-background.sidebar-mode-collapsed {
+                .nav-item.active{
+                    background: rgba(34, 197, 94, 0.1);
+                }
+            }
             #logo-icon {
                 pointer-events: all;
             }

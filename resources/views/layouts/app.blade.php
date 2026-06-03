@@ -407,6 +407,7 @@ media-src https://meet.jit.si https:;
 
     <!-- Боковая панель -->
    @include('partials.sidebar.sidebar')
+
     <!-- Основной контент -->
     <div class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:pt-[30px] max-[638px]:w-full max-[500px]:pt-[20px] max-[500px]:pb-[20px] {{ $backgroundEnabled && $backgroundImage ? '' : 'bg-gray-100' }}">
 
