@@ -477,6 +477,30 @@
                     max-height: 0;
                     transition: all 0.3s ease;
                 }
+                .sidebar:hover {
+                    max-width: 16rem !important;
+                    z-index: 10;
+                    .logotype__text,
+                    .tags,
+                    .tags h3,
+                    .nav-item span,
+                    .online-users h3,
+                    .tags p,
+                    .user-profile__name,
+                    .user-profile__arrow-icon {
+                        visibility: visible;
+                        opacity: 1;
+                        max-width: none;
+                        max-height: none;
+                    }
+                     .nav-item {
+                    padding-left: 1rem;
+                    padding-right: 1rem;
+                    justify-content: start;
+                    gap: 0.75rem;
+
+                }
+                }
             }
 
             #logo-icon {
@@ -520,18 +544,30 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const logoIcon = document.getElementById('logo-icon');
-            const mainContainer = document.querySelector('.main-container');
-            const navItems = document.querySelectorAll('.nav-item');
+           const logoIcon = document.getElementById('logo-icon');
+const mainContainer = document.querySelector('.main-container');
+const navItems = document.querySelectorAll('.nav-item');
+
+const isCollapsed = localStorage.getItem('sidebar-mode-collapsed') === 'true';
+
+if (isCollapsed && mainContainer) {
+    mainContainer.classList.add('sidebar-mode-collapsed');
+}
 
 
-            if (logoIcon && mainContainer) {
-                logoIcon.addEventListener('click', function () {
-                    if (window.innerWidth > 638) {
-                        mainContainer.classList.toggle('sidebar-mode-collapsed');
-                    }
-                });
-            }
+if (logoIcon && mainContainer) {
+    logoIcon.addEventListener('click', function () {
+        if (window.innerWidth > 638) {
+
+            mainContainer.classList.toggle('sidebar-mode-collapsed');
+
+
+            const currentlyCollapsed = mainContainer.classList.contains('sidebar-mode-collapsed');
+
+            localStorage.setItem('sidebar-mode-collapsed', currentlyCollapsed);
+        }
+    });
+}
 
             const currentPath = window.location.pathname;
             navItems.forEach(item => {
