@@ -205,6 +205,95 @@
                 </div>
             @endif
 
+            <!-- КНОПКА БЫСТРОГО ДОБАВЛЕНИЯ -->
+            <div id="quickAddBlock" class="mb-4">
+                <button onclick="showQuickAddForm()"
+                        id="showQuickAddBtn"
+                        class="w-full group relative overflow-hidden bg-gradient-to-r from-gray-50 to-white hover:from-green-50 hover:to-white border-2 border-dashed border-gray-300 hover:border-green-400 rounded-xl p-4 text-gray-500 hover:text-green-600 transition-all duration-300 flex items-center justify-center space-x-2">
+                    <div class="absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/0 to-green-500/0 group-hover:from-green-500/5 group-hover:via-green-500/10 group-hover:to-green-500/5 transition-all duration-500"></div>
+                    <i class="fas fa-plus-circle text-green-500 text-xl group-hover:scale-110 transition-transform duration-300"></i>
+                    <span class="text-sm font-medium">Быстрая задача</span>
+                    <i class="fas fa-chevron-down text-xs opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-y-0.5"></i>
+                </button>
+
+                <!-- ФОРМА БЫСТРОГО ДОБАВЛЕНИЯ -->
+                <div id="quickAddForm" class="hidden mt-2">
+                    <div class="bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden transform transition-all duration-300 scale-95 opacity-0" id="quickAddFormInner">
+                        <div class="bg-gradient-to-r from-green-500 to-green-600 px-4 py-3">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-bolt text-white text-sm"></i>
+                                    <h4 class="text-white font-semibold text-sm">Быстрое создание</h4>
+                                </div>
+                                <button onclick="hideQuickAddForm()" class="text-white/80 hover:text-white transition">
+                                    <i class="fas fa-times text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="p-4 space-y-4">
+                            <div class="relative">
+                                <i class="fas fa-tasks absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                                <input type="text"
+                                       id="quickTaskName"
+                                       placeholder="Что нужно сделать?"
+                                       class="w-full pl-10 pr-4 py-3 bg-gray-50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all duration-200 text-sm"
+                                       autocomplete="off">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="relative">
+                                    <i class="fas fa-flag absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                                    <select id="quickTaskPriority"
+                                            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all duration-200 text-sm appearance-none cursor-pointer">
+                                        <option value="низкий">Низкий</option>
+                                        <option value="средний" selected>⚡ Средний</option>
+                                        <option value="высокий">Высокий</option>
+                                        <option value="критический">Критический</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+                                </div>
+
+                                <div class="relative">
+                                    <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                                    <input type="datetime-local"
+                                           id="quickTaskDeadline"
+                                           class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all duration-200 text-sm cursor-pointer">
+                                </div>
+                            </div>
+
+                            <div class="relative">
+                                <i class="fas fa-align-left absolute left-3 top-3 text-gray-400 text-sm"></i>
+                                <textarea id="quickTaskDescription"
+                                          rows="2"
+                                          placeholder="Добавить описание..."
+                                          class="w-full pl-10 pr-4 py-2 bg-gray-50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all duration-200 text-sm resize-none"></textarea>
+                            </div>
+
+                            <div class="flex space-x-3 pt-2">
+                                <button onclick="createQuickTask()"
+                                        class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2.5 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 text-sm font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Создать</span>
+                                </button>
+                                <button onclick="hideQuickAddForm()"
+                                        class="px-4 py-2.5 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-all duration-200 text-sm font-medium flex items-center justify-center space-x-1">
+                                    <i class="fas fa-times"></i>
+                                    <span>Отмена</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 px-4 py-2 border-t border-gray-100">
+                            <div class="flex items-center justify-between text-xs text-gray-400">
+                                <span><i class="fas fa-keyboard mr-1"></i> Enter — создать</span>
+                                <span><i class="fas fa-arrow-left mr-1"></i> Esc — отмена</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="space-y-4 task-container" data-status="new">
                 @foreach($tasksByStatus['new'] as $task)
                     <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between {{ $task->status == 'просрочена' ? 'border-l-4 border-red-500' : '' }}"
@@ -263,8 +352,8 @@
 
                         <div class="flex justify-between items-center">
                             <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1 max-[500px]:space-x-0">
-                            <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-                                  class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
+                        <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
+                              class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
                                 @if($task->priority === 'высокий')
                                     <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">‼️ Высокий</span>
                                 @elseif($task->priority === 'критический')
@@ -469,7 +558,6 @@
                                     {{ substr($task->author->name, 0, 2) }}
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 @endforeach
@@ -923,7 +1011,7 @@
         </div>
     </div>
 
-    <!-- ==================== МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ ЗАДАЧИ (С ФАЙЛОВЫМ ХРАНИЛИЩЕМ) ==================== -->
+    <!-- ==================== МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ ЗАДАЧИ ==================== -->
     <div id="editTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
         <div class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
             <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-100">
@@ -1084,7 +1172,6 @@
                             </div>
                             <div class="flex space-x-2">
                                 <button type="button" onclick="openTaskEditFileManager()"
-
                                         class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200">
                                     <i class="fas fa-folder-open mr-2"></i>Открыть хранилище
                                 </button>
@@ -1144,8 +1231,8 @@
                             class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition">
                         Отмена
                     </button>
-                     <button type="submit"
-                      class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    <button type="submit"
+                            class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                         <i class="fas fa-save mr-2"></i>Сохранить изменения
                     </button>
                 </div>
@@ -1295,7 +1382,7 @@
             }
         }
 
-        function switchTaskFileTab(tabName) {
+        function switchFileTab(tabName) {
             document.querySelectorAll('#taskModal .tab-button').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.dataset.tab === tabName) btn.classList.add('active');
@@ -1553,7 +1640,7 @@
             }
         }
 
-        function switchTaskEditFileTab(tabName) {
+        function switchEditFileTab(tabName) {
             const tabButtons = document.querySelectorAll('#editTaskModal .tab-button');
             const tabContents = document.querySelectorAll('#editTaskModal .tab-content');
             tabButtons.forEach(btn => {
@@ -1760,7 +1847,7 @@
                     selectedFilesInput.value = JSON.stringify(taskSelectedFiles);
                 }
                 updateTaskSelectedFilesDisplay();
-                switchTaskFileTab('storage');
+                switchFileTab('storage');
                 closeTaskStorageManager();
             }
         };
@@ -1826,9 +1913,7 @@
         });
 
         // ==================== ОБРАБОТКА ФОРМЫ СОЗДАНИЯ ЗАДАЧИ ====================
-        // Отключаем глобальный обработчик layout для личных задач
         (function() {
-            const originalTaskFormSubmit = document.getElementById('taskForm')?.submit;
             const taskForm = document.getElementById('taskForm');
 
             if (taskForm) {
@@ -1849,6 +1934,16 @@
                             submitBtn.disabled = true;
                         }
 
+                        // Добавляем is_personal = true
+                        formData.append('is_personal', '1');
+
+                        // Убеждаемся что department_id есть (если у пользователя есть отдел)
+                        @if(isset($user) && $user->department_id)
+                        if (!formData.has('department_id') || !formData.get('department_id')) {
+                            formData.append('department_id', '{{ $user->department_id }}');
+                        }
+                        @endif
+
                         fetch('/tasks/personal/store', {
                             method: 'POST',
                             headers: {
@@ -1860,19 +1955,18 @@
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
-                                    // alert('Личная задача успешно создана!');
-                                    showNotification("Личная задача успешно создана!","success");
+                                    showNotification("Личная задача успешно создана!", "success");
                                     closeTaskModal();
                                     setTimeout(() => {
                                         location.reload();
-                                    },1000)
+                                    }, 1000);
                                 } else {
-                                    showNotification(data.message || 'Ошибка при создании задачи',"error");
+                                    showNotification(data.message || 'Ошибка при создании задачи', "error");
                                 }
                             })
                             .catch(error => {
                                 console.error('Ошибка:', error);
-                                showNotification("Ошибка при создании задачи","error");
+                                showNotification("Ошибка при создании задачи", "error");
                             })
                             .finally(() => {
                                 if (submitBtn) {
@@ -2199,50 +2293,42 @@
             // Отключаем HTML5 валидацию формы
             form.setAttribute('novalidate', 'novalidate');
 
-            // Удаляем старый скрытый department_id если есть
+            // Удаляем старые скрытые поля если есть
             const oldHiddenDept = form.querySelector('input[name="department_id"][type="hidden"]');
             if (oldHiddenDept) oldHiddenDept.remove();
 
-            // Добавляем скрытое поле department_id
+            const oldIsPersonal = form.querySelector('input[name="is_personal"]');
+            if (oldIsPersonal) oldIsPersonal.remove();
+
+            // Добавляем скрытое поле department_id с отделом пользователя
+            @if(isset($user) && $user->department_id)
             const hiddenDeptInput = document.createElement('input');
             hiddenDeptInput.type = 'hidden';
             hiddenDeptInput.name = 'department_id';
-            hiddenDeptInput.value = '';
+            hiddenDeptInput.value = '{{ $user->department_id }}';
             form.appendChild(hiddenDeptInput);
+            @endif
+
+            // Добавляем скрытое поле is_personal
+            const isPersonalInput = document.createElement('input');
+            isPersonalInput.type = 'hidden';
+            isPersonalInput.name = 'is_personal';
+            isPersonalInput.value = '1';
+            form.appendChild(isPersonalInput);
 
             const titleElement = modal.querySelector('h3');
             const descElement = modal.querySelector('p');
             if (titleElement) titleElement.textContent = 'Новая личная задача';
             if (descElement) descElement.textContent = 'Создайте задачу для себя';
 
+            // Скрываем ненужные поля
             const executorField = document.querySelector('select[name="user_id"]')?.closest('.space-y-2');
-            const departmentField = document.querySelector('select[name="department_id"]')?.closest('.space-y-2');
+            const departmentField = document.querySelector('select[name="department_id"]:not([type="hidden"])')?.closest('.space-y-2');
             const statusField = document.querySelector('select[name="status"]')?.closest('.space-y-2');
 
-            const departmentSelect = document.querySelector('select[name="department_id"]');
-            const statusSelect = document.querySelector('select[name="status"]');
-
             if (executorField) executorField.style.display = 'none';
-
-            @if(isset($user) && $user->department_id && $user->department)
-            if (departmentField && departmentSelect) {
-                departmentSelect.removeAttribute('required');
-                departmentSelect.innerHTML = `<option value="{{ $user->department_id }}" selected>{{ $user->department->name }}</option>`;
-                departmentSelect.disabled = true;
-                departmentField.style.display = 'block';
-            }
-            @else
-            if (departmentField && departmentSelect) {
-                departmentSelect.removeAttribute('required');
-                departmentField.style.display = 'none';
-            }
-            @endif
-
-            if (statusField && statusSelect) {
-                statusSelect.innerHTML = `<option value="назначена" selected>назначена</option>`;
-                statusSelect.disabled = true;
-                statusField.style.display = 'block';
-            }
+            if (departmentField) departmentField.style.display = 'none';
+            if (statusField) statusField.style.display = 'none';
 
             modal.classList.remove('hidden');
         }
@@ -2256,13 +2342,21 @@
             // Восстанавливаем валидацию формы
             form.removeAttribute('novalidate');
 
+            // Восстанавливаем видимость полей
             const executorField = document.querySelector('select[name="user_id"]')?.closest('.space-y-2');
-            const departmentField = document.querySelector('select[name="department_id"]')?.closest('.space-y-2');
+            const departmentField = document.querySelector('select[name="department_id"]:not([type="hidden"])')?.closest('.space-y-2');
             const statusField = document.querySelector('select[name="status"]')?.closest('.space-y-2');
 
             if (executorField) executorField.style.display = 'block';
             if (departmentField) departmentField.style.display = 'block';
             if (statusField) statusField.style.display = 'block';
+
+            // Удаляем скрытые поля
+            const hiddenDept = form.querySelector('input[name="department_id"][type="hidden"]');
+            if (hiddenDept) hiddenDept.remove();
+
+            const hiddenIsPersonal = form.querySelector('input[name="is_personal"]');
+            if (hiddenIsPersonal) hiddenIsPersonal.remove();
 
             const titleElement = modal.querySelector('h3');
             const descElement = modal.querySelector('p');
@@ -2271,9 +2365,6 @@
 
             if (form) {
                 form.reset();
-                // Удаляем скрытое поле department_id если оно есть
-                const hiddenDept = form.querySelector('input[name="department_id"][type="hidden"]');
-                if (hiddenDept) hiddenDept.remove();
             }
 
             taskSelectedFiles = [];
@@ -2542,43 +2633,22 @@
             if (e.key === 'Escape') closeTaskViewModal();
         });
 
-
         // ==================== УВЕДОМЛЕНИЯ ====================
-        //   function showNotification(type, message) {
-        //     const notification = document.createElement('div');
-        //     notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-transform duration-300 ${
-        //         type === 'success' ? 'bg-green-500 text-white' :
-        //             type === 'error' ? 'bg-red-500 text-white' :
-        //                 type === 'warning' ? 'bg-yellow-500 text-white' :
-        //                     'bg-blue-500 text-white'
-        //     }`;
-        //     notification.innerHTML = `<div class="flex items-center space-x-2">
-        //         <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
-        //         <span>${escapeHtml(message)}</span>
-        //     </div>`;
-        //     document.body.appendChild(notification);
-        //     setTimeout(() => {
-        //         notification.style.transform = 'translateX(100%)';
-        //         setTimeout(() => {
-        //             if (document.body.contains(notification)) document.body.removeChild(notification);
-        //         }, 300);
-        //     }, 5000);
-        // }
         function showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${type === 'success' ? 'bg-green-500 text-white' : type === 'error' ? 'bg-red-500 text-white' : type === 'warning' ? 'bg-yellow-500 text-white' : 'bg-blue-500 text-white'}`;
-        notification.innerHTML = `<div class="flex items-center"><i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} mr-2"></i><span>йййййй${message}</span></div>`;
-        document.body.appendChild(notification);
-        setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
-        }, 100);
-        setTimeout(() => {
-            notification.style.transform = 'translateX(100%)';
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${type === 'success' ? 'bg-green-500 text-white' : type === 'error' ? 'bg-red-500 text-white' : type === 'warning' ? 'bg-yellow-500 text-white' : 'bg-blue-500 text-white'}`;
+            notification.innerHTML = `<div class="flex items-center"><i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} mr-2"></i><span>${message}</span></div>`;
+            document.body.appendChild(notification);
             setTimeout(() => {
-                if (notification.parentNode) notification.parentNode.removeChild(notification);
-            }, 300);
-        }, 5000);
-    }
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) notification.parentNode.removeChild(notification);
+                }, 300);
+            }, 5000);
+        }
     </script>
 
     <style>
@@ -2667,6 +2737,15 @@
         .board-column.drag-over-active {
             background-color: rgba(16, 185, 129, 0.2) !important;
             border: 2px dashed #10b981;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .shake {
+            animation: shake 0.3s ease-in-out;
         }
     </style>
 

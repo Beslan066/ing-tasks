@@ -93,9 +93,11 @@ media-src https://meet.jit.si https:;
         .main-container {
             background-color: #f9fafb;
         }
-        .active-page{
+
+        .active-page {
             transition: padding 0.4s ease;
         }
+
         /* Стиль main-container с фоном */
         .main-container.has-background {
             background-size: cover;
@@ -350,14 +352,17 @@ media-src https://meet.jit.si https:;
         .burger-btn.active span:nth-child(3) {
             transform: translateY(-9.5px) rotate(-45deg);
         }
-        @media(max-width:500px) {
+
+        @media (max-width: 500px) {
             .sidebar {
-                box-shadow:none;
+                box-shadow: none;
             }
+
             .main-container:not(:has(.has-background)) {
 
             }
-            .main-container:not(:has(.has-background)):has(.sidebar.active) .burger-btn span{
+
+            .main-container:not(:has(.has-background)):has(.sidebar.active) .burger-btn span {
                 color: #ffffff;
                 background-color: #ffffff;
             }
@@ -389,8 +394,62 @@ media-src https://meet.jit.si https:;
         #extraMenuIcon {
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        /* Анимации для быстрого добавления */
+        #quickAddFormInner {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: top center;
+        }
+
+        #showQuickAddBtn {
+            transition: all 0.3s ease;
+        }
+
+        #showQuickAddBtn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Стили для полей ввода */
+        #quickTaskName:focus,
+        #quickTaskPriority:focus,
+        #quickTaskDeadline:focus,
+        #quickTaskDescription:focus {
+            background-color: white;
+        }
+
+        /* Кастомный скролл для текстареа */
+        #quickTaskDescription::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #quickTaskDescription::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        #quickTaskDescription::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        /* Стили для datetime-local */
+        input[type="datetime-local"] {
+            color-scheme: light;
+        }
+
+        /* Плавное появление формы */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
-<!-- @stack('sidebar-styles') -->
+    <!-- @stack('sidebar-styles') -->
 </head>
 
 <body class="bg-gray-50 font-sans">
@@ -406,36 +465,39 @@ media-src https://meet.jit.si https:;
     @endif>
 
     <!-- Боковая панель -->
-   @include('partials.sidebar.sidebar')
+    @include('partials.sidebar.sidebar')
     <!-- Основной контент -->
-    <div class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:pt-[30px] max-[638px]:w-full max-[500px]:pt-[20px] max-[500px]:pb-[20px] {{ $backgroundEnabled && $backgroundImage ? '' : 'bg-gray-100' }}">
+    <div
+        class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:pt-[30px] max-[638px]:w-full max-[500px]:pt-[20px] max-[500px]:pb-[20px] {{ $backgroundEnabled && $backgroundImage ? '' : 'bg-gray-100' }}">
 
-    <div class="justify-between items-center relative pr-4 pl-4 pb-6 hidden max-[638px]:flex">
-   <!-- Логотип -->
-        <div>
-            <a href="{{route('welcome')}}" class="flex items-center space-x-3 group">
-                <div
-                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
-                    <i class="fas fa-tasks text-white text-lg"></i>
-                </div>
-                 <div>
-                    @if($backgroundEnabled && $backgroundImage)
-                    <h1 class="text-xl font-bold text-white">Менеджер<span class="text-primary-500">Плюс</span></h1>
-                    <p class="text-xs text-sidebar-text mt-1">Управление задачами</p>
-                    @else
-                    <h1 class="text-xl font-bold text-gray-700">Менеджер<span class="text-primary-500">Плюс</span></h1>
-                    <p class="text-xs text-sidebar-text mt-1">Управление задачами</p>
-                    @endif
-                </div>
-            </a>
+        <div class="justify-between items-center relative pr-4 pl-4 pb-6 hidden max-[638px]:flex">
+            <!-- Логотип -->
+            <div>
+                <a href="{{route('welcome')}}" class="flex items-center space-x-3 group">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
+                        <i class="fas fa-tasks text-white text-lg"></i>
+                    </div>
+                    <div>
+                        @if($backgroundEnabled && $backgroundImage)
+                            <h1 class="text-xl font-bold text-white">Менеджер<span class="text-primary-500">Плюс</span>
+                            </h1>
+                            <p class="text-xs text-sidebar-text mt-1">Управление задачами</p>
+                        @else
+                            <h1 class="text-xl font-bold text-gray-700">Менеджер<span
+                                    class="text-primary-500">Плюс</span></h1>
+                            <p class="text-xs text-sidebar-text mt-1">Управление задачами</p>
+                        @endif
+                    </div>
+                </a>
+            </div>
+            <!-- Бургер меню -->
+            <button id="burger-btn" class="burger-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
-        <!-- Бургер меню -->
-        <button id="burger-btn" class="burger-btn">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-    </div>
 
         <div id="home" class="page active-page p-6 pl-[calc(256px+1.5rem)] max-[638px]:pl-6 max-[550px]:p-3">
             @yield('content')
@@ -499,9 +561,8 @@ media-src https://meet.jit.si https:;
     let activityInterval = null;
 
 
-
     // Подсветка активного пункта в подменю
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Проверяем, открыт ли какой-то из подпунктов
         const currentRoute = window.location.pathname;
         const extraLinks = ['news', 'support', 'license', 'payment'];
@@ -719,7 +780,7 @@ media-src https://meet.jit.si https:;
     window.selectedFiles = [];
     window.allFiles = [];
 
-    (function() {
+    (function () {
         // Функция для проверки - открыта ли модалка личной задачи
         function isPersonalTaskModal() {
             const modal = document.getElementById('taskModal');
@@ -731,7 +792,7 @@ media-src https://meet.jit.si https:;
         let originalSubmitHandler = null;
 
         // Ждем загрузки DOM
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('taskForm');
             if (!form) return;
 
@@ -739,7 +800,7 @@ media-src https://meet.jit.si https:;
             const oldSubmit = form.submit;
 
             // Переопределяем submit
-            form.submit = function() {
+            form.submit = function () {
                 if (isPersonalTaskModal()) {
                     // Для личных задач - отправляем через AJAX
                     const formData = new FormData(this);
@@ -791,7 +852,7 @@ media-src https://meet.jit.si https:;
             };
 
             // Добавляем свой обработчик на submit
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', function (e) {
                 if (isPersonalTaskModal()) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -1967,6 +2028,199 @@ media-src https://meet.jit.si https:;
             }
         });
     }
+
+    // ==================== БЫСТРОЕ ДОБАВЛЕНИЕ ЗАДАЧИ (НОВЫЙ СТИЛЬ) ====================
+    function showQuickAddForm() {
+        const showBtn = document.getElementById('showQuickAddBtn');
+        const form = document.getElementById('quickAddForm');
+        const formInner = document.getElementById('quickAddFormInner');
+
+        if (showBtn && form && formInner) {
+            showBtn.classList.add('hidden');
+            form.classList.remove('hidden');
+
+            // Анимация появления
+            setTimeout(() => {
+                formInner.classList.remove('scale-95', 'opacity-0');
+                formInner.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            // Фокусируемся на поле ввода названия
+            setTimeout(() => {
+                document.getElementById('quickTaskName').focus();
+            }, 200);
+        }
+    }
+
+    function hideQuickAddForm() {
+        const showBtn = document.getElementById('showQuickAddBtn');
+        const form = document.getElementById('quickAddForm');
+        const formInner = document.getElementById('quickAddFormInner');
+
+        if (formInner) {
+            formInner.classList.remove('scale-100', 'opacity-100');
+            formInner.classList.add('scale-95', 'opacity-0');
+        }
+
+        setTimeout(() => {
+            if (form && showBtn) {
+                form.classList.add('hidden');
+                showBtn.classList.remove('hidden');
+            }
+        }, 200);
+
+        // Очищаем форму
+        document.getElementById('quickTaskName').value = '';
+        document.getElementById('quickTaskDescription').value = '';
+        document.getElementById('quickTaskDeadline').value = '';
+        document.getElementById('quickTaskPriority').value = 'средний';
+    }
+
+    async function createQuickTask() {
+        const taskName = document.getElementById('quickTaskName').value.trim();
+
+        if (!taskName) {
+            const input = document.getElementById('quickTaskName');
+            input.classList.add('shake');
+            input.style.border = '2px solid #ef4444';
+            setTimeout(() => {
+                input.classList.remove('shake');
+                input.style.border = '';
+            }, 500);
+            showNotification('Пожалуйста, укажите название задачи', 'error');
+            document.getElementById('quickTaskName').focus();
+            return;
+        }
+
+        const submitBtn = document.querySelector('#quickAddForm button[onclick="createQuickTask()"]');
+        const originalText = submitBtn?.innerHTML;
+
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i><span>Создание...</span>';
+            submitBtn.disabled = true;
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('name', taskName);
+            formData.append('description', document.getElementById('quickTaskDescription').value);
+            formData.append('priority', document.getElementById('quickTaskPriority').value);
+            formData.append('deadline', document.getElementById('quickTaskDeadline').value || '');
+            formData.append('status', 'назначена');
+            formData.append('is_personal', '1');
+            formData.append('_token', '{{ csrf_token() }}');
+
+            @if(auth()->check())
+            formData.append('user_id', '{{ auth()->id() }}');
+            formData.append('author_id', '{{ auth()->id() }}');
+            @endif
+
+            const response = await fetch('/tasks/personal/store', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showNotification('Задача "' + escapeHtml(taskName) + '" успешно создана!', 'success');
+                hideQuickAddForm();
+
+                // Добавляем новую задачу в колонку без перезагрузки страницы
+                if (data.task) {
+                    addTaskToColumn(data.task);
+                } else {
+                    // Если нет данных задачи в ответе, просто перезагружаем
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                }
+            } else {
+                showNotification(data.message || 'Ошибка при создании задачи', 'error');
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+            showNotification('Ошибка при создании задачи', 'error');
+        } finally {
+            if (submitBtn) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+    }
+
+    function showSuccessNotification(message, taskName) {
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-20 right-4 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-xl shadow-2xl z-50 transform transition-all duration-300 translate-x-full';
+        notification.innerHTML = `
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                <i class="fas fa-check-circle text-xl"></i>
+            </div>
+            <div>
+                <p class="font-semibold">${message}</p>
+                <p class="text-sm text-white/80">"${escapeHtml(taskName.substring(0, 50))}${taskName.length > 50 ? '...' : ''}"</p>
+            </div>
+        </div>
+    `;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.classList.remove('translate-x-full');
+            notification.classList.add('translate-x-0');
+        }, 100);
+
+        setTimeout(() => {
+            notification.classList.remove('translate-x-0');
+            notification.classList.add('translate-x-full');
+            setTimeout(() => {
+                if (notification.parentNode) notification.parentNode.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+
+    // Добавляем поддержку Enter и Escape
+    document.addEventListener('DOMContentLoaded', function () {
+        const quickTaskName = document.getElementById('quickTaskName');
+        if (quickTaskName) {
+            quickTaskName.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    createQuickTask();
+                }
+            });
+        }
+
+        // Escape для закрытия формы
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                const form = document.getElementById('quickAddForm');
+                if (form && !form.classList.contains('hidden')) {
+                    hideQuickAddForm();
+                }
+            }
+        });
+    });
+
+    // Эффект встряски для инпутов
+    const style = document.createElement('style');
+    style.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    .shake {
+        animation: shake 0.3s ease-in-out;
+    }
+`;
+    document.head.appendChild(style);
+
+    // Конец быстрого добавления
 </script>
 
 <script>
@@ -2288,30 +2542,31 @@ media-src https://meet.jit.si https:;
     }
 
     async function startTask(taskId) {
-            try {
-                const response = await fetch(`/tasks/${taskId}/status`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ status: 'в работе' })
-                });
+        try {
+            const response = await fetch(`/tasks/${taskId}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({status: 'в работе'})
+            });
 
-                const data = await response.json();
+            const data = await response.json();
 
-                if (data.success) {
-                    showNotification('Задача переведена в работу!', 'success');
-                    closeTaskViewModal();
-                    location.reload();
-                } else {
-                    showNotification(data.message || 'Ошибка при обновлении статуса', 'error');
-                }
-            } catch (error) {
-                console.error('Ошибка:', error);
-                showNotification('Ошибка при обновлении статуса', 'error');
+            if (data.success) {
+                showNotification('Задача переведена в работу!', 'success');
+                closeTaskViewModal();
+                location.reload();
+            } else {
+                showNotification(data.message || 'Ошибка при обновлении статуса', 'error');
             }
+        } catch (error) {
+            console.error('Ошибка:', error);
+            showNotification('Ошибка при обновлении статуса', 'error');
         }
+    }
+
     // Закрыть модальное окно просмотра задачи
     function closeTaskViewModal() {
         document.getElementById('taskViewModal').classList.add('hidden');
