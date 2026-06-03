@@ -93,7 +93,9 @@ media-src https://meet.jit.si https:;
         .main-container {
             background-color: #f9fafb;
         }
-
+        .active-page{
+            transition: padding 0.4s ease;
+        }
         /* Стиль main-container с фоном */
         .main-container.has-background {
             background-size: cover;
@@ -827,12 +829,12 @@ media-src https://meet.jit.si https:;
         }
 
 
-        const currentPath = window.location.pathname;
-        navItems.forEach(item => {
-            if (item.getAttribute('href') === currentPath) {
-                item.classList.add('active');
-            }
-        });
+        // const currentPath = window.location.pathname;
+        // navItems.forEach(item => {
+        //     if (item.getAttribute('href') === currentPath) {
+        //         item.classList.add('active');
+        //     }
+        // });
 
         // Инициализация drag and drop после загрузки
         initTaskDragAndDrop();
