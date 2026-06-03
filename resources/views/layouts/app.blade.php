@@ -93,7 +93,9 @@ media-src https://meet.jit.si https:;
         .main-container {
             background-color: #f9fafb;
         }
-
+        .active-page{
+            transition: padding 0.4s ease;
+        }
         /* Стиль main-container с фоном */
         .main-container.has-background {
             background-size: cover;

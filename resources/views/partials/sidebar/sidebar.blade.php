@@ -1,5 +1,5 @@
  <!-- Боковая панель -->
-    <div id="sidebar-menu" class="sidebar w-64 h-full py-2 px-4 fixed {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
+    <div id="sidebar-menu" class="sidebar w-full max-w-64 h-full py-2 px-4 fixed {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
 <div class="relative h-full w-full sm:flex flex-col max-[638px]:flex">
 
 
@@ -8,7 +8,7 @@
             <div class="flex items-center space-x-3 group">
                 <div
                 id="logo-icon"
-                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
+                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
                     <i class="fas fa-tasks text-white text-lg"></i>
                 </div>
                 <a href="{{route('welcome')}}"  class="logotype__text">
@@ -108,7 +108,7 @@
 
             <!-- Онлайн пользователи -->
             <div class="mb-4 online-users">
-                <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider mb-3 px-2">В СЕТИ</h3>
+                <h3 class="text-xs font-semibold text-sidebar-text uppercase text-nowrap whitespace-nowrap tracking-wider mb-3 px-2">В СЕТИ</h3>
 
                 @if(isset($onlineUsersCount) && $onlineUsersCount > 0)
                     <div class="flex items-center mb-3">
@@ -125,7 +125,7 @@
                                     </div>
                                 @endforeach
                                 @php
-                                    $moreOnline = $onlineUsersCount - min(3, $onlineUsers->count());
+        $moreOnline = $onlineUsersCount - min(3, $onlineUsers->count());
                                 @endphp
                                 @if($moreOnline > 0)
                                     <div
@@ -249,234 +249,244 @@
 
 
 @once
-<!-- sidebar styles -->
-    <style>
-             .main-container.has-background  {
-                     .nav-item {
-                position: relative;
-                transition: all 0.3s ease;
-                border-radius: 12px;
-                overflow: hidden;
-            }
+    <!-- sidebar styles -->
+        <style>
+            .main-container.has-background {
+                .nav-item {
+                    position: relative;
+                    transition: all 0.3s ease;
+                    border-radius: 12px;
+                    overflow: hidden;
+                }
 
-            .nav-item::before {
-                content: '';
-                position: absolute;
-                left: 0;
-                top: 0;
-                height: 100%;
-                width: 3px;
-                background: linear-gradient(180deg, #22c55e, #16a34a);
-                transform: scaleY(0);
-                transition: transform 0.3s ease;
-            }
+                .nav-item::before {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    height: 100%;
+                    width: 3px;
+                    background: linear-gradient(180deg, #22c55e, #16a34a);
+                    transform: scaleY(0);
+                    transition: transform 0.3s ease;
+                }
 
-            .nav-item:hover::before {
-                transform: scaleY(1);
-            }
+                .nav-item:hover::before {
+                    transform: scaleY(1);
+                }
 
-            .nav-item.active::before {
-                transform: scaleY(1);
-            }
+                .nav-item.active::before {
+                    transform: scaleY(1);
+                }
 
-            .nav-item.active {
-                background: rgba(34, 197, 94, 0.1);
-            }
+                .nav-item.active {
+                    background: rgba(34, 197, 94, 0.1);
+                }
 
                 .sidebar:hover {
-                box-shadow: 0 0 50px rgba(34, 197, 94, 0.1);
-            }
-}
-.nav-item {
-    overflow: hidden;
-    flex-shrink: 0;
-}
-.nav-item > span{
-white-space: nowrap;
-}
-        .sidebar {
-            background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-             overflow:hidden;
-             &.glass {
-            backdrop-filter: blur(10px) saturate(160%);
-            background: none;
-            -webkit-backdrop-filter: blur(10px) saturate(160%);
-            box-shadow: 10px 0 15px -3px rgba(0, 0, 0, 0.1);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        }
-  .nav-item:hover {
-            transform: translateX(5px);
-        }
-        /* Стили sidebar когда фон выбран - убираем background */
-        .sidebar.no-background {
-            background: transparent !important;
-            backdrop-filter: none !important;
-            box-shadow: none !important;
-        }
-
-        /* ------v */
-        .sidebar.glass {
-            backdrop-filter: blur(10px) saturate(160%);
-            background: none;
-            -webkit-backdrop-filter: blur(10px) saturate(160%);
-            box-shadow: 10px 0 15px -3px rgba(0, 0, 0, 0.1);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-        }
-#logo-icon {
-    pointer-events: none;
-}
-@media(min-width: 638px) {
-      .main-container.sidebar-mode-collapsed {
-.sidebar {
-            width: 4.5rem !important;
-
-            .logotype__text {
-                	position: absolute;
-	width: 1px;
-	height: 1px;
-	margin: -1px;
-	padding: 0;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	border: 0;
-      transition:transform 1.15s  ease-in-out;
-            }
-        }
-        .active-page {
-            padding-left: calc(1.5rem + 4.5rem);
-        }
-        .nav-item {
-            padding-left: 0;
-            padding-right: 0;
-            justify-content: center;
-            transition:transform 1.15s  ease-in-out;
-        }
-        .nav-item span {
-            	position: absolute;
-	width: 1px;
-	height: 1px;
-	margin: -1px;
-	padding: 0;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	border: 0;
-    transition:transform 1.15s  ease-in-out;
-        }
-        .nav-item > div {
-            margin-right: 0;
-        }
-        .nav-item:hover {
-            transform: scale(1.1);
-            background: none;
-        }
-        .online-users {
-            h3 {
-                	position: absolute;
-	width: 1px;
-	height: 1px;
-	margin: -1px;
-	padding: 0;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	border: 0;
-            }
-        }
-        .tags {
-            h3 {
-                	position: absolute;
-	width: 1px;
-	height: 1px;
-	margin: -1px;
-	padding: 0;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	border: 0;
-            }
-            p {
-                	position: absolute;
-	width: 1px;
-	height: 1px;
-	margin: -1px;
-	padding: 0;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	border: 0;
-            }
-        }
-        .user-profile__name {
-           	position: absolute;
-	width: 1px;
-	height: 1px;
-	margin: -1px;
-	padding: 0;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	border: 0;
-        }
-        .user-profile__arrow-icon {
-            	position: absolute;
-	width: 1px;
-	height: 1px;
-	margin: -1px;
-	padding: 0;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	border: 0;
-        }
-}
-#logo-icon {
-    pointer-events: all;
-}
-#sidebar-overlay {
-    display: none !important;
-}
-}
-@media (max-width: 638px) {
-  .sidebar {
-    position: fixed !important;
-    top: 0;
-    left: -100%;
-    height: 100%;
-    z-index: 999;
-    width: 20rem !important;
-    padding-bottom: 0.5rem;
-
-    transition-property: left;
-    transition-duration: 300ms;
-    transition-timing-function: ease-in-out;
-     box-shadow: none;
-  }
-
-  .sidebar.active {
-    left: 0;
-  }
-}
-
-
-@media (max-width: 500px) {
-  .sidebar {
-    width: 100% !important;
-  }
-}
-
-    </style>
-
-     <script>
-   document.addEventListener('DOMContentLoaded', function () {
-        const logoIcon = document.getElementById('logo-icon');
-        const mainContainer = document.querySelector('.main-container');
-        if (logoIcon && mainContainer) {
-            logoIcon.addEventListener('click', function () {
-                if (window.innerWidth > 638) {
-                    mainContainer.classList.toggle('sidebar-mode-collapsed');
+                    box-shadow: 0 0 50px rgba(34, 197, 94, 0.1);
                 }
-            });
-        }
-    });
- </script>
+            }
+
+            .nav-item {
+                overflow: hidden;
+                flex-shrink: 0;
+            }
+
+            .nav-item>span {
+                white-space: nowrap;
+            }
+
+            .nav-item:hover {
+                transform: translateX(5px);
+            }
+
+            .sidebar {
+                background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);
+                backdrop-filter: blur(20px);
+                box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                overflow: hidden;
+
+                &.glass {
+                    backdrop-filter: blur(10px) saturate(160%);
+                    background: none;
+                    -webkit-backdrop-filter: blur(10px) saturate(160%);
+                    box-shadow: 10px 0 15px -3px rgba(0, 0, 0, 0.1);
+                    border-right: 1px solid rgba(255, 255, 255, 0.1);
+                }
+            }
+
+            /* Стили sidebar когда фон выбран - убираем background */
+            .sidebar.no-background {
+                background: transparent !important;
+                backdrop-filter: none !important;
+                box-shadow: none !important;
+            }
+
+            /* ------v */
+            .sidebar.glass {
+                backdrop-filter: blur(10px) saturate(160%);
+                background: none;
+                -webkit-backdrop-filter: blur(10px) saturate(160%);
+                box-shadow: 10px 0 15px -3px rgba(0, 0, 0, 0.1);
+                border-right: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            #logo-icon {
+                pointer-events: none;
+            }
+
+
+            @media(min-width: 638px) {
+                .sidebar {
+                    transition: max-width 0.3s ease-in-out;
+                }
+
+                .main-container.sidebar-mode-collapsed {
+                    .sidebar {
+                        max-width: 4.5rem !important;
+
+                        .logotype__text {
+                            visibility: hidden;
+                            opacity: 0;
+                            max-width: 0;
+                            max-height: 0;
+                            transition: all 0.3s ease;
+                        }
+
+                        .tags {
+                            visibility: hidden;
+                            opacity: 0;
+                            max-width: 0;
+                            max-height: 0;
+                            transition: all 0.3s ease;
+                        }
+                    }
+
+                    .active-page {
+                        padding-left: calc(1.5rem + 4.5rem);
+                    }
+
+                    .nav-item {
+                        padding-left: 0;
+                        padding-right: 0;
+                        justify-content: center;
+
+                    }
+
+                    .nav-item span {
+                        visibility: hidden;
+                        opacity: 0;
+                        max-width: 0;
+                        max-height: 0;
+                        transition: all 0.3s ease;
+                    }
+
+                    .nav-item>div {
+                        margin-right: 0;
+                    }
+
+                    .nav-item:hover {
+                        transform: scale(1.1);
+                        background: none;
+                    }
+
+                    .online-users {
+                        h3 {
+                            visibility: hidden;
+                            opacity: 0;
+                            max-width: 0;
+                            max-height: 0;
+                            transition: all 0.3s ease;
+                        }
+                    }
+
+                    .tags {
+                        h3 {
+                            visibility: hidden;
+                            opacity: 0;
+                            max-width: 0;
+                            max-height: 0;
+                            transition: all 0.3s ease;
+                        }
+
+                        p {
+                            visibility: hidden;
+                            opacity: 0;
+                            max-width: 0;
+                            max-height: 0;
+                            transition: all 0.3s ease;
+                        }
+                    }
+
+                    .user-profile__name {
+                        visibility: hidden;
+                        opacity: 0;
+                        max-width: 0;
+                        max-height: 0;
+                        transition: all 0.3s ease;
+                    }
+
+                    .user-profile__arrow-icon {
+                        visibility: hidden;
+                        opacity: 0;
+                        max-width: 0;
+                        max-height: 0;
+                        transition: all 0.3s ease;
+                    }
+                }
+
+                #logo-icon {
+                    pointer-events: all;
+                }
+
+                #sidebar-overlay {
+                    display: none !important;
+                }
+            }
+
+            @media (max-width: 638px) {
+                .sidebar {
+                    position: fixed !important;
+                    top: 0;
+                    left: -100%;
+                    height: 100%;
+                    z-index: 999;
+                    width: 20rem !important;
+                    padding-bottom: 0.5rem;
+
+                    transition-property: left;
+                    transition-duration: 300ms;
+                    transition-timing-function: ease-in-out;
+                    box-shadow: none;
+                }
+
+                .sidebar.active {
+                    left: 0;
+                }
+            }
+
+
+            @media (max-width: 500px) {
+                .sidebar {
+                    width: 100% !important;
+                }
+            }
+        </style>
+
+         <script>
+       document.addEventListener('DOMContentLoaded', function () {
+            const logoIcon = document.getElementById('logo-icon');
+            const mainContainer = document.querySelector('.main-container');
+            if (logoIcon && mainContainer) {
+                logoIcon.addEventListener('click', function () {
+                    if (window.innerWidth > 638) {
+                        mainContainer.classList.toggle('sidebar-mode-collapsed');
+                    }
+                });
+            }
+        });
+     </script>
 @endonce
 
