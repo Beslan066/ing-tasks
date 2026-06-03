@@ -588,11 +588,22 @@
          * Update task (добавляем поддержку файлов)
          */
 
+        /**
+         * Update task (добавляем поддержку файлов)
+         */
         public function update(Request $request, Task $task)
         {
             $user = Auth::user();
             $oldUserId = $task->user_id;
             $oldStatus = $task->status;
+            $oldDepartmentId = $task->department_id;
+            $oldPriority = $task->priority;
+            $oldDeadline = $task->deadline;
+            $oldEstimatedHours = $task->estimated_hours;
+            $oldActualHours = $task->actual_hours;
+            $oldName = $task->name;
+            $oldDescription = $task->description;
+            $oldCategoryId = $task->category_id;
 
             if (!$user->canViewAllCompanyTasks()) {
                 return response()->json([
@@ -641,7 +652,6 @@
                     ], 422);
                 }
 
-                $oldUserId = $task->user_id;
                 $newAssignedUser = null;
 
                 if ($request->user_id) {
@@ -678,8 +688,7 @@
 
                 $task->update($updateData);
 
-                // ==================== ОБРАБОТКА ФАЙЛОВ ====================
-                // Получаем выбранные файлы из поля selected_files
+                // ОБРАБОТКА ФАЙЛОВ
                 $selectedFileIds = [];
 
                 if ($request->has('selected_files')) {
@@ -698,7 +707,7 @@
                 // Убираем дубликаты и пустые значения
                 $selectedFileIds = array_unique(array_filter($selectedFileIds));
 
-                // Синхронизируем файлы (если есть)
+                // Синхронизируем файлы
                 if (!empty($selectedFileIds)) {
                     $task->files()->sync($selectedFileIds);
                 } else {
@@ -714,16 +723,60 @@
                     }
                 }
 
-                // Логируем обновление задачи
-                ActivityLogger::taskUpdated($task, $user, [
-                    'old' => ['status' => $oldStatus, 'user_id' => $oldUserId],
-                    'new' => ['status' => $request->status, 'user_id' => $request->user_id]
-                ]);
+                // Формируем список изменений для логирования
+                $changes = [];
 
-                // Если изменился исполнитель
+                if ($oldName != $request->name) {
+                    $changes[] = "название: '{$oldName}' → '{$request->name}'";
+                }
+                if ($oldStatus != $request->status) {
+                    $changes[] = "статус: '{$oldStatus}' → '{$request->status}'";
+                }
+                if ($oldUserId != $request->user_id) {
+                    $oldUserName = $oldUserId ? User::find($oldUserId)?->name : 'не назначен';
+                    $newUserName = $request->user_id ? User::find($request->user_id)?->name : 'не назначен';
+                    $changes[] = "исполнитель: '{$oldUserName}' → '{$newUserName}'";
+                }
+                if ($oldDepartmentId != $request->department_id) {
+                    $oldDeptName = Department::find($oldDepartmentId)?->name ?? 'не указан';
+                    $newDeptName = Department::find($request->department_id)?->name ?? 'не указан';
+                    $changes[] = "отдел: '{$oldDeptName}' → '{$newDeptName}'";
+                }
+                if ($oldCategoryId != $request->category_id) {
+                    $oldCatName = Category::find($oldCategoryId)?->name ?? 'не указана';
+                    $newCatName = Category::find($request->category_id)?->name ?? 'не указана';
+                    $changes[] = "категория: '{$oldCatName}' → '{$newCatName}'";
+                }
+                if ($oldPriority != $request->priority) {
+                    $changes[] = "приоритет: '{$oldPriority}' → '{$request->priority}'";
+                }
+                if ($oldDeadline != $request->deadline) {
+                    $oldDeadlineStr = $oldDeadline ? date('d.m.Y H:i', strtotime($oldDeadline)) : 'не указан';
+                    $newDeadlineStr = $request->deadline ? date('d.m.Y H:i', strtotime($request->deadline)) : 'не указан';
+                    $changes[] = "дедлайн: '{$oldDeadlineStr}' → '{$newDeadlineStr}'";
+                }
+                if ($oldEstimatedHours != $request->estimated_hours) {
+                    $changes[] = "планируемые часы: '{$oldEstimatedHours}' → '{$request->estimated_hours}'";
+                }
+                if ($oldActualHours != $request->actual_hours) {
+                    $changes[] = "фактические часы: '{$oldActualHours}' → '{$request->actual_hours}'";
+                }
+
+                // Логируем обновление задачи (только если есть изменения)
+                if (!empty($changes)) {
+                    $changesText = implode(', ', $changes);
+                    ActivityLogger::taskUpdated($task, $user, $changesText);
+                }
+
+                // Если изменился исполнитель и задача назначена на кого-то
                 if ($oldUserId != $request->user_id && $request->user_id) {
                     $newUser = User::find($request->user_id);
                     ActivityLogger::taskAssigned($task, $newUser, $user);
+                }
+
+                // Если изменился статус
+                if ($oldStatus != $request->status) {
+                    ActivityLogger::taskStatusChanged($task, $oldStatus, $request->status, $user);
                 }
 
                 DB::commit();
@@ -738,6 +791,9 @@
 
             } catch (\Exception $e) {
                 DB::rollBack();
+
+                \Log::error('Error updating task: ' . $e->getMessage());
+                \Log::error('Stack trace: ' . $e->getTraceAsString());
 
                 return response()->json([
                     'success' => false,

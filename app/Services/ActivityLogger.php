@@ -274,4 +274,114 @@ class ActivityLogger
             ]
         ]);
     }
+
+    /**
+     * Логируем обновление задачи
+     */
+    public static function taskUpdated(Task $task, User $user, $changes = []): ?Activity
+    {
+        // Проверяем дубликаты
+        $exists = Activity::where('subject_type', Task::class)
+            ->where('subject_id', $task->id)
+            ->where('action', 'task_updated')
+            ->where('created_at', '>=', now()->subSeconds(5))
+            ->exists();
+
+        if ($exists) {
+            return null;
+        }
+
+        // Обрабатываем изменения в зависимости от типа
+        $changesText = '';
+        if (is_array($changes)) {
+            // Если пришел массив, формируем строку
+            if (!empty($changes)) {
+                $changesParts = [];
+                foreach ($changes as $key => $value) {
+                    if (is_array($value)) {
+                        if (isset($value['old']) && isset($value['new'])) {
+                            $changesParts[] = "{$key}: {$value['old']} → {$value['new']}";
+                        }
+                    } else {
+                        $changesParts[] = "{$key}: {$value}";
+                    }
+                }
+                $changesText = implode(', ', $changesParts);
+            }
+        } else if (is_string($changes) && !empty($changes)) {
+            // Если пришла строка, используем её
+            $changesText = $changes;
+        }
+
+        $description = "{$user->name} обновил задачу «{$task->name}»";
+        if (!empty($changesText)) {
+            $description .= " (изменения: {$changesText})";
+        }
+
+        return Activity::create([
+            'user_id' => $user->id,
+            'company_id' => $task->company_id,
+            'subject_type' => Task::class,
+            'subject_id' => $task->id,
+            'action' => 'task_updated',
+            'description' => $description,
+            'properties' => [
+                'task_name' => $task->name,
+                'task_id' => $task->id,
+                'updated_by_id' => $user->id,
+                'updated_by_name' => $user->name,
+                'changes' => $changesText
+            ]
+        ]);
+    }
+
+    /**
+     * Логируем обновление задачи (с указанием старых и новых значений)
+     */
+    public static function taskUpdatedWithValues(Task $task, User $user, array $oldValues, array $newValues): ?Activity
+    {
+        // Проверяем дубликаты
+        $exists = Activity::where('subject_type', Task::class)
+            ->where('subject_id', $task->id)
+            ->where('action', 'task_updated')
+            ->where('created_at', '>=', now()->subSeconds(5))
+            ->exists();
+
+        if ($exists) {
+            return null;
+        }
+
+        // Находим только реально изменившиеся поля
+        $changedFields = [];
+        foreach ($oldValues as $key => $oldValue) {
+            if (isset($newValues[$key]) && $oldValue != $newValues[$key]) {
+                $changedFields[$key] = [
+                    'old' => $oldValue,
+                    'new' => $newValues[$key]
+                ];
+            }
+        }
+
+        if (empty($changedFields)) {
+            return null;
+        }
+
+        return Activity::create([
+            'user_id' => $user->id,
+            'company_id' => $task->company_id,
+            'subject_type' => Task::class,
+            'subject_id' => $task->id,
+            'action' => 'task_updated',
+            'description' => "{$user->name} обновил задачу «{$task->name}»",
+            'old_values' => $oldValues,
+            'new_values' => $newValues,
+            'properties' => [
+                'task_name' => $task->name,
+                'task_id' => $task->id,
+                'updated_by_id' => $user->id,
+                'updated_by_name' => $user->name,
+                'changed_fields' => $changedFields
+            ]
+        ]);
+    }
 }

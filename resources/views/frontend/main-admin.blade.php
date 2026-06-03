@@ -1893,6 +1893,8 @@
         let editSelectedFiles = [];
         let editAllFiles = [];
         let editTempSelectedFiles = [];
+        let currentDeleteTaskId = null;
+        let currentReturnTaskId = null;
 
         // Функции для модального окна улучшения
         function openUpgradeModal() {
@@ -1910,45 +1912,6 @@
                 modal.classList.remove('flex');
             }
         }
-
-        window.confirmEditFileSelectionForEdit = function() {
-            console.log('=== confirmEditFileSelectionForEdit вызвана (РЕДАКТИРОВАНИЕ) ===');
-
-            // Собираем выбранные файлы из чекбоксов (это ВСЕ выбранные файлы)
-            const selectedFiles = [];
-            document.querySelectorAll('#fileManagerContent .file-checkbox:checked').forEach(checkbox => {
-                const fileId = parseInt(checkbox.value);
-                let file = window.editAllFiles?.find(f => f.id === fileId);
-                if (!file && typeof editAllFiles !== 'undefined') {
-                    file = editAllFiles.find(f => f.id === fileId);
-                }
-                if (file) {
-                    selectedFiles.push(file);
-                }
-            });
-
-            console.log('Выбрано файлов из чекбоксов (всего):', selectedFiles.length);
-            console.log('Было файлов в задаче (editSelectedFiles):', editSelectedFiles.length);
-
-            // ВАЖНО: selectedFiles уже содержит ВСЕ выбранные файлы (и старые, и новые)
-            // Не нужно добавлять старые файлы отдельно!
-            editSelectedFiles = selectedFiles;
-            editTempSelectedFiles = [...selectedFiles];
-
-            console.log('Сохранено файлов в editSelectedFiles:', editSelectedFiles.length);
-
-            // Обновляем отображение в модалке редактирования
-            updateEditSelectedFilesDisplay();
-
-            // Закрываем файловый менеджер
-            const fileManagerModal = document.getElementById('fileManagerModal');
-            if (fileManagerModal) {
-                fileManagerModal.classList.add('hidden');
-                document.body.classList.remove('overflow-hidden');
-            }
-
-            console.log('Файлы сохранены для редактирования');
-        };
 
         // Переключение фильтров
         document.getElementById('filterToggle')?.addEventListener('click', function() {
@@ -1983,7 +1946,8 @@
             if (sortSelect) sortSelect.value = selectedValue;
         });
 
-        // Открытие модального окна редактирования
+        // ==================== ФУНКЦИИ ДЛЯ РЕДАКТИРОВАНИЯ ЗАДАЧИ ====================
+
         async function openEditModal(taskId) {
             currentTaskId = taskId;
             editSelectedFiles = [];
@@ -2002,7 +1966,61 @@
 
                 if (data.success) {
                     const task = data.task;
-                    // ... остальной код заполнения формы ...
+
+                    document.getElementById('editTaskName').value = task.name;
+                    document.getElementById('editTaskDescription').value = task.description || '';
+
+                    // Заполняем отдел
+                    const departmentSelect = document.getElementById('editTaskDepartment');
+                    if (departmentSelect) {
+                        departmentSelect.innerHTML = '<option value="">Выберите отдел</option>';
+                        @foreach($filterData['departments'] as $department)
+                            departmentSelect.innerHTML += `<option value="{{ $department->id }}">{{ $department->name }}</option>`;
+                        @endforeach
+                            departmentSelect.value = task.department_id || '';
+                    }
+
+                    // Заполняем категорию
+                    const categorySelect = document.getElementById('editTaskCategory');
+                    if (categorySelect) {
+                        categorySelect.innerHTML = '<option value="">Без категории</option>';
+                        @foreach($filterData['categories'] as $category)
+                            categorySelect.innerHTML += `<option value="{{ $category->id }}">{{ $category->name }}</option>`;
+                        @endforeach
+                            categorySelect.value = task.category_id || '';
+                    }
+
+                    // Заполняем исполнителя
+                    const userSelect = document.getElementById('editTaskUser');
+                    if (userSelect) {
+                        userSelect.innerHTML = '<option value="">Не назначен</option>';
+                        @foreach($filterData['users'] as $user)
+                            userSelect.innerHTML += `<option value="{{ $user->id }}">{{ $user->name }}</option>`;
+                        @endforeach
+                            userSelect.value = task.user_id || '';
+                    }
+
+                    document.getElementById('editTaskPriority').value = task.priority || 'средний';
+                    document.getElementById('editTaskStatus').value = task.status;
+                    document.getElementById('editTaskDeadline').value = task.deadline ? task.deadline.slice(0, 16) : '';
+                    document.getElementById('editTaskEstimatedHours').value = task.estimated_hours || '';
+                    document.getElementById('editTaskActualHours').value = task.actual_hours || '';
+
+                    // Загружаем файлы задачи
+                    if (task.files && task.files.length > 0) {
+                        editSelectedFiles = task.files;
+                        console.log('Загружены файлы задачи:', editSelectedFiles.map(f => f.id));
+                    } else {
+                        editSelectedFiles = [];
+                    }
+                    updateEditSelectedFilesDisplay();
+
+                    // Загружаем историю отказов
+                    if (task.rejections && task.rejections.length > 0) {
+                        displayRejections(task.rejections);
+                    } else {
+                        displayRejections([]);
+                    }
 
                     document.getElementById('editTaskModal').classList.remove('hidden');
                 } else {
@@ -2034,6 +2052,7 @@
                 container.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
                 <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
                 <p class="text-sm text-gray-500">Файлы не выбраны</p>
+                <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
             </div>`;
                 if (fileCounter) fileCounter.classList.add('hidden');
             } else {
@@ -2065,6 +2084,7 @@
         function removeEditSelectedFile(fileId) {
             editSelectedFiles = editSelectedFiles.filter(f => f.id !== fileId);
             updateEditSelectedFilesDisplay();
+            showNotification('Файл удален', 'info');
         }
 
         function clearEditSelectedFiles() {
@@ -2094,15 +2114,16 @@
             if (activeContent) activeContent.classList.remove('hidden');
         }
 
-        // ==================== ФАЙЛОВЫЙ МЕНЕДЖЕР ====================
+        // ==================== ФАЙЛОВЫЙ МЕНЕДЖЕР ДЛЯ РЕДАКТИРОВАНИЯ ====================
+
         async function openEditFileManager() {
             const modal = document.getElementById('fileManagerModal');
             if (modal) {
                 modal.classList.remove('hidden');
                 document.body.classList.add('overflow-hidden');
-                // Копируем ТЕКУЩИЕ файлы задачи во временный массив
+                // Копируем текущие файлы задачи во временный массив
                 editTempSelectedFiles = [...editSelectedFiles];
-                console.log('Открыт менеджер, editTempSelectedFiles (текущие файлы задачи):', editTempSelectedFiles.length);
+                console.log('Открыт менеджер, editTempSelectedFiles:', editTempSelectedFiles.map(f => f.id));
                 await loadEditFiles();
             }
         }
@@ -2110,7 +2131,10 @@
         async function loadEditFiles() {
             const contentDiv = document.getElementById('fileManagerContent');
             if (!contentDiv) return;
-            contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Загрузка...</div>`;
+            contentDiv.innerHTML = `<div class="col-span-full text-center py-12">
+        <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
+        <p class="text-gray-500 mt-2">Загрузка файлов...</p>
+    </div>`;
 
             try {
                 const response = await fetch('/tasks/file-storage/get-files', {
@@ -2119,160 +2143,126 @@
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
                     }
                 });
-                if (!response.ok) throw new Error('Ошибка');
+                if (!response.ok) throw new Error('Ошибка загрузки');
                 editAllFiles = await response.json();
-                window.editAllFiles = editAllFiles; // ДОБАВЬТЕ ЭТУ СТРОКУ!
-                renderFileManagerFiles(editAllFiles);
-                updateFileManagerUI();
-                initFileManagerFilters();
+                window.editAllFiles = editAllFiles;
+                console.log('Загружено файлов из хранилища:', editAllFiles.length);
+                renderEditFileManagerFiles(editAllFiles);
+                initEditFileManagerFilters();
             } catch (error) {
-                contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">Ошибка загрузки</div>`;
+                console.error('Ошибка загрузки файлов:', error);
+                contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">
+            <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
+            <p>Ошибка загрузки файлов</p>
+        </div>`;
             }
         }
 
-        function renderFileManagerFiles(files) {
+        function renderEditFileManagerFiles(files) {
             const contentDiv = document.getElementById('fileManagerContent');
             if (!contentDiv) return;
+
             if (!files || files.length === 0) {
-                contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Нет файлов</div>`;
+                contentDiv.innerHTML = `<div class="col-span-full text-center py-12">
+            <i class="fas fa-folder-open text-3xl text-gray-300 mb-2"></i>
+            <p class="text-gray-500">Нет файлов в хранилище</p>
+        </div>`;
                 return;
             }
+
             let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
             files.forEach(file => {
                 const isSelected = editTempSelectedFiles.some(f => f.id === file.id);
                 const fileIcon = getFileIcon(file.extension);
                 const fileType = getFileTypeClass(file.extension);
+
                 html += `
-            <div class="file-card bg-white border ${isSelected ? 'border-green-500 shadow-md' : 'border-gray-200'} rounded-lg p-3">
-                <div class="flex justify-end mb-2">
-                    <input type="checkbox"
-                           value="${file.id}"
-                           data-id="${file.id}"
-                           data-name="${escapeHtml(file.name)}"
-                           data-size="${file.size}"
-                           data-ext="${file.extension || ''}"
-                           data-path="${file.file_path || file.path}"
-                           data-created="${file.created_at}"
-                           class="file-checkbox w-5 h-5 rounded border-gray-300"
-                           ${isSelected ? 'checked' : ''}>
+            <div class="file-card bg-white border-2 ${isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200'} rounded-lg p-3 transition-all duration-200 hover:shadow-md cursor-pointer"
+                 onclick="toggleEditFileSelection(${file.id})">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="w-5 h-5 rounded ${isSelected ? 'bg-green-500' : 'border-2 border-gray-300'} flex items-center justify-center">
+                        ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                    </div>
+                    <button type="button"
+                            onclick="event.stopPropagation(); downloadEditFile(${file.id})"
+                            class="text-gray-400 hover:text-green-600 p-1 transition-colors"
+                            title="Скачать">
+                        <i class="fas fa-download"></i>
+                    </button>
                 </div>
                 <div class="text-center">
                     <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
                         <span class="text-2xl">${fileIcon}</span>
                     </div>
-                    <p class="text-sm font-medium truncate">${escapeHtml(file.name)}</p>
-                    <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                    <p class="text-sm font-medium text-gray-800 truncate" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</p>
+                    <p class="text-xs text-gray-500 mt-1">${formatFileSize(file.size)}</p>
+                    <p class="text-xs text-gray-400">${formatDate(file.created_at)}</p>
                 </div>
             </div>`;
             });
             html += '</div>';
             contentDiv.innerHTML = html;
 
-            // ПРИВЯЗЫВАЕМ ОБРАБОТЧИКИ К ЧЕКБОКСАМ
-            document.querySelectorAll('#fileManagerContent .file-checkbox').forEach(checkbox => {
-                checkbox.removeEventListener('change', handleCheckboxChange);
-                checkbox.addEventListener('change', handleCheckboxChange);
-            });
-
-            updateFileManagerUI();
+            updateEditFileManagerUI();
         }
 
-        // ОТДЕЛЬНАЯ ФУНКЦИЯ-ОБРАБОТЧИК
-        function handleCheckboxChange(event) {
-            const checkbox = event.target;
-            const fileId = parseInt(checkbox.value);
-            const file = editAllFiles?.find(f => f.id === fileId);
+        function toggleEditFileSelection(fileId) {
+            console.log('toggleEditFileSelection called for fileId:', fileId);
 
-            console.log('Чекбокс кликнут!', fileId, file?.name);
+            const file = editAllFiles.find(f => f.id === fileId);
+            if (!file) {
+                console.error('File not found:', fileId);
+                return;
+            }
 
-            if (!file) return;
+            const index = editTempSelectedFiles.findIndex(f => f.id === fileId);
 
-            if (checkbox.checked) {
-                if (!editTempSelectedFiles.some(f => f.id === fileId)) {
-                    editTempSelectedFiles.push(file);
-                    console.log('Файл добавлен, теперь всего:', editTempSelectedFiles.length);
-                }
+            if (index === -1) {
+                editTempSelectedFiles.push(file);
+                console.log('File added, now total:', editTempSelectedFiles.length);
             } else {
-                editTempSelectedFiles = editTempSelectedFiles.filter(f => f.id !== fileId);
-                console.log('Файл удален, осталось:', editTempSelectedFiles.length);
+                editTempSelectedFiles.splice(index, 1);
+                console.log('File removed, now total:', editTempSelectedFiles.length);
             }
 
-            // Обновляем выделение карточки
-            const card = checkbox.closest('.file-card');
-            if (card) {
-                if (checkbox.checked) {
-                    card.classList.add('border-green-500', 'shadow-md');
-                    card.classList.remove('border-gray-200');
-                } else {
-                    card.classList.remove('border-green-500', 'shadow-md');
-                    card.classList.add('border-gray-200');
-                }
-            }
-
-            updateFileManagerUI();
-        }
-
-        window.toggleFileSelection = function(fileId) {
-            console.log('toggleFileSelection вызвана, fileId:', fileId);
-
-            // Определяем, какое модальное окно открыто
-            const isCreateModal = document.getElementById('taskModal') && !document.getElementById('taskModal').classList.contains('hidden');
-            const isEditModal = document.getElementById('editTaskModal') && !document.getElementById('editTaskModal').classList.contains('hidden');
-
-            if (isCreateModal) {
-                // Логика для создания задачи
-                let file = window.allFiles?.find(f => f.id === fileId);
-                if (!file) {
-                    if (typeof allFiles !== 'undefined' && allFiles) {
-                        file = allFiles.find(f => f.id === fileId);
-                    }
-                }
-                if (!file) return;
-
-                if (typeof window.selectedFiles === 'undefined') window.selectedFiles = [];
-                const index = window.selectedFiles.findIndex(f => f.id === fileId);
-                if (index === -1) {
-                    window.selectedFiles.push(file);
-                } else {
-                    window.selectedFiles.splice(index, 1);
-                }
-
-                if (typeof window.renderFiles === 'function') window.renderFiles(window.allFiles || allFiles);
-                if (typeof window.updateSelectedCount === 'function') window.updateSelectedCount();
-
-                const selectedCountSpan = document.getElementById('selectedCount');
-                const confirmCountSpan = document.getElementById('confirmCount');
-                if (selectedCountSpan) selectedCountSpan.textContent = window.selectedFiles.length;
-                if (confirmCountSpan) confirmCountSpan.textContent = window.selectedFiles.length;
-            }
-            else if (isEditModal) {
-                // Логика для редактирования задачи (существующая)
-                const file = editAllFiles?.find(f => f.id === fileId);
-                if (!file) return;
-
-                if (checkbox) {
-                    if (checkbox.checked) {
-                        if (!editTempSelectedFiles.some(f => f.id === fileId)) {
-                            editTempSelectedFiles.push(file);
+            // Обновляем отображение карточек
+            const fileCards = document.querySelectorAll('#fileManagerContent .file-card');
+            fileCards.forEach(card => {
+                const onclickAttr = card.getAttribute('onclick');
+                if (onclickAttr && onclickAttr.includes(fileId.toString())) {
+                    const isSelected = editTempSelectedFiles.some(f => f.id === fileId);
+                    if (isSelected) {
+                        card.classList.add('border-green-500', 'bg-green-50');
+                        card.classList.remove('border-gray-200');
+                        const checkDiv = card.querySelector('.w-5.h-5');
+                        if (checkDiv) {
+                            checkDiv.classList.add('bg-green-500');
+                            checkDiv.classList.remove('border-2', 'border-gray-300');
+                            checkDiv.innerHTML = '<i class="fas fa-check text-white text-xs"></i>';
                         }
                     } else {
-                        editTempSelectedFiles = editTempSelectedFiles.filter(f => f.id !== fileId);
+                        card.classList.remove('border-green-500', 'bg-green-50');
+                        card.classList.add('border-gray-200');
+                        const checkDiv = card.querySelector('.w-5.h-5');
+                        if (checkDiv) {
+                            checkDiv.classList.remove('bg-green-500');
+                            checkDiv.classList.add('border-2', 'border-gray-300');
+                            checkDiv.innerHTML = '';
+                        }
                     }
                 }
-                updateFileManagerUI();
-            }
+            });
 
-            console.log('Выбрано файлов:', isCreateModal ? window.selectedFiles?.length : editTempSelectedFiles?.length);
-        };
+            updateEditFileManagerUI();
+        }
 
-        function updateFileManagerUI() {
+        function updateEditFileManagerUI() {
             const selectedCount = document.getElementById('selectedCount');
             const confirmCount = document.getElementById('confirmCount');
             const confirmBtn = document.getElementById('confirmFileSelectionBtn');
 
             const count = editTempSelectedFiles.length;
-
-            console.log('updateFileManagerUI: count =', count);
+            console.log('updateEditFileManagerUI: count =', count);
 
             if (selectedCount) selectedCount.textContent = count;
             if (confirmCount) confirmCount.textContent = count;
@@ -2287,16 +2277,31 @@
             }
         }
 
-        function closeFileManager() {
-            const modal = document.getElementById('fileManagerModal');
-            if (modal) {
-                modal.classList.add('hidden');
+        // ЕДИНАЯ ФУНКЦИЯ ПОДТВЕРЖДЕНИЯ ВЫБОРА ФАЙЛОВ (исправлено дублирование)
+        window.confirmEditFileSelectionForEdit = function() {
+            console.log('=== confirmEditFileSelectionForEdit вызвана ===');
+            console.log('Текущие выбранные файлы (editTempSelectedFiles):', editTempSelectedFiles.map(f => f.id));
+
+            // Сохраняем выбранные файлы в основной массив
+            editSelectedFiles = [...editTempSelectedFiles];
+
+            console.log('Сохранено файлов в editSelectedFiles:', editSelectedFiles.length);
+            console.log('ID сохраненных файлов:', editSelectedFiles.map(f => f.id));
+
+            // Обновляем отображение в модалке редактирования
+            updateEditSelectedFilesDisplay();
+
+            // Закрываем файловый менеджер
+            const fileManagerModal = document.getElementById('fileManagerModal');
+            if (fileManagerModal) {
+                fileManagerModal.classList.add('hidden');
                 document.body.classList.remove('overflow-hidden');
             }
-            editTempSelectedFiles = [];
-        }
 
-        function initFileManagerFilters() {
+            showNotification(`Выбрано ${editSelectedFiles.length} файлов`, 'success');
+        };
+
+        function initEditFileManagerFilters() {
             const searchInput = document.getElementById('fileManagerSearch');
             const typeFilter = document.getElementById('fileManagerTypeFilter');
             const sortBy = document.getElementById('fileManagerSortBy');
@@ -2305,24 +2310,76 @@
                 if (!editAllFiles) return;
                 let filtered = [...editAllFiles];
                 const searchTerm = searchInput?.value.toLowerCase() || '';
-                if (searchTerm) filtered = filtered.filter(f => f.name.toLowerCase().includes(searchTerm));
-                renderFileManagerFiles(filtered);
+                if (searchTerm) {
+                    filtered = filtered.filter(f => f.name.toLowerCase().includes(searchTerm));
+                }
+                if (typeFilter && typeFilter.value) {
+                    const type = typeFilter.value;
+                    if (type === 'image') {
+                        filtered = filtered.filter(f => ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(f.extension?.toLowerCase()));
+                    } else if (type === 'document') {
+                        filtered = filtered.filter(f => ['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(f.extension?.toLowerCase()));
+                    } else if (type === 'video') {
+                        filtered = filtered.filter(f => ['mp4', 'avi', 'mov', 'mkv', 'webm'].includes(f.extension?.toLowerCase()));
+                    } else if (type === 'audio') {
+                        filtered = filtered.filter(f => ['mp3', 'wav', 'ogg', 'flac', 'm4a'].includes(f.extension?.toLowerCase()));
+                    } else if (type === 'archive') {
+                        filtered = filtered.filter(f => ['zip', 'rar', '7z', 'tar', 'gz'].includes(f.extension?.toLowerCase()));
+                    }
+                }
+                if (sortBy && sortBy.value) {
+                    const sort = sortBy.value;
+                    if (sort === 'newest') {
+                        filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    } else if (sort === 'oldest') {
+                        filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                    } else if (sort === 'name_asc') {
+                        filtered.sort((a, b) => a.name.localeCompare(b.name));
+                    } else if (sort === 'name_desc') {
+                        filtered.sort((a, b) => b.name.localeCompare(a.name));
+                    } else if (sort === 'size_asc') {
+                        filtered.sort((a, b) => (a.size || 0) - (b.size || 0));
+                    } else if (sort === 'size_desc') {
+                        filtered.sort((a, b) => (b.size || 0) - (a.size || 0));
+                    }
+                }
+                renderEditFileManagerFiles(filtered);
             };
 
-            if (searchInput) searchInput.addEventListener('input', filter);
-            if (typeFilter) typeFilter.addEventListener('change', filter);
-            if (sortBy) sortBy.addEventListener('change', filter);
+            if (searchInput) {
+                searchInput.removeEventListener('input', filter);
+                searchInput.addEventListener('input', filter);
+            }
+            if (typeFilter) {
+                typeFilter.removeEventListener('change', filter);
+                typeFilter.addEventListener('change', filter);
+            }
+            if (sortBy) {
+                sortBy.removeEventListener('change', filter);
+                sortBy.addEventListener('change', filter);
+            }
         }
 
-        function downloadFileFromManager(fileId) {
+        function downloadEditFile(fileId) {
             window.open(`/file-storage/download/${fileId}`, '_blank');
         }
 
-        function closeFilePreview() {
-            document.getElementById('fileManagerPreviewPanel')?.classList.add('hidden');
+        function closeFileManager() {
+            const modal = document.getElementById('fileManagerModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
         }
 
-        // ==================== ЗАГРУЗКА НОВЫХ ФАЙЛОВ ====================
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ru-RU');
+        }
+
+        // ==================== ФУНКЦИИ ДЛЯ ЗАГРУЗКИ НОВЫХ ФАЙЛОВ ====================
+
         document.getElementById('editUploadNewFilesInput')?.addEventListener('change', function(e) {
             const container = document.getElementById('editUploadFilesContainer');
             const list = document.getElementById('editUploadFilesList');
@@ -2353,7 +2410,8 @@
             input.dispatchEvent(new Event('change'));
         }
 
-        //Сохранение
+        // ==================== СОХРАНЕНИЕ РЕДАКТИРОВАНИЯ ====================
+
         document.getElementById('editTaskForm')?.addEventListener('submit', async function(e) {
             e.preventDefault();
             const submitBtn = this.querySelector('button[type="submit"]');
@@ -2364,18 +2422,21 @@
             }
             try {
                 const formData = new FormData(this);
-                formData.delete('selected_file_ids');
 
+                // ВАЖНО: передаем ID выбранных файлов
                 const selectedFileIds = editSelectedFiles.map(f => f.id);
-                selectedFileIds.forEach(id => {
-                    formData.append('selected_file_ids[]', id);
-                });
+                console.log('Отправляемые ID файлов:', selectedFileIds);
+
+                // Очищаем старые значения и добавляем новые
+                formData.delete('selected_files');
+                formData.append('selected_files', JSON.stringify(selectedFileIds));
 
                 const newFiles = document.getElementById('editUploadNewFilesInput');
                 if (newFiles?.files.length) {
                     for (let i = 0; i < newFiles.files.length; i++) {
                         formData.append('new_files[]', newFiles.files[i]);
                     }
+                    console.log('Новых файлов для загрузки:', newFiles.files.length);
                 }
 
                 const response = await fetch(`/tasks/${currentTaskId}/update`, {
@@ -2410,9 +2471,14 @@
             }
         });
 
-        //Вспомогательные
+        // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
+
         function getFileIcon(ext) {
-            const icons = { 'pdf': '📄', 'doc': '📝', 'docx': '📝', 'xls': '📊', 'xlsx': '📊', 'jpg': '🖼️', 'png': '🖼️', 'gif': '🖼️', 'zip': '📦' };
+            const icons = {
+                'pdf': '📄', 'doc': '📝', 'docx': '📝', 'xls': '📊', 'xlsx': '📊',
+                'jpg': '🖼️', 'png': '🖼️', 'gif': '🖼️', 'zip': '📦', 'rar': '📦',
+                'mp3': '🎵', 'mp4': '🎬', 'avi': '🎬', 'mov': '🎬'
+            };
             return icons[(ext || '').toLowerCase()] || '📎';
         }
 
@@ -2434,26 +2500,47 @@
             return div.innerHTML;
         }
 
-        function formatDateTime(date) {
-            if (!date) return '';
-            return new Date(date).toLocaleString('ru-RU');
-        }
-
         function displayRejections(rejections) {
             const container = document.getElementById('editRejectionsList');
             const countSpan = document.getElementById('editRejectionsCount');
             if (!container) return;
             if (rejections?.length) {
                 if (countSpan) countSpan.textContent = rejections.length;
-                container.innerHTML = rejections.map(r => `<div class="bg-red-50 p-3 rounded">${escapeHtml(r.reason || 'Отказ')}</div>`).join('');
+                container.innerHTML = rejections.map(r => `<div class="bg-red-50 p-3 rounded rejection-item">${escapeHtml(r.reason || 'Отказ')}</div>`).join('');
             } else {
                 if (countSpan) countSpan.textContent = '0';
-                container.innerHTML = '<p class="text-gray-500">Отказов нет</p>';
+                container.innerHTML = '<div class="text-center py-8"><i class="fas fa-check-circle text-3xl text-gray-300 mb-2"></i><p class="text-gray-500">Отказов нет</p></div>';
             }
         }
 
-        function returnToWork(taskId) { currentTaskId = taskId; document.getElementById('returnToWorkModal').classList.remove('hidden'); }
-        function closeReturnModal() { document.getElementById('returnToWorkModal').classList.add('hidden'); document.getElementById('returnComment').value = ''; }
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${type === 'success' ? 'bg-green-500 text-white' : type === 'error' ? 'bg-red-500 text-white' : type === 'warning' ? 'bg-yellow-500 text-white' : 'bg-blue-500 text-white'}`;
+            notification.innerHTML = `<div class="flex items-center"><i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} mr-2"></i><span>${message}</span></div>`;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) notification.parentNode.removeChild(notification);
+                }, 300);
+            }, 5000);
+        }
+
+        // ==================== ФУНКЦИИ ДЛЯ ВОЗВРАТА НА ДОРАБОТКУ ====================
+
+        function returnToWork(taskId) {
+            currentReturnTaskId = taskId;
+            document.getElementById('returnToWorkModal').classList.remove('hidden');
+        }
+
+        function closeReturnModal() {
+            document.getElementById('returnToWorkModal').classList.add('hidden');
+            document.getElementById('returnComment').value = '';
+        }
+
         async function confirmReturnToWork() {
             const comment = document.getElementById('returnComment').value;
             const submitBtn = document.querySelector('#returnToWorkModal .bg-orange-600');
@@ -2465,7 +2552,7 @@
                     submitBtn.disabled = true;
                 }
 
-                const response = await fetch(`/tasks/${currentTaskId}/return-to-work`, {
+                const response = await fetch(`/tasks/${currentReturnTaskId}/return-to-work`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2498,12 +2585,17 @@
                 }
             }
         }
+
+        // ==================== ФУНКЦИИ ДЛЯ УДАЛЕНИЯ ЗАДАЧИ ====================
+
         function openDeleteModal(taskId) {
-            currentTaskId = taskId;
+            currentDeleteTaskId = taskId;
             document.getElementById('deleteTaskModal').classList.remove('hidden');
         }
 
-        function closeDeleteModal() { document.getElementById('deleteTaskModal').classList.add('hidden'); }
+        function closeDeleteModal() {
+            document.getElementById('deleteTaskModal').classList.add('hidden');
+        }
 
         async function confirmDeleteTask() {
             const submitBtn = document.querySelector('#deleteTaskModal .bg-red-600');
@@ -2519,7 +2611,7 @@
                 formData.append('_token', document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}');
                 formData.append('_method', 'DELETE');
 
-                const response = await fetch(`/tasks/${currentTaskId}/delete`, {
+                const response = await fetch(`/tasks/${currentDeleteTaskId}/delete`, {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -2555,6 +2647,34 @@
             }
         }
 
+        // ==================== ФУНКЦИИ ДЛЯ ПРОСМОТРА ЗАДАЧИ ====================
+
+        function openTaskViewModal(taskId) {
+            fetch(`/tasks/${taskId}`)
+                .then(response => response.text())
+                .then(html => {
+                    const content = document.getElementById('taskModalContent');
+                    const modal = document.getElementById('taskViewModal');
+                    if (content) content.innerHTML = html;
+                    if (modal) modal.classList.remove('hidden');
+                })
+                .catch(error => console.error('Ошибка:', error));
+        }
+
+        function closeTaskViewModal() {
+            const modal = document.getElementById('taskViewModal');
+            const content = document.getElementById('taskModalContent');
+            if (modal) modal.classList.add('hidden');
+            if (content) content.innerHTML = '';
+        }
+
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'taskViewModal') closeTaskViewModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeTaskViewModal();
+        });
     </script>
 
     <style>
