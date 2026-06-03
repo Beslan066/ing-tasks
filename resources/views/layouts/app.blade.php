@@ -829,12 +829,12 @@ media-src https://meet.jit.si https:;
         }
 
 
-        const currentPath = window.location.pathname;
-        navItems.forEach(item => {
-            if (item.getAttribute('href') === currentPath) {
-                item.classList.add('active');
-            }
-        });
+        // const currentPath = window.location.pathname;
+        // navItems.forEach(item => {
+        //     if (item.getAttribute('href') === currentPath) {
+        //         item.classList.add('active');
+        //     }
+        // });
 
         // Инициализация drag and drop после загрузки
         initTaskDragAndDrop();
