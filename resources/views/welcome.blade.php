@@ -738,7 +738,7 @@
                                 <i class="fas fa-stopwatch text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
                             </div>
                             <input type="number" name="estimated_hours" min="0" step="0.5"
-                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
+                                   class="w-full px-4 py-3 pl-8 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
                                    placeholder="0.0">
                             <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium text-sm">часов</span>
                         </div>
@@ -1042,7 +1042,7 @@
                             <i class="fas fa-hourglass-half text-green-500 mr-2 text-xs"></i>Планируемые часы
                         </label>
                         <input type="number" name="estimated_hours" id="editTaskEstimatedHours" step="0.5" min="0"
-                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400">
+                               class="w-full px-4 pl-8 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400">
                     </div>
 
                     <div class="space-y-2">
