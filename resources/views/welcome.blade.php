@@ -1144,8 +1144,8 @@
                             class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition">
                         Отмена
                     </button>
-                    <button type="submit"
-                            class="px-6 py-3 bg-green-600 transition">
+                     <button type="submit"
+                      class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                         <i class="fas fa-save mr-2"></i>Сохранить изменения
                     </button>
                 </div>
