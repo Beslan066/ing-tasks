@@ -32,22 +32,6 @@
                                     <span><i class="fas fa-tasks mr-1"></i> Всего задач: {{ $company->getTasksCount() }}</span>
                                 </div>
                             </div>
-                            <div>
-                                @if($company->license_type !== 'premium')
-                                    <button onclick="openUpgradeModal()"
-                                            class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105 flex items-center gap-2 text-sm md:text-base">
-                                        <i class="fas fa-crown"></i>
-                                        <span>Улучшить подписку</span>
-                                        <i class="fas fa-arrow-right"></i>
-                                    </button>
-                                @else
-                                    <span class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-lg inline-flex items-center gap-2 text-sm md:text-base">
-                                        <i class="fas fa-check-circle"></i>
-                                        <span>Премиум</span>
-                                        <i class="fas fa-star"></i>
-                                    </span>
-                                @endif
-                            </div>
                         </div>
                         <div class="mt-4 pt-4 border-t border-white/20">
                             <div class="flex flex-wrap justify-between items-center gap-3">

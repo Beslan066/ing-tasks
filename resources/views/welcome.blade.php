@@ -209,27 +209,17 @@
             <div id="quickAddBlock" class="mb-4">
                 <button onclick="showQuickAddForm()"
                         id="showQuickAddBtn"
-                        class="w-full group relative overflow-hidden bg-gradient-to-r from-gray-50 to-white hover:from-green-50 hover:to-white border-2 border-dashed border-gray-300 hover:border-green-400 rounded-xl p-4 text-gray-500 hover:text-green-600 transition-all duration-300 flex items-center justify-center space-x-2">
-                    <div class="absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/0 to-green-500/0 group-hover:from-green-500/5 group-hover:via-green-500/10 group-hover:to-green-500/5 transition-all duration-500"></div>
+                        class="w-full group relative overflow-hidden bg-transparent/10
+                        hover:from-green-50 hover:to-white border-2 border-dashed border-gray-300 hover:border-green-400 rounded-xl p-2 text-gray-500 hover:text-green-600 transition-all duration-300 flex items-center justify-center space-x-2">
+                    <div class="absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/0 to-green-500/0
+                    group-hover:from-green-500/5 group-hover:via-green-500/10 group-hover:to-green-500/5 transition-all duration-500"></div>
                     <i class="fas fa-plus-circle text-green-500 text-xl group-hover:scale-110 transition-transform duration-300"></i>
                     <span class="text-sm font-medium">Быстрая задача</span>
-                    <i class="fas fa-chevron-down text-xs opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-y-0.5"></i>
                 </button>
 
                 <!-- ФОРМА БЫСТРОГО ДОБАВЛЕНИЯ -->
                 <div id="quickAddForm" class="hidden mt-2">
                     <div class="bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden transform transition-all duration-300 scale-95 opacity-0" id="quickAddFormInner">
-                        <div class="bg-gradient-to-r from-green-500 to-green-600 px-4 py-3">
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center space-x-2">
-                                    <i class="fas fa-bolt text-white text-sm"></i>
-                                    <h4 class="text-white font-semibold text-sm">Быстрое создание</h4>
-                                </div>
-                                <button onclick="hideQuickAddForm()" class="text-white/80 hover:text-white transition">
-                                    <i class="fas fa-times text-sm"></i>
-                                </button>
-                            </div>
-                        </div>
 
                         <div class="p-4 space-y-4">
                             <div class="relative">
@@ -626,13 +616,6 @@
         </div>
     </div>
 
-    <div class="fixed bottom-6">
-        @if($backgroundEnabled && $backgroundImage)
-            <p><a href="{{route('allTasks')}}" class="underline text-white">Все задачи</a></p>
-        @else
-            <p><a href="{{route('allTasks')}}" class="underline text-gray-700">Все задачи</a></p>
-        @endif
-    </div>
 
     <!-- Модальные окна -->
     <div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">

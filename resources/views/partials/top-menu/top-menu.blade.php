@@ -1,50 +1,73 @@
-<div class="top-menu">
+@php
+    $backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
+    $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
+    $company = auth()->check() ? auth()->user()->company : null;
+
+@endphp
+
+
+    @if($backgroundEnabled && $backgroundImage)
+        <div class="top-menu bg-transparent/10">
+    @else
+        <div class="top-menu" style="background: linear-gradient(to right, #1a1f2e 0%, #161b28 100%);">
+    @endif
     <div class="top-menu__inner">
         <nav class="top-menu__navigation">
             <ul>
                 <li>
-                    <a href="#" class="top-menu__link text-sidebar-text hover:text-white">
-                        <span>
-                            MenuItem
+                    <a href="#" class="top-menu__link text-white">
+                        <span class="font-medium">
+                            Задачи
                         </span>
                     </a>
                 </li>
-                <li><a href="#" class="top-menu__link text-sidebar-text hover:text-white">
-                        <span>
-                            MenuItem
-                        </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="top-menu__link text-sidebar-text hover:text-white">
-                        <span>
-                            MenuItem
+                <li><a href="#" class="top-menu__link text-white">
+                        <span class="font-medium">
+                            Аналитика
                         </span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="top-menu__link text-sidebar-text hover:text-white">
-                        <span>
-                            MenuItem
+                    <a href="#" class="top-menu__link text-white">
+                        <span class="font-medium">
+                            Отчеты
+                        </span>
+                    </a>
+                </li>
+                <li><a href="#" class="top-menu__link text-white">
+                        <span class="font-medium">
+                            Лента
                         </span>
                     </a>
                 </li>
             </ul>
         </nav>
         <div class="top-menu__right">
-            <div class="flex items-center space-x-3 group">
-                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
-                        <i class="fas fa-tasks text-white text-lg"></i>
-                    </div>
-                <a href="http://localhost:8000/home" class="logotype__text">
-                    <h1 class="text-xl text-[16px] font-bold text-white">Менеджер<span class="text-primary-500">Плюс</span></h1>
-                </a>
+            <div>
+                @if($company->license_type !== 'premium')
+                    <button onclick="openUpgradeModal()"
+                            class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600
+                            hover:to-yellow-700 text-white font-bold py-2 px-2  rounded-lg shadow-lg transition
+                            duration-300 transform hover:scale-105 flex items-center text-sm md:text-base">
+                        <i class="fas fa-crown"></i>
+                        <span>Улучшить подписку</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                @else
+                    <span
+                        class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-2 px-2
+                                gap-2 rounded-lg shadow-lg inline-flex items-center  text-sm md:text-base">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Премиум</span>
+                        <i class="fas fa-star"></i>
+                    </span>
+                @endif
             </div>
-             <a href="{{route('profile.edit')}}">
-                 <div class="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-bold shadow-lg">
-                     <img class="rounded" src="https://ui-avatars.com/api/?name=%D0%98%D1%81%D0%BB%D0%B0%D0%BC+%D0%9F%D0%B0%D1%80%D1%87%D0%B8%D0%B5%D0%B2&amp;color=7F9CF5&amp;background=EBF4FF" alt="">
-                    </div>
-                </a>
+             <button type="button" class="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br
+                                    from-primary-500 to-primary-700 flex items-center justify-center
+                                    text-white font-bold shadow-lg" onclick="userProfileModal()">
+                 <img class="rounded" src="{{auth()->user()->getAvatarUrlAttribute()}}" alt="{{auth()->user()->name}}">
+             </button>
         </div>
     </div>
 </div>
@@ -60,8 +83,7 @@
          padding-left: calc(3rem + 256px);
 
         width: 100%;
-         height: 50px;
-        background: linear-gradient(to right, #1a1f2e 0%, #161b28 100%);
+        height: 60px;
     }
     .top-menu__inner {
         height: 100%;
@@ -72,7 +94,7 @@
     .top-menu__right {
         display: flex;
         align-items: center;
-        gap: 1.5rem;
+        gap: 0.5rem;
             margin-left: auto;
     }
     .top-menu__navigation {

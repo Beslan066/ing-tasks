@@ -505,21 +505,6 @@ media-src https://meet.jit.si https:;
             @yield('content')
         </div>
 
-        <div class="setting-button" style="position: fixed; bottom: 10px; right: 60px;" title="Выберите фон">
-            <button onclick="openBackgroundSelector()"
-                    class="w-full text-left px-4 py-2 rounded-lg transition-colors">
-                <i class="fas fa-image mr-3"></i>
-            </button>
-        </div>
-
-        <div class="chat-button" style="position: fixed; bottom: 10px; right: 20px;">
-            <a href="{{route('chat.index')}}">
-                <button class="bg-primary  p-2 rounded-full hover:bg-secondary transition-colors">
-                    <i class="fas fa-comment-dots"></i>
-                </button>
-            </a>
-        </div>
-
     </div>
 </div>
 
@@ -2236,6 +2221,11 @@ media-src https://meet.jit.si https:;
         document.getElementById('newUserModal').classList.remove('hidden');
     });
 
+    function userProfileModal() {
+        currentModalType = 'user';
+        document.getElementById('userProfileModal').classList.remove('hidden');
+    }
+
 
     // Закрытие модальных окон
     document.getElementById('closeModal').addEventListener('click', function () {
@@ -2245,6 +2235,11 @@ media-src https://meet.jit.si https:;
     document.getElementById('cancelTask').addEventListener('click', function () {
         document.getElementById('taskModal').classList.add('hidden');
     });
+
+    function closeUserProfileModal() {
+        document.getElementById('userProfileModal').classList.add('hidden');
+        document.getElementById('userForm').reset();
+    }
 
 
     // // Обработка формы создания задачи

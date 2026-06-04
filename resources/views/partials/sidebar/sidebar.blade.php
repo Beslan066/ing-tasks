@@ -125,8 +125,6 @@
                     </a>
                 </div>
 
-
-
             </div>
 
             <!-- Онлайн пользователи -->
@@ -171,102 +169,30 @@
                     </div>
                 @endif
             </div>
-
-            <!-- Теги -->
-            <div class="tags mb-4">
-                <div class="flex items-center justify-between mb-4 px-2">
-                    <h3 class="text-xs font-semibold text-sidebar-text uppercase tracking-wider">ТЕГИ</h3>
-                    <button onclick="openCategoryModal()"
-                        class="w-6 h-6 rounded-full bg-transparent/20 flex items-center justify-center text-sidebar-text hover:text-white hover:bg-primary-600 transition-colors">
-                        <i class="fas fa-plus text-xs"></i>
-                    </button>
-                </div>
-
-                <div class="space-y-1">
-                    @if(isset($categories) && $categories->count() > 0)
-                        @foreach($categories as $category)
-                            <div
-                                class="group flex items-center justify-between px-4 py-2.5 text-sidebar-text hover:text-white hover:bg-transparent/20 rounded-lg cursor-pointer transition-all duration-200">
-                                <div class="flex items-center">
-                                    <div class="category-dot" style="background-color: {{ $category->color }}"></div>
-                                    <span class="font-medium">{{ $category->name }}</span>
-                                </div>
-                                @if(in_array(auth()->user()->role->name, ['Руководитель', 'Менеджер']))
-                                    <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button onclick="openEditCategoryModal({{ $category->id }})"
-                                            class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center"
-                                            title="Редактировать">
-                                            <i class="fas fa-edit text-xs"></i>
-                                        </button>
-                                        <button
-                                            onclick="openDeleteCategoryModal({{ $category->id }}, {{ json_encode($category->name) }})"
-                                            class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center"
-                                            title="Удалить">
-                                            <i class="fas fa-trash text-xs"></i>
-                                        </button>
-                                    </div>
-                                @endif
-                            </div>
-                        @endforeach
-                    @else
-                        <div class="px-4 py-3 text-center">
-                            <p class="text-sm text-sidebar-text">Нет доступных тегов</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
         </div>
 
 
         <!-- Нижняя часть -->
         <div class="mt-auto space-y-4 pt-4 border-t border-white/10">
-
-
             <!-- Файловое хранилище -->
-            {{-- <div class="bg-gradient-to-r from-sidebar-hover to-transparent p-4 rounded-xl border border-white/5">
-                --}}
-                {{-- <div class="flex items-center justify-between mb-3">--}}
-                    {{-- <div class="flex items-center">--}}
-                        {{-- <i class="fas fa-hard-drive text-primary-500 mr-2"></i>--}}
-                        {{-- <h6 class="font-medium text-white">Хранилище</h6>--}}
-                        {{-- </div>--}}
-                    {{-- <span class="text-xs text-sidebar-text">15%</span>--}}
-                    {{-- </div>--}}
-                {{-- <div class="w-full bg-white/10 rounded-full h-1.5 mb-2 overflow-hidden">--}}
-                    {{-- <div class="progress-bar h-full rounded-full" style="width: 15%"></div>--}}
-                    {{-- </div>--}}
-                {{-- <div class="text-xs text-sidebar-text">12.47 GB из 50 GB</div>--}}
-                {{-- </div>--}}
+            <div class="bg-transparent/10 p-4 rounded-xl border border-white/5">
 
-            <!-- Профиль пользователя -->
-            <a href="{{route('profile.edit')}}" className="user-profile">
-                <div
-                    class="flex items-center justify-between p-2 rounded-lg hover:bg-transparent/20 transition-colors cursor-pointer">
+                <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center">
-                        <div
-                            class="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-bold shadow-lg">
-                            <img class="rounded" src="{{auth()->user()->getAvatarUrlAttribute()}}" alt="">
-                        </div>
-                        <div class="ml-3 user-profile__name">
-                            <div class="text-white font-medium text-sm flex-shrink-0 whitespace-nowrap">
-                                {{ auth()->user()->name }} {{ auth()->user()->surname }}
-                            </div>
-                            @if(auth()->user()->role)
-                                <div class="text-sidebar-text text-xs flex-shrink-0 whitespace-nowrap">
-                                    {{ auth()->user()->role->name }}
-                                </div>
-                            @endif
-                        </div>
+                        <i class="fas fa-hard-drive text-primary-500 mr-2"></i>
+                        <h6 class="font-medium text-white">Хранилище</h6>
+                       </div>
+                    <span class="text-xs text-sidebar-text">15%</span>
                     </div>
-                    <i class="fas fa-chevron-right text-sidebar-text text-sm user-profile__arrow-icon"></i>
+                <div class="w-full bg-white/10 rounded-full h-1.5 mb-2 overflow-hidden">
+                    <div class="progress-bar h-full rounded-full" style="width: 15%"></div>
+                    </div>
+                <div class="text-xs text-sidebar-text">12.47 GB из 50 GB</div>
                 </div>
-            </a>
+
         </div>
 
-        <!-- Индикатор активности -->
-        <div
-            class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-500 to-transparent opacity-20 max-[638px]:static max-[638px]:mt-3">
-        </div>
+
     </div>
 </div>
 <!-- Оверлей для боковой панели -->

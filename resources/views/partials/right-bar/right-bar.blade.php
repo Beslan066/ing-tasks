@@ -1,11 +1,17 @@
 <div class="right-bar">
     <div class="right-bar__inner">
-        <div class="text-white">
-            <a href="http://localhost:8000/chat">
-                <button class="bg-primary  p-2 rounded-full hover:bg-secondary transition-colors">
-                    <i class="fas fa-comment-dots"></i>
+        <div class="text-white flex flex-col items-center">
+            <div class="p-2">
+                <a href="{{route('chat.index')}}">
+                    <i class="fas fa-comments text-pink-500 text-lg"></i>
+                </a>
+            </div>
+
+            <div class="p-2">
+                <button type="button" class="background-none outline-none" onclick="openBackgroundSelector()">
+                    <i class="fas fa-image text-pink-500 text-lg"></i>
                 </button>
-            </a>
+            </div>
         </div>
     </div>
 </div>
