@@ -495,6 +495,9 @@
                         max-width: none;
                         max-height: none;
                     }
+                    .tags {
+                        position: unset;
+                    }
                      .nav-item {
                     padding-left: 1rem;
                     padding-right: 1rem;
