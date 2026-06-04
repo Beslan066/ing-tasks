@@ -342,6 +342,7 @@
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
+            z-index: 2;
 
             &.glass {
                 backdrop-filter: blur(10px) saturate(160%);
@@ -396,6 +397,7 @@
                         max-width: 0;
                         max-height: 0;
                         transition: all 0.3s ease;
+                        position: absolute;
                     }
                 }
 
@@ -477,8 +479,42 @@
                     max-height: 0;
                     transition: all 0.3s ease;
                 }
-            }
+                .sidebar:hover {
+                    max-width: 16rem !important;
+                    z-index: 10;
+                    .logotype__text,
+                    .tags,
+                    .tags h3,
+                    .nav-item span,
+                    .online-users h3,
+                    .tags p,
+                    .user-profile__name,
+                    .user-profile__arrow-icon {
+                        visibility: visible;
+                        opacity: 1;
+                        max-width: none;
+                        max-height: none;
+                    }
+                     .nav-item {
+                    padding-left: 1rem;
+                    padding-right: 1rem;
+                    justify-content: start;
+                    gap: 0.75rem;
 
+                }
+                .nav-item:hover {
+                      transform: translateX(5px);
+            color: #fff;
+            background-color: rgb(0 0 0 / 0.2);
+            border-radius: 0.5rem;
+                }
+                }
+            }
+            .main-container.has-background.sidebar-mode-collapsed {
+                .nav-item.active{
+                    background: rgba(34, 197, 94, 0.1);
+                }
+            }
             #logo-icon {
                 pointer-events: all;
             }
@@ -520,18 +556,30 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const logoIcon = document.getElementById('logo-icon');
-            const mainContainer = document.querySelector('.main-container');
-            const navItems = document.querySelectorAll('.nav-item');
+           const logoIcon = document.getElementById('logo-icon');
+const mainContainer = document.querySelector('.main-container');
+const navItems = document.querySelectorAll('.nav-item');
+
+const isCollapsed = localStorage.getItem('sidebar-mode-collapsed') === 'true';
+
+if (isCollapsed && mainContainer) {
+    mainContainer.classList.add('sidebar-mode-collapsed');
+}
 
 
-            if (logoIcon && mainContainer) {
-                logoIcon.addEventListener('click', function () {
-                    if (window.innerWidth > 638) {
-                        mainContainer.classList.toggle('sidebar-mode-collapsed');
-                    }
-                });
-            }
+if (logoIcon && mainContainer) {
+    logoIcon.addEventListener('click', function () {
+        if (window.innerWidth > 638) {
+
+            mainContainer.classList.toggle('sidebar-mode-collapsed');
+
+
+            const currentlyCollapsed = mainContainer.classList.contains('sidebar-mode-collapsed');
+
+            localStorage.setItem('sidebar-mode-collapsed', currentlyCollapsed);
+        }
+    });
+}
 
             const currentPath = window.location.pathname;
             navItems.forEach(item => {
