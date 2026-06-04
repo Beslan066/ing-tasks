@@ -342,6 +342,7 @@
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
+            z-index: 2;
 
             &.glass {
                 backdrop-filter: blur(10px) saturate(160%);
