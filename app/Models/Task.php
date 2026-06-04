@@ -395,4 +395,48 @@ class Task extends Model
     {
         return \App\Services\ActivityLogger::taskCompleted($this, $user);
     }
+
+    /**
+     * Комментарии к задаче
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(TaskComment::class)->whereNull('parent_id')->with('user', 'replies.user')->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Все комментарии (включая ответы)
+     */
+    public function allComments(): HasMany
+    {
+        return $this->hasMany(TaskComment::class)->with('user')->orderBy('created_at', 'asc');
+    }
+
+    /**
+     * Проверить, может ли пользователь видеть комментарии к задаче
+     */
+    public function canUserViewComments(User $user): bool
+    {
+        if ($this->is_personal) {
+            // Личная задача - только автор и исполнитель
+            return $this->author_id === $user->id || $this->user_id === $user->id;
+        }
+
+        // Задача отдела - все, кто в отделе
+        if ($this->department_id) {
+            return $user->isInDepartment($this->department_id);
+        }
+
+        // Общая задача компании
+        return $this->company_id === $user->company_id;
+    }
+
+    /**
+     * Проверить, может ли пользователь писать комментарии
+     */
+    public function canUserComment(User $user): bool
+    {
+        // Аналогичная логика
+        return $this->canUserViewComments($user);
+    }
 }

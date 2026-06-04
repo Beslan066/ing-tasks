@@ -1,516 +1,1020 @@
 <?php
 
-    namespace App\Http\Controllers\Frontend;
+namespace App\Http\Controllers\Frontend;
 
-    use App\Http\Controllers\Controller;
-    use App\Models\Task;
-    use App\Models\File;
-    use App\Models\TaskRejection;
-    use App\Models\User;
-    use App\Models\Department;
-    use App\Models\Category;
-    use App\Models\Company;
-    use App\Notifications\TaskAssignedNotification;
-    use App\Services\ActivityLogger;
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\Auth;
-    use Illuminate\Support\Facades\DB;
-    use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Controller;
+use App\Models\Task;
+use App\Models\File;
+use App\Models\TaskRejection;
+use App\Models\User;
+use App\Models\Department;
+use App\Models\Category;
+use App\Models\Company;
+use App\Models\TaskComment;
+use App\Notifications\TaskAssignedNotification;
+use App\Services\ActivityLogger;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
-    class TaskController extends Controller
+class TaskController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
     {
-        /**
-         * Display a listing of the resource.
-         */
-        public function index()
-        {
-            $user = Auth::user();
+        $user = Auth::user();
 
-            if ($user->canViewAllCompanyTasks()) {
-                return redirect()->route('tasks.admin');
-            }
-
-            $tasks = $user->assignedTasks()
-                ->with(['author', 'department', 'category', 'files'])
-                ->orderBy('created_at', 'desc')
-                ->get();
-
-            // Добавляем категории компании для создания задач
-            $categories = Category::where('company_id', $user->company_id)->get();
-
-            // Группируем задачи по статусам
-            $tasksByStatus = [
-                'new' => $tasks->where('status', 'назначена'),
-                'in_progress' => $tasks->where('status', 'в работе'),
-                'review' => $tasks->where('status', 'на проверке'),
-                'done' => $tasks->where('status', 'выполнена'),
-            ];
-
-            // Статистика
-            $stats = [
-                'new' => $tasksByStatus['new']->count(),
-                'in_progress' => $tasksByStatus['in_progress']->count(),
-                'review' => $tasksByStatus['review']->count(),
-                'done' => $tasksByStatus['done']->count(),
-            ];
-
-            return view('frontend.tasks.index', compact('tasks', 'user', 'tasksByStatus', 'stats', 'categories'));
+        if ($user->canViewAllCompanyTasks()) {
+            return redirect()->route('tasks.admin');
         }
 
-        /**
-         * Show the form for creating a new resource.
-         */
-        public function create()
-        {
-            $user = Auth::user();
+        $tasks = $user->assignedTasks()
+            ->with(['author', 'department', 'category', 'files'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-            if (!$user->canViewAllCompanyTasks()) {
-                abort(403, 'У вас нет прав для создания задач');
-            }
+        $categories = Category::where('company_id', $user->company_id)->get();
 
-            $departments = Department::where('company_id', $user->company_id)->get();
-            $categories = Category::where('company_id', $user->company_id)->get();
+        $tasksByStatus = [
+            'new' => $tasks->where('status', 'назначена'),
+            'in_progress' => $tasks->where('status', 'в работе'),
+            'review' => $tasks->where('status', 'на проверке'),
+            'done' => $tasks->where('status', 'выполнена'),
+        ];
 
-            // Пользователи, которым можно назначить задачу
-            $assignableUsers = User::where('company_id', $user->company_id)
-                ->get();
+        $stats = [
+            'new' => $tasksByStatus['new']->count(),
+            'in_progress' => $tasksByStatus['in_progress']->count(),
+            'review' => $tasksByStatus['review']->count(),
+            'done' => $tasksByStatus['done']->count(),
+        ];
 
-            return view('frontend.task.create', compact('departments', 'categories', 'assignableUsers', 'user'));
+        return view('frontend.tasks.index', compact('tasks', 'user', 'tasksByStatus', 'stats', 'categories'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $user = Auth::user();
+
+        if (!$user->canViewAllCompanyTasks()) {
+            abort(403, 'У вас нет прав для создания задач');
         }
 
-        /**
-         * Store a newly created resource in storage.
-         */
-        public function store(Request $request)
-        {
-            $user = Auth::user();
-            \Log::info('User:', [
-                'id' => $user->id,
-                'name' => $user->name,
-                'company_id' => $user->company_id,
-                'canViewAllCompanyTasks' => $user->canViewAllCompanyTasks()
-            ]);
+        $departments = Department::where('company_id', $user->company_id)->get();
+        $categories = Category::where('company_id', $user->company_id)->get();
+        $assignableUsers = User::where('company_id', $user->company_id)->get();
 
-            if (!$user->canViewAllCompanyTasks()) {
-                \Log::warning('User does not have permission to create tasks');
+        return view('frontend.task.create', compact('departments', 'categories', 'assignableUsers', 'user'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $user = Auth::user();
+        \Log::info('User:', [
+            'id' => $user->id,
+            'name' => $user->name,
+            'company_id' => $user->company_id,
+            'canViewAllCompanyTasks' => $user->canViewAllCompanyTasks()
+        ]);
+
+        if (!$user->canViewAllCompanyTasks()) {
+            \Log::warning('User does not have permission to create tasks');
+            return response()->json([
+                'success' => false,
+                'message' => 'У вас нет прав для создания задач'
+            ], 403);
+        }
+
+        $validator = \Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'department_id' => 'nullable|exists:departments,id',
+            'category_id' => 'nullable|exists:categories,id',
+            'user_id' => 'nullable|exists:users,id',
+            'priority' => 'required|in:низкий,средний,высокий,критический',
+            'status' => 'required|in:назначена,не назначена,в работе,просрочена,на проверке,выполнена',
+            'deadline' => 'nullable|date',
+            'estimated_hours' => 'nullable|numeric|min:0',
+            'selected_file_ids' => 'nullable|array',
+            'selected_file_ids.*' => 'exists:files,id',
+            'new_files.*' => 'nullable|file|max:10240',
+        ]);
+
+        if ($validator->fails()) {
+            \Log::error('Validation failed:', $validator->errors()->toArray());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибки валидации',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $department = Department::find($request->department_id);
+            if (!$department || $department->company_id !== $user->company_id) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'У вас нет прав для создания задач'
-                ], 403);
-            }
-
-            // Валидация
-            $validator = \Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'department_id' => 'nullable|exists:departments,id',
-                'category_id' => 'nullable|exists:categories,id',
-                'user_id' => 'nullable|exists:users,id',
-                'priority' => 'required|in:низкий,средний,высокий,критический',
-                'status' => 'required|in:назначена,не назначена,в работе,просрочена,на проверке,выполнена',
-                'deadline' => 'nullable|date',
-                'estimated_hours' => 'nullable|numeric|min:0',
-                'selected_file_ids' => 'nullable|array',
-                'selected_file_ids.*' => 'exists:files,id',
-                'new_files.*' => 'nullable|file|max:10240',
-            ]);
-
-            if ($validator->fails()) {
-                \Log::error('Validation failed:', $validator->errors()->toArray());
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ошибки валидации',
-                    'errors' => $validator->errors()
+                    'message' => 'Выбранный отдел не принадлежит вашей компании'
                 ], 422);
             }
 
-            try {
-                // Проверяем отдел
-                $department = Department::find($request->department_id);
-                \Log::info('Department check:', [
-                    'department_id' => $request->department_id,
-                    'found' => !!$department,
-                    'department_company_id' => $department ? $department->company_id : null,
-                    'user_company_id' => $user->company_id
-                ]);
-
-                if (!$department || $department->company_id !== $user->company_id) {
-                    \Log::warning('Department does not belong to user company');
+            $assignedUser = null;
+            if ($request->user_id) {
+                $assignedUser = User::find($request->user_id);
+                if (!$assignedUser || $assignedUser->company_id !== $user->company_id) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Выбранный отдел не принадлежит вашей компании'
+                        'message' => 'Выбранный исполнитель не работает в вашей компании'
                     ], 422);
                 }
+            }
 
-                // Проверяем исполнителя
-                $assignedUser = null;
-                if ($request->user_id) {
-                    $assignedUser = User::find($request->user_id);
-                    \Log::info('Assigned user check:', [
-                        'user_id' => $request->user_id,
-                        'found' => !!$assignedUser,
-                        'user_company_id' => $assignedUser ? $assignedUser->company_id : null
+            $taskData = [
+                'name' => $request->name,
+                'description' => $request->description,
+                'department_id' => $request->department_id,
+                'category_id' => $request->category_id,
+                'user_id' => $request->user_id,
+                'priority' => $request->priority,
+                'status' => $request->status,
+                'deadline' => $request->deadline,
+                'estimated_hours' => $request->estimated_hours,
+                'company_id' => $user->company_id,
+                'author_id' => $user->id,
+            ];
+
+            $task = Task::create($taskData);
+
+            if ($request->has('selected_file_ids')) {
+                $selectedFiles = File::whereIn('id', $request->selected_file_ids)
+                    ->where('company_id', $user->company_id)
+                    ->get();
+                foreach ($selectedFiles as $file) {
+                    if (method_exists($task, 'files')) {
+                        $task->files()->attach($file->id);
+                    }
+                }
+            }
+
+            if ($request->hasFile('new_files')) {
+                foreach ($request->file('new_files') as $file) {
+                    $path = $file->store("tasks/{$task->id}", 'public');
+                    $fileRecord = File::create([
+                        'name' => $file->getClientOriginalName(),
+                        'path' => $path,
+                        'file_path' => $path,
+                        'size' => $file->getSize(),
+                        'mime_type' => $file->getMimeType(),
+                        'extension' => $file->getClientOriginalExtension(),
+                        'uploaded_by' => $user->id,
+                        'company_id' => $user->company_id,
+                        'department_id' => $task->department_id,
+                        'disk' => 'public',
+                        'folder' => 'tasks',
+                        'is_public' => false,
                     ]);
-
-                    if (!$assignedUser || $assignedUser->company_id !== $user->company_id) {
-                        \Log::warning('Assigned user does not belong to user company');
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'Выбранный исполнитель не работает в вашей компании'
-                        ], 422);
+                    if (method_exists($task, 'files')) {
+                        $task->files()->attach($fileRecord->id);
                     }
                 }
-
-                // Создаем задачу
-                $taskData = [
-                    'name' => $request->name,
-                    'description' => $request->description,
-                    'department_id' => $request->department_id,
-                    'category_id' => $request->category_id,
-                    'user_id' => $request->user_id,
-                    'priority' => $request->priority,
-                    'status' => $request->status,
-                    'deadline' => $request->deadline,
-                    'estimated_hours' => $request->estimated_hours,
-                    'company_id' => $user->company_id,
-                    'author_id' => $user->id,
-                ];
-
-                \Log::info('Creating task with data:', $taskData);
-                $task = Task::create($taskData);
-                \Log::info('Task created:', ['task_id' => $task->id]);
-
-
-
-                // Привязываем выбранные файлы из хранилища
-                if ($request->has('selected_file_ids')) {
-                    \Log::info('Attaching selected files:', $request->input('selected_file_ids'));
-                    $selectedFiles = File::whereIn('id', $request->selected_file_ids)
-                        ->where('company_id', $user->company_id)
-                        ->get();
-
-                    foreach ($selectedFiles as $file) {
-                        if (method_exists($task, 'files')) {
-                            $task->files()->attach($file->id);
-                            \Log::info('File attached:', ['file_id' => $file->id, 'task_id' => $task->id]);
-                        } else {
-                            $file->update(['task_id' => $task->id]);
-                        }
-                    }
-                }
-
-                // Загружаем новые файлы
-                if ($request->hasFile('new_files')) {
-                    \Log::info('Processing new files:', ['count' => count($request->file('new_files'))]);
-                    foreach ($request->file('new_files') as $file) {
-                        $path = $file->store("tasks/{$task->id}", 'public');
-                        \Log::info('File stored:', ['path' => $path, 'original_name' => $file->getClientOriginalName()]);
-
-                        $fileRecord = File::create([
-                            'name' => $file->getClientOriginalName(),
-                            'path' => $path,
-                            'file_path' => $path,
-                            'size' => $file->getSize(),
-                            'mime_type' => $file->getMimeType(),
-                            'extension' => $file->getClientOriginalExtension(),
-                            'uploaded_by' => $user->id,
-                            'company_id' => $user->company_id,
-                            'department_id' => $task->department_id,
-                            'disk' => 'public',
-                            'folder' => 'tasks',
-                            'is_public' => false,
-                        ]);
-
-                        if (method_exists($task, 'files')) {
-                            $task->files()->attach($fileRecord->id);
-                        }
-                    }
-                }
-
-                ActivityLogger::taskCreated($task, $user);
-
-                // Если задача сразу назначена на пользователя
-                if ($request->user_id && $request->user_id != $user->id) {
-                    $assignedUser = User::find($request->user_id);
-                    ActivityLogger::taskAssigned($task, $assignedUser, $user);
-                }
-
-                // Отправляем уведомление
-                if ($assignedUser && $task->user_id) {
-                    try {
-                        \Log::info('Sending notification to user:', ['user_id' => $assignedUser->id, 'email' => $assignedUser->email]);
-                        $assignedUser->notify(new TaskAssignedNotification($task));
-                        \Log::info('Notification sent successfully');
-                    } catch (\Exception $e) {
-                        \Log::error('Notification error: ' . $e->getMessage());
-                    }
-                }
-
-                \Log::info('=== TASK CREATED SUCCESSFULLY ===');
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Задача успешно создана',
-                    'task' => $task->load(['department', 'category', 'user', 'author', 'files'])
-                ]);
-
-            } catch (\Exception $e) {
-                \Log::error('Error in task store: ' . $e->getMessage());
-                \Log::error('Stack trace: ' . $e->getTraceAsString());
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ошибка при создании задачи: ' . $e->getMessage()
-                ], 500);
-            }
-        }
-
-        public function view(Task $task)
-        {
-            $user = Auth::user();
-
-            try {
-                if (!$this->canAccessTask($user, $task)) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'У вас нет доступа к этой задаче'
-                    ], 403);
-                }
-
-                $task->load(['author', 'user', 'department', 'category', 'files']);
-                $task->status_icon = $task->getStatusIcon();
-
-                return response()->json([
-                    'success' => true,
-                    'task' => $task
-                ]);
-
-            } catch (\Exception $e) {
-                \Log::error('Ошибка при загрузке задачи: ' . $e->getMessage());
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ошибка при загрузке задачи'
-                ], 500);
-            }
-        }
-
-        /**
-         * Get task data for editing (уже есть, но проверим)
-         */
-        public function getTask(Task $task)
-        {
-            $user = Auth::user();
-
-            if (!$user->canViewAllCompanyTasks()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'У вас нет прав для редактирования задач'
-                ], 403);
             }
 
-            if ($task->company_id !== $user->company_id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Задача не принадлежит вашей компании'
-                ], 403);
+            ActivityLogger::taskCreated($task, $user);
+
+            if ($request->user_id && $request->user_id != $user->id) {
+                $assignedUser = User::find($request->user_id);
+                ActivityLogger::taskAssigned($task, $assignedUser, $user);
             }
 
-            $task->load(['author', 'user', 'department', 'category', 'files', 'rejections.user']);
+            if ($assignedUser && $task->user_id) {
+                try {
+                    $assignedUser->notify(new TaskAssignedNotification($task));
+                } catch (\Exception $e) {
+                    \Log::error('Notification error: ' . $e->getMessage());
+                }
+            }
 
             return response()->json([
                 'success' => true,
-                'task' => $task,
-                'departments' => Department::where('company_id', $user->company_id)->get(),
-                'categories' => Category::where('company_id', $user->company_id)->get(),
-                'users' => User::where('company_id', $user->company_id)->get()
+                'message' => 'Задача успешно создана',
+                'task' => $task->load(['department', 'category', 'user', 'author', 'files'])
             ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error in task store: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при создании задачи: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Отображение задачи с комментариями для модального окна
+     */
+    /**
+     * Отображение задачи с комментариями для модального окна
+     */
+    public function view(Task $task)
+    {
+        $user = Auth::user();
+
+        if (!$this->canAccessTask($user, $task)) {
+            abort(403, 'У вас нет доступа к этой задаче');
         }
 
-        /**
-         * Take available task (for employees)
-         */
-        public function takeTask(Task $task)
-        {
-            $user = Auth::user();
+        $task->updateOverdueStatus();
+        $task->load(['author', 'user', 'department', 'category']);
 
-            try {
-                if ($task->user_id !== null || $task->status !== 'не назначена') {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Задача уже назначена или недоступна'
-                    ], 422);
-                }
+        // ПРИНУДИТЕЛЬНО загружаем файлы через связь
+        $files = $task->files()->get();
 
-                // проверяем, состоит ли пользователь в отделе задачи
-                if (!$user->isInDepartment($task->department_id)) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Вы не можете взять задачу из другого отдела'
-                    ], 422);
-                }
+        // Для отладки - пишем в лог
+        \Log::info('Task ID: ' . $task->id . ', Files count: ' . $files->count());
 
-                $task->update([
-                    'user_id' => $user->id,
-                    'status' => 'в работе'
-                ]);
+        $comments = null;
+        $canComment = false;
 
-                // Логируем назначение задачи (пользователь сам взял задачу)
-                ActivityLogger::taskAssigned($task, $user, $user);
+        if (!$task->is_personal) {
+            $comments = $task->comments()->with(['user', 'replies.user'])->paginate(20);
+            $canComment = $this->canUserComment($task, $user);
+        }
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Задача успешно взята в работу',
-                    'task' => $task->load(['department', 'category', 'author'])
-                ]);
+        $subtasks = $task->subtasks()->with(['user', 'author'])->get();
+        $currentUser = Auth::user();
 
-            } catch (\Exception $e) {
-                \Log::error('Ошибка при взятии задачи: ' . $e->getMessage());
+        return view('partials.modal.task.modal_content', compact(
+            'task', 'comments', 'files', 'subtasks', 'currentUser', 'canComment'
+        ));
+    }
+
+    /**
+     * Get task data for editing
+     */
+    public function getTask(Task $task)
+    {
+        $user = Auth::user();
+
+        if (!$user->canViewAllCompanyTasks()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'У вас нет прав для редактирования задач'
+            ], 403);
+        }
+
+        if ($task->company_id !== $user->company_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Задача не принадлежит вашей компании'
+            ], 403);
+        }
+
+        $task->load(['author', 'user', 'department', 'category', 'files', 'rejections.user']);
+
+        return response()->json([
+            'success' => true,
+            'task' => $task,
+            'departments' => Department::where('company_id', $user->company_id)->get(),
+            'categories' => Category::where('company_id', $user->company_id)->get(),
+            'users' => User::where('company_id', $user->company_id)->get()
+        ]);
+    }
+
+    /**
+     * Take available task (for employees)
+     */
+    public function takeTask(Task $task)
+    {
+        $user = Auth::user();
+
+        try {
+            if ($task->user_id !== null || $task->status !== 'не назначена') {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Ошибка при взятии задачи'
-                ], 500);
+                    'message' => 'Задача уже назначена или недоступна'
+                ], 422);
             }
-        }
 
-        public function updateTaskStatus(Request $request, Task $task)
-        {
-            try {
-                $user = Auth::user();
-                $oldStatus = $task->status;
-
-
-                \Log::info('=== updateTaskStatus START ===');
-                \Log::info('Task ID: ' . $task->id);
-                \Log::info('User ID: ' . $user->id);
-                \Log::info('Requested status: ' . $request->status);
-
-                // Проверяем права - исполнитель или автор или руководитель
-                if ($task->user_id !== $user->id && $task->author_id !== $user->id && !$user->canViewAllCompanyTasks()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'У вас нет прав на изменение этой задачи'
-                    ], 403);
-                }
-
-                // Допустимые статусы (добавили 'назначена')
-                $validator = \Validator::make($request->all(), [
-                    'status' => 'required|in:назначена,в работе,на проверке,выполнена'
-                ]);
-
-                if ($validator->fails()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Недопустимый статус. Доступные статусы: назначена, в работе, на проверке, выполнена'
-                    ], 422);
-                }
-
-                $updateData = ['status' => $request->status];
-
-                if ($request->status === 'на проверке' && $request->has('actual_hours')) {
-                    $updateData['actual_hours'] = $request->actual_hours;
-                }
-
-                if ($request->status === 'выполнена') {
-                    $updateData['completed_at'] = now();
-                } elseif ($request->status === 'назначена' && $task->completed_at) {
-                    $updateData['completed_at'] = null;
-                }
-
-                $task->update($updateData);
-
-                // Логируем изменение статуса
-                if ($oldStatus != $request->status) {
-                    ActivityLogger::taskStatusChanged($task, $oldStatus, $request->status, $user);
-                }
-
-                // Если статус changed на 'выполнена'
-                if ($request->status === 'выполнена' && $oldStatus !== 'выполнена') {
-                    ActivityLogger::taskCompleted($task, $user);
-                }
-
-                \Log::info('Task status updated to: ' . $task->status);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Статус задачи успешно обновлен',
-                    'task' => $task->load(['department', 'category', 'author'])
-                ]);
-
-            } catch (\Exception $e) {
-                \Log::error('Error in updateTaskStatus: ' . $e->getMessage());
+            if (!$user->isInDepartment($task->department_id)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Ошибка при обновлении статуса задачи: ' . $e->getMessage()
-                ], 500);
+                    'message' => 'Вы не можете взять задачу из другого отдела'
+                ], 422);
             }
+
+            $task->update([
+                'user_id' => $user->id,
+                'status' => 'в работе'
+            ]);
+
+            ActivityLogger::taskAssigned($task, $user, $user);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Задача успешно взята в работу',
+                'task' => $task->load(['department', 'category', 'author'])
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Ошибка при взятии задачи: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при взятии задачи'
+            ], 500);
         }
+    }
 
-        public function rejectTask(Request $request, Task $task)
-        {
+    public function updateTaskStatus(Request $request, Task $task)
+    {
+        try {
             $user = Auth::user();
+            $oldStatus = $task->status;
 
-            try {
-                if ($task->user_id !== $user->id) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Вы не являетесь исполнителем этой задачи'
-                    ], 403);
-                }
+            if ($task->user_id !== $user->id && $task->author_id !== $user->id && !$user->canViewAllCompanyTasks()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'У вас нет прав на изменение этой задачи'
+                ], 403);
+            }
 
-                $request->validate([
-                    'reason' => 'required|string|max:1000'
-                ]);
+            $validator = \Validator::make($request->all(), [
+                'status' => 'required|in:назначена,в работе,на проверке,выполнена'
+            ]);
 
-                TaskRejection::create([
-                    'reason' => $request->reason,
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Недопустимый статус'
+                ], 422);
+            }
+
+            $updateData = ['status' => $request->status];
+
+            if ($request->status === 'на проверке' && $request->has('actual_hours')) {
+                $updateData['actual_hours'] = $request->actual_hours;
+            }
+
+            if ($request->status === 'выполнена') {
+                $updateData['completed_at'] = now();
+            } elseif ($request->status === 'назначена' && $task->completed_at) {
+                $updateData['completed_at'] = null;
+            }
+
+            $task->update($updateData);
+
+            if ($oldStatus != $request->status) {
+                ActivityLogger::taskStatusChanged($task, $oldStatus, $request->status, $user);
+            }
+
+            if ($request->status === 'выполнена' && $oldStatus !== 'выполнена') {
+                ActivityLogger::taskCompleted($task, $user);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Статус задачи успешно обновлен',
+                'task' => $task->load(['department', 'category', 'author'])
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error in updateTaskStatus: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при обновлении статуса задачи: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function rejectTask(Request $request, Task $task)
+    {
+        $user = Auth::user();
+
+        try {
+            if ($task->user_id !== $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Вы не являетесь исполнителем этой задачи'
+                ], 403);
+            }
+
+            $request->validate([
+                'reason' => 'required|string|max:1000'
+            ]);
+
+            TaskRejection::create([
+                'reason' => $request->reason,
+                'task_id' => $task->id,
+                'user_id' => $user->id,
+                'company_id' => $user->company_id
+            ]);
+
+            $task->update([
+                'user_id' => null,
+                'status' => 'не назначена'
+            ]);
+
+            ActivityLogger::taskRejected($task, $user, $request->reason);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Вы отказались от задачи',
+                'task' => $task->load(['department', 'category', 'author'])
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Ошибка при отказе от задачи: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при отказе от задачи'
+            ], 500);
+        }
+    }
+
+    public function attachFile(Request $request, Task $task)
+    {
+        $user = Auth::user();
+
+        try {
+            if ($task->user_id !== $user->id && !$user->canViewAllCompanyTasks()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'У вас нет доступа к этой задаче'
+                ], 403);
+            }
+
+            $request->validate([
+                'file' => 'required|file|max:10240',
+            ]);
+
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                $path = $file->store('tasks/' . $task->id, 'public');
+
+                $fileRecord = File::create([
+                    'name' => $file->getClientOriginalName(),
+                    'file' => $path,
+                    'file_path' => $path,
+                    'file_size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
                     'task_id' => $task->id,
                     'user_id' => $user->id,
-                    'company_id' => $user->company_id
+                    'department_id' => $task->department_id,
                 ]);
-
-                $task->update([
-                    'user_id' => null,
-                    'status' => 'не назначена'
-                ]);
-                // Логируем отказ от задачи
-                ActivityLogger::taskRejected($task, $user, $request->reason);
-
-                \Log::info("Пользователь {$user->name} отказался от задачи #{$task->id}. Причина: {$request->reason}");
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'Вы отказались от задачи',
-                    'task' => $task->load(['department', 'category', 'author'])
+                    'message' => 'Файл успешно прикреплен',
+                    'file' => $fileRecord
                 ]);
-
-            } catch (\Exception $e) {
-                \Log::error('Ошибка при отказе от задачи: ' . $e->getMessage());
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ошибка при отказе от задачи'
-                ], 500);
             }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Файл не был загружен'
+            ], 422);
+
+        } catch (\Exception $e) {
+            \Log::error('Ошибка при прикреплении файла: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при прикреплении файла'
+            ], 500);
+        }
+    }
+
+    public function show(Task $task)
+    {
+        $user = Auth::user();
+
+        if (!$this->canAccessTask($user, $task)) {
+            abort(403, 'У вас нет доступа к этой задаче');
         }
 
-        public function attachFile(Request $request, Task $task)
-        {
-            $user = Auth::user();
+        $task->load(['author', 'user', 'department', 'category', 'files', 'subtasks']);
 
-            try {
-                if ($task->user_id !== $user->id && !$user->canViewAllCompanyTasks()) {
+        return view('frontend.tasks.show', compact('task', 'user'));
+    }
+
+    public function edit(Task $task)
+    {
+        $user = Auth::user();
+
+        if (!$user->canViewAllCompanyTasks()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'У вас нет прав для редактирования задач'
+            ], 403);
+        }
+
+        if ($task->company_id !== $user->company_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Задача не принадлежит вашей компании'
+            ], 403);
+        }
+
+        $task->load(['author', 'user', 'department', 'category', 'files']);
+
+        return response()->json([
+            'success' => true,
+            'task' => $task,
+            'departments' => Department::where('company_id', $user->company_id)->get(),
+            'categories' => Category::where('company_id', $user->company_id)->get(),
+            'users' => User::where('company_id', $user->company_id)->get()
+        ]);
+    }
+
+    /**
+     * Update task
+     */
+    public function update(Request $request, Task $task)
+    {
+        $user = Auth::user();
+        $oldUserId = $task->user_id;
+        $oldStatus = $task->status;
+        $oldDepartmentId = $task->department_id;
+        $oldPriority = $task->priority;
+        $oldDeadline = $task->deadline;
+        $oldEstimatedHours = $task->estimated_hours;
+        $oldActualHours = $task->actual_hours;
+        $oldName = $task->name;
+        $oldDescription = $task->description;
+        $oldCategoryId = $task->category_id;
+
+        if (!$user->canViewAllCompanyTasks()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'У вас нет прав для редактирования задач'
+            ], 403);
+        }
+
+        if ($task->company_id !== $user->company_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Задача не принадлежит вашей компании'
+            ], 403);
+        }
+
+        $validator = \Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'department_id' => 'required|exists:departments,id',
+            'category_id' => 'nullable|exists:categories,id',
+            'user_id' => 'nullable|exists:users,id',
+            'priority' => 'required|in:низкий,средний,высокий,критический',
+            'status' => 'required|in:назначена,не назначена,в работе,просрочена,на проверке,выполнена',
+            'deadline' => 'nullable|date',
+            'estimated_hours' => 'nullable|numeric|min:0',
+            'actual_hours' => 'nullable|numeric|min:0',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибки валидации',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $department = Department::find($request->department_id);
+            if (!$department || $department->company_id !== $user->company_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Выбранный отдел не принадлежит вашей компании'
+                ], 422);
+            }
+
+            $newAssignedUser = null;
+
+            if ($request->user_id) {
+                $newAssignedUser = User::find($request->user_id);
+                if (!$newAssignedUser || $newAssignedUser->company_id !== $user->company_id) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'У вас нет доступа к этой задаче'
-                    ], 403);
+                        'message' => 'Выбранный исполнитель не работает в вашей компании'
+                    ], 422);
                 }
+            }
 
-                $request->validate([
-                    'file' => 'required|file|max:10240',
-                ]);
+            $updateData = [
+                'name' => $request->name,
+                'description' => $request->description,
+                'department_id' => $request->department_id,
+                'category_id' => $request->category_id,
+                'user_id' => $request->user_id,
+                'priority' => $request->priority,
+                'status' => $request->status,
+                'deadline' => $request->deadline,
+                'estimated_hours' => $request->estimated_hours,
+                'actual_hours' => $request->actual_hours,
+            ];
 
-                if ($request->hasFile('file')) {
-                    $file = $request->file('file');
-                    $path = $file->store('tasks/' . $task->id, 'public');
+            if ($request->status === 'выполнена' && $task->status !== 'выполнена') {
+                $updateData['completed_at'] = now();
+            }
+
+            if ($request->status !== 'выполнена' && $task->status === 'выполнена') {
+                $updateData['completed_at'] = null;
+            }
+
+            $task->update($updateData);
+
+            $selectedFileIds = [];
+
+            if ($request->has('selected_files')) {
+                $selectedFilesInput = $request->input('selected_files');
+                if (is_string($selectedFilesInput)) {
+                    $decoded = json_decode($selectedFilesInput, true);
+                    if (is_array($decoded)) {
+                        $selectedFileIds = $decoded;
+                    }
+                } elseif (is_array($selectedFilesInput)) {
+                    $selectedFileIds = $selectedFilesInput;
+                }
+            }
+
+            $selectedFileIds = array_unique(array_filter($selectedFileIds));
+
+            if (!empty($selectedFileIds)) {
+                $task->files()->sync($selectedFileIds);
+            } else {
+                $task->files()->detach();
+            }
+
+            if ($newAssignedUser && $oldUserId !== $newAssignedUser->id) {
+                try {
+                    $newAssignedUser->notify(new TaskAssignedNotification($task));
+                } catch (\Exception $e) {
+                    \Log::error('Notification error: ' . $e->getMessage());
+                }
+            }
+
+            $changes = [];
+
+            if ($oldName != $request->name) {
+                $changes[] = "название: '{$oldName}' → '{$request->name}'";
+            }
+            if ($oldStatus != $request->status) {
+                $changes[] = "статус: '{$oldStatus}' → '{$request->status}'";
+            }
+            if ($oldUserId != $request->user_id) {
+                $oldUserName = $oldUserId ? User::find($oldUserId)?->name : 'не назначен';
+                $newUserName = $request->user_id ? User::find($request->user_id)?->name : 'не назначен';
+                $changes[] = "исполнитель: '{$oldUserName}' → '{$newUserName}'";
+            }
+            if ($oldDepartmentId != $request->department_id) {
+                $oldDeptName = Department::find($oldDepartmentId)?->name ?? 'не указан';
+                $newDeptName = Department::find($request->department_id)?->name ?? 'не указан';
+                $changes[] = "отдел: '{$oldDeptName}' → '{$newDeptName}'";
+            }
+            if ($oldCategoryId != $request->category_id) {
+                $oldCatName = Category::find($oldCategoryId)?->name ?? 'не указана';
+                $newCatName = Category::find($request->category_id)?->name ?? 'не указана';
+                $changes[] = "категория: '{$oldCatName}' → '{$newCatName}'";
+            }
+            if ($oldPriority != $request->priority) {
+                $changes[] = "приоритет: '{$oldPriority}' → '{$request->priority}'";
+            }
+            if ($oldDeadline != $request->deadline) {
+                $oldDeadlineStr = $oldDeadline ? date('d.m.Y H:i', strtotime($oldDeadline)) : 'не указан';
+                $newDeadlineStr = $request->deadline ? date('d.m.Y H:i', strtotime($request->deadline)) : 'не указан';
+                $changes[] = "дедлайн: '{$oldDeadlineStr}' → '{$newDeadlineStr}'";
+            }
+            if ($oldEstimatedHours != $request->estimated_hours) {
+                $changes[] = "планируемые часы: '{$oldEstimatedHours}' → '{$request->estimated_hours}'";
+            }
+            if ($oldActualHours != $request->actual_hours) {
+                $changes[] = "фактические часы: '{$oldActualHours}' → '{$request->actual_hours}'";
+            }
+
+            if (!empty($changes)) {
+                $changesText = implode(', ', $changes);
+                ActivityLogger::taskUpdated($task, $user, $changesText);
+            }
+
+            if ($oldUserId != $request->user_id && $request->user_id) {
+                $newUser = User::find($request->user_id);
+                ActivityLogger::taskAssigned($task, $newUser, $user);
+            }
+
+            if ($oldStatus != $request->status) {
+                ActivityLogger::taskStatusChanged($task, $oldStatus, $request->status, $user);
+            }
+
+            DB::commit();
+
+            $task->load(['department', 'category', 'user', 'author', 'files']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Задача успешно обновлена',
+                'task' => $task
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error updating task: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при обновлении задачи: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Add files to task
+     */
+    public function addFiles(Request $request, Task $task)
+    {
+        $user = Auth::user();
+
+        if (!$user->canViewAllCompanyTasks()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'У вас нет прав для добавления файлов'
+            ], 403);
+        }
+
+        if ($task->company_id !== $user->company_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Задача не принадлежит вашей компании'
+            ], 403);
+        }
+
+        $request->validate([
+            'files.*' => 'required|file|max:10240',
+        ]);
+
+        try {
+            $uploadedFiles = [];
+
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    $path = $file->store("tasks/{$task->id}", 'public');
 
                     $fileRecord = File::create([
+                        'name' => $file->getClientOriginalName(),
+                        'file_path' => $path,
+                        'path' => $path,
+                        'file_size' => $file->getSize(),
+                        'size' => $file->getSize(),
+                        'mime_type' => $file->getMimeType(),
+                        'extension' => $file->getClientOriginalExtension(),
+                        'uploaded_by' => $user->id,
+                        'company_id' => $user->company_id,
+                        'department_id' => $task->department_id,
+                        'disk' => 'public',
+                        'folder' => 'tasks',
+                        'is_public' => false,
+                    ]);
+
+                    $task->files()->attach($fileRecord->id);
+                    $uploadedFiles[] = $fileRecord;
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Файлы успешно добавлены',
+                'files' => $uploadedFiles
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Ошибка при добавлении файлов: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при добавлении файлов: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete file from task
+     */
+    public function deleteFile($fileId)
+    {
+        $user = Auth::user();
+
+        try {
+            $file = File::findOrFail($fileId);
+            $task = $file->tasks()->first();
+            if ($task && !$user->canViewAllCompanyTasks()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'У вас нет прав для удаления этого файла'
+                ], 403);
+            }
+
+            if ($task) {
+                $task->files()->detach($fileId);
+            }
+
+            if (Storage::disk('public')->exists($file->file_path)) {
+                Storage::disk('public')->delete($file->file_path);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Файл успешно удален'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Ошибка при удалении файла: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при удалении файла'
+            ], 500);
+        }
+    }
+
+    /**
+     * Return task to work (for admin)
+     */
+    public function returnToWork(Request $request, Task $task)
+    {
+        $user = Auth::user();
+
+        if (!$user->canViewAllCompanyTasks()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'У вас нет прав для этого действия'
+            ], 403);
+        }
+
+        if ($task->company_id !== $user->company_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Задача не принадлежит вашей компании'
+            ], 403);
+        }
+
+        $request->validate([
+            'comment' => 'nullable|string|max:1000'
+        ]);
+
+        try {
+            TaskRejection::create([
+                'reason' => $request->comment ?: 'Возврат на доработку руководителем',
+                'task_id' => $task->id,
+                'user_id' => $user->id,
+                'company_id' => $user->company_id
+            ]);
+
+            $task->update([
+                'status' => 'в работе'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Задача возвращена на доработку'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Ошибка при возврате задачи: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при возврате задачи'
+            ], 500);
+        }
+    }
+
+    public function destroy(Request $request, Task $task)
+    {
+        $user = Auth::user();
+
+        try {
+            if (!$task->canBeDeletedBy($user)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Вы можете удалять только свои задачи'
+                ], 403);
+            }
+
+            if (!$task->canBeDeleted()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Невозможно удалить задачу'
+                ], 422);
+            }
+
+            $task->update(['deleted_by' => $user->id]);
+            $task->delete();
+
+            ActivityLogger::taskDeleted($task, $user);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Задача успешно удалена'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Ошибка при удалении задачи: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при удалении задачи'
+            ], 500);
+        }
+    }
+
+    /**
+     * Check if user can access task
+     */
+    private function canAccessTask(User $user, Task $task): bool
+    {
+        if ($user->canViewAllCompanyTasks()) {
+            return $task->company_id === $user->company_id;
+        }
+
+        return $task->company_id === $user->company_id &&
+            ($task->user_id === $user->id || $user->isInDepartment($task->department_id));
+    }
+
+    /**
+     * Check if user can comment on task
+     */
+    private function canUserComment(Task $task, User $user): bool
+    {
+        if ($task->is_personal) {
+            return false;
+        }
+
+        if ($task->department_id) {
+            return $user->isInDepartment($task->department_id);
+        }
+
+        return $task->company_id === $user->company_id;
+    }
+
+    public function storePersonal(Request $request)
+    {
+        $user = Auth::user();
+
+        $validator = \Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'category_id' => 'nullable|exists:categories,id',
+            'priority' => 'required|in:низкий,средний,высокий,критический',
+            'deadline' => 'nullable|date',
+            'estimated_hours' => 'nullable|numeric|min:0',
+            'files.*' => 'nullable|file|max:10240',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибки валидации',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            if ($request->category_id) {
+                $category = Category::find($request->category_id);
+                if (!$category || $category->company_id !== $user->company_id) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Выбранная категория не доступна'
+                    ], 422);
+                }
+            }
+
+            $primaryDepartment = $user->departments()->first();
+            $departmentId = $primaryDepartment ? $primaryDepartment->id : null;
+
+            $taskData = [
+                'name' => $request->name,
+                'description' => $request->description,
+                'department_id' => $departmentId,
+                'category_id' => $request->category_id,
+                'user_id' => $user->id,
+                'priority' => $request->priority,
+                'status' => 'назначена',
+                'deadline' => $request->deadline,
+                'estimated_hours' => $request->estimated_hours,
+                'company_id' => $user->company_id,
+                'author_id' => $user->id,
+                'is_personal' => true,
+            ];
+
+            $task = Task::create($taskData);
+
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    $path = $file->store('tasks/' . $task->id, 'public');
+                    File::create([
                         'name' => $file->getClientOriginalName(),
                         'file' => $path,
                         'file_path' => $path,
@@ -518,628 +1022,54 @@
                         'mime_type' => $file->getMimeType(),
                         'task_id' => $task->id,
                         'user_id' => $user->id,
-                        'department_id' => $task->department_id,
-                    ]);
-
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Файл успешно прикреплен',
-                        'file' => $fileRecord
+                        'department_id' => $departmentId,
                     ]);
                 }
-
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Файл не был загружен'
-                ], 422);
-
-            } catch (\Exception $e) {
-                \Log::error('Ошибка при прикреплении файла: ' . $e->getMessage());
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ошибка при прикреплении файла'
-                ], 500);
             }
-        }
-
-        public function show(Task $task)
-        {
-            $user = Auth::user();
-
-            if (!$this->canAccessTask($user, $task)) {
-                abort(403, 'У вас нет доступа к этой задаче');
-            }
-
-            $task->load(['author', 'user', 'department', 'category', 'files', 'subtasks']);
-
-            return view('frontend.tasks.show', compact('task', 'user'));
-        }
-
-        public function edit(Task $task)
-        {
-            $user = Auth::user();
-
-            if (!$user->canViewAllCompanyTasks()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'У вас нет прав для редактирования задач'
-                ], 403);
-            }
-
-            if ($task->company_id !== $user->company_id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Задача не принадлежит вашей компании'
-                ], 403);
-            }
-
-            $task->load(['author', 'user', 'department', 'category', 'files']);
 
             return response()->json([
                 'success' => true,
-                'task' => $task,
-                'departments' => Department::where('company_id', $user->company_id)->get(),
-                'categories' => Category::where('company_id', $user->company_id)->get(),
-                'users' => User::where('company_id', $user->company_id)->get()
-            ]);
-        }
-
-        /**
-         * Update task (добавляем поддержку файлов)
-         */
-
-        /**
-         * Update task (добавляем поддержку файлов)
-         */
-        public function update(Request $request, Task $task)
-        {
-            $user = Auth::user();
-            $oldUserId = $task->user_id;
-            $oldStatus = $task->status;
-            $oldDepartmentId = $task->department_id;
-            $oldPriority = $task->priority;
-            $oldDeadline = $task->deadline;
-            $oldEstimatedHours = $task->estimated_hours;
-            $oldActualHours = $task->actual_hours;
-            $oldName = $task->name;
-            $oldDescription = $task->description;
-            $oldCategoryId = $task->category_id;
-
-            if (!$user->canViewAllCompanyTasks()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'У вас нет прав для редактирования задач'
-                ], 403);
-            }
-
-            if ($task->company_id !== $user->company_id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Задача не принадлежит вашей компании'
-                ], 403);
-            }
-
-            $validator = \Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'department_id' => 'required|exists:departments,id',
-                'category_id' => 'nullable|exists:categories,id',
-                'user_id' => 'nullable|exists:users,id',
-                'priority' => 'required|in:низкий,средний,высокий,критический',
-                'status' => 'required|in:назначена,не назначена,в работе,просрочена,на проверке,выполнена',
-                'deadline' => 'nullable|date',
-                'estimated_hours' => 'nullable|numeric|min:0',
-                'actual_hours' => 'nullable|numeric|min:0',
+                'message' => 'Личная задача успешно создана',
+                'task' => $task->load(['department', 'category'])
             ]);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ошибки валидации',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            try {
-                DB::beginTransaction();
-
-                // Проверяем отдел
-                $department = Department::find($request->department_id);
-                if (!$department || $department->company_id !== $user->company_id) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Выбранный отдел не принадлежит вашей компании'
-                    ], 422);
-                }
-
-                $newAssignedUser = null;
-
-                if ($request->user_id) {
-                    $newAssignedUser = User::find($request->user_id);
-                    if (!$newAssignedUser || $newAssignedUser->company_id !== $user->company_id) {
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'Выбранный исполнитель не работает в вашей компании'
-                        ], 422);
-                    }
-                }
-
-                // Обновляем основные данные задачи
-                $updateData = [
-                    'name' => $request->name,
-                    'description' => $request->description,
-                    'department_id' => $request->department_id,
-                    'category_id' => $request->category_id,
-                    'user_id' => $request->user_id,
-                    'priority' => $request->priority,
-                    'status' => $request->status,
-                    'deadline' => $request->deadline,
-                    'estimated_hours' => $request->estimated_hours,
-                    'actual_hours' => $request->actual_hours,
-                ];
-
-                if ($request->status === 'выполнена' && $task->status !== 'выполнена') {
-                    $updateData['completed_at'] = now();
-                }
-
-                if ($request->status !== 'выполнена' && $task->status === 'выполнена') {
-                    $updateData['completed_at'] = null;
-                }
-
-                $task->update($updateData);
-
-                // ОБРАБОТКА ФАЙЛОВ
-                $selectedFileIds = [];
-
-                if ($request->has('selected_files')) {
-                    $selectedFilesInput = $request->input('selected_files');
-
-                    if (is_string($selectedFilesInput)) {
-                        $decoded = json_decode($selectedFilesInput, true);
-                        if (is_array($decoded)) {
-                            $selectedFileIds = $decoded;
-                        }
-                    } elseif (is_array($selectedFilesInput)) {
-                        $selectedFileIds = $selectedFilesInput;
-                    }
-                }
-
-                // Убираем дубликаты и пустые значения
-                $selectedFileIds = array_unique(array_filter($selectedFileIds));
-
-                // Синхронизируем файлы
-                if (!empty($selectedFileIds)) {
-                    $task->files()->sync($selectedFileIds);
-                } else {
-                    $task->files()->detach();
-                }
-
-                // Отправляем уведомление при смене исполнителя
-                if ($newAssignedUser && $oldUserId !== $newAssignedUser->id) {
-                    try {
-                        $newAssignedUser->notify(new TaskAssignedNotification($task));
-                    } catch (\Exception $e) {
-                        \Log::error('Notification error: ' . $e->getMessage());
-                    }
-                }
-
-                // Формируем список изменений для логирования
-                $changes = [];
-
-                if ($oldName != $request->name) {
-                    $changes[] = "название: '{$oldName}' → '{$request->name}'";
-                }
-                if ($oldStatus != $request->status) {
-                    $changes[] = "статус: '{$oldStatus}' → '{$request->status}'";
-                }
-                if ($oldUserId != $request->user_id) {
-                    $oldUserName = $oldUserId ? User::find($oldUserId)?->name : 'не назначен';
-                    $newUserName = $request->user_id ? User::find($request->user_id)?->name : 'не назначен';
-                    $changes[] = "исполнитель: '{$oldUserName}' → '{$newUserName}'";
-                }
-                if ($oldDepartmentId != $request->department_id) {
-                    $oldDeptName = Department::find($oldDepartmentId)?->name ?? 'не указан';
-                    $newDeptName = Department::find($request->department_id)?->name ?? 'не указан';
-                    $changes[] = "отдел: '{$oldDeptName}' → '{$newDeptName}'";
-                }
-                if ($oldCategoryId != $request->category_id) {
-                    $oldCatName = Category::find($oldCategoryId)?->name ?? 'не указана';
-                    $newCatName = Category::find($request->category_id)?->name ?? 'не указана';
-                    $changes[] = "категория: '{$oldCatName}' → '{$newCatName}'";
-                }
-                if ($oldPriority != $request->priority) {
-                    $changes[] = "приоритет: '{$oldPriority}' → '{$request->priority}'";
-                }
-                if ($oldDeadline != $request->deadline) {
-                    $oldDeadlineStr = $oldDeadline ? date('d.m.Y H:i', strtotime($oldDeadline)) : 'не указан';
-                    $newDeadlineStr = $request->deadline ? date('d.m.Y H:i', strtotime($request->deadline)) : 'не указан';
-                    $changes[] = "дедлайн: '{$oldDeadlineStr}' → '{$newDeadlineStr}'";
-                }
-                if ($oldEstimatedHours != $request->estimated_hours) {
-                    $changes[] = "планируемые часы: '{$oldEstimatedHours}' → '{$request->estimated_hours}'";
-                }
-                if ($oldActualHours != $request->actual_hours) {
-                    $changes[] = "фактические часы: '{$oldActualHours}' → '{$request->actual_hours}'";
-                }
-
-                // Логируем обновление задачи (только если есть изменения)
-                if (!empty($changes)) {
-                    $changesText = implode(', ', $changes);
-                    ActivityLogger::taskUpdated($task, $user, $changesText);
-                }
-
-                // Если изменился исполнитель и задача назначена на кого-то
-                if ($oldUserId != $request->user_id && $request->user_id) {
-                    $newUser = User::find($request->user_id);
-                    ActivityLogger::taskAssigned($task, $newUser, $user);
-                }
-
-                // Если изменился статус
-                if ($oldStatus != $request->status) {
-                    ActivityLogger::taskStatusChanged($task, $oldStatus, $request->status, $user);
-                }
-
-                DB::commit();
-
-                $task->load(['department', 'category', 'user', 'author', 'files']);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Задача успешно обновлена',
-                    'task' => $task
-                ]);
-
-            } catch (\Exception $e) {
-                DB::rollBack();
-
-                \Log::error('Error updating task: ' . $e->getMessage());
-                \Log::error('Stack trace: ' . $e->getTraceAsString());
-
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ошибка при обновлении задачи: ' . $e->getMessage()
-                ], 500);
-            }
-        }
-
-        /**
-         * Add files to task (новый метод)
-         */
-        public function addFiles(Request $request, Task $task)
-        {
-            $user = Auth::user();
-
-            if (!$user->canViewAllCompanyTasks()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'У вас нет прав для добавления файлов'
-                ], 403);
-            }
-
-            if ($task->company_id !== $user->company_id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Задача не принадлежит вашей компании'
-                ], 403);
-            }
-
-            $request->validate([
-                'files.*' => 'required|file|max:10240',
-            ]);
-
-            try {
-                $uploadedFiles = [];
-
-                if ($request->hasFile('files')) {
-                    foreach ($request->file('files') as $file) {
-                        $path = $file->store("tasks/{$task->id}", 'public');
-
-                        $fileRecord = File::create([
-                            'name' => $file->getClientOriginalName(),
-                            'file_path' => $path,
-                            'path' => $path,
-                            'file_size' => $file->getSize(),
-                            'size' => $file->getSize(),
-                            'mime_type' => $file->getMimeType(),
-                            'extension' => $file->getClientOriginalExtension(),
-                            'uploaded_by' => $user->id,
-                            'company_id' => $user->company_id,
-                            'department_id' => $task->department_id,
-                            'disk' => 'public',
-                            'folder' => 'tasks',
-                            'is_public' => false,
-                        ]);
-
-                        $task->files()->attach($fileRecord->id);
-                        $uploadedFiles[] = $fileRecord;
-                    }
-                }
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Файлы успешно добавлены',
-                    'files' => $uploadedFiles
-                ]);
-
-            } catch (\Exception $e) {
-                \Log::error('Ошибка при добавлении файлов: ' . $e->getMessage());
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ошибка при добавлении файлов: ' . $e->getMessage()
-                ], 500);
-            }
-        }
-
-        /**
-         * Delete file from task
-         */
-        public function deleteFile($fileId)
-        {
-            $user = Auth::user();
-
-            try {
-                $file = File::findOrFail($fileId);
-
-                // Проверяем права доступа
-                $task = $file->tasks()->first();
-                if ($task && !$user->canViewAllCompanyTasks()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'У вас нет прав для удаления этого файла'
-                    ], 403);
-                }
-
-                // Отвязываем файл от задачи
-                if ($task) {
-                    $task->files()->detach($fileId);
-                }
-
-                // Удаляем физический файл
-                if (Storage::disk('public')->exists($file->file_path)) {
-                    Storage::disk('public')->delete($file->file_path);
-                }
-
-                // Удаляем запись из БД (опционально)
-                // $file->delete();
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Файл успешно удален'
-                ]);
-
-            } catch (\Exception $e) {
-                \Log::error('Ошибка при удалении файла: ' . $e->getMessage());
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ошибка при удалении файла'
-                ], 500);
-            }
-        }
-
-        /**
-         * Return task to work (for admin)
-         */
-        public function returnToWork(Request $request, Task $task)
-        {
-            $user = Auth::user();
-
-            if (!$user->canViewAllCompanyTasks()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'У вас нет прав для этого действия'
-                ], 403);
-            }
-
-            if ($task->company_id !== $user->company_id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Задача не принадлежит вашей компании'
-                ], 403);
-            }
-
-            $request->validate([
-                'comment' => 'nullable|string|max:1000'
-            ]);
-
-            try {
-                // Создаем запись об отказе
-                TaskRejection::create([
-                    'reason' => $request->comment ?: 'Возврат на доработку руководителем',
-                    'task_id' => $task->id,
-                    'user_id' => $user->id,
-                    'company_id' => $user->company_id
-                ]);
-
-                $task->update([
-                    'status' => 'в работе'
-                ]);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Задача возвращена на доработку'
-                ]);
-
-            } catch (\Exception $e) {
-                \Log::error('Ошибка при возврате задачи: ' . $e->getMessage());
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ошибка при возврате задачи'
-                ], 500);
-            }
-        }
-
-        public function destroy(Request $request, Task $task)
-        {
-            $user = Auth::user();
-
-            try {
-                if (!$task->canBeDeletedBy($user)) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Вы можете удалять только свои задачи'
-                    ], 403);
-                }
-
-                if (!$task->canBeDeleted()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Невозможно удалить задачу. Возможно, она уже выполнена или имеет подзадачи.'
-                    ], 422);
-                }
-
-                $task->update(['deleted_by' => $user->id]);
-                $task->delete();
-
-                // Логируем удаление задачи
-                ActivityLogger::taskDeleted($task, $user);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Задача успешно удалена'
-                ]);
-
-            } catch (\Exception $e) {
-                \Log::error('Ошибка при удалении задачи: ' . $e->getMessage());
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ошибка при удалении задачи'
-                ], 500);
-            }
-        }
-
-        /**
-         * Check if user can access task
-         */
-        private function canAccessTask(User $user, Task $task): bool
-        {
-            if ($user->canViewAllCompanyTasks()) {
-                return $task->company_id === $user->company_id;
-            }
-
-            // ИСПРАВЛЕНО: проверяем, состоит ли пользователь в отделе задачи
-            return $task->company_id === $user->company_id &&
-                ($task->user_id === $user->id || $user->isInDepartment($task->department_id));
-        }
-
-        public function storePersonal(Request $request)
-        {
-            $user = Auth::user();
-
-            \Log::info('Creating personal task for user:', ['user_id' => $user->id]);
-
-            $validator = \Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'category_id' => 'nullable|exists:categories,id',
-                'priority' => 'required|in:низкий,средний,высокий,критический',
-                'deadline' => 'nullable|date',
-                'estimated_hours' => 'nullable|numeric|min:0',
-                'files.*' => 'nullable|file|max:10240',
-            ]);
-
-            if ($validator->fails()) {
-                \Log::error('Validation failed for personal task:', $validator->errors()->toArray());
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ошибки валидации',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            try {
-                if ($request->category_id) {
-                    $category = Category::find($request->category_id);
-                    if (!$category || $category->company_id !== $user->company_id) {
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'Выбранная категория не доступна'
-                        ], 422);
-                    }
-                }
-
-                // ИСПРАВЛЕНО: берем первый отдел пользователя для личной задачи
-                $primaryDepartment = $user->departments()->first();
-                $departmentId = $primaryDepartment ? $primaryDepartment->id : null;
-
-                $taskData = [
-                    'name' => $request->name,
-                    'description' => $request->description,
-                    'department_id' => $departmentId,
-                    'category_id' => $request->category_id,
-                    'user_id' => $user->id,
-                    'priority' => $request->priority,
-                    'status' => 'назначена',
-                    'deadline' => $request->deadline,
-                    'estimated_hours' => $request->estimated_hours,
-                    'company_id' => $user->company_id,
-                    'author_id' => $user->id,
-                    'is_personal' => true,
-                ];
-
-                $task = Task::create($taskData);
-                \Log::info('Personal task created:', ['task_id' => $task->id]);
-
-                if ($request->hasFile('files')) {
-                    foreach ($request->file('files') as $file) {
-                        $path = $file->store('tasks/' . $task->id, 'public');
-
-                        File::create([
-                            'name' => $file->getClientOriginalName(),
-                            'file' => $path,
-                            'file_path' => $path,
-                            'file_size' => $file->getSize(),
-                            'mime_type' => $file->getMimeType(),
-                            'task_id' => $task->id,
-                            'user_id' => $user->id,
-                            'department_id' => $departmentId,
-                        ]);
-                    }
-                }
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Личная задача успешно создана',
-                    'task' => $task->load(['department', 'category'])
-                ]);
-
-            } catch (\Exception $e) {
-                \Log::error('Error creating personal task: ' . $e->getMessage());
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ошибка при создании задачи: ' . $e->getMessage()
-                ], 500);
-            }
-        }
-
-        public function getFiles(Request $request)
-        {
-            $user = Auth::user();
-
-            // Простой запрос без проверки на привязанные задачи
-            $files = File::where('company_id', $user->company_id)
-                ->select('id', 'name', 'size', 'extension', 'created_at')
-                ->orderBy('created_at', 'desc')
-                ->get()
-                ->map(function($file) {
-                    return [
-                        'id' => $file->id,
-                        'name' => $file->name,
-                        'size' => $file->size,
-                        'extension' => $file->extension,
-                        'created_at' => $file->created_at->toDateTimeString(),
-                        'formatted_size' => $this->formatFileSize($file->size),
-                    ];
-                });
-
-            return response()->json($files);
-        }
-
-        private function formatFileSize($bytes)
-        {
-            if ($bytes == 0) return "0 Bytes";
-            $k = 1024;
-            $sizes = ["Bytes", "KB", "MB", "GB"];
-            $i = floor(log($bytes) / log($k));
-            return round($bytes / pow($k, $i), 2) . " " . $sizes[$i];
+        } catch (\Exception $e) {
+            \Log::error('Error creating personal task: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при создании задачи: ' . $e->getMessage()
+            ], 500);
         }
     }
+
+    public function getFiles(Request $request)
+    {
+        $user = Auth::user();
+
+        $files = File::where('company_id', $user->company_id)
+            ->select('id', 'name', 'size', 'extension', 'created_at')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($file) {
+                return [
+                    'id' => $file->id,
+                    'name' => $file->name,
+                    'size' => $file->size,
+                    'extension' => $file->extension,
+                    'created_at' => $file->created_at->toDateTimeString(),
+                    'formatted_size' => $this->formatFileSize($file->size),
+                ];
+            });
+
+        return response()->json($files);
+    }
+
+    private function formatFileSize($bytes)
+    {
+        if ($bytes == 0) return "0 Bytes";
+        $k = 1024;
+        $sizes = ["Bytes", "KB", "MB", "GB"];
+        $i = floor(log($bytes) / log($k));
+        return round($bytes / pow($k, $i), 2) . " " . $sizes[$i];
+    }
+}

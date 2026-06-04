@@ -515,6 +515,11 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified', 'trackUs
     Route::get('/file-storage/get-files', [App\Http\Controllers\Frontend\TaskController::class, 'getFiles'])
         ->name('file-storage.get-files');
 
+    Route::get('/{task}/comments', [App\Http\Controllers\Frontend\TaskCommentController::class, 'index']);
+    Route::post('/{task}/comments', [App\Http\Controllers\Frontend\TaskCommentController::class, 'store']);
+    Route::put('/{task}/comments/{comment}', [App\Http\Controllers\Frontend\TaskCommentController::class, 'update']);
+    Route::delete('/{task}/comments/{comment}', [App\Http\Controllers\Frontend\TaskCommentController::class, 'destroy']);
+
 });
 
 // Остальные маршруты остаются без изменений
