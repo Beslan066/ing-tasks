@@ -12,10 +12,10 @@
         <div>
             @if($backgroundEnabled && $backgroundImage)
                 <h2 class="text-3xl font-bold text-white">Мои задачи</h2>
-                <p class="text-white text-sm">Ваши личные задачи не видны на странице Команда</p>
+                <p class="text-white text-sm">Ваши1 личные задачи не видны на странице Команда</p>
             @else
                 <h2 class="text-3xl font-bold text-[#16a34a]">Мои задачи</h2>
-                <p class="text-gray-700 text-sm">Ваши личные задачи не видны на странице Команда</p>
+                <p class="text-gray-700 text-sm">Ваши 1личные задачи не видны на странице Команда</p>
             @endif
         </div>
 
@@ -2788,19 +2788,15 @@ function dragOver(e) {
         @media (max-width: 500px) {
     .board-column {
         flex-shrink: 0 !important;
-
-        /* Укажите любую нужную ширину в процентах или пикселях */
-        /* 85% — отличный выбор, чтобы сбоку было видно соседний слайд */
-        width: 95% !important;
-
-        max-width: 95% !important;
+        width: 82% !important; /* Уменьшили, чтобы освободить место слева и справа */
+        max-width: 82% !important;
     }
-     .task-card, .task-card * {
+    .task-card, .task-card * {
         touch-action: none !important;
         -webkit-user-select: none !important;
         user-select: none !important;
         -webkit-touch-callout: none !important;
-    }
+}
 }
     </style>
 
@@ -2808,7 +2804,6 @@ function dragOver(e) {
 @push('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
     <style>
-        /* Обязательные стили для вашей кастомной обертки, чтобы слайдер не ломался */
         .sw-v-wrapper {
             display: flex;
             width: 100%;
@@ -2826,11 +2821,9 @@ function dragOver(e) {
 @push('scripts')
    <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. СРАЗУ НАСТРАИВАЕМ ПОЛИФИЛ (внутри события загрузки)
-    // В оригинальной библиотеке DragDropTouch обращение к свойству задержки
-    // идет через глобальный экземпляр DataTransfer, либо через инициализированное свойство.
+
     if (window.DragDropTouch) {
-        window.DragDropTouch._HOLD_DELAY = 1; // 200мс — идеальное время для отрыва
+        window.DragDropTouch._HOLD_DELAY = 20;
         console.log('Полифил успешно найден и настроен!',1);
     } else {
         console.log('drag not found — полифил всё еще не загрузился.');
@@ -2847,6 +2840,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.mySwiper = new Swiper('.sw-v', {
             wrapperClass: 'sw-v-wrapper',
             slideClass: 'board-column',
+    centeredSlides: true,
             slidesPerView: 'auto',
             spaceBetween: 10,
             loop: false,
