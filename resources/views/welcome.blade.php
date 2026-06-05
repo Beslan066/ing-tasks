@@ -2221,20 +2221,14 @@ function dragOver(e) {
     if (column) {
         column.classList.add('drag-over-active');
 
-        // ПРОВЕРКА ДЛЯ SWIPER:
-        // Если Swiper существует и инициализирован
         if (window.mySwiper && typeof window.mySwiper.slideTo === 'function') {
 
-            // Находим все колонки на доске
+
             const allColumns = Array.from(document.querySelectorAll('.board-column'));
-            // Определяем порядковый номер (индекс) текущей колонки
             const columnIndex = allColumns.indexOf(column);
 
-            // Если мы ведем карточку над новой колонкой и скрипт еще не запланировал переключение
             if (columnIndex !== -1 && window.mySwiper.activeIndex !== columnIndex && !swiperSlideTimeout) {
 
-                // Делаем небольшую задержку в 400мс, чтобы слайд переключался,
-                // только если пользователь осознанно задерживает карточку у края экрана
                 swiperSlideTimeout = setTimeout(() => {
                     window.mySwiper.slideTo(columnIndex, 300); // 300 — скорость анимации в мс
                     swiperSlideTimeout = null;
@@ -2250,7 +2244,6 @@ function dragOver(e) {
         column.classList.remove('drag-over-active');
     }
 
-    // СБРОС ТАЙМЕРА: если пользователь увёл карточку, отменяем переключение
     if (swiperSlideTimeout) {
         clearTimeout(swiperSlideTimeout);
         swiperSlideTimeout = null;
@@ -2785,18 +2778,19 @@ function dragOver(e) {
         .shake {
             animation: shake 0.3s ease-in-out;
         }
-        @media (max-width: 500px) {
+     @media (max-width: 500px) {
     .board-column {
         flex-shrink: 0 !important;
-        width: 82% !important; /* Уменьшили, чтобы освободить место слева и справа */
+        width: 82% !important;
         max-width: 82% !important;
     }
+    /* ИЗМЕНЕНО: разрешаем горизонтальный жест на карточках для Swiper */
     .task-card, .task-card * {
-        touch-action: none !important;
+        touch-action: pan-x !important;
         -webkit-user-select: none !important;
         user-select: none !important;
         -webkit-touch-callout: none !important;
-}
+    }
 }
     </style>
 
@@ -2817,39 +2811,40 @@ function dragOver(e) {
 @endpush
 
 
-{{-- ВСТАВЛЯЕМ СКРИПТЫ SWIPER --}}
 @push('scripts')
    <script>
 document.addEventListener('DOMContentLoaded', () => {
 
     if (window.DragDropTouch) {
-        window.DragDropTouch._HOLD_DELAY = 20;
+        window.DragDropTouch._HOLD_DELAY = 150;
         console.log('Полифил успешно найден и настроен!',1);
     } else {
         console.log('drag not found — полифил всё еще не загрузился.');
     }
 
-    // 2. Проверяем ширину экрана для Swiper
+
     if (window.innerWidth > 500) return;
 
-    // 3. Ищем элемент
     const sliderElement = document.querySelector('.sw-v');
 
-    // 4. Инициализируем Swiper
+
     if (sliderElement) {
-        window.mySwiper = new Swiper('.sw-v', {
-            wrapperClass: 'sw-v-wrapper',
-            slideClass: 'board-column',
+      window.mySwiper = new Swiper('.sw-v', {
+    wrapperClass: 'sw-v-wrapper',
+    slideClass: 'board-column',
     centeredSlides: true,
-            slidesPerView: 'auto',
-            spaceBetween: 10,
-            loop: false,
-            noSwiping: true,
-            noSwipingClass: 'task-card',
-            observer: true,
-            observeParents: true,
-            watchSlidesProgress: true,
-        });
+    slidesPerView: 'auto',
+    spaceBetween: 10,
+    loop: false,
+
+    /* УДАЛЕНО / ЗАКОММЕНТИРОВАНО: */
+    /* noSwiping: true, */
+    /* noSwipingClass: 'task-card', */
+
+    observer: true,
+    observeParents: true,
+    watchSlidesProgress: true,
+});
         console.log('Swiper успешно запущен для мобильного экрана!');
     }
 });
