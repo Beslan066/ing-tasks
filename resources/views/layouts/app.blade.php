@@ -12,26 +12,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <meta http-equiv="Content-Security-Policy" content="
-
-default-src 'self';
-
-script-src 'self' 'unsafe-inline' 'unsafe-eval' https://meet.jit.si https://cdnjs.cloudflare.com https://cdn.tailwindcss.com;
-
-style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
-
-style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
-
-font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com;
-
-img-src 'self' data: https:;
-
-connect-src 'self' https://meet.jit.si wss://meet.jit.si;
-
-frame-src https://meet.jit.si;
-
-media-src https://meet.jit.si https:;
-
+ <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://meet.jit.si https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js https://mc.yandex.ru https://yastatic.net https://cdn.jsdelivr.net/npm/@dragdroptouch/drag-drop-touch@latest/dist/drag-drop-touch.esm.min.js;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css;
+    style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css;
+    font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com;
+    img-src 'self' data: https: https://mc.yandex.ru;
+    connect-src 'self' https://meet.jit.si wss://meet.jit.si https://mc.yandex.ru https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js.map wss://mc.yandex.ru/solid.ws https://mc.yandex.md https://cdn.jsdelivr.net/npm/@dragdroptouch/drag-drop-touch@latest/dist/drag-drop-touch.esm.min.js;
+    frame-src https://meet.jit.si;
+    media-src https://meet.jit.si https:;
 ">
     <script>
         tailwind.config = {
@@ -2222,11 +2212,11 @@ media-src https://meet.jit.si https:;
 <script>
 
     // Модальные окна
-    document.getElementById('newTaskBtn').addEventListener('click', function () {
+    document.getElementById('newTaskBtn')?.addEventListener('click', function () {
         document.getElementById('taskModal').classList.remove('hidden');
     });
 
-    document.getElementById('newUserBtn').addEventListener('click', function () {
+    document.getElementById('newUserBtn')?.addEventListener('click', function () {
         document.getElementById('newUserModal').classList.remove('hidden');
     });
 
@@ -2237,11 +2227,11 @@ media-src https://meet.jit.si https:;
 
 
     // Закрытие модальных окон
-    document.getElementById('closeModal').addEventListener('click', function () {
+    document.getElementById('closeModal')?.addEventListener('click', function () {
         document.getElementById('taskModal').classList.add('hidden');
     });
 
-    document.getElementById('cancelTask').addEventListener('click', function () {
+    document.getElementById('cancelTask')?.addEventListener('click', function () {
         document.getElementById('taskModal').classList.add('hidden');
     });
 

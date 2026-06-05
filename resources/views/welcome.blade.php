@@ -12,10 +12,10 @@
         <div>
             @if($backgroundEnabled && $backgroundImage)
                 <h2 class="text-3xl font-bold text-white">Мои задачи</h2>
-                <p class="text-white text-sm">Ваши личные задачи не видны на странице Команда</p>
+                <p class="text-white text-sm">Ваши1 личные задачи не видны на странице Команда</p>
             @else
                 <h2 class="text-3xl font-bold text-[#16a34a]">Мои задачи</h2>
-                <p class="text-gray-700 text-sm">Ваши личные задачи не видны на странице Команда</p>
+                <p class="text-gray-700 text-sm">Ваши 1личные задачи не видны на странице Команда</p>
             @endif
         </div>
 
@@ -190,7 +190,8 @@
     </div>
 
     <!-- Доска с задачами -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-4 gap-6">
+     <div class="sw-v overflow-hidden w-full">
+    <div class="sw-v-wrapper flex lg:grid lg:grid-cols-4 xl:grid-cols-4 gap-6 max-[500px]:gap-0">
         <!-- Колонка "Новые" -->
         <div class="rounded-lg p-4 board-column bg-transparent max-[600px]:p-0" data-status="new">
             @if($backgroundEnabled && $backgroundImage)
@@ -615,7 +616,8 @@
             </div>
         </div>
     </div>
-
+   <div class="swiper-pagination !bottom-2 min-[501px]:hidden"></div>
+   </div>
 
     <!-- Модальные окна -->
     @include('partials.modal.task.show')
@@ -1212,7 +1214,11 @@
             </form>
         </div>
     </div>
-
+<script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+    <script
+  src="https://cdn.jsdelivr.net/npm/@dragdroptouch/drag-drop-touch@latest/dist/drag-drop-touch.esm.min.js"
+  type="module"
+></script>
     <script>
         // ==================== ПЕРЕМЕННЫЕ ====================
         let taskSelectedFiles = [];
@@ -2171,38 +2177,82 @@
         }
 
         let draggedItem = null;
+let swiperSlideTimeout = null;
 
-        function dragStart(e) {
-            draggedItem = this;
-            e.dataTransfer.setData('text/plain', this.dataset.task);
-            this.style.opacity = '0.5';
-        }
+// В самой функции dragStart добавьте строку для принудительного создания "призрака"
+function dragStart(e) {
+    draggedItem = this;
+    e.dataTransfer.setData('text/plain', this.dataset.task);
+    this.style.opacity = '0.5';
+ if (window.mySwiper) {
+        window.mySwiper.detachEvents(); // полностью отключает реакцию на палец для Swiper
+    }
 
+    // Фикс для iOS/Android: помогаем полифилу понять, какой именно элемент мы тащим
+    if (e.dataTransfer.setDragImage) {
+        e.dataTransfer.setDragImage(this, 0, 0);
+    }
+}
         function dragEnd(e) {
             if (draggedItem) {
                 draggedItem.style.opacity = '';
                 draggedItem = null;
             }
+              if (window.mySwiper) {
+        window.mySwiper.attachEvents();
+    }
         }
 
-        function dragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            const column = this.closest('.board-column');
-            if (column) {
-                column.classList.add('drag-over-active');
+
+function dragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+
+    const column = this.closest('.board-column');
+    if (column) {
+        column.classList.add('drag-over-active');
+
+        if (window.mySwiper && typeof window.mySwiper.slideTo === 'function') {
+
+
+            const allColumns = Array.from(document.querySelectorAll('.board-column'));
+            const columnIndex = allColumns.indexOf(column);
+
+            if (columnIndex !== -1 && window.mySwiper.activeIndex !== columnIndex && !swiperSlideTimeout) {
+
+                swiperSlideTimeout = setTimeout(() => {
+                    window.mySwiper.slideTo(columnIndex, 300); // 300 — скорость анимации в мс
+                    swiperSlideTimeout = null;
+                }, 400);
             }
         }
+    }
+}
 
-        function dragLeave(e) {
-            const column = this.closest('.board-column');
-            if (column) {
-                column.classList.remove('drag-over-active');
-            }
-        }
+function dragLeave(e) {
+    const column = this.closest('.board-column');
+    if (column) {
+        column.classList.remove('drag-over-active');
+    }
 
-        function drop(e) {
+    if (swiperSlideTimeout) {
+        clearTimeout(swiperSlideTimeout);
+        swiperSlideTimeout = null;
+    }
+}
+
+function drop(e) {
             e.preventDefault();
+
+            if (swiperSlideTimeout) {
+        clearTimeout(swiperSlideTimeout);
+        swiperSlideTimeout = null;
+
+             if (window.mySwiper) {
+        window.mySwiper.attachEvents();
+    }
+    }
+
             const column = this.closest('.board-column');
             if (column) {
                 column.classList.remove('drag-over-active');
@@ -2623,7 +2673,6 @@
             }, 5000);
         }
     </script>
-
     <style>
         .task-card {
             transition: all 0.2s ease-in-out;
@@ -2720,6 +2769,81 @@
         .shake {
             animation: shake 0.3s ease-in-out;
         }
+     @media (max-width: 500px) {
+    .board-column {
+        flex-shrink: 0 !important;
+        width: 82% !important;
+        max-width: 82% !important;
+    }
+    /* ИЗМЕНЕНО: разрешаем горизонтальный жест на карточках для Swiper */
+    .task-card, .task-card * {
+        touch-action: pan-x !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
+        -webkit-touch-callout: none !important;
+    }
+}
     </style>
 
 @endsection
+@push('styles')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
+    <style>
+        .sw-v-wrapper {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+            transition-property: transform;
+            box-sizing: content-box;
+        }
+    </style>
+@endpush
+
+
+@push('scripts')
+   <script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    if (window.DragDropTouch) {
+        window.DragDropTouch._HOLD_DELAY = 150;
+        console.log('Полифил успешно найден и настроен!',1);
+    } else {
+        console.log('drag not found — полифил всё еще не загрузился.');
+    }
+
+
+    if (window.innerWidth > 500) return;
+
+    const sliderElement = document.querySelector('.sw-v');
+
+
+    if (sliderElement) {
+      window.mySwiper = new Swiper('.sw-v', {
+    wrapperClass: 'sw-v-wrapper',
+    slideClass: 'board-column',
+    centeredSlides: true,
+    slidesPerView: 'auto',
+    spaceBetween: 10,
+    loop: false,
+
+    /* УДАЛЕНО / ЗАКОММЕНТИРОВАНО: */
+    /* noSwiping: true, */
+    /* noSwipingClass: 'task-card', */
+
+    observer: true,
+    observeParents: true,
+    watchSlidesProgress: true,
+     pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+        bulletClass: 'swiper-pagination-bullet bg-gray-400 opacity-50 mx-1 inline-block rounded-full w-2 h-2',
+        bulletActiveClass: '!bg-[#22c55e] !opacity-100 w-4 rounded-lg transition-all duration-300'
+    },
+});
+        console.log('Swiper успешно запущен для мобильного экрана!');
+    }
+});
+</script>
+@endpush
