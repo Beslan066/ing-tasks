@@ -485,7 +485,11 @@ Route::get('/create-company', [\App\Http\Controllers\Frontend\HomeController::cl
 Route::get('/invitation/{token}', [InvitationController::class, 'showInvitationForm'])->name('invitation.accept');
 Route::post('/invitation/{token}/accept', [InvitationController::class, 'acceptInvitation'])->name('invitation.process');
 
-// ВСЕ МАРШРУТЫ ДЛЯ ЗАДАЧ ПЕРЕНЕСЕМ В TaskController
+
+Route::get('/team/tasks/{task}', function ($task) {
+    return redirect()->to('/team/tasks?open_task=' . $task);
+})->name('tasks.admin.with-modal');
+// ВСЕ МАРШРУТЫ ДЛЯ ЗАДАЧ
 Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified', 'trackUserActivity', 'require.company']], function () {
     // Основные CRUD маршруты
     Route::get('/', [App\Http\Controllers\Frontend\TaskController::class, 'index'])->name('tasks.index');
@@ -495,10 +499,10 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified', 'trackUs
     // Задачи себе
     Route::post('/personal/store', [App\Http\Controllers\Frontend\TaskController::class, 'storePersonal'])->name('tasks.personal.store');
 
-    // Маршрут для просмотра задачи
-    Route::get('/{task}/view', [App\Http\Controllers\Frontend\TaskController::class, 'view'])->name('tasks.view');
+    // Модальное окно (AJAX)
+    Route::get('/{task}', [App\Http\Controllers\Frontend\TaskController::class, 'view'])->name('tasks.show');
 
-    // Маршруты для редактирования задачи (ОСТАВЛЯЕМ ТОЛЬКО ЭТИ)
+    // Маршруты для редактирования задачи
     Route::get('/{task}/get', [App\Http\Controllers\Frontend\TaskController::class, 'getTask'])->name('tasks.get');
     Route::post('/{task}/update', [App\Http\Controllers\Frontend\TaskController::class, 'update'])->name('tasks.update');
 
@@ -508,20 +512,18 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified', 'trackUs
     Route::post('/{task}/reject', [App\Http\Controllers\Frontend\TaskController::class, 'rejectTask'])->name('tasks.reject');
     Route::post('/{task}/attach-file', [App\Http\Controllers\Frontend\TaskController::class, 'attachFile'])->name('tasks.attach-file');
 
-
     // МАРШРУТЫ ДЛЯ АДМИНИСТРАТОРОВ
     Route::post('/{task}/return-to-work', [App\Http\Controllers\Frontend\TaskController::class, 'returnToWork'])->name('admin.tasks.return-to-work');
     Route::delete('/{task}/delete', [App\Http\Controllers\Frontend\TaskController::class, 'destroy'])->name('admin.tasks.delete');
     Route::post('/{task}/add-files', [App\Http\Controllers\Frontend\TaskController::class, 'addFiles'])->name('tasks.add-files');
-    Route::get('/file-storage/get-files', [App\Http\Controllers\Frontend\TaskController::class, 'getFiles'])
-        ->name('file-storage.get-files');
+    Route::get('/file-storage/get-files', [App\Http\Controllers\Frontend\TaskController::class, 'getFiles'])->name('file-storage.get-files');
 
     Route::get('/{task}/comments', [App\Http\Controllers\Frontend\TaskCommentController::class, 'index']);
     Route::post('/{task}/comments', [App\Http\Controllers\Frontend\TaskCommentController::class, 'store']);
     Route::put('/{task}/comments/{comment}', [App\Http\Controllers\Frontend\TaskCommentController::class, 'update']);
     Route::delete('/{task}/comments/{comment}', [App\Http\Controllers\Frontend\TaskCommentController::class, 'destroy']);
-
 });
+
 
 // Остальные маршруты остаются без изменений
 Route::middleware(['auth', 'verified', 'trackUserActivity', 'require.company'])->group(function () {

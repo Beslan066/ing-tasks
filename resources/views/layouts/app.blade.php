@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>МенеджерПлюс - Современная система управления задачами</title>
     <meta name="csrf-token" content="{{csrf_token()}}">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -12,17 +15,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
- <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://meet.jit.si https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js https://mc.yandex.ru https://yastatic.net https://cdn.jsdelivr.net/npm/@dragdroptouch/drag-drop-touch@latest/dist/drag-drop-touch.esm.min.js;
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css;
-    style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css;
-    font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com;
-    img-src 'self' data: https: https://mc.yandex.ru;
-    connect-src 'self' https://meet.jit.si wss://meet.jit.si https://mc.yandex.ru https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js.map wss://mc.yandex.ru/solid.ws https://mc.yandex.md https://cdn.jsdelivr.net/npm/@dragdroptouch/drag-drop-touch@latest/dist/drag-drop-touch.esm.min.js;
-    frame-src https://meet.jit.si;
-    media-src https://meet.jit.si https:;
-">
+
+    <!-- Временно отключаем CSP для отладки -->
+    {{-- <meta http-equiv="Content-Security-Policy" content="
+default-src 'self';
+script-src 'self' 'unsafe-inline' 'unsafe-eval' https://meet.jit.si https://cdnjs.cloudflare.com https://cdn.tailwindcss.com;
+style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
+style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
+font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com;
+img-src 'self' data: https:;
+connect-src 'self' https://meet.jit.si wss://meet.jit.si;
+frame-src https://meet.jit.si;
+media-src https://meet.jit.si https:;
+"> --}}
+
     <script>
         tailwind.config = {
             theme: {
@@ -78,8 +84,6 @@
             font-family: "Inter", sans-serif;
         }
 
-
-        /* Стиль main-container по умолчанию */
         .main-container {
             background-color: #f9fafb;
         }
@@ -88,220 +92,212 @@
             transition: padding 0.4s ease;
         }
 
-        /* Стиль main-container с фоном */
         .main-container.has-background {
             background-size: cover;
             background-position: center;
+        }
 
-            .chat-button {
-                color: #fff;
+        .main-container.has-background .chat-button {
+            color: #fff;
+        }
+
+        .main-container.has-background .setting-button {
+            color: #fff;
+        }
+
+        .avatar-container {
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+
+        .avatar-container:hover {
+            transform: translateY(-2px);
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-radius: 50%;
+            animation: pulseGlow 2s infinite;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+            border-radius: 9999px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
             }
-
-            .setting-button {
-                color: #fff;
+            100% {
+                transform: translateX(100%);
             }
+        }
 
-            .avatar-container {
-                position: relative;
-                transition: transform 0.2s ease;
+        .badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-weight: 600;
+        }
+
+        .category-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .category-item:hover .category-dot {
+            transform: scale(1.3);
+        }
+
+        .scrollbar-thin {
+            scrollbar-width: thin;
+            scrollbar-color: #4b5563 transparent;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 2px;
+        }
+
+        .dropdown-enter {
+            animation: dropdownEnter 0.2s ease-out;
+        }
+
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: transparent transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: transparent;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes dropdownEnter {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
             }
-
-            .avatar-container:hover {
-                transform: translateY(-2px);
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
+        }
 
-            .online-indicator {
-                position: absolute;
-                bottom: 0;
-                right: 0;
-                width: 10px;
-                height: 10px;
-                background: linear-gradient(135deg, #22c55e, #16a34a);
-                border-radius: 50%;
-                animation: pulseGlow 2s infinite;
-            }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset;
+            -webkit-text-fill-color: #111827;
+            transition: background-color 5000s ease-in-out 0s;
+        }
 
-            .progress-bar {
-                background: linear-gradient(90deg, #22c55e, #16a34a);
-                border-radius: 9999px;
-                position: relative;
-                overflow: hidden;
-            }
+        .dark input:-webkit-autofill,
+        .dark input:-webkit-autofill:hover,
+        .dark input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px #374151 inset;
+            -webkit-text-fill-color: white;
+        }
 
-            .progress-bar::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-                animation: shimmer 2s infinite;
-            }
+        .email-nav-container .absolute {
+            display: none;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
 
-            @keyframes shimmer {
-                0% {
-                    transform: translateX(-100%);
-                }
-                100% {
-                    transform: translateX(100%);
-                }
-            }
+        .email-nav-container:hover .absolute {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-            .badge {
-                background: linear-gradient(135deg, #f59e0b, #d97706);
-                color: white;
-                font-size: 0.7rem;
-                padding: 2px 8px;
-                border-radius: 9999px;
-                font-weight: 600;
-            }
+        .email-nav-container .email-dropdown {
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            pointer-events: none;
+        }
 
-            .category-dot {
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-                margin-right: 10px;
-                transition: all 0.3s ease;
-            }
+        .email-nav-container:hover .email-dropdown {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
 
-            .category-item:hover .category-dot {
-                transform: scale(1.3);
-            }
-
-            .scrollbar-thin {
-                scrollbar-width: thin;
-                scrollbar-color: #4b5563 transparent;
-            }
-
-            .scrollbar-thin::-webkit-scrollbar {
-                width: 4px;
-            }
-
-            .scrollbar-thin::-webkit-scrollbar-track {
-                background: transparent;
-            }
-
-            .scrollbar-thin::-webkit-scrollbar-thumb {
-                background: #4b5563;
-                border-radius: 2px;
-            }
-
-            .dropdown-enter {
-                animation: dropdownEnter 0.2s ease-out;
-            }
-
-            .custom-scrollbar {
-                scrollbar-width: thin;
-                scrollbar-color: transparent transparent;
-            }
-
-            .custom-scrollbar::-webkit-scrollbar {
-                width: 6px;
-            }
-
-            .custom-scrollbar::-webkit-scrollbar-track {
-                background: transparent;
-                border-radius: 10px;
-            }
-
-            .custom-scrollbar::-webkit-scrollbar-thumb {
-                background: transparent;
-                border-radius: 10px;
-            }
-
-            .custom-scrollbar:hover::-webkit-scrollbar-thumb {
-                background: rgba(0, 0, 0, 0.2);
-            }
-
-            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                background: rgba(0, 0, 0, 0.3);
-            }
-
-            @keyframes dropdownEnter {
-                from {
-                    opacity: 0;
-                    transform: translateY(-10px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            input:-webkit-autofill,
-            input:-webkit-autofill:hover,
-            input:-webkit-autofill:focus {
-                -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset;
-                -webkit-text-fill-color: #111827;
-                transition: background-color 5000s ease-in-out 0s;
-            }
-
-            .dark input:-webkit-autofill,
-            .dark input:-webkit-autofill:hover,
-            .dark input:-webkit-autofill:focus {
-                -webkit-box-shadow: 0 0 0px 1000px #374151 inset;
-                -webkit-text-fill-color: white;
-            }
-
-
-            /* Стили для выпадающего меню почты */
-
+        @media (max-width: 768px) {
             .email-nav-container .absolute {
+                position: static;
                 display: none;
-                opacity: 0;
-                transform: translateY(-10px);
-                transition: opacity 0.2s ease, transform 0.2s ease;
+                width: 100%;
+                box-shadow: none;
+                border: none;
+                margin-top: 0.5rem;
             }
-
-            .email-nav-container:hover .absolute {
+            .email-nav-container.active .absolute {
                 display: block;
-                opacity: 1;
-                transform: translateY(0);
             }
+        }
 
-            /* Альтернативный вариант с visibility */
-
-            .email-nav-container .email-dropdown {
-                visibility: hidden;
-                opacity: 0;
-                transform: translateY(-10px);
-                transition: all 0.2s ease;
-                pointer-events: none;
-            }
-
-            .email-nav-container:hover .email-dropdown {
-                visibility: visible;
-                opacity: 1;
-                transform: translateY(0);
-                pointer-events: auto;
-            }
-
-            /* Для мобильных устройств */
-            @media (max-width: 768px) {
-                .email-nav-container .absolute {
-                    position: static;
-                    display: none;
-                    width: 100%;
-                    box-shadow: none;
-                    border: none;
-                    margin-top: 0.5rem;
-                }
-
-                .email-nav-container.active .absolute {
-                    display: block;
-                }
-            }
-
-            .burger-btn span {
-                background-color: #fff;
-            }
+        .burger-btn span {
+            background-color: #fff;
         }
 
         .burger-btn {
             display: none;
             width: 30px;
-            height: 22px; /* Высота уменьшена для ровного баланса трех линий */
+            height: 22px;
             flex-direction: column;
             justify-content: space-between;
             cursor: pointer;
@@ -311,7 +307,6 @@
             padding: 0;
         }
 
-        /* Стили для всех трех линий */
         .burger-btn span {
             display: block;
             height: 3px;
@@ -322,13 +317,11 @@
             transform-origin: center;
         }
 
-        /* Отображение на мобильных экранах */
         @media (max-width: 638px) {
             .burger-btn {
                 display: flex;
             }
         }
-
 
         .burger-btn.active span:nth-child(1) {
             transform: translateY(9.5px) rotate(45deg);
@@ -347,25 +340,18 @@
             .sidebar {
                 box-shadow: none;
             }
-
-            .main-container:not(:has(.has-background)) {
-
-            }
-
             .main-container:not(:has(.has-background)):has(.sidebar.active) .burger-btn span {
                 color: #ffffff;
                 background-color: #ffffff;
             }
         }
 
-        /* Стили для подменю */
         #extraSubmenu {
             transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
             opacity 0.3s ease;
             overflow-y: hidden;
         }
 
-        /* Скроллбар для подменю если много пунктов */
         #extraSubmenu::-webkit-scrollbar {
             width: 3px;
         }
@@ -380,12 +366,10 @@
             border-radius: 3px;
         }
 
-        /* Анимация для иконки */
         #extraMenuIcon {
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Анимации для быстрого добавления */
         #quickAddFormInner {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             transform-origin: top center;
@@ -399,7 +383,6 @@
             transform: translateY(-2px);
         }
 
-        /* Стили для полей ввода */
         #quickTaskName:focus,
         #quickTaskPriority:focus,
         #quickTaskDeadline:focus,
@@ -407,7 +390,6 @@
             background-color: white;
         }
 
-        /* Кастомный скролл для текстареа */
         #quickTaskDescription::-webkit-scrollbar {
             width: 4px;
         }
@@ -422,12 +404,10 @@
             border-radius: 10px;
         }
 
-        /* Стили для datetime-local */
         input[type="datetime-local"] {
             color-scheme: light;
         }
 
-        /* Плавное появление формы */
         @keyframes slideInDown {
             from {
                 opacity: 0;
@@ -446,9 +426,7 @@
             background-size: auto, cover;
             background-color: rgb(159, 207, 255);
         }
-
     </style>
-    <!-- @stack('sidebar-styles') -->
 </head>
 
 <body class="bg-gray-50 font-sans">
@@ -2212,11 +2190,11 @@
 <script>
 
     // Модальные окна
-    document.getElementById('newTaskBtn')?.addEventListener('click', function () {
+    document.getElementById('newTaskBtn').addEventListener('click', function () {
         document.getElementById('taskModal').classList.remove('hidden');
     });
 
-    document.getElementById('newUserBtn')?.addEventListener('click', function () {
+    document.getElementById('newUserBtn').addEventListener('click', function () {
         document.getElementById('newUserModal').classList.remove('hidden');
     });
 
@@ -2227,11 +2205,11 @@
 
 
     // Закрытие модальных окон
-    document.getElementById('closeModal')?.addEventListener('click', function () {
+    document.getElementById('closeModal').addEventListener('click', function () {
         document.getElementById('taskModal').classList.add('hidden');
     });
 
-    document.getElementById('cancelTask')?.addEventListener('click', function () {
+    document.getElementById('cancelTask').addEventListener('click', function () {
         document.getElementById('taskModal').classList.add('hidden');
     });
 
@@ -2337,6 +2315,8 @@
         });
     });
 
+    // ==================== ПРОСМОТР ЗАДАЧИ ====================
+
     // Открыть модальное окно просмотра задачи
     async function openTaskViewModal(taskId) {
         const modal = document.getElementById('taskViewModal');
@@ -2347,8 +2327,13 @@
             return;
         }
 
+        // Сохраняем ID задачи
         window.currentTaskId = taskId;
         window.taskId = taskId;
+
+        // МЕНЯЕМ URL БЕЗ ПЕРЕЗАГРУЗКИ СТРАНИЦЫ
+        const newUrl = `/tasks/${taskId}`;
+        window.history.pushState({taskId: taskId, modalOpen: true}, '', newUrl);
 
         // Показываем загрузчик
         content.innerHTML = `
@@ -2358,13 +2343,13 @@
         </div>
     `;
 
-        // Добавляем blur при открытии
+        // Показываем модальное окно
         modal.style.backdropFilter = 'blur(10px)';
         modal.classList.remove('hidden');
 
         try {
-            // ВАЖНО: ожидаем HTML, а не JSON!
-            const response = await fetch(`/tasks/${taskId}/view`, {
+            // ПРАВИЛЬНЫЙ URL - без /view и без /page
+            const response = await fetch(`/tasks/${taskId}`, {
                 method: 'GET',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
@@ -2404,9 +2389,185 @@
             modal.classList.add('hidden');
             modal.style.backdropFilter = '';
         }
+
         if (content) {
-            content.innerHTML = '';
+            content.innerHTML = `
+            <div class="text-center py-8">
+                <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
+                <p class="text-gray-500 mt-2">Загрузка задачи...</p>
+            </div>
+        `;
         }
+
+        // Убираем ID задачи из URL, возвращаемся к /team/tasks или на предыдущую страницу
+        const currentPath = window.location.pathname;
+
+        // Если в URL есть /tasks/число или /tasks/page/число
+        if (currentPath.match(/\/tasks\/(page\/)?\d+/)) {
+            // Возвращаемся на страницу со списком задач
+            window.history.pushState({}, '', '/team/tasks');
+        } else {
+            // Иначе просто назад
+            window.history.back();
+        }
+    }
+
+    // Обрабатываем кнопку "Назад" в браузере
+    window.addEventListener('popstate', function (event) {
+        const modal = document.getElementById('taskViewModal');
+
+        if (modal && !modal.classList.contains('hidden')) {
+            closeTaskViewModal();
+        }
+    });
+
+    // Закрытие по Escape
+    document.addEventListener('keydown', function (e) {
+        const modal = document.getElementById('taskViewModal');
+        if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+            closeTaskViewModal();
+        }
+    });
+
+    // Закрытие по клику на фон
+    document.addEventListener('click', function (e) {
+        const modal = document.getElementById('taskViewModal');
+        if (e.target === modal) {
+            closeTaskViewModal();
+        }
+    });
+
+    // При загрузке страницы проверяем URL и открываем модалку если нужно
+    document.addEventListener('DOMContentLoaded', function () {
+        const match = window.location.pathname.match(/\/tasks\/(\d+)/);
+
+        if (match && !window.location.pathname.includes('/page/')) {
+            const taskId = match[1];
+            // Открываем модальное окно с задачей
+            setTimeout(function () {
+                openTaskViewModal(taskId);
+            }, 100);
+        }
+    });
+
+    // При загрузке страницы проверяем, не открыта ли прямая ссылка
+    document.addEventListener('DOMContentLoaded', function () {
+        const match = window.location.pathname.match(/\/tasks\/page\/(\d+)/);
+        if (match) {
+            // Если открыта прямая ссылка на страницу задачи - ничего не делаем,
+            // контроллер сам покажет полную страницу
+            console.log('Прямая ссылка на задачу', match[1]);
+        }
+    });
+
+    showNotification('Ссылка на задачу скопирована!', 'success');
+    }).catch(() => {
+        // fallback для старых браузеров
+        const textarea = document.createElement('textarea');
+        textarea.value = url;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showNotification('Ссылка на задачу скопирована!', 'success');
+    });
+    }
+
+    // Печать задачи
+    function printTask() {
+        const modalContent = document.getElementById('taskModalContent');
+        if (!modalContent) return;
+
+        // Создаем временный контейнер для печати
+        const printWindow = window.open('', '_blank');
+        const taskHtml = modalContent.innerHTML;
+
+        printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Задача #${window.currentTaskId}</title>
+            <meta charset="utf-8">
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 40px;
+                    padding: 20px;
+                }
+                .print-container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 30px;
+                    padding-bottom: 20px;
+                    border-bottom: 2px solid #333;
+                }
+                .info-block {
+                    margin-bottom: 20px;
+                }
+                .info-row {
+                    display: flex;
+                    margin-bottom: 10px;
+                }
+                .info-label {
+                    width: 120px;
+                    font-weight: bold;
+                }
+                .info-value {
+                    flex: 1;
+                }
+                .description {
+                    margin: 20px 0;
+                    padding: 10px;
+                    background: #f5f5f5;
+                    border-radius: 5px;
+                }
+                .comments-section {
+                    margin-top: 30px;
+                }
+                .comment {
+                    margin-bottom: 15px;
+                    padding: 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                }
+                .comment-author {
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                }
+                .comment-date {
+                    font-size: 11px;
+                    color: #666;
+                }
+                @media print {
+                    body {
+                        margin: 0;
+                        padding: 20px;
+                    }
+                    .no-print {
+                        display: none;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="print-container">
+                ${taskHtml}
+            </div>
+            <script>
+                window.onload = function() {
+                    window.print();
+                    setTimeout(function() {
+                        window.close();
+                    }, 1000);
+                };
+            <\/script>
+        </body>
+        </html>
+    `);
+        printWindow.document.close();
     }
 
     async function startTask(taskId) {
@@ -2433,17 +2594,6 @@
             console.error('Ошибка:', error);
             showNotification('Ошибка при обновлении статуса', 'error');
         }
-    }
-
-    // Закрыть модальное окно просмотра задачи
-    function closeTaskViewModal() {
-        document.getElementById('taskViewModal').classList.add('hidden');
-        document.getElementById('taskModalContent').innerHTML = '';
-
-        const modal = document.getElementById('taskViewModal');
-        modal.classList.add('hidden');
-        // Убираем blur при закрытии (опционально)
-        modal.style.backdropFilter = '';
     }
 
     // Вспомогательные функции

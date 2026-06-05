@@ -126,7 +126,7 @@ class HomeController extends Controller
     }
 
 
-    public function indexAdmin(Request $request)
+    public function indexAdmin(Request $request, $task = null)
     {
         $user = Auth::user();
 
@@ -157,9 +157,6 @@ class HomeController extends Controller
                 ->where('is_personal', '!=', true)
                 ->where('company_id', $user->company_id);
         }
-
-        // Базовый запрос - ВСЕ задачи компании пользователя (НЕ дублируем, убираем лишний)
-        // Удаляем этот дублирующий блок, так как выше уже есть $tasksQuery
 
         // Поиск
         if ($request->has('search') && $request->search) {
@@ -261,7 +258,10 @@ class HomeController extends Controller
             'priorities' => ['низкий', 'средний', 'высокий', 'критический'],
         ];
 
-        return view('frontend.main-admin', compact('tasks', 'stats', 'filterData', 'user'));
+        // Получаем ID задачи для открытия из параметра маршрута или GET
+        $openTaskId = $request->route('task') ?? $request->get('open_task');
+
+        return view('frontend.main-admin', compact('tasks', 'stats', 'filterData', 'user', 'openTaskId'));
     }
 
     public function noCompanies()

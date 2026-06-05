@@ -224,6 +224,8 @@ class TaskController extends Controller
     /**
      * Отображение задачи с комментариями для модального окна
      */
+
+
     public function view(Task $task)
     {
         \Log::info('=== START view method for task ID: ' . $task->id . ', status: ' . $task->status . ' ===');
@@ -251,7 +253,7 @@ class TaskController extends Controller
             if (!$task->is_personal) {
                 try {
                     $comments = $task->comments()->with(['user', 'replies.user'])->paginate(20);
-                    $canComment = $task->canUserComment($user);  // <- здесь должно быть true
+                    $canComment = $task->canUserComment($user);
                     \Log::info('canComment result: ' . ($canComment ? 'true' : 'false'));
                 } catch (\Exception $e) {
                     \Log::error('Error loading comments: ' . $e->getMessage());
@@ -262,6 +264,7 @@ class TaskController extends Controller
             $subtasks = $task->subtasks()->with(['user', 'author'])->get();
             $currentUser = Auth::user();
 
+            // Всегда возвращаем только контент модального окна
             return view('partials.modal.task.modal_content', compact(
                 'task', 'comments', 'files', 'subtasks', 'currentUser', 'canComment'
             ));
@@ -508,18 +511,6 @@ class TaskController extends Controller
         }
     }
 
-    public function show(Task $task)
-    {
-        $user = Auth::user();
-
-        if (!$this->canAccessTask($user, $task)) {
-            abort(403, 'У вас нет доступа к этой задаче');
-        }
-
-        $task->load(['author', 'user', 'department', 'category', 'files', 'subtasks']);
-
-        return view('frontend.tasks.show', compact('task', 'user'));
-    }
 
     public function edit(Task $task)
     {

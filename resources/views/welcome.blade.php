@@ -294,10 +294,12 @@
                          data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
                          data-author-id="{{ $task->author_id }}">
                         <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-medium cursor-pointer hover:text-blue-600 flex-1"
-                                onclick="openTaskViewModal({{ $task->id }})">
-                                {{ $task->name }}
-                            </h4>
+                            <a href="/team/tasks/{{ $task->id }}"
+                               onclick="openTaskViewModal({{ $task->id }}); return false;">
+                                <h4 class="font-medium cursor-pointer hover:text-blue-600 flex-1">
+                                    {{ $task->name }}
+                                </h4>
+                            </a>
                             <div class="flex items-center space-x-2">
                                 <div class="relative">
                                     <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
@@ -2507,24 +2509,137 @@ function drop(e) {
             currentTaskId = null;
         }
 
-        function openTaskViewModal(taskId) {
-            fetch(`/tasks/${taskId}`)
-                .then(response => response.text())
-                .then(html => {
-                    const content = document.getElementById('taskModalContent');
-                    const modal = document.getElementById('taskViewModal');
-                    if (content) content.innerHTML = html;
-                    if (modal) modal.classList.remove('hidden');
-                })
-                .catch(error => console.error('Ошибка:', error));
+        // Открыть модальное окно просмотра задачи
+        async function openTaskViewModal(taskId) {
+            const modal = document.getElementById('taskViewModal');
+            const content = document.getElementById('taskModalContent');
+
+            if (!modal || !content) {
+                console.error('Модальное окно не найдено');
+                return;
+            }
+
+            // Сохраняем ID задачи
+            window.currentTaskId = taskId;
+            window.taskId = taskId;
+
+            // МЕНЯЕМ URL БЕЗ ПЕРЕЗАГРУЗКИ СТРАНИЦЫ
+            const newUrl = `/team/tasks/${taskId}`;
+            window.history.pushState({ taskId: taskId, modalOpen: true }, '', newUrl);
+
+            // Показываем загрузчик
+            content.innerHTML = `
+        <div class="text-center py-8">
+            <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
+            <p class="text-gray-500 mt-2">Загрузка задачи...</p>
+        </div>
+    `;
+
+            // Показываем модальное окно
+            modal.style.backdropFilter = 'blur(10px)';
+            modal.classList.remove('hidden');
+
+            try {
+                // ПРАВИЛЬНЫЙ URL - без /view и без /page
+                const response = await fetch(`/tasks/${taskId}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'text/html'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const html = await response.text();
+                content.innerHTML = html;
+
+            } catch (error) {
+                console.error('Ошибка:', error);
+                content.innerHTML = `
+            <div class="text-center py-8">
+                <i class="fas fa-exclamation-triangle text-3xl text-red-400"></i>
+                <p class="text-gray-500 mt-2">Не удалось загрузить задачу</p>
+                <p class="text-sm text-gray-400 mt-1">${error.message}</p>
+                <button onclick="openTaskViewModal(${taskId})"
+                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                    <i class="fas fa-sync-alt mr-2"></i>Повторить
+                </button>
+            </div>
+        `;
+            }
         }
 
+        // Закрыть модальное окно просмотра задачи
         function closeTaskViewModal() {
             const modal = document.getElementById('taskViewModal');
             const content = document.getElementById('taskModalContent');
-            if (modal) modal.classList.add('hidden');
-            if (content) content.innerHTML = '';
+
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.style.backdropFilter = '';
+            }
+
+            if (content) {
+                content.innerHTML = `
+            <div class="text-center py-8">
+                <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
+                <p class="text-gray-500 mt-2">Загрузка задачи...</p>
+            </div>
+        `;
+            }
+
+            // Меняем URL обратно на /team/tasks без перезагрузки
+            window.history.pushState({}, '', '/home');
         }
+
+        // Обрабатываем кнопку "Назад" в браузере
+        window.addEventListener('popstate', function(event) {
+            const modal = document.getElementById('taskViewModal');
+
+            if (modal && !modal.classList.contains('hidden')) {
+                closeTaskViewModal();
+            }
+        });
+
+        // Закрытие по Escape
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('taskViewModal');
+            if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+                closeTaskViewModal();
+            }
+        });
+
+        // Закрытие по клику на фон
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('taskViewModal');
+            if (e.target === modal) {
+                closeTaskViewModal();
+            }
+        });
+
+        // При загрузке страницы проверяем URL и открываем модалку если нужно
+        document.addEventListener('DOMContentLoaded', function() {
+            const match = window.location.pathname.match(/\/tasks\/(\d+)/);
+
+            if (match && !window.location.pathname.includes('/page/')) {
+                const taskId = match[1];
+                // Открываем модальное окно с задачей
+                setTimeout(function() {
+                    openTaskViewModal(taskId);
+                }, 100);
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (e.target.id === 'taskViewModal') closeTaskViewModal();
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeTaskViewModal();
+        });
 
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
         document.addEventListener('DOMContentLoaded', function () {
