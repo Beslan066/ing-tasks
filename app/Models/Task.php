@@ -432,27 +432,30 @@ class Task extends Model
         // Общая задача компании
         return $this->company_id === $user->company_id;
     }
-
     /**
      * Проверить, может ли пользователь писать комментарии
      */
-    private function canUserComment(Task $task, User $user): bool
+    public function canUserComment(User $user): bool
     {
-        \Log::info('canUserComment check for task ' . $task->id . ', status: ' . $task->status);
+        \Log::info('=== canUserComment called ===');
+        \Log::info('Task ID: ' . $this->id . ', is_personal: ' . ($this->is_personal ? 'true' : 'false'));
+        \Log::info('department_id: ' . ($this->department_id ?? 'NULL'));
+        \Log::info('company_id: ' . $this->company_id . ', user company_id: ' . $user->company_id);
 
-        if ($task->is_personal) {
-            \Log::info('Task is personal - cannot comment');
+        if ($this->is_personal) {
+            \Log::info('Result: false (is_personal)');
             return false;
         }
 
-        if ($task->department_id) {
-            $isInDepartment = $user->isInDepartment($task->department_id);
-            \Log::info('Department check: user in department ' . $task->department_id . '? ' . ($isInDepartment ? 'yes' : 'no'));
-            return $isInDepartment;
+        // Если нет отдела - комментарии доступны всем в компании
+        if (!$this->department_id) {
+            $result = $this->company_id === $user->company_id;
+            \Log::info('No department, company check result: ' . ($result ? 'true' : 'false'));
+            return $result;
         }
 
-        $result = $task->company_id === $user->company_id;
-        \Log::info('Company check: ' . $task->company_id . ' === ' . $user->company_id . '? ' . ($result ? 'yes' : 'no'));
-        return $result;
+        $isInDepartment = $user->isInDepartment($this->department_id);
+        \Log::info('Department check result: ' . ($isInDepartment ? 'true' : 'false'));
+        return $isInDepartment;
     }
 }

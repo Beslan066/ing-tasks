@@ -251,8 +251,8 @@ class TaskController extends Controller
             if (!$task->is_personal) {
                 try {
                     $comments = $task->comments()->with(['user', 'replies.user'])->paginate(20);
-                    $canComment = $task->canUserComment($user);
-                    \Log::info('Comments loaded: ' . ($comments ? $comments->count() : 0));
+                    $canComment = $task->canUserComment($user);  // <- здесь должно быть true
+                    \Log::info('canComment result: ' . ($canComment ? 'true' : 'false'));
                 } catch (\Exception $e) {
                     \Log::error('Error loading comments: ' . $e->getMessage());
                     $comments = null;
@@ -963,23 +963,6 @@ class TaskController extends Controller
 
         return $task->company_id === $user->company_id &&
             ($task->user_id === $user->id || $isInDepartment);
-    }
-
-    /**
-     * Check if user can comment on task
-     */
-    public function canUserComment(User $user): bool
-    {
-        if ($this->is_personal) {
-            return false;
-        }
-
-        // Если нет отдела - комментарии доступны всем в компании
-        if (!$this->department_id) {
-            return $this->company_id === $user->company_id;
-        }
-
-        return $user->isInDepartment($this->department_id);
     }
 
     public function storePersonal(Request $request)
