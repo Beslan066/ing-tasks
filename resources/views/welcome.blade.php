@@ -616,6 +616,7 @@
             </div>
         </div>
     </div>
+   <div class="swiper-pagination !bottom-2 min-[501px]:hidden"></div>
    </div>
 
     <!-- Модальные окна -->
@@ -2238,7 +2239,7 @@ function dragOver(e) {
     }
 }
 
-        function dragLeave(e) {
+function dragLeave(e) {
     const column = this.closest('.board-column');
     if (column) {
         column.classList.remove('drag-over-active');
@@ -2250,7 +2251,7 @@ function dragOver(e) {
     }
 }
 
-        function drop(e) {
+function drop(e) {
             e.preventDefault();
 
             if (swiperSlideTimeout) {
@@ -2844,6 +2845,12 @@ document.addEventListener('DOMContentLoaded', () => {
     observer: true,
     observeParents: true,
     watchSlidesProgress: true,
+     pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+        bulletClass: 'swiper-pagination-bullet bg-gray-400 opacity-50 mx-1 inline-block rounded-full w-2 h-2',
+        bulletActiveClass: '!bg-[#22c55e] !opacity-100 w-4 rounded-lg transition-all duration-300'
+    },
 });
         console.log('Swiper успешно запущен для мобильного экрана!');
     }
