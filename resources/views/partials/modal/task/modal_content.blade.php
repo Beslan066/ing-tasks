@@ -2,18 +2,25 @@
 
 <div class="flex h-full">
     {{-- ЛЕВАЯ КОЛОНКА - Информация о задаче --}}
-    <div class="w-1/2 border-r border-gray-200 pr-6 overflow-y-auto max-h-[calc(90vh-70px)]">
+    <div class="w-2/5 border-r border-gray-200 pr-6 overflow-y-auto">
         {{-- Заголовок и статус --}}
         <div class="mb-6">
             <div class="flex items-start justify-between">
                 <h2 class="text-xl font-bold text-gray-800 break-words pr-4">{{ $task->name }}</h2>
-                <span class="px-2 py-1 text-xs rounded-full whitespace-nowrap flex-shrink-0
+                <span class="px-2 py-1 text-xs rounded-full whitespace-nowrap flex-shrink-0 flex items-center gap-1
                     @if($task->status === 'выполнена') bg-green-100 text-green-800
                     @elseif($task->status === 'в работе') bg-blue-100 text-blue-800
                     @elseif($task->status === 'не назначена') bg-yellow-100 text-yellow-800
                     @elseif($task->status === 'просрочена') bg-red-100 text-red-800
                     @elseif($task->status === 'на проверке') bg-orange-100 text-orange-800
                     @else bg-gray-100 text-gray-800 @endif">
+                    <i class="fas
+                        @if($task->status === 'выполнена') fa-check-circle
+                        @elseif($task->status === 'в работе') fa-play-circle
+                        @elseif($task->status === 'не назначена') fa-clock
+                        @elseif($task->status === 'просрочена') fa-exclamation-triangle
+                        @elseif($task->status === 'на проверке') fa-eye
+                        @else fa-tasks @endif text-xs"></i>
                     {{ $task->status }}
                 </span>
             </div>
@@ -33,16 +40,79 @@
             @endif
         </div>
 
+        {{-- КНОПКИ ДЕЙСТВИЙ --}}
+        @php
+            $currentUser = Auth::user();
+            $isExecutor = $task->user_id === $currentUser->id;
+            $isAuthor = $task->author_id === $currentUser->id;
+            $isLeader = $currentUser->isLeader();
+            $isManager = $currentUser->isManagerRole();
+            $isInDepartment = $currentUser->isInDepartment($task->department_id);
+            $canView = $isExecutor || $isAuthor || $isLeader || $isManager || $isInDepartment;
+        @endphp
+
+        @if(!$task->is_personal && $canView)
+            <div class="mb-6 flex flex-wrap gap-2">
+                {{-- Кнопка "Начать работу" (для назначенных задач в статусе "назначена") --}}
+                @if($task->status === 'назначена' && $task->user_id === $currentUser->id)
+                    <button onclick="startTask({{ $task->id }})"
+                            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm flex items-center gap-2">
+                        <i class="fas fa-play"></i> Начать работу
+                    </button>
+                @endif
+
+                {{-- Кнопка "Взять задачу" (для не назначенных задач, если пользователь из отдела) --}}
+                @if($task->status === 'не назначена' && $isInDepartment && !$isExecutor)
+                    <button onclick="takeTask({{ $task->id }})"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm flex items-center gap-2">
+                        <i class="fas fa-hand-paper"></i> Взять задачу
+                    </button>
+                @endif
+
+                {{-- Кнопка "Отправить на проверку" (для исполнителя, когда задача в работе) --}}
+                @if($task->status === 'в работе' && $isExecutor)
+                    <button onclick="showTimeModal({{ $task->id }})"
+                            class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition text-sm flex items-center gap-2">
+                        <i class="fas fa-check-circle"></i> Отправить на проверку
+                    </button>
+                @endif
+
+                {{-- Кнопка "Завершить задачу" (для руководителя/менеджера, когда задача на проверке) --}}
+                @if($task->status === 'на проверке' && ($isLeader || $isManager))
+                    <button onclick="completeTask({{ $task->id }})"
+                            class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition text-sm flex items-center gap-2">
+                        <i class="fas fa-check-double"></i> Завершить задачу
+                    </button>
+                @endif
+
+                {{-- Кнопка "Вернуть на доработку" (для руководителя/менеджера, когда задача на проверке) --}}
+                @if($task->status === 'на проверке' && ($isLeader || $isManager))
+                    <button onclick="showReturnToWorkModal({{ $task->id }})"
+                            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm flex items-center gap-2">
+                        <i class="fas fa-undo-alt"></i> Вернуть на доработку
+                    </button>
+                @endif
+
+                {{-- Кнопка "Отказаться" (для исполнителя, если задача не завершена) --}}
+                @if($isExecutor && !in_array($task->status, ['выполнена', 'просрочена']))
+                    <button onclick="showRejectModal({{ $task->id }})"
+                            class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition text-sm flex items-center gap-2">
+                        <i class="fas fa-times-circle"></i> Отказаться
+                    </button>
+                @endif
+            </div>
+        @endif
+
         {{-- Описание --}}
         <div class="mb-6">
             <h3 class="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide">Описание</h3>
-            <div class="text-gray-700 text-sm whitespace-pre-wrap bg-gray-50 p-3 rounded-lg">
+            <div class="text-gray-700 text-sm whitespace-pre-wrap bg-gray-50 p-[10px] rounded-lg">
                 {{ $task->description ?: 'Нет описания' }}
             </div>
         </div>
 
         {{-- Информационные блоки в стиле Битрикс24 --}}
-        <div class="space-y-4">
+        <div class="space-y-4 bg-white p-[10px] rounded-lg">
             {{-- Исполнитель --}}
             <div class="flex items-start">
                 <div class="w-24 text-sm text-gray-500 flex-shrink-0">Исполнитель:</div>
@@ -72,7 +142,15 @@
             {{-- Отдел --}}
             <div class="flex items-start">
                 <div class="w-24 text-sm text-gray-500 flex-shrink-0">Отдел:</div>
-                <div class="flex-1 text-sm text-gray-800">{{ $task->department?->name ?? ($task->is_personal ? 'Личная задача' : 'Общая задача') }}</div>
+                <div class="flex-1 text-sm text-gray-800">
+                    @if($task->department)
+                        {{ $task->department->name }}
+                    @elseif($task->is_personal)
+                        Личная задача
+                    @else
+                        Без отдела
+                    @endif
+                </div>
             </div>
 
             {{-- Категория --}}
@@ -135,22 +213,11 @@
 
         {{-- Файлы --}}
         @php
-            // Принудительно проверяем и загружаем файлы
             if (!isset($files) || $files === null) {
                 $files = collect();
             }
-
-            // Дополнительная проверка через связь задачи
             if ($files->count() == 0 && isset($task) && $task->relationLoaded('files')) {
                 $files = $task->files;
-            }
-
-            // Логирование для отладки (видно в ларавел лог)
-            if ($files->count() > 0) {
-                \Log::info('Files found in view: ' . $files->count());
-                foreach($files as $f) {
-                    \Log::info('File name: ' . ($f->name ?? 'no name'));
-                }
             }
         @endphp
 
@@ -179,40 +246,27 @@
                                     $formattedSize = $fileSize ? round($fileSize / 1024, 1) . ' KB' : '~ KB';
                                 @endphp
                                 <i class="fas {{ $icon }} text-gray-400 group-hover:text-blue-500 transition"></i>
-                                <a href="{{ $fileUrl }}"
-                                   target="_blank"
-                                   class="text-blue-500 hover:underline text-sm truncate"
-                                   title="{{ $fileName }}">
+                                <a href="{{ $fileUrl }}" target="_blank" class="text-blue-500 hover:underline text-sm truncate" title="{{ $fileName }}">
                                     {{ $fileName }}
                                 </a>
                             </div>
-                            <span class="text-xs text-gray-400 flex-shrink-0 ml-2">
-                {{ $formattedSize }}
-            </span>
+                            <span class="text-xs text-gray-400 flex-shrink-0 ml-2">{{ $formattedSize }}</span>
                         </div>
                     @endforeach
-                </div>
-            </div>
-        @else
-            {{-- Временная отладка --}}
-            <div class="mt-6 pt-4 border-t border-gray-200">
-                <div class="text-xs text-gray-400 p-2 bg-gray-50 rounded">
-                    <i class="fas fa-info-circle mr-1"></i>
-                    Файлов не найдено
                 </div>
             </div>
         @endif
     </div>
 
     {{-- ПРАВАЯ КОЛОНКА - Комментарии в стиле мессенджера --}}
-    <div class="w-1/2 pl-6 flex flex-col h-100 chat-background">
-        <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-200 p-2">
-            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+    <div class="w-3/5 flex flex-col h-100 chat-background rounded-lg">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-200 p-2 bg-white rounded-lg">
+            <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                 <i class="fas fa-comments text-blue-500 mr-2"></i>Сообщения к задаче
                 @if(!$task->is_personal && isset($comments) && $comments)
                     <span class="ml-1 text-gray-400">({{ $comments->total() ?? 0 }})</span>
                 @endif
-            </h3>
+            </h2>
         </div>
 
         @if($task->is_personal)
@@ -220,12 +274,12 @@
                 <div class="text-center">
                     <i class="fas fa-lock text-5xl text-gray-300 mb-3"></i>
                     <p class="text-gray-500">Сообщений к задаче нет</p>
-                    <p class="text-sm text-gray-400 mt-1">Комментарии недоступны для личных задач</p>
+                    <p class="text-sm text-gray-400 mt-1">Сообщения недоступны для личных задач</p>
                 </div>
             </div>
         @else
             {{-- Список комментариев в стиле чата --}}
-            <div id="commentsList" class="flex-1 overflow-y-auto space-y-3 pr-2" style="max-height: calc(90vh - 200px);">
+            <div id="commentsList" class="flex-1 overflow-y-auto space-y-3 p-2" style="max-height: calc(90vh - 200px);">
                 @if(isset($comments) && $comments && $comments->count() > 0)
                     @foreach($comments as $comment)
                         @include('partials.modal.task.comment_item', ['comment' => $comment, 'taskId' => $task->id, 'level' => 0])
@@ -242,8 +296,7 @@
                 @else
                     <div class="flex-1 flex items-center justify-center">
                         <div class="text-center">
-                            <i class="fas fa-comment-dots text-5xl text-gray-300 mb-3"></i>
-                            <p class="text-gray-500">Нет комментариев</p>
+                            <i class="fas fa-comment-dots text-5xl text-white mb-3"></i>
                             <p class="text-sm text-gray-400 mt-1">Напишите первое сообщение</p>
                         </div>
                     </div>
@@ -254,22 +307,15 @@
             @if(isset($canComment) && $canComment)
                 <div class="mt-4 pt-4 border-t border-gray-200">
                     <div class="flex items-start space-x-3">
-                        <div class="flex-shrink-0">
-                            <div class="w-9 h-9 rounded-full {{ $currentUser->getAvatarColor() ?? 'bg-gray-400' }} flex items-center justify-center text-white text-sm font-semibold">
-                                {{ $currentUser->getInitials() ?? 'U' }}
-                            </div>
-                        </div>
-                        <div class="flex-1">
+                        <div class="flex-1 relative p-4">
                             <textarea id="commentInput"
                                       rows="2"
-                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
-                                      placeholder="Напишите комментарий..."></textarea>
-                            <div class="flex justify-end mt-2">
-                                <button onclick="submitComment({{ $task->id }})"
-                                        class="px-4 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm flex items-center gap-1">
-                                    <i class="fas fa-paper-plane"></i> Отправить
-                                </button>
-                            </div>
+                                      class="w-full px-3 py-2 pr-12 border placeholder-pt-2 border-gray-300 rounded-lg focus:ring-2 h-[80px] focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+                                      placeholder="Напишите сообщение..."></textarea>
+                            <button onclick="submitComment({{ $task->id }})"
+                                    class="absolute right-[2rem] top-1/2 -translate-y-1/2 p-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm flex w-[40px] h-[40px] items-center justify-center">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -282,10 +328,284 @@
     // Устанавливаем ID задачи ГЛОБАЛЬНО
     if (typeof window !== 'undefined') {
         window.currentTaskId = {{ $task->id }};
-        window.taskId = {{ $task->id }}; // дублируем для надежности
+        window.taskId = {{ $task->id }};
     }
 
     console.log('Task ID set to:', window.currentTaskId);
+
+    // Функция для взятия задачи
+    function takeTask(taskId) {
+        if (!confirm('Вы уверены, что хотите взять эту задачу?')) return;
+
+        fetch(`/tasks/${taskId}/take`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (typeof showNotification === 'function') {
+                        showNotification('Задача взята в работу!', 'success');
+                    } else {
+                        alert('Задача взята в работу!');
+                    }
+                    if (typeof openTaskViewModal === 'function') openTaskViewModal(taskId);
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    if (typeof showNotification === 'function') {
+                        showNotification(data.message || 'Ошибка', 'error');
+                    } else {
+                        alert(data.message || 'Ошибка');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('Ошибка при взятии задачи', 'error');
+                } else {
+                    alert('Ошибка при взятии задачи');
+                }
+            });
+    }
+
+    // Функция для завершения задачи (руководитель)
+    function completeTask(taskId) {
+        if (!confirm('Вы уверены, что хотите завершить эту задачу?')) return;
+
+        fetch(`/tasks/${taskId}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ status: 'выполнена' })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (typeof showNotification === 'function') {
+                        showNotification('Задача завершена!', 'success');
+                    } else {
+                        alert('Задача завершена!');
+                    }
+                    if (typeof openTaskViewModal === 'function') openTaskViewModal(taskId);
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    if (typeof showNotification === 'function') {
+                        showNotification(data.message || 'Ошибка', 'error');
+                    } else {
+                        alert(data.message || 'Ошибка');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('Ошибка при завершении задачи', 'error');
+                } else {
+                    alert('Ошибка при завершении задачи');
+                }
+            });
+    }
+
+    // Функция для показа модального окна с временем
+    function showTimeModal(taskId) {
+        window.currentTaskId = taskId;
+        const timeModal = document.getElementById('timeModal');
+        if (timeModal) {
+            timeModal.classList.remove('hidden');
+        } else {
+            // Если модального окна нет в этом партиале, используем глобальную функцию
+            if (typeof window.showTimeModalGlobal === 'function') {
+                window.showTimeModalGlobal(taskId);
+            } else {
+                // Временный диалог
+                const hours = prompt('Укажите фактическое время работы над задачей (в часах):');
+                if (hours && !isNaN(hours) && hours > 0) {
+                    sendForReviewWithTime(taskId, hours);
+                }
+            }
+        }
+    }
+
+    function sendForReviewWithTime(taskId, actualHours) {
+        fetch(`/tasks/${taskId}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ status: 'на проверке', actual_hours: actualHours })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (typeof showNotification === 'function') {
+                        showNotification('Задача отправлена на проверку!', 'success');
+                    } else {
+                        alert('Задача отправлена на проверку!');
+                    }
+                    if (typeof openTaskViewModal === 'function') openTaskViewModal(taskId);
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    if (typeof showNotification === 'function') {
+                        showNotification(data.message || 'Ошибка', 'error');
+                    } else {
+                        alert(data.message || 'Ошибка');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('Ошибка при отправке на проверку', 'error');
+                } else {
+                    alert('Ошибка при отправке на проверку');
+                }
+            });
+    }
+
+    // Функция для показа модального окна возврата на доработку
+    function showReturnToWorkModal(taskId) {
+        window.currentTaskId = taskId;
+        const comment = prompt('Укажите причину возврата на доработку:');
+        if (comment !== null) {
+            returnToWork(taskId, comment);
+        }
+    }
+
+    function returnToWork(taskId, comment) {
+        fetch(`/tasks/${taskId}/return-to-work`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ comment: comment })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (typeof showNotification === 'function') {
+                        showNotification('Задача возвращена на доработку!', 'success');
+                    } else {
+                        alert('Задача возвращена на доработку!');
+                    }
+                    if (typeof openTaskViewModal === 'function') openTaskViewModal(taskId);
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    if (typeof showNotification === 'function') {
+                        showNotification(data.message || 'Ошибка', 'error');
+                    } else {
+                        alert(data.message || 'Ошибка');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('Ошибка при возврате задачи', 'error');
+                } else {
+                    alert('Ошибка при возврате задачи');
+                }
+            });
+    }
+
+    // Функция для показа модального окна отказа
+    function showRejectModal(taskId) {
+        window.currentTaskId = taskId;
+        const reason = prompt('Укажите причину отказа от задачи:');
+        if (reason !== null && reason.trim() !== '') {
+            rejectTask(taskId, reason);
+        } else if (reason !== null) {
+            alert('Пожалуйста, укажите причину отказа');
+        }
+    }
+
+    function rejectTask(taskId, reason) {
+        fetch(`/tasks/${taskId}/reject`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ reason: reason })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (typeof showNotification === 'function') {
+                        showNotification('Вы отказались от задачи', 'success');
+                    } else {
+                        alert('Вы отказались от задачи');
+                    }
+                    if (typeof openTaskViewModal === 'function') openTaskViewModal(taskId);
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    if (typeof showNotification === 'function') {
+                        showNotification(data.message || 'Ошибка', 'error');
+                    } else {
+                        alert(data.message || 'Ошибка');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('Ошибка при отказе от задачи', 'error');
+                } else {
+                    alert('Ошибка при отказе от задачи');
+                }
+            });
+    }
+
+    // Функция начала работы
+    function startTask(taskId) {
+        fetch(`/tasks/${taskId}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ status: 'в работе' })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (typeof showNotification === 'function') {
+                        showNotification('Задача переведена в работу!', 'success');
+                    } else {
+                        alert('Задача переведена в работу!');
+                    }
+                    if (typeof openTaskViewModal === 'function') openTaskViewModal(taskId);
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    if (typeof showNotification === 'function') {
+                        showNotification(data.message || 'Ошибка', 'error');
+                    } else {
+                        alert(data.message || 'Ошибка');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('Ошибка при начале работы', 'error');
+                } else {
+                    alert('Ошибка при начале работы');
+                }
+            });
+    }
 
     // Функция загрузки дополнительных комментариев
     function loadMoreComments(taskId, nextPageUrl) {
@@ -295,9 +615,7 @@
             button.disabled = true;
         }
 
-        fetch(nextPageUrl, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
+        fetch(nextPageUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
             .then(response => response.text())
             .then(html => {
                 const temp = document.createElement('div');
@@ -307,7 +625,6 @@
 
                 newComments.forEach(comment => {
                     if (commentsList) {
-                        // Вставляем перед кнопкой загрузки, если она есть
                         const loadMoreBtn = commentsList.querySelector('.text-center.pt-2');
                         if (loadMoreBtn) {
                             commentsList.insertBefore(comment, loadMoreBtn);
@@ -317,7 +634,6 @@
                     }
                 });
 
-                // Удаляем кнопку загрузки если это последняя страница
                 const loadMoreBtn = document.querySelector('#commentsList .text-center.pt-2 button');
                 if (loadMoreBtn && !temp.querySelector('#commentsList .text-center.pt-2 button')) {
                     loadMoreBtn.closest('.text-center.pt-2')?.remove();

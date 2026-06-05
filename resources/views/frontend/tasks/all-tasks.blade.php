@@ -404,19 +404,7 @@
     </div>
 
     <!-- Модальные окна -->
-    <div id="taskViewModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
-        <div class="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-semibold">Просмотр задачи</h3>
-                <button onclick="closeTaskViewModal()" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div id="taskModalContent"></div>
-        </div>
-    </div>
-
+    @include('partials.modal.task.show')
     <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-4">Отказ от задачи</h3>
@@ -483,6 +471,86 @@
             }
         }
 
+        // ==================== ФУНКЦИЯ ДЛЯ ОТКРЫТИЯ МОДАЛЬНОГО ОКНА ====================
+        async function openTaskViewModal(taskId) {
+            console.log('openTaskViewModal called with taskId:', taskId);
+
+            const modal = document.getElementById('taskViewModal');
+            const content = document.getElementById('taskModalContent');
+
+            if (!modal) {
+                console.error('Modal #taskViewModal not found!');
+                alert('Ошибка: модальное окно не найдено');
+                return;
+            }
+
+            if (!content) {
+                console.error('Element #taskModalContent not found!');
+                alert('Ошибка: контейнер контента не найден');
+                return;
+            }
+
+            // Показываем загрузчик
+            content.innerHTML = `
+        <div class="text-center py-8">
+            <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
+            <p class="text-gray-500 mt-2">Загрузка задачи...</p>
+        </div>
+    `;
+
+            modal.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`/tasks/${taskId}/view`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'text/html',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Server response error:', errorText.substring(0, 200));
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const html = await response.text();
+                console.log('Received HTML length:', html.length);
+
+                if (!html || html.trim() === '') {
+                    throw new Error('Получен пустой ответ от сервера');
+                }
+
+                content.innerHTML = html;
+
+                // Устанавливаем ID задачи глобально
+                window.currentTaskId = taskId;
+                window.taskId = taskId;
+
+            } catch (error) {
+                console.error('Error loading task:', error);
+                content.innerHTML = `
+            <div class="text-center py-8">
+                <i class="fas fa-exclamation-triangle text-3xl text-red-400"></i>
+                <p class="text-gray-500 mt-2">Не удалось загрузить задачу</p>
+                <p class="text-sm text-gray-400 mt-1">${error.message}</p>
+                <button onclick="openTaskViewModal(${taskId})"
+                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                    <i class="fas fa-sync-alt mr-2"></i>Повторить
+                </button>
+            </div>
+        `;
+            }
+        }
+
+        function closeTaskViewModal() {
+            const modal = document.getElementById('taskViewModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
         // Применить фильтры
         function applyFilters() {
             const status = document.getElementById('statusFilter').value;
@@ -608,193 +676,6 @@
         function updateVisibleCount() {
             const visible = document.querySelectorAll('.task-row:not([style*="display: none"])').length;
             document.getElementById('visibleCount').textContent = visible;
-        }
-
-        // Открыть модальное окно просмотра задачи
-        async function openTaskViewModal(taskId) {
-            try {
-                const response = await fetch(`/tasks/${taskId}/view`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    const task = data.task;
-                    const modalContent = document.getElementById('taskModalContent');
-
-                    modalContent.innerHTML = `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="md:col-span-2">
-                        <h4 class="text-lg font-semibold text-gray-800 mb-2">${escapeHtml(task.name)}</h4>
-                        <p class="text-gray-600 mb-4">${escapeHtml(task.description) || 'Описание отсутствует'}</p>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div class="flex items-center">
-                            <div class="mr-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                                <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(task.status)}">
-                                    ${task.status}
-                                </div>
-                            </div>
-
-                            <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
-                                    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md ${getPriorityStyle(task.priority).bg} border ${getPriorityStyle(task.priority).border}">
-                                        <div class="flex items-end gap-[3px] h-5">
-                                            <div class="w-1.5 rounded-sm ${getPriorityStyle(task.priority).level >= 1 ? getPriorityStyle(task.priority).filled : getPriorityStyle(task.priority).empty} h-2"></div>
-                                            <div class="w-1.5 rounded-sm ${getPriorityStyle(task.priority).level >= 2 ? getPriorityStyle(task.priority).filled : getPriorityStyle(task.priority).empty} h-3"></div>
-                                            <div class="w-1.5 rounded-sm ${getPriorityStyle(task.priority).level >= 3 ? getPriorityStyle(task.priority).filled : getPriorityStyle(task.priority).empty} h-4"></div>
-                                            <div class="w-1.5 rounded-sm ${getPriorityStyle(task.priority).level >= 4 ? getPriorityStyle(task.priority).filled : getPriorityStyle(task.priority).empty} h-5"></div>
-                                        </div>
-                                        <span class="text-xs font-medium ${getPriorityStyle(task.priority).text}">${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span>
-                                    </div>
-                            </div>
-                        </div>
-
-                        ${task.department ? `
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
-                                <p class="text-gray-900">${escapeHtml(task.department.name)}</p>
-                            </div>
-                        ` : ''}
-
-                        ${task.category ? `
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
-                                <p class="text-gray-900">${escapeHtml(task.category.name)}</p>
-                            </div>
-                        ` : ''}
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Автор</label>
-                            <p class="text-gray-900">${escapeHtml(task.author.name)}</p>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        ${task.deadline ? `
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Дедлайн</label>
-                                <p class="text-gray-900 ${new Date(task.deadline) < new Date() ? 'text-red-600 font-semibold' : ''}">
-                                    ${formatDateTime(task.deadline)}
-                                    ${new Date(task.deadline) < new Date() ? ' (Просрочено)' : ''}
-                                </p>
-                            </div>
-                        ` : ''}
-
-                        ${task.estimated_hours ? `
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Планируемое время</label>
-                                <p class="text-gray-900">${task.estimated_hours} часов</p>
-                            </div>
-                        ` : ''}
-
-                        ${task.actual_hours ? `
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Фактическое время</label>
-                                <p class="text-gray-900">${task.actual_hours} часов</p>
-                            </div>
-                        ` : ''}
-
-                        ${task.completed_at ? `
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Завершено</label>
-                                <p class="text-gray-900">${formatDateTime(task.completed_at)}</p>
-                            </div>
-                        ` : ''}
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Создана</label>
-                            <p class="text-gray-900">${formatDateTime(task.created_at)}</p>
-                        </div>
-                    </div>
-
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-3">Прикрепленные файлы</label>
-                        ${task.files && task.files.length > 0 ? `
-                            <div class="space-y-2 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
-                                ${task.files.map(file => `
-                                    <div class="flex items-center justify-between bg-gray-50 p-3 rounded">
-                                        <div class="flex items-center space-x-3">
-                                            <i class="fas fa-paperclip text-gray-500"></i>
-                                            <div>
-                                                <a href="/storage/${file.file_path}" target="_blank"
-                                                    class="text-blue-600 hover:text-blue-800 font-medium block">
-                                                    ${escapeHtml(file.name)}
-                                                </a>
-                                                <span class="text-xs text-gray-500">
-                                                    ${Math.round(file.file_size / 1024)} KB •
-                                                    ${formatDateTime(file.created_at)}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        ` : '<p class="text-gray-500 text-center py-4">Файлы отсутствуют</p>'}
-                    </div>
-                </div>
-
-                ${task.rejections && task.rejections.length > 0 ? `
-                    <div class="mt-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-3">История отказов</label>
-                        <div class="space-y-2 max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-3">
-                            ${task.rejections.map(rejection => `
-                                <div class="bg-red-50 border border-red-200 rounded p-3">
-                                    <div class="flex justify-between items-start mb-1">
-                                        <span class="text-sm font-medium text-red-800">${escapeHtml(rejection.user?.name || 'Пользователь')}</span>
-                                        <span class="text-xs text-red-600">${formatDateTime(rejection.created_at)}</span>
-                                    </div>
-                                    <p class="text-sm text-red-700">${escapeHtml(rejection.reason)}</p>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                ` : ''}
-
-                <div class="flex space-x-3 mt-6 pt-4 border-t border-gray-200 max-[500px]:flex-col-reverse max-[500px]:space-x-0 max-[500px]:space-y-0 max-[500px]:gap-3">
-                    ${task.status === 'назначена' ? `
-                        <button onclick="startTask(${task.id})"
-                                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                            <i class="fas fa-play mr-2"></i>Начать работу
-                        </button>
-                    ` : ''}
-
-                    ${task.status === 'в работе' ? `
-                        <button onclick="sendForReview(${task.id})"
-                                class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition">
-                            <i class="fas fa-check-circle mr-2"></i>Отправить на проверку
-                        </button>
-                    ` : ''}
-
-                    ${task.status !== 'выполнена' ? `
-                        <button onclick="showRejectModal(${task.id})"
-                                class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">
-                            <i class="fas fa-times mr-2"></i>Отказаться от задачи
-                        </button>
-                    ` : ''}
-
-                    <button onclick="closeTaskViewModal()"
-                            class=" text-white px-4 py-2 rounded-lg transition" style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);">
-                        Закрыть
-                    </button>
-                </div>
-            `;
-
-                    document.getElementById('taskViewModal').classList.remove('hidden');
-                } else {
-                    alert(data.message || 'Ошибка при загрузке данных задачи');
-                }
-            } catch (error) {
-                console.error('Ошибка:', error);
-                alert('Ошибка при загрузке данных задачи');
-            }
         }
 
         function escapeHtml(str) {

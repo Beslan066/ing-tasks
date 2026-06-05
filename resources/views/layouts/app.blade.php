@@ -450,9 +450,13 @@ media-src https://meet.jit.si https:;
         }
 
         .chat-background {
-            background: url({{asset('images/chat-back.png')}}) 0 0 / 250px 250px, linear-gradient(135deg, #cfebfa, #b3d3ff);
-            background-blend-mode: soft-light;
+            background-image: url({{asset('images/chat1.svg')}}), url({{asset('images/chat-2.png')}});
+            background-position: right top, center center;
+            background-repeat: repeat, no-repeat;
+            background-size: auto, cover;
+            background-color: rgb(159, 207, 255);
         }
+
     </style>
     <!-- @stack('sidebar-styles') -->
 </head>

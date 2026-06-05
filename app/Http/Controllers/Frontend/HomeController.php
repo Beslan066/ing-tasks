@@ -286,7 +286,7 @@ class HomeController extends Controller
         $user = Auth::user();
 
         // Получаем все задачи пользователя с пагинацией
-        $allTasks = Task::with(['author', 'department', 'category', 'files'])
+        $allTasks = Task::with(['author', 'department', 'category', 'files', 'comments', 'subtasks', ])
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->paginate(10); // По 20 задач на странице

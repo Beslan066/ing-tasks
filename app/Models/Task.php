@@ -94,7 +94,9 @@ class Task extends Model
      */
     public function department(): BelongsTo
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class)->withDefault([
+            'name' => 'Без отдела'
+        ]);
     }
 
     /**
@@ -434,9 +436,23 @@ class Task extends Model
     /**
      * Проверить, может ли пользователь писать комментарии
      */
-    public function canUserComment(User $user): bool
+    private function canUserComment(Task $task, User $user): bool
     {
-        // Аналогичная логика
-        return $this->canUserViewComments($user);
+        \Log::info('canUserComment check for task ' . $task->id . ', status: ' . $task->status);
+
+        if ($task->is_personal) {
+            \Log::info('Task is personal - cannot comment');
+            return false;
+        }
+
+        if ($task->department_id) {
+            $isInDepartment = $user->isInDepartment($task->department_id);
+            \Log::info('Department check: user in department ' . $task->department_id . '? ' . ($isInDepartment ? 'yes' : 'no'));
+            return $isInDepartment;
+        }
+
+        $result = $task->company_id === $user->company_id;
+        \Log::info('Company check: ' . $task->company_id . ' === ' . $user->company_id . '? ' . ($result ? 'yes' : 'no'));
+        return $result;
     }
 }

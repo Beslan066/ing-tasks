@@ -403,19 +403,8 @@
         @endif
     </div>
 
-    <!-- Модальные окна -->
-    <div id="taskViewModal"
-         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
-        <div class="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-semibold">Просмотр задачи</h3>
-                <button onclick="closeTaskViewModal()" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div id="taskModalContent"></div>
-        </div>
-    </div>
+    @include('partials.modal.task.show')
+
 
     <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">

@@ -226,35 +226,52 @@ class TaskController extends Controller
      */
     public function view(Task $task)
     {
-        $user = Auth::user();
+        \Log::info('=== START view method for task ID: ' . $task->id . ', status: ' . $task->status . ' ===');
 
-        if (!$this->canAccessTask($user, $task)) {
-            abort(403, 'У вас нет доступа к этой задаче');
+        try {
+            $user = Auth::user();
+
+            if (!$this->canAccessTask($user, $task)) {
+                abort(403, 'У вас нет доступа к этой задаче');
+            }
+
+            $task->updateOverdueStatus();
+
+            // Загружаем связи
+            $task->load(['author', 'user', 'category']);
+
+            // Отдел загружаем даже если NULL (withDefault сработает)
+            $task->load('department');
+
+            $files = $task->files()->get();
+
+            $comments = null;
+            $canComment = false;
+
+            if (!$task->is_personal) {
+                try {
+                    $comments = $task->comments()->with(['user', 'replies.user'])->paginate(20);
+                    $canComment = $task->canUserComment($user);
+                    \Log::info('Comments loaded: ' . ($comments ? $comments->count() : 0));
+                } catch (\Exception $e) {
+                    \Log::error('Error loading comments: ' . $e->getMessage());
+                    $comments = null;
+                }
+            }
+
+            $subtasks = $task->subtasks()->with(['user', 'author'])->get();
+            $currentUser = Auth::user();
+
+            return view('partials.modal.task.modal_content', compact(
+                'task', 'comments', 'files', 'subtasks', 'currentUser', 'canComment'
+            ));
+
+        } catch (\Exception $e) {
+            \Log::error('!!! CRITICAL ERROR for task ' . $task->id . ': ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+
+            return response()->make('<div class="p-6 text-center"><i class="fas fa-exclamation-triangle text-3xl text-red-500 mb-3"></i><p class="text-gray-700">Ошибка при загрузке задачи: ' . $e->getMessage() . '</p><button onclick="closeTaskViewModal()" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg">Закрыть</button></div>', 500);
         }
-
-        $task->updateOverdueStatus();
-        $task->load(['author', 'user', 'department', 'category']);
-
-        // ПРИНУДИТЕЛЬНО загружаем файлы через связь
-        $files = $task->files()->get();
-
-        // Для отладки - пишем в лог
-        \Log::info('Task ID: ' . $task->id . ', Files count: ' . $files->count());
-
-        $comments = null;
-        $canComment = false;
-
-        if (!$task->is_personal) {
-            $comments = $task->comments()->with(['user', 'replies.user'])->paginate(20);
-            $canComment = $this->canUserComment($task, $user);
-        }
-
-        $subtasks = $task->subtasks()->with(['user', 'author'])->get();
-        $currentUser = Auth::user();
-
-        return view('partials.modal.task.modal_content', compact(
-            'task', 'comments', 'files', 'subtasks', 'currentUser', 'canComment'
-        ));
     }
 
     /**
@@ -938,24 +955,31 @@ class TaskController extends Controller
             return $task->company_id === $user->company_id;
         }
 
+        // Проверяем, есть ли у задачи отдел
+        $isInDepartment = false;
+        if ($task->department_id) {
+            $isInDepartment = $user->isInDepartment($task->department_id);
+        }
+
         return $task->company_id === $user->company_id &&
-            ($task->user_id === $user->id || $user->isInDepartment($task->department_id));
+            ($task->user_id === $user->id || $isInDepartment);
     }
 
     /**
      * Check if user can comment on task
      */
-    private function canUserComment(Task $task, User $user): bool
+    public function canUserComment(User $user): bool
     {
-        if ($task->is_personal) {
+        if ($this->is_personal) {
             return false;
         }
 
-        if ($task->department_id) {
-            return $user->isInDepartment($task->department_id);
+        // Если нет отдела - комментарии доступны всем в компании
+        if (!$this->department_id) {
+            return $this->company_id === $user->company_id;
         }
 
-        return $task->company_id === $user->company_id;
+        return $user->isInDepartment($this->department_id);
     }
 
     public function storePersonal(Request $request)
