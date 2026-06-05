@@ -21,6 +21,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
-        "highcharts": "^12.4.0"
+        "highcharts": "^12.4.0",
+        "swiper": "^12.2.0"
     }
 }
