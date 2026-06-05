@@ -616,7 +616,7 @@
             </div>
         </div>
     </div>
-   <div class="swiper-pagination !bottom-2 min-[501px]:hidden"></div>
+   <div class="swiper-pagination flex justify-center pt-5 px-0 !bottom-2 min-[501px]:hidden"></div>
    </div>
 
     <!-- Модальные окна -->
@@ -2769,15 +2769,20 @@ function drop(e) {
         .shake {
             animation: shake 0.3s ease-in-out;
         }
-     @media (max-width: 500px) {
+   @media (max-width: 500px) {
     .board-column {
         flex-shrink: 0 !important;
-        width: 82% !important;
-        max-width: 82% !important;
+        width: 87% !important;
+        max-width: 87% !important;
     }
-    /* ИЗМЕНЕНО: разрешаем горизонтальный жест на карточках для Swiper */
+    .board-column:first-child,
+    .board-column:last-child {
+        width: 92% !important;
+        max-width: 92% !important;
+    }
+
     .task-card, .task-card * {
-        touch-action: pan-x !important;
+        touch-action: pan-x pan-y !important;
         -webkit-user-select: none !important;
         user-select: none !important;
         -webkit-touch-callout: none !important;
@@ -2824,6 +2829,7 @@ document.addEventListener('DOMContentLoaded', () => {
     wrapperClass: 'sw-v-wrapper',
     slideClass: 'board-column',
     centeredSlides: true,
+    centeredSlidesBounds: true,
     slidesPerView: 'auto',
     spaceBetween: 10,
     loop: false,
@@ -2835,6 +2841,7 @@ document.addEventListener('DOMContentLoaded', () => {
     observer: true,
     observeParents: true,
     watchSlidesProgress: true,
+     touchStartPreventDefault: false,
      pagination: {
         el: '.swiper-pagination',
         clickable: true,
