@@ -2357,19 +2357,23 @@ media-src https://meet.jit.si https:;
                 }
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
             const html = await response.text();
+
+            // ВСЕГДА показываем полученный HTML, даже если статус не 200
             content.innerHTML = html;
 
+            // Если статус не OK, логгируем но не показываем ошибку
+            if (!response.ok) {
+                console.warn(`HTTP status: ${response.status} - отображаем сообщение от сервера`);
+            }
+
         } catch (error) {
-            console.error('Ошибка:', error);
+            console.error('Сетевая ошибка:', error);
+            // Эта ошибка возникает только при проблемах с сетью (нет интернета и т.д.)
             content.innerHTML = `
             <div class="text-center py-8">
-                <i class="fas fa-exclamation-triangle text-3xl text-red-400"></i>
-                <p class="text-gray-500 mt-2">Не удалось загрузить задачу</p>
+                <i class="fas fa-wifi text-3xl text-red-400"></i>
+                <p class="text-gray-500 mt-2">Ошибка сети</p>
                 <p class="text-sm text-gray-400 mt-1">${error.message}</p>
                 <button onclick="openTaskViewModal(${taskId})"
                         class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
