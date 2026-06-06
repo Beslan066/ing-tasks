@@ -1,3 +1,9 @@
+@php
+    $backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
+    $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
+    $company = auth()->check() ? auth()->user()->company : null;
+@endphp
+
 @if($backgroundEnabled && $backgroundImage)
     <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden department-card flex flex-col justify-between"
          data-name="{{ strtolower($department->name) }}"
