@@ -234,7 +234,15 @@ class TaskController extends Controller
             $user = Auth::user();
 
             if (!$this->canAccessTask($user, $task)) {
-                abort(403, 'У вас нет доступа к этой задаче');
+                // Возвращаем HTML с сообщением об ошибке и статусом 403
+                return response()->make(
+                    '<div class="p-6 text-center">
+                    <i class="fas fa-lock text-3xl text-red-500 mb-3"></i>
+                    <p class="text-gray-700">У вас нет доступа к этой задаче</p>
+                    <button onclick="closeTaskViewModal()" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg">Закрыть</button>
+                </div>',
+                    403
+                );
             }
 
             $task->updateOverdueStatus();
@@ -273,7 +281,14 @@ class TaskController extends Controller
             \Log::error('!!! CRITICAL ERROR for task ' . $task->id . ': ' . $e->getMessage());
             \Log::error($e->getTraceAsString());
 
-            return response()->make('<div class="p-6 text-center"><i class="fas fa-exclamation-triangle text-3xl text-red-500 mb-3"></i><p class="text-gray-700">Ошибка при загрузке задачи: ' . $e->getMessage() . '</p><button onclick="closeTaskViewModal()" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg">Закрыть</button></div>', 500);
+            return response()->make(
+                '<div class="p-6 text-center">
+                <i class="fas fa-exclamation-triangle text-3xl text-red-500 mb-3"></i>
+                <p class="text-gray-700">Ошибка при загрузке задачи: ' . $e->getMessage() . '</p>
+                <button onclick="closeTaskViewModal()" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg">Закрыть</button>
+            </div>',
+                500
+            );
         }
     }
 
