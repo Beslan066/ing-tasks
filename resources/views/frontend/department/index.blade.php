@@ -498,7 +498,7 @@
 
                     closeDepartmentModal();
                     form.reset();
-                    alert('Отдел успешно создан!');
+                    location.reload();
                 } else {
                     alert(data.message);
                 }

@@ -113,16 +113,6 @@
                             class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Лицензия
                             и оплата</span>
                     </a>
-
-                    <a href="{{route('activity.index')}}"
-                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('license.index*') ? 'active' : ''}}">
-                        <div
-                            class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3 flex-shrink-0">
-                            <i class="fas fa-list text-gray-300 text-sm"></i>
-                        </div>
-                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Лента
-                            событий</span>
-                    </a>
                 </div>
 
             </div>

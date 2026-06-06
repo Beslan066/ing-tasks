@@ -34,7 +34,7 @@
                         </span>
                     </a>
                 </li>
-                <li><a href="#" class="top-menu__link text-white">
+                <li><a href="{{route('activity.index')}}" class="top-menu__link text-white">
                         <span class="font-medium">
                             Лента
                         </span>

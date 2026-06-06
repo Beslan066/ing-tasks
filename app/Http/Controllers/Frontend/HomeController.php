@@ -138,6 +138,12 @@ class HomeController extends Controller
         // Оптимизируем запросы
         $user->load(['company', 'role', 'departments']);
 
+        // Обновляем статусы просроченных задач
+        Task::where('company_id', $user->company_id)
+            ->where('status', '!=', 'выполнена')
+            ->where('deadline', '<', now())
+            ->update(['status' => 'просрочена']);
+
         // Определяем видимость задач в зависимости от роли
         if ($user->isManagerRole() && !$user->isLeader()) {
             // Менеджер видит только задачи своих отделов и где он автор
@@ -261,7 +267,47 @@ class HomeController extends Controller
         // Получаем ID задачи для открытия из параметра маршрута или GET
         $openTaskId = $request->route('task') ?? $request->get('open_task');
 
-        return view('frontend.main-admin', compact('tasks', 'stats', 'filterData', 'user', 'openTaskId'));
+        // Получаем режим отображения из сессии или запроса
+        $viewMode = $request->get('view_mode', session('task_view_mode', 'list'));
+
+        return view('frontend.main-admin', compact('tasks', 'stats', 'filterData', 'user', 'openTaskId', 'viewMode'));
+    }
+
+    /**
+     * Set the view mode (list or kanban) for the admin panel
+     */
+    /**
+     * Set the view mode (list or kanban) for the admin panel
+     */
+    public function setViewMode(Request $request)
+    {
+        try {
+            $request->validate([
+                'view_mode' => 'required|in:list,kanban'
+            ]);
+
+            // Сохраняем режим просмотра в сессии
+            session(['task_view_mode' => $request->view_mode]);
+
+            // Также можно сохранить в базе данных для пользователя, если нужно
+            // if (auth()->check()) {
+            //     auth()->user()->update(['task_view_mode' => $request->view_mode]);
+            // }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Режим просмотра сохранен',
+                'view_mode' => $request->view_mode
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error saving view mode: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при сохранении режима просмотра: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function noCompanies()

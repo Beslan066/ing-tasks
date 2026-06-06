@@ -93,6 +93,10 @@ Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class, 'home'])-
 Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->group(function () {
     Route::get('/home', [\App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('welcome');
 
+    // Роут для типа показа задача в main
+    Route::post('/set-view-mode', [App\Http\Controllers\Frontend\HomeController::class, 'setViewMode'])->name('tasks.set-view-mode');
+
+
     Route::get('/all-tasks', [App\Http\Controllers\Frontend\HomeController::class, 'allTasks'])->middleware('require.company')->name('allTasks');
     Route::get('/team/all-tasks', [App\Http\Controllers\Frontend\HomeController::class, 'allTeamTasks'])->middleware('require.company')->name('allTeamTasks');
     Route::get('/tools', [\App\Http\Controllers\Frontend\ToolController::class, 'index'])->middleware('require.company')->name('tools.index');
