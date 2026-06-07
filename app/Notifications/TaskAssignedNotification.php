@@ -23,7 +23,12 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $taskUrl = route('tasks.view', $this->task->id);
+        // Отправляем ссылку на страницу со списком задач с параметром open_task
+        // Это откроет страницу /team/tasks и автоматически покажет модальное окно с задачей
+        $taskUrl = route('tasks.index') . '?open_task=' . $this->task->id;
+
+        // Или если у вас есть отдельный роут для team/tasks
+        // $taskUrl = url('/team/tasks?open_task=' . $this->task->id);
 
         return (new MailMessage)
             ->subject('Вам назначена новая задача: ' . $this->task->name)
