@@ -36,7 +36,7 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
             ->line('**Дедлайн:** ' . ($this->task->deadline ? $this->task->deadline->format('d.m.Y H:i') : 'Не установлен'))
             ->line('**Статус:** ' . $this->task->status)
             ->action('Перейти к задаче', $taskUrl)
-            ->line('Спасибо за использование нашего приложения!');
+            ->line('С уважением, команда МенеджерПлюс!');
     }
 
     public function toArray(object $notifiable): array

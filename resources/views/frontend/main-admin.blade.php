@@ -806,7 +806,7 @@
                                  ondragleave="dragLeave.call(this, event)"
                                  ondrop="drop.call(this, event)">
 
-                                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title">
+                                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title backdrop-blur-md bg-transparent/20">
                                     <h3 class="font-semibold text-white text-sm">{{ $statusMap[$statusKey] }}</h3>
                                     <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $tasksByStatusForKanban[$statusKey]->count() }}</span>
                                 </div>
@@ -961,7 +961,7 @@
                                  ondrop="drop.call(this, event)">
 
                                 {{-- Заголовок колонки с красным фоном для просроченных --}}
-                                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 {{ $statusKey === 'просрочена' ? 'bg-red-600' : 'canban-col-title' }}">
+                                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 {{ $statusKey === 'просрочена' ? 'bg-red-600' : '' }}" style=" background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);">
                                     <h3 class="font-semibold text-white text-sm">{{ $statusMap[$statusKey] }}</h3>
                                     <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $tasksByStatusForKanban[$statusKey]->count() }}</span>
                                 </div>
@@ -2930,9 +2930,6 @@
                 min-height: auto;
             }
         }
-        .canban-col-title {
-            background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);
-        }
         .tab-button {
             border-color: transparent;
             color: #6b7280;
@@ -3030,6 +3027,7 @@
             transition-property: transform;
             box-sizing: content-box;
         }
+
 
     </style>
 @endsection
