@@ -96,6 +96,9 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
     // Роут для типа показа задача в main
     Route::post('/set-view-mode', [App\Http\Controllers\Frontend\HomeController::class, 'setViewMode'])->name('tasks.set-view-mode');
 
+    Route::get('/team/tasks/kanban-data', [App\Http\Controllers\Frontend\HomeController::class, 'getKanbanTasksAjax'])->name('tasks.kanban-data');
+
+
 
     Route::get('/all-tasks', [App\Http\Controllers\Frontend\HomeController::class, 'allTasks'])->middleware('require.company')->name('allTasks');
     Route::get('/team/all-tasks', [App\Http\Controllers\Frontend\HomeController::class, 'allTeamTasks'])->middleware('require.company')->name('allTeamTasks');

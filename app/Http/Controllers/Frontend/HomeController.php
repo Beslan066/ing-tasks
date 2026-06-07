@@ -125,7 +125,6 @@ class HomeController extends Controller
         ]);
     }
 
-
     public function indexAdmin(Request $request, $task = null)
     {
         $user = Auth::user();
@@ -144,11 +143,14 @@ class HomeController extends Controller
             ->where('deadline', '<', now())
             ->update(['status' => 'просрочена']);
 
-        // Определяем видимость задач в зависимости от роли
+        // Получаем режим отображения из сессии или запроса
+        $viewMode = $request->get('view_mode', session('task_view_mode', 'list'));
+
+        // Определяем базовый запрос (общий для обоих режимов)
         if ($user->isManagerRole() && !$user->isLeader()) {
             // Менеджер видит только задачи своих отделов и где он автор
             $departmentIds = $user->departments()->pluck('departments.id')->toArray();
-            $tasksQuery = Task::with(['author', 'user', 'department', 'category'])
+            $baseQuery = Task::with(['author', 'user', 'department', 'category'])
                 ->withCount('rejections')
                 ->where('is_personal', '!=', true)
                 ->where('company_id', $user->company_id)
@@ -158,65 +160,53 @@ class HomeController extends Controller
                 });
         } else {
             // Руководитель видит все задачи компании
-            $tasksQuery = Task::with(['author', 'user', 'department', 'category'])
+            $baseQuery = Task::with(['author', 'user', 'department', 'category'])
                 ->withCount('rejections')
                 ->where('is_personal', '!=', true)
                 ->where('company_id', $user->company_id);
         }
 
-        // Поиск
-        if ($request->has('search') && $request->search) {
-            $search = $request->search;
-            $tasksQuery->where(function($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
+        // Применяем поиск и фильтры к базовому запросу
+        $baseQuery = $this->applyFiltersToQuery($baseQuery, $request);
+
+        // Применяем сортировку
+        $baseQuery = $this->applySortingToQuery($baseQuery, $request);
+
+        // Для канбан-режима - получаем все задачи (без пагинации)
+        if ($viewMode === 'kanban') {
+            // Получаем все задачи для канбан-доски (ограничиваем для производительности)
+            $allTasks = $baseQuery->limit(500)->get();
+
+            // Группируем задачи по статусам для канбан-доски
+            $tasksByStatusForKanban = [
+                'просрочена' => collect(),
+                'назначена' => collect(),
+                'в работе' => collect(),
+                'на проверке' => collect(),
+                'выполнена' => collect()
+            ];
+
+            foreach ($allTasks as $task) {
+                $status = $task->status;
+                if (isset($tasksByStatusForKanban[$status])) {
+                    $tasksByStatusForKanban[$status]->push($task);
+                }
+            }
+
+            // Создаем объект, совместимый с шаблоном (для пагинации используем коллекцию)
+            $tasks = new \Illuminate\Pagination\LengthAwarePaginator(
+                $allTasks,
+                $allTasks->count(),
+                $allTasks->count(),
+                1,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        } else {
+            // Для списка - используем пагинацию (20 задач на страницу)
+            $tasks = $baseQuery->paginate(20);
         }
 
-        // Фильтрация по статусу
-        if ($request->has('status') && $request->status) {
-            $tasksQuery->where('status', $request->status);
-        }
-
-        // Фильтрация по приоритету
-        if ($request->has('priority') && $request->priority) {
-            $tasksQuery->where('priority', $request->priority);
-        }
-
-        // Фильтрация по исполнителю
-        if ($request->has('user_id') && $request->user_id) {
-            $tasksQuery->where('user_id', $request->user_id);
-        }
-
-        // Фильтрация по отделу
-        if ($request->has('department_id') && $request->department_id) {
-            $tasksQuery->where('department_id', $request->department_id);
-        }
-
-        // Фильтрация по категории
-        if ($request->has('category_id') && $request->category_id) {
-            $tasksQuery->where('category_id', $request->category_id);
-        }
-
-        // Сортировка
-        $sort = $request->get('sort', 'created_at');
-        $order = $request->get('order', 'desc');
-
-        $allowedSortFields = ['created_at', 'deadline', 'priority', 'name', 'status'];
-        $allowedOrders = ['asc', 'desc'];
-
-        if (!in_array($sort, $allowedSortFields)) {
-            $sort = 'created_at';
-        }
-        if (!in_array($order, $allowedOrders)) {
-            $order = 'desc';
-        }
-
-        $tasksQuery->orderBy($sort, $order);
-
-        $tasks = $tasksQuery->paginate(10);
-
-        // Статистика
+        // Статистика (общая для обоих режимов)
         $stats = [
             'total' => Task::where('company_id', $user->company_id)
                 ->where('is_personal', 0)
@@ -267,15 +257,183 @@ class HomeController extends Controller
         // Получаем ID задачи для открытия из параметра маршрута или GET
         $openTaskId = $request->route('task') ?? $request->get('open_task');
 
-        // Получаем режим отображения из сессии или запроса
-        $viewMode = $request->get('view_mode', session('task_view_mode', 'list'));
+        // Для канбан-режима передаем дополнительные данные
+        if ($viewMode === 'kanban') {
+            $tasksByStatus = $tasksByStatusForKanban;
+            return view('frontend.main-admin', compact('tasks', 'stats', 'filterData', 'user', 'openTaskId', 'viewMode', 'tasksByStatus'));
+        }
 
         return view('frontend.main-admin', compact('tasks', 'stats', 'filterData', 'user', 'openTaskId', 'viewMode'));
     }
 
     /**
-     * Set the view mode (list or kanban) for the admin panel
+     * Применяет поиск и фильтры к запросу
      */
+    private function applyFiltersToQuery($query, Request $request)
+    {
+        // Поиск
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        // Фильтрация по статусу
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        // Фильтрация по приоритету
+        if ($request->has('priority') && $request->priority) {
+            $query->where('priority', $request->priority);
+        }
+
+        // Фильтрация по исполнителю
+        if ($request->has('user_id') && $request->user_id) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        // Фильтрация по отделу
+        if ($request->has('department_id') && $request->department_id) {
+            $query->where('department_id', $request->department_id);
+        }
+
+        // Фильтрация по категории
+        if ($request->has('category_id') && $request->category_id) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Применяет сортировку к запросу
+     */
+    private function applySortingToQuery($query, Request $request)
+    {
+        $sort = $request->get('sort', 'created_at');
+        $order = $request->get('order', 'desc');
+
+        $allowedSortFields = ['created_at', 'deadline', 'priority', 'name', 'status'];
+        $allowedOrders = ['asc', 'desc'];
+
+        if (!in_array($sort, $allowedSortFields)) {
+            $sort = 'created_at';
+        }
+        if (!in_array($order, $allowedOrders)) {
+            $order = 'desc';
+        }
+
+        return $query->orderBy($sort, $order);
+    }
+
+    /**
+     * Get kanban tasks data via AJAX (для динамической загрузки)
+     */
+    public function getKanbanTasksAjax(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            // Проверяем права доступа
+            if (!$user->isManager()) {
+                return response()->json(['error' => 'Нет доступа'], 403);
+            }
+
+            // Определяем видимость задач в зависимости от роли
+            if ($user->isManagerRole() && !$user->isLeader()) {
+                // Менеджер видит только задачи своих отделов и где он автор
+                $departmentIds = $user->departments()->pluck('departments.id')->toArray();
+                $query = Task::with(['author', 'user', 'department', 'category'])
+                    ->withCount('rejections')
+                    ->where('is_personal', '!=', true)
+                    ->where('company_id', $user->company_id)
+                    ->where(function($q) use ($user, $departmentIds) {
+                        $q->whereIn('department_id', $departmentIds)
+                            ->orWhere('author_id', $user->id);
+                    });
+            } else {
+                // Руководитель видит все задачи компании
+                $query = Task::with(['author', 'user', 'department', 'category'])
+                    ->withCount('rejections')
+                    ->where('is_personal', '!=', true)
+                    ->where('company_id', $user->company_id);
+            }
+
+            // Применяем фильтры
+            if ($request->has('search') && $request->search) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            }
+
+            if ($request->has('status') && $request->status) {
+                $query->where('status', $request->status);
+            }
+
+            if ($request->has('priority') && $request->priority) {
+                $query->where('priority', $request->priority);
+            }
+
+            if ($request->has('user_id') && $request->user_id) {
+                $query->where('user_id', $request->user_id);
+            }
+
+            if ($request->has('department_id') && $request->department_id) {
+                $query->where('department_id', $request->department_id);
+            }
+
+            if ($request->has('category_id') && $request->category_id) {
+                $query->where('category_id', $request->category_id);
+            }
+
+            // Сортировка
+            $sort = $request->get('sort', 'created_at');
+            $order = $request->get('order', 'desc');
+            $allowedSortFields = ['created_at', 'deadline', 'priority', 'name', 'status'];
+            if (in_array($sort, $allowedSortFields)) {
+                $query->orderBy($sort, $order);
+            } else {
+                $query->orderBy('created_at', 'desc');
+            }
+
+            // Ограничиваем количество задач для производительности
+            $tasks = $query->limit(500)->get();
+
+            // Группируем задачи по статусам
+            $kanbanTasks = [
+                'просрочена' => [],
+                'назначена' => [],
+                'в работе' => [],
+                'на проверке' => [],
+                'выполнена' => [],
+            ];
+
+            foreach ($tasks as $task) {
+                $status = $task->status;
+                if (isset($kanbanTasks[$status])) {
+                    $kanbanTasks[$status][] = $task->toArray();
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'tasks' => $kanbanTasks
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error loading kanban tasks: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка загрузки задач: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     /**
      * Set the view mode (list or kanban) for the admin panel
      */
@@ -288,11 +446,6 @@ class HomeController extends Controller
 
             // Сохраняем режим просмотра в сессии
             session(['task_view_mode' => $request->view_mode]);
-
-            // Также можно сохранить в базе данных для пользователя, если нужно
-            // if (auth()->check()) {
-            //     auth()->user()->update(['task_view_mode' => $request->view_mode]);
-            // }
 
             return response()->json([
                 'success' => true,
