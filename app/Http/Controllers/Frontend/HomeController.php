@@ -529,4 +529,6 @@ class HomeController extends Controller
 
         return view('frontend.tasks.all-team-task', compact('user', 'allTasks', 'stats'));
     }
+
+
 }

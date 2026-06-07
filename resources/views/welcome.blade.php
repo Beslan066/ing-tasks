@@ -347,13 +347,28 @@
                             <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1 max-[500px]:space-x-0">
                         <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
                               class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
-                                @if($task->priority === 'высокий')
-                                    <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">‼️ Высокий</span>
-                                @elseif($task->priority === 'критический')
-                                    <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">🚨 Критический</span>
-                                @endif
-                                @if($task->status == 'просрочена')
-                                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">⚠️ Просрочена</span>
+                                @php
+                                    $prioritySignals = [
+                                        'низкий' => ['level' => 1, 'color' => 'green', 'bg' => 'bg-green-50', 'border' => 'border-green-200', 'filled' => 'bg-green-500', 'empty' => 'bg-green-200', 'text' => 'text-green-700'],
+                                        'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
+                                        'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
+                                        'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
+                                    ];
+                                    $signal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
+                                @endphp
+
+                                @if(!$task->trashed())
+                                    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $signal['bg'] }} border {{ $signal['border'] }}">
+                                        <div class="flex items-end gap-[3px] h-5">
+                                            <div class="w-1.5 rounded-sm {{ $signal['level'] >= 1 ? $signal['filled'] : $signal['empty'] }} h-2"></div>
+                                            <div class="w-1.5 rounded-sm {{ $signal['level'] >= 2 ? $signal['filled'] : $signal['empty'] }} h-3"></div>
+                                            <div class="w-1.5 rounded-sm {{ $signal['level'] >= 3 ? $signal['filled'] : $signal['empty'] }} h-4"></div>
+                                            <div class="w-1.5 rounded-sm {{ $signal['level'] >= 4 ? $signal['filled'] : $signal['empty'] }} h-5"></div>
+                                        </div>
+                                        <span class="text-xs font-medium {{ $signal['text'] }}">{{ ucfirst($task->priority) }}</span>
+                                    </div>
+                                @else
+                                    <span class="text-sm text-gray-400">—</span>
                                 @endif
                             </div>
                             <div class="flex space-x-1">
@@ -384,6 +399,16 @@
 
             <div class="space-y-4 task-container" data-status="in-progress">
                 @foreach($tasksByStatus['in_progress'] as $task)
+                    @php
+                        $prioritySignals = [
+                            'низкий' => ['level' => 1, 'color' => 'green', 'bg' => 'bg-green-50', 'border' => 'border-green-200', 'filled' => 'bg-green-500', 'empty' => 'bg-green-200', 'text' => 'text-green-700'],
+                            'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
+                            'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
+                            'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
+                        ];
+                        $signal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
+                    @endphp
+
                     <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between {{ $task->status == 'просрочена' ? 'border-l-4 border-red-500' : '' }}"
                          draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
                          data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
@@ -440,8 +465,20 @@
 
                         <div class="flex justify-between items-center">
                             <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1 max-[500px]:space-x-0">
-                            <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-                                  class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
+                <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
+                      class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
+
+                                <!-- НОВЫЙ СТИКЕР ПРИОРИТЕТА (как на второй странице) -->
+                                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $signal['bg'] }} border {{ $signal['border'] }}">
+                                    <div class="flex items-end gap-[3px] h-5">
+                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 1 ? $signal['filled'] : $signal['empty'] }} h-2"></div>
+                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 2 ? $signal['filled'] : $signal['empty'] }} h-3"></div>
+                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 3 ? $signal['filled'] : $signal['empty'] }} h-4"></div>
+                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 4 ? $signal['filled'] : $signal['empty'] }} h-5"></div>
+                                    </div>
+                                    <span class="text-xs font-medium {{ $signal['text'] }}">{{ ucfirst($task->priority) }}</span>
+                                </div>
+
                                 @if($task->category)
                                     <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->category->name }}</span>
                                 @endif
@@ -477,6 +514,16 @@
 
             <div class="space-y-4 task-container" data-status="review">
                 @foreach($tasksByStatus['review'] as $task)
+                    @php
+                        $prioritySignals = [
+                            'низкий' => ['level' => 1, 'color' => 'green', 'bg' => 'bg-green-50', 'border' => 'border-green-200', 'filled' => 'bg-green-500', 'empty' => 'bg-green-200', 'text' => 'text-green-700'],
+                            'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
+                            'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
+                            'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
+                        ];
+                        $signal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
+                    @endphp
+
                     <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between {{ $task->status == 'просрочена' ? 'border-l-4 border-red-500' : '' }}"
                          draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
                          data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
@@ -539,8 +586,20 @@
 
                         <div class="flex justify-between items-center">
                             <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1 max-[500px]:space-x-0">
-                            <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-                                  class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
+                <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
+                      class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
+
+                                <!-- НОВЫЙ СТИКЕР ПРИОРИТЕТА (как на второй странице) -->
+                                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $signal['bg'] }} border {{ $signal['border'] }}">
+                                    <div class="flex items-end gap-[3px] h-5">
+                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 1 ? $signal['filled'] : $signal['empty'] }} h-2"></div>
+                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 2 ? $signal['filled'] : $signal['empty'] }} h-3"></div>
+                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 3 ? $signal['filled'] : $signal['empty'] }} h-4"></div>
+                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 4 ? $signal['filled'] : $signal['empty'] }} h-5"></div>
+                                    </div>
+                                    <span class="text-xs font-medium {{ $signal['text'] }}">{{ ucfirst($task->priority) }}</span>
+                                </div>
+
                                 @if($task->status == 'просрочена')
                                     <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">⚠️ Просрочена</span>
                                 @endif

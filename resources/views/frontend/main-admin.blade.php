@@ -8,7 +8,7 @@
         $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // 'list' or 'kanban'
     @endphp
 
-        <!-- Страница статистики компании -->
+    <!-- Страница статистики компании -->
     <div id="company-stats">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
             <div>
@@ -281,7 +281,6 @@
             </div>
         @endif
 
-        <!-- Статистика в виде карточек -->
         @include('partials.main.statistic-card')
 
         <!-- Режим отображения: Список -->
@@ -801,14 +800,14 @@
                     <!-- Канбан доска -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                         @foreach($statusKeys as $statusKey)
-                            <div class="rounded-lg p-3 board-column bg-transparent"
+                            <div class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
                                  data-status="{{ $statusDataValues[$statusKey] }}"
                                  ondragover="dragOver.call(this, event)"
                                  ondragleave="dragLeave.call(this, event)"
                                  ondrop="drop.call(this, event)">
 
-                                <div class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2 {{ $statusKey === 'просрочена' ? 'border-l-4 border-red-500' : '' }}">
-                                    <h3 class="font-semibold text-white {{ $statusKey === 'просрочена' ? 'text-red-400' : '' }}">{{ $statusMap[$statusKey] }}</h3>
+                                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title">
+                                    <h3 class="font-semibold text-white text-sm">{{ $statusMap[$statusKey] }}</h3>
                                     <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $tasksByStatusForKanban[$statusKey]->count() }}</span>
                                 </div>
 
@@ -817,6 +816,8 @@
                                         @php
                                             $prioritySignal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
                                         @endphp
+
+                                        {{-- Карточка задачи --}}
                                         <div class="task-card bg-white p-3 rounded-lg shadow cursor-move flex flex-col justify-between {{ $statusKey === 'просрочена' ? 'border-l-4 border-red-500 bg-red-50' : '' }}"
                                              draggable="true"
                                              data-task="{{ $task->id }}"
@@ -896,36 +897,36 @@
 
                                             <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-100">
                                                 <div class="flex flex-wrap gap-1">
-                                            <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-                                                  class="text-xs px-1.5 py-0.5 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
+                <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
+                      class="text-xs px-1.5 py-0.5 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
 
-                                                    {{-- Красивый индикатор приоритета --}}
-                                                    @if(!$task->trashed())
-                                                        <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md {{ $prioritySignal['bg'] }} border {{ $prioritySignal['border'] }}">
-                                                            <div class="flex items-end gap-[2px] h-3">
-                                                                <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 1 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1"></div>
-                                                                <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 2 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1.5"></div>
-                                                                <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 3 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2"></div>
-                                                                <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 4 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2.5"></div>
-                                                            </div>
-                                                            <span class="text-xs font-medium {{ $prioritySignal['text'] }}">{{ ucfirst($task->priority) }}</span>
+                                                    {{-- Индикатор приоритета --}}
+                                                    <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md {{ $prioritySignal['bg'] }} border {{ $prioritySignal['border'] }}">
+                                                        <div class="flex items-end gap-[2px] h-3">
+                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 1 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1"></div>
+                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 2 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1.5"></div>
+                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 3 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2"></div>
+                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 4 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2.5"></div>
                                                         </div>
-                                                    @endif
+                                                        <span class="text-xs font-medium {{ $prioritySignal['text'] }}">{{ ucfirst($task->priority) }}</span>
+                                                    </div>
 
                                                     @if($task->category)
                                                         <span class="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded">{{ mb_substr($task->category->name, 0, 10) }}</span>
                                                     @endif
                                                 </div>
+
+                                                {{-- Иконка ИСПОЛНИТЕЛЯ (используем те же методы, что в модальном окне) --}}
                                                 <div class="flex items-center space-x-1">
-                                                    <div class="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center text-white text-[10px]"
-                                                         title="{{ $task->author->name ?? 'Автор' }}">
-                                                        {{ substr($task->author->name ?? 'А', 0, 1) }}
+                                                    <div class="w-5 h-5 rounded-full {{ $task->user ? $task->user->getAvatarColor() : 'bg-gray-300' }} flex items-center justify-center text-white text-[10px] font-medium"
+                                                         title="{{ $task->user?->name ?? 'Не назначен' }}">
+                                                        {{ $task->user ? $task->user->getInitials() : '?' }}
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     @empty
-                                        {{-- Пустая колонка - без карточки "Нет задач" --}}
+                                        {{-- Пустая колонка - ничего не выводим --}}
                                     @endforelse
                                 </div>
                             </div>
@@ -953,12 +954,13 @@
                     <!-- Канбан доска -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                         @foreach($statusKeys as $statusKey)
-                            <div class="rounded-lg p-3 board-column bg-gray-50"
+                            <div class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
                                  data-status="{{ $statusDataValues[$statusKey] }}"
                                  ondragover="dragOver.call(this, event)"
                                  ondragleave="dragLeave.call(this, event)"
                                  ondrop="drop.call(this, event)">
 
+                                {{-- Заголовок колонки с красным фоном для просроченных --}}
                                 <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 {{ $statusKey === 'просрочена' ? 'bg-red-600' : 'canban-col-title' }}">
                                     <h3 class="font-semibold text-white text-sm">{{ $statusMap[$statusKey] }}</h3>
                                     <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $tasksByStatusForKanban[$statusKey]->count() }}</span>
@@ -969,6 +971,8 @@
                                         @php
                                             $prioritySignal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
                                         @endphp
+
+                                        {{-- Карточка задачи --}}
                                         <div class="task-card bg-white p-3 rounded-lg shadow cursor-move flex flex-col justify-between {{ $statusKey === 'просрочена' ? 'border-l-4 border-red-500 bg-red-50' : '' }}"
                                              draggable="true"
                                              data-task="{{ $task->id }}"
@@ -1048,36 +1052,36 @@
 
                                             <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-100">
                                                 <div class="flex flex-wrap gap-1">
-                                            <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-                                                  class="text-xs px-1.5 py-0.5 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
+                <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
+                      class="text-xs px-1.5 py-0.5 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
 
-                                                    {{-- Красивый индикатор приоритета --}}
-                                                    @if(!$task->trashed())
-                                                        <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md {{ $prioritySignal['bg'] }} border {{ $prioritySignal['border'] }}">
-                                                            <div class="flex items-end gap-[2px] h-3">
-                                                                <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 1 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1"></div>
-                                                                <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 2 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1.5"></div>
-                                                                <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 3 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2"></div>
-                                                                <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 4 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2.5"></div>
-                                                            </div>
-                                                            <span class="text-xs font-medium {{ $prioritySignal['text'] }}">{{ ucfirst($task->priority) }}</span>
+                                                    {{-- Индикатор приоритета --}}
+                                                    <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md {{ $prioritySignal['bg'] }} border {{ $prioritySignal['border'] }}">
+                                                        <div class="flex items-end gap-[2px] h-3">
+                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 1 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1"></div>
+                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 2 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1.5"></div>
+                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 3 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2"></div>
+                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 4 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2.5"></div>
                                                         </div>
-                                                    @endif
+                                                        <span class="text-xs font-medium {{ $prioritySignal['text'] }}">{{ ucfirst($task->priority) }}</span>
+                                                    </div>
 
                                                     @if($task->category)
                                                         <span class="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded">{{ mb_substr($task->category->name, 0, 10) }}</span>
                                                     @endif
                                                 </div>
+
+                                                {{-- Иконка ИСПОЛНИТЕЛЯ (используем те же методы, что в модальном окне) --}}
                                                 <div class="flex items-center space-x-1">
-                                                    <div class="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center text-white text-[10px]"
-                                                         title="{{ $task->author->name ?? 'Автор' }}">
-                                                        {{ substr($task->author->name ?? 'А', 0, 1) }}
+                                                    <div class="w-5 h-5 rounded-full {{ $task->user ? $task->user->getAvatarColor() : 'bg-gray-300' }} flex items-center justify-center text-white text-[10px] font-medium"
+                                                         title="{{ $task->user?->name ?? 'Не назначен' }}">
+                                                        {{ $task->user ? $task->user->getInitials() : '?' }}
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     @empty
-                                        {{-- Пустая колонка - без карточки "Нет задач" --}}
+                                        {{-- Пустая колонка - ничего не выводим --}}
                                     @endforelse
                                 </div>
                             </div>
@@ -1198,199 +1202,7 @@
         </div>
     </div>
 
-    <!-- Модальное окно создания задачи -->
-    <div id="taskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
-        <div class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-100">
-                <div class="flex justify-between items-center p-6">
-                    <div>
-                        <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Новая задача</h3>
-                        <p class="text-sm text-gray-500 mt-1">Заполните информацию о задаче</p>
-                    </div>
-                    <button onclick="closeTaskModal()" class="text-gray-400 hover:text-gray-600 transition-all duration-200 p-2 rounded-xl hover:bg-gray-100">
-                        <i class="fas fa-times text-lg"></i>
-                    </button>
-                </div>
-            </div>
-
-            <form id="taskForm" action="{{ route('tasks.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
-                @csrf
-                <input type="hidden" name="selected_files" id="selectedFiles" value="[]">
-                <input type="hidden" name="is_personal" value="0">
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
-                            <i class="fas fa-tag text-green-500 mr-2 text-xs"></i>Название задачи *
-                        </label>
-                        <input type="text" name="name" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200" placeholder="Введите название задачи" required>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
-                            <i class="fas fa-flag text-green-500 mr-2 text-xs"></i>Приоритет *
-                        </label>
-                        <select name="priority" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200">
-                            <option value="низкий">Низкий</option>
-                            <option value="средний" selected>Средний</option>
-                            <option value="высокий">Высокий</option>
-                            <option value="критический">Критический</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">
-                        <i class="fas fa-align-left text-green-500 mr-2 text-xs"></i>Описание
-                    </label>
-                    <textarea name="description" rows="4" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 resize-none" placeholder="Подробное описание задачи..."></textarea>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
-                            <i class="fas fa-building text-green-500 mr-2 text-xs"></i>Отдел *
-                        </label>
-                        <select name="department_id" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200" required>
-                            <option value="">Выберите отдел</option>
-                            @foreach($filterData['departments'] as $department)
-                                <option value="{{ $department->id }}">{{ $department->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
-                            <i class="fas fa-folder text-green-500 mr-2 text-xs"></i>Категория
-                        </label>
-                        <select name="category_id" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200">
-                            <option value="">Без категории</option>
-                            @foreach($filterData['categories'] as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
-                            <i class="fas fa-user-check text-green-500 mr-2 text-xs"></i>Исполнитель
-                        </label>
-                        <select name="user_id" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200">
-                            <option value="">Не назначено</option>
-                            @foreach($filterData['users'] as $userItem)
-                                <option value="{{ $userItem->id }}">{{ $userItem->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
-                            <i class="fas fa-calendar-alt text-green-500 mr-2 text-xs"></i>Дедлайн
-                        </label>
-                        <input type="datetime-local" name="deadline" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
-                            <i class="fas fa-hourglass-half text-green-500 mr-2 text-xs"></i>Планируемые часы
-                        </label>
-                        <input type="number" name="estimated_hours" step="0.5" min="0" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200" placeholder="0.0">
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
-                            <i class="fas fa-chart-line text-green-500 mr-2 text-xs"></i>Статус *
-                        </label>
-                        <select name="status" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200" required>
-                            @foreach($filterData['statuses'] as $status)
-                                <option value="{{ $status }}" {{ $status == 'не назначена' ? 'selected' : '' }}>{{ $status }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    <div class="border-b border-gray-200">
-                        <nav class="flex space-x-6" aria-label="Tabs">
-                            <button type="button" onclick="switchFileTab('storage')" class="py-2 px-1 border-b-2 font-medium text-sm focus:outline-none tab-button active transition-all duration-200" data-tab="storage">
-                                <i class="fas fa-database mr-2"></i>Из хранилища
-                            </button>
-                            <button type="button" onclick="switchFileTab('upload')" class="py-2 px-1 border-b-2 font-medium text-sm focus:outline-none tab-button transition-all duration-200" data-tab="upload">
-                                <i class="fas fa-cloud-upload-alt mr-2"></i>Новая загрузка
-                            </button>
-                        </nav>
-                    </div>
-
-                    <div id="storageTabContent" class="tab-content active">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
-                            <div>
-                                <h4 class="text-sm font-semibold text-gray-700">Выберите файлы из хранилища</h4>
-                                <p class="text-xs text-gray-500 mt-1">Файлы будут прикреплены к задаче</p>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button type="button" onclick="openTaskStorageManager()" class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200">
-                                    <i class="fas fa-folder-open mr-2"></i>Открыть хранилище
-                                </button>
-                                <button type="button" onclick="clearTaskSelectedFiles()" class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-red-50 hover:border-red-300 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200">
-                                    <i class="fas fa-times mr-2"></i>Очистить
-                                </button>
-                            </div>
-                        </div>
-
-                        <div id="selectedFilesContainer" class="space-y-3 min-h-[100px]">
-                            <div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
-                                <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
-                                <p class="text-sm text-gray-500">Файлы не выбраны</p>
-                                <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
-                            </div>
-                        </div>
-
-                        <div id="fileCounter" class="hidden text-sm text-gray-600 mt-3">
-                            <i class="fas fa-paperclip mr-1"></i>
-                            <span id="fileCount">0</span> файлов выбрано
-                        </div>
-                    </div>
-
-                    <div id="uploadTabContent" class="tab-content hidden">
-                        <div class="mb-4">
-                            <h4 class="text-sm font-semibold text-gray-700">Загрузите новые файлы</h4>
-                            <p class="text-xs text-gray-500 mt-1">Файлы будут сохранены в хранилище и прикреплены к задаче</p>
-                        </div>
-
-                        <div class="file-upload-area border-2 border-dashed border-gray-300 rounded-xl p-8 text-center transition-all duration-300 bg-gradient-to-br from-gray-50 to-white hover:from-green-50 hover:to-white cursor-pointer group" onclick="document.getElementById('uploadNewFilesInput').click()">
-                            <input type="file" name="new_files[]" multiple class="hidden" id="uploadNewFilesInput">
-                            <div class="flex flex-col items-center justify-center">
-                                <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                    <i class="fas fa-cloud-upload-alt text-3xl text-white"></i>
-                                </div>
-                                <p class="text-base font-medium text-gray-700 mb-2">Нажмите или перетащите файлы сюда</p>
-                                <p class="text-sm text-gray-500">Поддерживаются: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF, ZIP</p>
-                                <p class="text-xs text-gray-400 mt-1">Максимальный размер: 10MB на файл</p>
-                            </div>
-                        </div>
-
-                        <div id="uploadFilesList" class="space-y-3 mt-4 hidden">
-                            <h5 class="text-sm font-semibold text-gray-700">Выбранные файлы:</h5>
-                            <div id="uploadFilesContainer" class="space-y-2"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
-                    <button type="button" onclick="closeTaskModal()" class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-medium transition-all duration-200">
-                        Отмена
-                    </button>
-                    <button type="submit" class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                        <i class="fas fa-plus mr-2"></i>Создать задачу
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+    @include('partials.modal.task.create')
 
     <!-- Модальное окно отказа от задачи -->
     <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
@@ -3218,5 +3030,6 @@
             transition-property: transform;
             box-sizing: content-box;
         }
+
     </style>
 @endsection

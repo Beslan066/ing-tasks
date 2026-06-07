@@ -18,17 +18,27 @@
                 </span>
             </div>
 
-            {{-- Приоритет --}}
+            {{-- Приоритет с индикаторами уровня (как на второй странице) --}}
             @if($task->priority)
-                <div class="mt-2">
-                    <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium
-                        @if($task->priority === 'критический') bg-red-100 text-red-700
-                        @elseif($task->priority === 'высокий') bg-orange-100 text-orange-700
-                        @elseif($task->priority === 'средний') bg-blue-100 text-blue-700
-                        @else bg-gray-100 text-gray-700 @endif">
-                        <i class="fas fa-flag"></i>
-                        {{ $task->priority }}
-                    </span>
+                @php
+                    $prioritySignals = [
+                        'низкий' => ['level' => 1, 'color' => 'green', 'bg' => 'bg-green-50', 'border' => 'border-green-200', 'filled' => 'bg-green-500', 'empty' => 'bg-green-200', 'text' => 'text-green-700'],
+                        'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
+                        'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
+                        'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
+                    ];
+                    $signal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
+                @endphp
+                <div class="mt-3">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md {{ $signal['bg'] }} border {{ $signal['border'] }}">
+                        <div class="flex items-end gap-[3px] h-5">
+                            <div class="w-1.5 rounded-sm {{ $signal['level'] >= 1 ? $signal['filled'] : $signal['empty'] }} h-2"></div>
+                            <div class="w-1.5 rounded-sm {{ $signal['level'] >= 2 ? $signal['filled'] : $signal['empty'] }} h-3"></div>
+                            <div class="w-1.5 rounded-sm {{ $signal['level'] >= 3 ? $signal['filled'] : $signal['empty'] }} h-4"></div>
+                            <div class="w-1.5 rounded-sm {{ $signal['level'] >= 4 ? $signal['filled'] : $signal['empty'] }} h-5"></div>
+                        </div>
+                        <span class="text-sm font-medium {{ $signal['text'] }}">{{ ucfirst($task->priority) }}</span>
+                    </div>
                 </div>
             @endif
         </div>
