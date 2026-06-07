@@ -1,14 +1,50 @@
-<!-- Боковая панель -->
-<div id="sidebar-menu"
-    class="sidebar h-full w-full max-w-64 py-2 px-4 fixed {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
-    <div class="relative h-full w-full sm:flex flex-col max-[638px]:flex">
+@php
+    $company = auth()->check() ? auth()->user()->company : null;
+    $storageUsage = $company ? \App\Models\StorageUsage::where('company_id', $company->id)->first() : null;
 
+    // Если нет данных о хранилище, создаем объект с значениями по умолчанию
+    if (!$storageUsage && $company) {
+        $storageUsage = new \App\Models\StorageUsage();
+        $storageUsage->total_storage_limit = 50 * 1024 * 1024 * 1024; // 50 GB по умолчанию
+        $storageUsage->used_storage = 0;
+        $storageUsage->license_type = $company->license_type ?? 'basic';
+    }
+
+    $usedStorageFormatted = $storageUsage ? $storageUsage->getFormattedUsedStorage() : '0 B';
+    $totalStorageFormatted = $storageUsage ? $storageUsage->getFormattedTotalStorage() : '50 GB';
+    $usagePercentage = $storageUsage ? $storageUsage->getUsagePercentage() : 0;
+    $licenseType = $storageUsage ? $storageUsage->license_type : ($company->license_type ?? 'basic');
+
+    // Определяем иконку и цвет для типа подписки
+    $licenseIcon = match($licenseType) {
+        'premium' => 'fa-crown',
+        'optimal' => 'fa-star',
+        default => 'fa-check-circle'
+    };
+
+    $licenseColor = match($licenseType) {
+        'premium' => 'text-yellow-500',
+        'optimal' => 'text-blue-500',
+        default => 'text-gray-500'
+    };
+
+    $licenseText = match($licenseType) {
+        'premium' => 'Премиум',
+        'optimal' => 'Оптимальный',
+        default => 'Базовый'
+    };
+@endphp
+
+    <!-- Боковая панель -->
+<div id="sidebar-menu"
+     class="sidebar h-full w-full max-w-64 py-2 px-4 fixed {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
+    <div class="relative h-full w-full sm:flex flex-col max-[638px]:flex">
 
         <!-- Логотип -->
         <div class="mb-8 logotype">
             <div class="flex items-center space-x-3 group">
                 <div id="logo-icon"
-                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
+                     class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
                     <i class="fas fa-tasks text-white text-lg"></i>
                 </div>
                 <a href="{{route('welcome')}}" class="logotype__text">
@@ -26,7 +62,7 @@
 
                 <div class="space-y-1">
                     <a href="{{route('welcome')}}"
-                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('welcome*') ? 'active' : ''}}">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('welcome*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-check text-primary-500 text-sm"></i>
@@ -35,7 +71,7 @@
                             задачи</span>
                     </a>
                     <a href="{{route('tasks.admin')}}"
-                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:rounded-lg hover:bg-transparent/20 {{request()->routeIs('tasks.admin*') ? 'active' : ''}}">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:rounded-lg hover:bg-transparent/20 {{request()->routeIs('tasks.admin*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-landmark text-purple-500 text-sm"></i>
@@ -44,7 +80,7 @@
                             компания</span>
                     </a>
                     <a href="{{route('departments.index')}}"
-                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('departments.index*') ? 'active' : ''}}">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('departments.index*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-building text-orange-500 text-sm"></i>
@@ -54,7 +90,7 @@
                     </a>
 
                     <a href="{{route('team.index')}}"
-                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('team.index*') ? 'active' : ''}}">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('team.index*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-users text-blue-500 text-sm"></i>
@@ -64,7 +100,7 @@
                     </a>
 
                     <a href="{{route('chat.index')}}"
-                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('chat.index*') ? 'active' : ''}}">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('chat.index*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-comments text-pink-500 text-sm"></i>
@@ -74,7 +110,7 @@
                     </a>
 
                     <a href="{{route('files.index')}}"
-                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('files.index*') ? 'active' : ''}}">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('files.index*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-hard-drive text-brown-500 text-sm"></i>
@@ -84,7 +120,7 @@
                     </a>
 
                     <a href="{{route('tools.index')}}"
-                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('tools.index*') ? 'active' : ''}}">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('tools.index*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-tools text-yellow-500 text-sm"></i>
@@ -93,7 +129,7 @@
                             class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Инструменты</span>
                     </a>
                     <a href="{{route('frontend.news.index')}}"
-                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('news.index*') ? 'active' : ''}}">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('news.index*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-newspaper text-green-500 text-sm"></i>
@@ -104,7 +140,7 @@
                     </a>
 
                     <a href="{{route('licence.index')}}"
-                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('license.index*') ? 'active' : ''}}">
+                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('license.index*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-credit-card text-yellow-500 text-sm"></i>
@@ -130,7 +166,7 @@
                                 @foreach($onlineUsers->take(3) as $user)
                                     <div class="avatar-container">
                                         <div class="w-8 h-8 rounded-full {{ $user['color'] ?? 'bg-gradient-to-br from-blue-500 to-purple-600' }}  flex items-center justify-center text-white text-xs font-bold shadow-lg"
-                                            title="{{ $user['name'] ?? 'Пользователь' }}">
+                                             title="{{ $user['name'] ?? 'Пользователь' }}">
                                             {{ $user['initials'] ?? '??' }}
                                         </div>
                                         <div class="online-indicator"></div>
@@ -141,7 +177,7 @@
                                 @endphp
                                 @if($moreOnline > 0)
                                     <div class="w-8 h-8 rounded-full bg-sidebar-hover flex items-center justify-center text-sidebar-text text-xs font-bold shadow-lg"
-                                        title="Еще {{ $moreOnline }} онлайн">
+                                         title="Еще {{ $moreOnline }} онлайн">
                                         +{{ $moreOnline }}
                                     </div>
                                 @endif
@@ -161,36 +197,65 @@
             </div>
         </div>
 
-
         <!-- Нижняя часть -->
         <div class="mt-auto space-y-4 pt-4 border-t border-white/10">
             <!-- Файловое хранилище -->
             <div class="bg-transparent/10 p-4 rounded-xl border border-white/5">
-
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center">
-                        <i class="fas fa-hard-drive text-primary-500 mr-2"></i>
-                        <h6 class="font-medium text-white">Хранилище</h6>
-                       </div>
-                    <span class="text-xs text-sidebar-text">15%</span>
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-hard-drive text-primary-500"></i>
+                        <h6 class="font-medium text-white text-sm">Хранилище</h6>
+                        <!-- Иконка типа подписки -->
+                        <i class="fas {{ $licenseIcon }} {{ $licenseColor }} text-xs" title="{{ $licenseText }}"></i>
                     </div>
-                <div class="w-full bg-white/10 rounded-full h-1.5 mb-2 overflow-hidden">
-                    <div class="progress-bar h-full rounded-full" style="width: 15%"></div>
-                    </div>
-                <div class="text-xs text-sidebar-text">12.47 GB из 50 GB</div>
+                    <span class="text-xs text-sidebar-text">{{ $usagePercentage }}%</span>
                 </div>
 
+                <!-- Прогресс бар -->
+                <div class="w-full bg-white/10 rounded-full h-1.5 mb-2 overflow-hidden">
+                    <div class="progress-bar h-full rounded-full transition-all duration-300"
+                         style="width: {{ min($usagePercentage, 100) }}%;
+                                background: {{ $usagePercentage > 90 ? '#ef4444' : ($usagePercentage > 70 ? '#f59e0b' : '#22c55e') }}">
+                    </div>
+                </div>
+
+                <!-- Информация об использовании -->
+                <div class="text-xs text-sidebar-text space-y-1">
+                    <div class="flex justify-between">
+                        <span>Использовано:</span>
+                        <span class="text-white">{{ $usedStorageFormatted }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Всего:</span>
+                        <span class="text-white">{{ $totalStorageFormatted }}</span>
+                    </div>
+
+                    <!-- Предупреждение о переполнении -->
+                    @if($storageUsage && $storageUsage->isStorageLimitExceeded())
+                        <div class="mt-2 pt-1 border-t border-red-500/30">
+                            <p class="text-red-400 text-xs flex items-center gap-1">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Лимит хранилища превышен!</span>
+                            </p>
+                        </div>
+                    @elseif($usagePercentage > 80)
+                        <div class="mt-2 pt-1 border-t border-yellow-500/30">
+                            <p class="text-yellow-400 text-xs flex items-center gap-1">
+                                <i class="fas fa-clock"></i>
+                                <span>Заканчивается место в хранилище</span>
+                            </p>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
-
-
     </div>
 </div>
+
 <!-- Оверлей для боковой панели -->
 <div id="sidebar-overlay"
-    class="fixed inset-0 bg-black/50 z-[998] hidden max-[638px]:[&.active]:block transition-opacity duration-300 max-[500px]:bg-black/90">
+     class="fixed inset-0 bg-black/50 z-[998] hidden max-[638px]:[&.active]:block transition-opacity duration-300 max-[500px]:bg-black/90">
 </div>
-
-
 
 @once
     <!-- sidebar styles -->
@@ -289,6 +354,10 @@
             pointer-events: none;
         }
 
+        /* Анимация для progress-bar */
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
 
         @media(min-width: 638px) {
             .sidebar {
@@ -414,19 +483,19 @@
                     .tags {
                         position: unset;
                     }
-                     .nav-item {
-                    padding-left: 1rem;
-                    padding-right: 1rem;
-                    justify-content: start;
-                    gap: 0.75rem;
+                    .nav-item {
+                        padding-left: 1rem;
+                        padding-right: 1rem;
+                        justify-content: start;
+                        gap: 0.75rem;
 
-                }
-                .nav-item:hover {
-                      transform: translateX(5px);
-            color: #fff;
-            background-color: rgb(0 0 0 / 0.2);
-            border-radius: 0.5rem;
-                }
+                    }
+                    .nav-item:hover {
+                        transform: translateX(5px);
+                        color: #fff;
+                        background-color: rgb(0 0 0 / 0.2);
+                        border-radius: 0.5rem;
+                    }
                 }
             }
             .main-container.has-background.sidebar-mode-collapsed {
@@ -464,7 +533,6 @@
             }
         }
 
-
         @media (max-width: 500px) {
             .sidebar {
                 width: 100% !important;
@@ -475,30 +543,30 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-           const logoIcon = document.getElementById('logo-icon');
-const mainContainer = document.querySelector('.main-container');
-const navItems = document.querySelectorAll('.nav-item');
+            const logoIcon = document.getElementById('logo-icon');
+            const mainContainer = document.querySelector('.main-container');
+            const navItems = document.querySelectorAll('.nav-item');
 
-const isCollapsed = localStorage.getItem('sidebar-mode-collapsed') === 'true';
+            const isCollapsed = localStorage.getItem('sidebar-mode-collapsed') === 'true';
 
-if (isCollapsed && mainContainer) {
-    mainContainer.classList.add('sidebar-mode-collapsed');
-}
-
-
-if (logoIcon && mainContainer) {
-    logoIcon.addEventListener('click', function () {
-        if (window.innerWidth > 638) {
-
-            mainContainer.classList.toggle('sidebar-mode-collapsed');
+            if (isCollapsed && mainContainer) {
+                mainContainer.classList.add('sidebar-mode-collapsed');
+            }
 
 
-            const currentlyCollapsed = mainContainer.classList.contains('sidebar-mode-collapsed');
+            if (logoIcon && mainContainer) {
+                logoIcon.addEventListener('click', function () {
+                    if (window.innerWidth > 638) {
 
-            localStorage.setItem('sidebar-mode-collapsed', currentlyCollapsed);
-        }
-    });
-}
+                        mainContainer.classList.toggle('sidebar-mode-collapsed');
+
+
+                        const currentlyCollapsed = mainContainer.classList.contains('sidebar-mode-collapsed');
+
+                        localStorage.setItem('sidebar-mode-collapsed', currentlyCollapsed);
+                    }
+                });
+            }
 
             const currentPath = window.location.pathname;
             navItems.forEach(item => {
@@ -508,7 +576,5 @@ if (logoIcon && mainContainer) {
                 }
             });
         });
-
-
     </script>
 @endonce

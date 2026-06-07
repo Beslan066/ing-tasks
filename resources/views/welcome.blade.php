@@ -31,8 +31,25 @@
     <!-- YouGile-style Filters -->
     <div class="mb-4 max-[500px]:mb-1">
         <div class="flex items-center gap-2 flex-wrap">
+
+            <div>
+                @if($backgroundEnabled && $backgroundImage)
+                    <a href="{{route('allTasks')}}" class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
+                        <span>Все задачи</span>
+                        <span id="activeFiltersCount"
+                              class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
+                    </a>
+                @else
+                    <a href="{{route('allTasks')}}" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
+                        <span>Все задачи</span>
+                        <span id="activeFiltersCount"
+                              class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
+                    </a>
+                @endif
+            </div>
             <!-- Кнопка фильтров -->
             <div class="relative">
+
                 @if($backgroundEnabled && $backgroundImage)
                     <button onclick="toggleFiltersDropdown()"
                             class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">

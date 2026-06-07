@@ -5,7 +5,7 @@
     <div id="tasks">
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-dark">Все задачи</h1>
+                <h2 class="text-3xl font-bold text-dark">Все задачи</h2>
                 <p class="text-gray-500">Просмотр и управление всеми задачами</p>
             </div>
             <div class="flex space-x-4">

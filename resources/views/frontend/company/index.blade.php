@@ -5,7 +5,7 @@
     <div id="team">
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-dark">Команда</h1>
+                <h2 class="text-3xl font-bold text-dark">Команда</h2>
                 <p class="text-gray-500">Участники вашей организации</p>
             </div>
             <button class="bg-primary text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-secondary transition">

@@ -29,22 +29,42 @@
                 @endif
 
                 <!-- Переключатель режимов отображения -->
-                <div class="flex rounded-lg overflow-hidden border-none ">
-                    <button onclick="setViewMode('list')"
-                            id="viewModeListBtn"
-                            class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
-                                {{ $viewMode === 'list' ? 'bg-transparent/10 text-white' : 'bg-white text-gray-700' }}">
-                        <i class="fas fa-list"></i>
-                        <span>Список</span>
-                    </button>
-                    <button onclick="setViewMode('kanban')"
-                            id="viewModeKanbanBtn"
-                            class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
-                                {{ $viewMode === 'kanban' ? 'bg-transparent/10 text-white' : 'bg-white text-gray-700 ' }}">
-                        <i class="fas fa-columns"></i>
-                        <span>Канбан</span>
-                    </button>
-                </div>
+                    @if($backgroundEnabled && $backgroundImage)
+                        <div class="flex rounded-lg overflow-hidden border-none ">
+                            <button onclick="setViewMode('list')"
+                                    id="viewModeListBtn"
+                                    class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
+                                {{ $viewMode === 'list' ? 'bg-green-600 text-white' : 'bg-white text-gray-700' }}">
+                                <i class="fas fa-list"></i>
+                                <span>Список</span>
+                            </button>
+                            <button onclick="setViewMode('kanban')"
+                                    id="viewModeKanbanBtn"
+                                    class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
+                                {{ $viewMode === 'kanban' ? 'bg-green-600 text-white' : 'bg-white text-gray-700 ' }}">
+                                <i class="fas fa-columns"></i>
+                                <span>Канбан</span>
+                            </button>
+                        </div>
+                    @else
+                        <div class="flex rounded-lg overflow-hidden border-none ">
+                            <button onclick="setViewMode('list')"
+                                    id="viewModeListBtn"
+                                    class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
+                                {{ $viewMode === 'list' ? 'bg-green-600 text-white' : 'bg-white text-gray-700' }}">
+                                <i class="fas fa-list"></i>
+                                <span>Список</span>
+                            </button>
+                            <button onclick="setViewMode('kanban')"
+                                    id="viewModeKanbanBtn"
+                                    class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
+                                {{ $viewMode === 'kanban' ? 'bg-green-600 text-white' : 'bg-white text-gray-700 ' }}">
+                                <i class="fas fa-columns"></i>
+                                <span>Канбан</span>
+                            </button>
+                        </div>
+                   @endif
+
 
                 @if($backgroundEnabled && $backgroundImage)
                     <button id="filterToggle"
@@ -291,7 +311,15 @@
                         <div class="text-gray-500 text-sm md:text-base">
                             Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
                         </div>
+
                         <div class="w-full sm:w-auto">
+                            <div>
+                                <a href="{{route('allTasks')}}" class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
+                                    <span>Все задачи</span>
+                                    <span id="activeFiltersCount"
+                                          class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
+                                </a>
+                            </div>
                             <select id="sortSelect"
                                     class="w-full sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
                                 <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
@@ -785,7 +813,14 @@
                         <div class="text-gray-500 text-sm md:text-base">
                             Всего задач: {{ $tasks->total() }}
                         </div>
-                        <div class="w-full sm:w-auto">
+                        <div class="w-full sm:w-auto flex items-center">
+                            <div class="mr-2">
+                                <a href="{{route('allTasks')}}" class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-md">
+                                    <span>Все задачи</span>
+                                    <span id="activeFiltersCount"
+                                          class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
+                                </a>
+                            </div>
                             <select id="sortSelectKanban"
                                     class="w-full sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
                                 <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
@@ -939,7 +974,15 @@
                         <div class="text-gray-500 text-sm md:text-base">
                             Всего задач: {{ $tasks->total() }}
                         </div>
-                        <div class="w-full sm:w-auto">
+
+                        <div class="w-full sm:w-auto flex items-center">
+                            <div class="mr-2">
+                                <a href="{{route('allTasks')}}" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
+                                    <span>Все задачи</span>
+                                    <span id="activeFiltersCount"
+                                          class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
+                                </a>
+                            </div>
                             <select id="sortSelectKanban"
                                     class="w-full sm:w-48 border-none rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
                                 <option value="created_at_desc">Новые сначала</option>
