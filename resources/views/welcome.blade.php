@@ -2865,6 +2865,15 @@ function drop(e) {
         }
     </script>
     <style>
+        html, body {
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+    </style>
+    <style>
         .task-card {
             transition: all 0.2s ease-in-out;
         }
