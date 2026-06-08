@@ -316,7 +316,11 @@ media-src https://meet.jit.si https:;
             border-radius: 20px;
             transform-origin: center;
         }
-
+        .burger-btn.active {
+                position: fixed;
+    top: 20px;
+    right: 15px;
+        }
         @media (max-width: 638px) {
             .burger-btn {
                 display: flex;
@@ -445,7 +449,7 @@ media-src https://meet.jit.si https:;
     @include('partials.sidebar.sidebar')
     <!-- Основной контент -->
     <div
-        class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:w-full max-[500px]:pb-[20px] {{ $backgroundEnabled && $backgroundImage ? '' : 'bg-gray-100' }}">
+        class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:w-full max-[500px]:pb-[20px] max-[500px]:pt-[10px] {{ $backgroundEnabled && $backgroundImage ? '' : 'bg-gray-100' }}">
 
         @include('partials.top-menu.top-menu')
         <div class="justify-between items-center relative pr-4 pl-4 pb-6 hidden max-[638px]:flex">
@@ -1910,29 +1914,39 @@ media-src https://meet.jit.si https:;
         }
     }
 
-    function updateTaskCounters() {
-        const columns = [
-            {selector: '[data-status="new"]', counterSelector: '.board-column[data-status="new"] span:first-child'},
-            {
-                selector: '[data-status="in-progress"]',
-                counterSelector: '.board-column[data-status="in-progress"] span:first-child'
-            },
-            {
-                selector: '[data-status="review"]',
-                counterSelector: '.board-column[data-status="review"] span:first-child'
-            },
-            {selector: '[data-status="done"]', counterSelector: '.board-column[data-status="done"] span:first-child'}
-        ];
+    // function updateTaskCounters() {
+    //     const columns = [
+    //         {selector: '[data-status="new"]', counterSelector: '.board-column[data-status="new"] span:first-child'},
+    //         {
+    //             selector: '[data-status="in-progress"]',
+    //             counterSelector: '.board-column[data-status="in-progress"] span:first-child'
+    //         },
+    //         {
+    //             selector: '[data-status="review"]',
+    //             counterSelector: '.board-column[data-status="review"] span:first-child'
+    //         },
+    //         {selector: '[data-status="done"]', counterSelector: '.board-column[data-status="done"] span:first-child'}
+    //     ];
 
-        columns.forEach(column => {
-            const container = document.querySelector(`.task-container${column.selector}`);
-            const counter = document.querySelector(column.counterSelector);
-            if (container && counter) {
-                counter.textContent = container.querySelectorAll('.task-card').length;
-            }
-        });
-    }
-
+    //     columns.forEach(column => {
+    //         const container = document.querySelector(`.task-container${column.selector}`);
+    //         const counter = document.querySelector(column.counterSelector);
+    //         if (container && counter) {
+    //             counter.textContent = container.querySelectorAll('.task-card').length;
+    //         }
+    //     });
+    // }
+        function updateColumnCounters() {
+            const columns = document.querySelectorAll('.board-column');
+            columns.forEach(column => {
+                const taskContainer = column.querySelector('.task-container');
+                if (taskContainer) {
+                    const visibleTasks = taskContainer.querySelectorAll('.task-card:not([style*="display: none"])').length;
+                    const counterSpan = column.querySelector('.stat-count');
+                    if (counterSpan) counterSpan.textContent = visibleTasks;
+                }
+            });
+        }
     // Функции для удаления категории
 
     let currentDeletingCategoryId = null;

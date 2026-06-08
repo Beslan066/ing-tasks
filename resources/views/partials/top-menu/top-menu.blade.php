@@ -117,7 +117,7 @@
     }
     @media (max-width: 500px) {
         .top-menu {
-            margin-bottom: 20px;
+            display: none !important;
         }
     }
 </style>
