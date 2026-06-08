@@ -251,7 +251,7 @@
         </div>
     </div>
    <button class="sidebar-toggle-btn">
-    <i class="fas fa-chevron-right"></i>
+    <i class="fas fa-chevron-left"></i>
 </button>
 </div>
 <!-- Оверлей для боковой панели -->
