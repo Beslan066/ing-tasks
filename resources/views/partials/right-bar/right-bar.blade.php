@@ -76,7 +76,18 @@
 .right-bar:hover .right-bar-toggle-btn {
      color: #fff;
 }
-
+.main-container.has-background {
+    .right-bar {
+          backdrop-filter: blur(10px) saturate(160%);
+                background: none;
+                -webkit-backdrop-filter: blur(10px) saturate(160%);
+                box-shadow: 10px 0 15px -3px rgba(0, 0, 0, 0.1);
+                border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .right-bar-toggle-btn {
+          background: none;
+    }
+}
 @media (max-width: 768px) {
     .right-bar {
         display: none;
