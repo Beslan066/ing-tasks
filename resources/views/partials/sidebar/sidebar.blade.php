@@ -557,6 +557,9 @@
             .sidebar.active {
                 left: 0;
             }
+            .sidebar-toggle-btn {
+                display: none !important;
+            }
         }
 
         @media (max-width: 500px) {

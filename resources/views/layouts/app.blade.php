@@ -316,7 +316,11 @@ media-src https://meet.jit.si https:;
             border-radius: 20px;
             transform-origin: center;
         }
-
+        .burger-btn.active {
+                position: fixed;
+    top: 20px;
+    right: 15px;
+        }
         @media (max-width: 638px) {
             .burger-btn {
                 display: flex;
