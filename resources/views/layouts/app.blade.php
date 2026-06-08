@@ -449,7 +449,7 @@ media-src https://meet.jit.si https:;
     @include('partials.sidebar.sidebar')
     <!-- Основной контент -->
     <div
-        class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:w-full max-[500px]:pb-[20px] {{ $backgroundEnabled && $backgroundImage ? '' : 'bg-gray-100' }}">
+        class="flex-1 w-[calc(100%-16rem)] min-h-[calc(100vh-80px)] max-[638px]:w-full max-[500px]:pb-[20px] max-[500px]:pt-[10px] {{ $backgroundEnabled && $backgroundImage ? '' : 'bg-gray-100' }}">
 
         @include('partials.top-menu.top-menu')
         <div class="justify-between items-center relative pr-4 pl-4 pb-6 hidden max-[638px]:flex">

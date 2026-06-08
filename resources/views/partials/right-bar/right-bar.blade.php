@@ -55,7 +55,7 @@
     width: 20px;
     height: 32px;
     border: none;
-    border-radius: 20px 0 0 20px;
+    border-radius: 0.5rem 0 0 0.5rem;
 
     display: flex;
     align-items: center;

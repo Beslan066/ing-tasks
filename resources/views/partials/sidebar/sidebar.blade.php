@@ -358,7 +358,7 @@
     width: 20px;
     height: 32px;
     border: none;
-    border-radius: 0 20px 20px 0;
+    border-radius: 0 0.5rem 0.5rem 0;
     display: flex;
     align-items: center;
     justify-content: center;
