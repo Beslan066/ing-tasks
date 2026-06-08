@@ -72,7 +72,7 @@
 
                 <!-- Выпадающая панель фильтров -->
                 <div id="filtersDropdown"
-                     class="hidden absolute left-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border z-50">
+                     class="hidden absolute left-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border z-50 max-[500px]:w-[100vw]">
                     <div class="p-4 border-b border-gray-100">
                         <div class="flex justify-between items-center">
                             <h3 class="font-semibold text-gray-800">Фильтрация задач</h3>
@@ -292,7 +292,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-gray-50 px-4 py-2 border-t border-gray-100">
+                        <div class="bg-gray-50 px-4 py-2 border-t border-gray-100 max-[500px]:hidden">
                             <div class="flex items-center justify-between text-xs text-gray-400">
                                 <span><i class="fas fa-keyboard mr-1"></i> Enter — создать</span>
                                 <span><i class="fas fa-arrow-left mr-1"></i> Esc — отмена</span>
@@ -360,8 +360,8 @@
                             </div>
                         @endif
 
-                        <div class="flex justify-between items-center">
-                            <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1 max-[500px]:space-x-0">
+                        <div class="flex justify-between items-center max-[1300px]:items-end">
+                            <div class="flex space-x-1 max-[1300px]:flex-col max-[1300px]:gap-1 max-[500px]:flex-wrap max-[500px]:space-x-0 max-[500px]:flex-row">
                         <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
                               class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
                                 @php
@@ -480,8 +480,8 @@
                             </div>
                         @endif
 
-                        <div class="flex justify-between items-center">
-                            <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1 max-[500px]:space-x-0">
+                        <div class="flex justify-between items-center max-[1300px]:items-end">
+                             <div class="flex space-x-1 max-[1300px]:flex-col max-[1300px]:gap-1 max-[500px]:flex-wrap max-[500px]:space-x-0 max-[500px]:flex-row">
                 <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
                       class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
 
@@ -601,8 +601,8 @@
                             </div>
                         @endif
 
-                        <div class="flex justify-between items-center">
-                            <div class="flex space-x-1 max-[500px]:flex-wrap max-[500px]:gap-1 max-[500px]:space-x-0">
+                         <div class="flex justify-between items-center max-[1300px]:items-end max-[500px]:items-center">
+                            <div class="flex space-x-1 max-[1300px]:flex-col max-[1300px]:gap-1 max-[500px]:flex-wrap max-[500px]:space-x-0 max-[500px]:flex-row">
                 <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
                       class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
 
@@ -684,7 +684,7 @@
                             </div>
                         @endif
 
-                        <div class="flex justify-between items-center">
+                        <div class="flex justify-between items-center max-[1100px]:flex-col max-[1100px]:items-start max-[1100px]:gap-2">
                         <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
                               class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
                             <span class="text-xs text-gray-500">Завершено</span>
@@ -2874,6 +2874,9 @@ function drop(e) {
 }
     </style>
     <style>
+        .swiper-notification {
+            display: none !important;
+        }
         .task-card {
             transition: all 0.2s ease-in-out;
         }

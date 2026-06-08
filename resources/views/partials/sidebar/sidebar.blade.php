@@ -297,6 +297,9 @@
             .sidebar:hover {
                 box-shadow: 0 0 50px rgba(34, 197, 94, 0.1);
             }
+            .sidebar-toggle-btn {
+                background: none;
+            }
         }
 
         .nav-item {
