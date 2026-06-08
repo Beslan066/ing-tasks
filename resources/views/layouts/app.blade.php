@@ -1932,7 +1932,7 @@ media-src https://meet.jit.si https:;
     //         }
     //     });
     // }
- function updateColumnCounters() {
+        function updateColumnCounters() {
             const columns = document.querySelectorAll('.board-column');
             columns.forEach(column => {
                 const taskContainer = column.querySelector('.task-container');

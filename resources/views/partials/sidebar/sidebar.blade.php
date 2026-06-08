@@ -38,21 +38,21 @@
     <!-- Боковая панель -->
 <div id="sidebar-menu"
      class="sidebar h-full w-full max-w-64 py-2 px-4 fixed {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
-    <div class="relative h-full w-full sm:flex flex-col max-[638px]:flex">
+    <div class="relative h-full w-full sm:flex flex-col max-[638px]:flex overflow-hidden">
 
         <!-- Логотип -->
-        <div class="mb-8 logotype">
+        <a href="{{route('welcome')}}" class="mb-8 logotype">
             <div class="flex items-center space-x-3 group">
                 <div id="logo-icon"
                      class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
                     <i class="fas fa-tasks text-white text-lg"></i>
                 </div>
-                <a href="{{route('welcome')}}" class="logotype__text">
+                <div class="logotype__text">
                     <h1 class="text-xl font-bold text-white">Менеджер<span class="text-primary-500">Плюс</span></h1>
                     <p class="text-xs text-sidebar-text mt-1 text-nowrap whitespace-nowrap">Управление задачами</p>
-                </a>
+                </div>
             </div>
-        </div>
+        </a>
 
         <!-- Навигация -->
         <div
@@ -250,8 +250,10 @@
             </div>
         </div>
     </div>
+   <button class="sidebar-toggle-btn">
+    <i class="fas fa-chevron-right"></i>
+</button>
 </div>
-
 <!-- Оверлей для боковой панели -->
 <div id="sidebar-overlay"
      class="fixed inset-0 bg-black/50 z-[998] hidden max-[638px]:[&.active]:block transition-opacity duration-300 max-[500px]:bg-black/90">
@@ -322,7 +324,6 @@
             backdrop-filter: blur(20px);
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
             z-index: 2;
 
             &.glass {
@@ -349,10 +350,33 @@
             box-shadow: 10px 0 15px -3px rgba(0, 0, 0, 0.1);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
+.sidebar-toggle-btn {
+    position: absolute;
+    top: 60px;
+    right: -20px;
+    z-index: 10;
+    width: 20px;
+    height: 32px;
+    border: none;
+    border-radius: 0 20px 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000000;
+    color: var(--sidebar-text, #a0aec0);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+    transition: color 0.15s ease-in-out;
+}
 
-        #logo-icon {
-            pointer-events: none;
-        }
+.sidebar-toggle-btn i {
+    font-size: 14px;
+    padding-left: 2px;
+}
+
+.sidebar-toggle-btn:hover {
+    color: #ffffff;
+}
 
         /* Анимация для progress-bar */
         .progress-bar {
@@ -385,7 +409,9 @@
                         position: absolute;
                     }
                 }
-
+.sidebar-toggle-btn i {
+    transform: rotate(180deg);
+}
                 .active-page {
                     padding-left: calc(1.5rem + 4.5rem);
                 }
@@ -543,7 +569,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const logoIcon = document.getElementById('logo-icon');
+            // const logoIcon = document.getElementById('logo-icon');
+            const sidebarToggleBtn = document.querySelector('.sidebar-toggle-btn');
             const mainContainer = document.querySelector('.main-container');
             const navItems = document.querySelectorAll('.nav-item');
 
@@ -554,8 +581,8 @@
             }
 
 
-            if (logoIcon && mainContainer) {
-                logoIcon.addEventListener('click', function () {
+            if (sidebarToggleBtn && mainContainer) {
+                sidebarToggleBtn.addEventListener('click', function () {
                     if (window.innerWidth > 638) {
 
                         mainContainer.classList.toggle('sidebar-mode-collapsed');
