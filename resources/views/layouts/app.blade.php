@@ -1910,29 +1910,39 @@ media-src https://meet.jit.si https:;
         }
     }
 
-    function updateTaskCounters() {
-        const columns = [
-            {selector: '[data-status="new"]', counterSelector: '.board-column[data-status="new"] span:first-child'},
-            {
-                selector: '[data-status="in-progress"]',
-                counterSelector: '.board-column[data-status="in-progress"] span:first-child'
-            },
-            {
-                selector: '[data-status="review"]',
-                counterSelector: '.board-column[data-status="review"] span:first-child'
-            },
-            {selector: '[data-status="done"]', counterSelector: '.board-column[data-status="done"] span:first-child'}
-        ];
+    // function updateTaskCounters() {
+    //     const columns = [
+    //         {selector: '[data-status="new"]', counterSelector: '.board-column[data-status="new"] span:first-child'},
+    //         {
+    //             selector: '[data-status="in-progress"]',
+    //             counterSelector: '.board-column[data-status="in-progress"] span:first-child'
+    //         },
+    //         {
+    //             selector: '[data-status="review"]',
+    //             counterSelector: '.board-column[data-status="review"] span:first-child'
+    //         },
+    //         {selector: '[data-status="done"]', counterSelector: '.board-column[data-status="done"] span:first-child'}
+    //     ];
 
-        columns.forEach(column => {
-            const container = document.querySelector(`.task-container${column.selector}`);
-            const counter = document.querySelector(column.counterSelector);
-            if (container && counter) {
-                counter.textContent = container.querySelectorAll('.task-card').length;
-            }
-        });
-    }
-
+    //     columns.forEach(column => {
+    //         const container = document.querySelector(`.task-container${column.selector}`);
+    //         const counter = document.querySelector(column.counterSelector);
+    //         if (container && counter) {
+    //             counter.textContent = container.querySelectorAll('.task-card').length;
+    //         }
+    //     });
+    // }
+ function updateColumnCounters() {
+            const columns = document.querySelectorAll('.board-column');
+            columns.forEach(column => {
+                const taskContainer = column.querySelector('.task-container');
+                if (taskContainer) {
+                    const visibleTasks = taskContainer.querySelectorAll('.task-card:not([style*="display: none"])').length;
+                    const counterSpan = column.querySelector('.stat-count');
+                    if (counterSpan) counterSpan.textContent = visibleTasks;
+                }
+            });
+        }
     // Функции для удаления категории
 
     let currentDeletingCategoryId = null;

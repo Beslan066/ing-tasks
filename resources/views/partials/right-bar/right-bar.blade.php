@@ -24,7 +24,7 @@
     position: fixed;
     z-index: 50;
     right: -50px;
-    top: 50px;
+    top: 70px;
     width: 50px;
     min-height: 150px;
     background-color: #fff;
