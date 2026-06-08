@@ -83,7 +83,13 @@ media-src https://meet.jit.si https:;
         * {
             font-family: "Inter", sans-serif;
         }
-
+    html, body {
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
         .main-container {
             background-color: #f9fafb;
         }

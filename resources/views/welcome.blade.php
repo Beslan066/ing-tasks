@@ -2864,15 +2864,7 @@ function drop(e) {
             }, 5000);
         }
     </script>
-    <style>
-        html, body {
-    ::-webkit-scrollbar {
-        display: none;
-    }
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-    </style>
+
     <style>
         .swiper-notification {
             display: none !important;
