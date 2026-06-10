@@ -2864,6 +2864,7 @@ function drop(e) {
             }, 5000);
         }
     </script>
+
     <style>
         .swiper-notification {
             display: none !important;

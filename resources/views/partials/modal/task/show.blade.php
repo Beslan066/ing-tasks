@@ -31,3 +31,14 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+     function copyTaskLink() {
+                const taskId = window.currentTaskId;
+                if (!taskId) return;
+                const url = window.location.origin + '/team/tasks/' + taskId;
+                navigator.clipboard.writeText(url);
+                showNotification('Ссылка скопирована', 'success');
+            }
+</script>
+@endpush

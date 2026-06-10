@@ -83,7 +83,13 @@ media-src https://meet.jit.si https:;
         * {
             font-family: "Inter", sans-serif;
         }
-
+    html, body {
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
         .main-container {
             background-color: #f9fafb;
         }
@@ -2196,26 +2202,26 @@ media-src https://meet.jit.si https:;
 <script>
 
     // Модальные окна
-    document.getElementById('newTaskBtn').addEventListener('click', function () {
-        document.getElementById('taskModal').classList.remove('hidden');
-    });
+        document.getElementById('newTaskBtn')?.addEventListener('click', function () {
+            document.getElementById('taskModal').classList.remove('hidden');
+        });
 
-    document.getElementById('newUserBtn').addEventListener('click', function () {
-        document.getElementById('newUserModal').classList.remove('hidden');
-    });
+        document.getElementById('newUserBtn')?.addEventListener('click', function () {
+            document.getElementById('newUserModal').classList.remove('hidden');
+        });
 
-    function userProfileModal() {
-        currentModalType = 'user';
-        document.getElementById('userProfileModal').classList.remove('hidden');
-    }
+    // function userProfileModal() {
+    //     currentModalType = 'user';
+    //     document.getElementById('userProfileModal').classList.remove('hidden');
+    // }
 
 
     // Закрытие модальных окон
-    document.getElementById('closeModal').addEventListener('click', function () {
+    document.getElementById('closeModal')?.addEventListener('click', function () {
         document.getElementById('taskModal').classList.add('hidden');
     });
 
-    document.getElementById('cancelTask').addEventListener('click', function () {
+    document.getElementById('cancelTask')?.addEventListener('click', function () {
         document.getElementById('taskModal').classList.add('hidden');
     });
 

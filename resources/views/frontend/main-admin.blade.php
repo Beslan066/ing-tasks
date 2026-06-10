@@ -332,7 +332,7 @@
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto -mx-4 md:mx-0">
+                    <div class="overflow-x-auto -mx-4 md:mx-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                         <div class="inline-block min-w-full align-middle">
                             <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
                                 <table class="min-w-full hidden md:table">
@@ -645,7 +645,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="overflow-x-auto -mx-4 md:mx-0">
+                    <div class="overflow-x-auto -mx-4 md:mx-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                         <div class="inline-block min-w-full align-middle">
                             <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
                                 <div class="hidden md:block">
@@ -2958,6 +2958,7 @@
     @endpush
 
     <style>
+
         .task-card {
             transition: all 0.2s ease-in-out;
         }

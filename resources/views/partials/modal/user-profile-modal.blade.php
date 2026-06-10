@@ -48,10 +48,10 @@
         </div>
 
         <div class="mt-6 flex justify-end space-x-2">
-            <button href="{{route('profile.edit')}}" id="editProfile"
+            <a href="{{route('profile.edit')}}" id="editProfile"
                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
                 Профиль
-            </button>
+            </a>
             <form action="{{route('logout')}}" method="post">
                 @csrf
                 <button id="logout"

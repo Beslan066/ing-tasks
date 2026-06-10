@@ -122,4 +122,15 @@
         }
     }
 </style>
+<script>
+     function userProfileModal() {
+        currentModalType = 'user';
+        document.getElementById('userProfileModal').classList.remove('hidden');
+    }
+       function closeUserProfileModal() {
+        document.getElementById('userProfileModal').classList.add('hidden');
+        document.getElementById('userForm').reset();
+    }
+</script>
+
 @endonce
