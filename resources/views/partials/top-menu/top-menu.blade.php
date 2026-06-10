@@ -71,6 +71,7 @@
         </div>
     </div>
 </div>
+
 @once
 <style>
     .main-container.sidebar-mode-collapsed {

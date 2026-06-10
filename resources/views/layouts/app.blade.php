@@ -502,9 +502,7 @@ media-src https://meet.jit.si https:;
 @include('partials.modal.notifications-modal')
 
 <!-- Модальное окно профиля пользователя -->
-@auth()
-    @include('partials.modal.user-profile-modal')
-@endauth
+@include('partials.modal.user-profile-modal')
 
 
 <!-- Модальное окно для новой категории -->
@@ -578,7 +576,6 @@ media-src https://meet.jit.si https:;
     function startWorkTimer() {
         if (workStartTime === null) {
             workStartTime = Date.now();
-            console.log('🚀 Трекинг времени начат');
         }
     }
 
@@ -587,7 +584,6 @@ media-src https://meet.jit.si https:;
             const elapsed = Math.floor((Date.now() - workStartTime) / 1000);
             workTotalSeconds += elapsed;
             workStartTime = null;
-            console.log(`⏸ Пауза. Добавлено: ${elapsed} сек.`);
         }
         workIsActive = false;
     }
@@ -596,7 +592,6 @@ media-src https://meet.jit.si https:;
         if (!workIsActive) {
             workStartTime = Date.now();
             workIsActive = true;
-            console.log('▶ Возобновлен трекинг');
         }
     }
 
@@ -615,8 +610,8 @@ media-src https://meet.jit.si https:;
             workStartTime = Date.now();
         }
 
+        // Отправка времени на сервер
         if (toSend > 0) {
-            console.log(`📤 Отправка времени на сервер: ${toSend} сек.`);
             sendWorkTimeToServer(toSend);
         }
     }
@@ -684,11 +679,9 @@ media-src https://meet.jit.si https:;
         }
         const minutes = Math.floor(total / 60);
         const seconds = total % 60;
-        console.log(`📊 Рабочее время: ${minutes} мин. ${seconds} сек. (${total} сек.)`);
         return total;
     };
 
-    console.log('🎯 Трекинг времени загружен');
 </script>
 
 <script>
@@ -810,7 +803,6 @@ media-src https://meet.jit.si https:;
                         })
                         .catch(error => {
                             console.error('Ошибка:', error);
-                            // alert('Ошибка при создании задачи');
                             showNotification('Ошибка при создании задачи', 'error');
                         })
                         .finally(() => {
@@ -2233,19 +2225,11 @@ media-src https://meet.jit.si https:;
         document.getElementById('taskModal').classList.add('hidden');
     });
 
-    // function closeUserProfileModal() {
-    //     document.getElementById('userProfileModal').classList.add('hidden');
-    //     document.getElementById('userForm').reset();
-    // }
+    function closeUserProfileModal() {
+        document.getElementById('userProfileModal').classList.add('hidden');
+        document.getElementById('userForm').reset();
+    }
 
-
-    // // Обработка формы создания задачи
-    // document.getElementById('taskForm').addEventListener('submit', function (e) {
-    //     e.preventDefault();
-    //     alert('Задача успешно создана!');
-    //     document.getElementById('taskModal').classList.add('hidden');
-    //     // Здесь будет код для добавления задачи на доску
-    // });
 
     // Перетаскивание задач
     let draggedTask = null;
@@ -2329,8 +2313,6 @@ media-src https://meet.jit.si https:;
                     this.classList.contains('board-item') ? 'board' : 'user';
                 const id = this.getAttribute(`data-${type}`);
 
-                // В реальном приложении здесь будет загрузка данных
-                console.log(`Выбран ${type}: ${id}`);
             });
         });
     });
@@ -2478,34 +2460,10 @@ media-src https://meet.jit.si https:;
     document.addEventListener('DOMContentLoaded', function () {
         const match = window.location.pathname.match(/\/tasks\/page\/(\d+)/);
         if (match) {
-            // Если открыта прямая ссылка на страницу задачи - ничего не делаем,
-            // контроллер сам покажет полную страницу
-            console.log('Прямая ссылка на задачу', match[1]);
         }
     });
 
-    try {
 
-
-
-    // !!!!! ЭТА Функция ничего не делает
-   navigator.clipboard.writeText(url)
-    .then(() => {
-        showNotification('Ссылка на задачу скопирована!', 'success');
-    })
-    .catch(() => {
-        // fallback для старых браузеров
-        const textarea = document.createElement('textarea');
-        textarea.value = url;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        showNotification('Ссылка на задачу скопирована!', 'success');
-    });
-                }catch(e) {
-                    console.log('url not found',e)
-                }
 
     // Печать задачи
     function printTask() {
@@ -2696,6 +2654,8 @@ media-src https://meet.jit.si https:;
     }
 
 </script>
+
+
 <script>
     const burgerBtn = document.getElementById('burger-btn');
     const sidebarMenu = document.getElementById('sidebar-menu');
