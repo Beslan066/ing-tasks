@@ -2218,10 +2218,10 @@ media-src https://meet.jit.si https:;
         document.getElementById('newUserModal').classList.remove('hidden');
     });
 
-    function userProfileModal() {
-        currentModalType = 'user';
-        document.getElementById('userProfileModal').classList.remove('hidden');
-    }
+    // function userProfileModal() {
+    //     currentModalType = 'user';
+    //     document.getElementById('userProfileModal').classList.remove('hidden');
+    // }
 
 
     // Закрытие модальных окон
@@ -2233,10 +2233,10 @@ media-src https://meet.jit.si https:;
         document.getElementById('taskModal').classList.add('hidden');
     });
 
-    function closeUserProfileModal() {
-        document.getElementById('userProfileModal').classList.add('hidden');
-        document.getElementById('userForm').reset();
-    }
+    // function closeUserProfileModal() {
+    //     document.getElementById('userProfileModal').classList.add('hidden');
+    //     document.getElementById('userForm').reset();
+    // }
 
 
     // // Обработка формы создания задачи
