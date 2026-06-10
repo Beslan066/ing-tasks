@@ -2210,13 +2210,13 @@ media-src https://meet.jit.si https:;
 <script>
 
     // Модальные окна
-    document.getElementById('newTaskBtn').addEventListener('click', function () {
-        document.getElementById('taskModal').classList.remove('hidden');
-    });
+        document.getElementById('newTaskBtn')?.addEventListener('click', function () {
+            document.getElementById('taskModal').classList.remove('hidden');
+        });
 
-    document.getElementById('newUserBtn').addEventListener('click', function () {
-        document.getElementById('newUserModal').classList.remove('hidden');
-    });
+        document.getElementById('newUserBtn')?.addEventListener('click', function () {
+            document.getElementById('newUserModal').classList.remove('hidden');
+        });
 
     // function userProfileModal() {
     //     currentModalType = 'user';
@@ -2225,11 +2225,11 @@ media-src https://meet.jit.si https:;
 
 
     // Закрытие модальных окон
-    document.getElementById('closeModal').addEventListener('click', function () {
+    document.getElementById('closeModal')?.addEventListener('click', function () {
         document.getElementById('taskModal').classList.add('hidden');
     });
 
-    document.getElementById('cancelTask').addEventListener('click', function () {
+    document.getElementById('cancelTask')?.addEventListener('click', function () {
         document.getElementById('taskModal').classList.add('hidden');
     });
 
@@ -2484,8 +2484,16 @@ media-src https://meet.jit.si https:;
         }
     });
 
-    showNotification('Ссылка на задачу скопирована!', 'success');
-    }).catch(() => {
+    try {
+
+
+
+    // !!!!! ЭТА Функция ничего не делает
+   navigator.clipboard.writeText(url)
+    .then(() => {
+        showNotification('Ссылка на задачу скопирована!', 'success');
+    })
+    .catch(() => {
         // fallback для старых браузеров
         const textarea = document.createElement('textarea');
         textarea.value = url;
@@ -2495,7 +2503,9 @@ media-src https://meet.jit.si https:;
         document.body.removeChild(textarea);
         showNotification('Ссылка на задачу скопирована!', 'success');
     });
-    }
+                }catch(e) {
+                    console.log('url not found',e)
+                }
 
     // Печать задачи
     function printTask() {

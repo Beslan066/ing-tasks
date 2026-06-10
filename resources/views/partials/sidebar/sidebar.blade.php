@@ -603,7 +603,6 @@
 
             const currentPath = window.location.pathname;
             navItems.forEach(item => {
-                console.log(item);
                 if (item.getAttribute('href') === currentPath) {
                     item.classList.add('active');
                 }
