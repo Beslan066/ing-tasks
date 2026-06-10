@@ -2926,9 +2926,15 @@ function drop(e) {
             background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
             transform: scale(0.98);
         }
-        .modal-content {
-            animation: fadeIn 0.3s ease-out;
-        }
+      .modal-content {
+    animation: fadeIn 0.3s ease-out;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.modal-content::-webkit-scrollbar {
+    display: none;
+}
 
         .task-menu {
             animation: fadeIn 0.15s ease-out;
