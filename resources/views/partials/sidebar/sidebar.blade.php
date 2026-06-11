@@ -592,8 +592,6 @@
                     if (window.innerWidth > 638) {
 
                         mainContainer.classList.toggle('sidebar-mode-collapsed');
-
-
                         const currentlyCollapsed = mainContainer.classList.contains('sidebar-mode-collapsed');
 
                         localStorage.setItem('sidebar-mode-collapsed', currentlyCollapsed);
