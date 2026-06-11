@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Subtask;
 use App\Models\Task;
 use App\Models\File;
 use App\Models\TaskRejection;
@@ -234,28 +235,38 @@ class TaskController extends Controller
             $user = Auth::user();
 
             if (!$this->canAccessTask($user, $task)) {
-                // Возвращаем HTML с сообщением об ошибке и статусом 403
                 return response()->make(
                     '<div class="p-6 text-center">
-                    <i class="fas fa-lock text-3xl text-red-500 mb-3"></i>
-                    <p class="text-gray-700">У вас нет доступа к этой задаче</p>
-                    <button onclick="closeTaskViewModal()" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg">Закрыть</button>
-                </div>',
+                <i class="fas fa-lock text-3xl text-red-500 mb-3"></i>
+                <p class="text-gray-700">У вас нет доступа к этой задаче</p>
+                <button onclick="closeTaskViewModal()" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg">Закрыть</button>
+            </div>',
                     403
                 );
             }
 
             $task->updateOverdueStatus();
 
-            // Загружаем связи
-            $task->load(['author', 'user', 'category']);
+            // Загружаем связи ВКЛЮЧАЯ ПОДЗАДАЧИ
+            $task->load(['author', 'user', 'category', 'department']);
 
-            // Отдел загружаем даже если NULL (withDefault сработает)
-            $task->load('department');
+            $subtasks = $task->subtasks()->with(['user', 'author'])->get();
+
+            // ВРЕМЕННО: дамп для отладки
+            \Log::info('=== SUBTASKS DUMP ===');
+            \Log::info('Count: ' . $subtasks->count());
+            foreach ($subtasks as $st) {
+                \Log::info('Subtask: ' . $st->id . ' - ' . $st->name . ' - parent_id: ' . $st->parent_id);
+            }
+
+            \Log::info('Subtasks loaded in view method: ' . $subtasks->count());
+            foreach ($subtasks as $subtask) {
+                \Log::info('Subtask ID: ' . $subtask->id . ', Name: ' . $subtask->name);
+            }
 
             $files = $task->files()->get();
 
-            $comments = null;
+            $comments = collect();
             $canComment = false;
 
             if (!$task->is_personal) {
@@ -265,11 +276,10 @@ class TaskController extends Controller
                     \Log::info('canComment result: ' . ($canComment ? 'true' : 'false'));
                 } catch (\Exception $e) {
                     \Log::error('Error loading comments: ' . $e->getMessage());
-                    $comments = null;
+                    $comments = collect();
                 }
             }
 
-            $subtasks = $task->subtasks()->with(['user', 'author'])->get();
             $currentUser = Auth::user();
 
             // Всегда возвращаем только контент модального окна
@@ -283,10 +293,10 @@ class TaskController extends Controller
 
             return response()->make(
                 '<div class="p-6 text-center">
-                <i class="fas fa-exclamation-triangle text-3xl text-red-500 mb-3"></i>
-                <p class="text-gray-700">Ошибка при загрузке задачи: ' . $e->getMessage() . '</p>
-                <button onclick="closeTaskViewModal()" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg">Закрыть</button>
-            </div>',
+            <i class="fas fa-exclamation-triangle text-3xl text-red-500 mb-3"></i>
+            <p class="text-gray-700">Ошибка при загрузке задачи: ' . $e->getMessage() . '</p>
+            <button onclick="closeTaskViewModal()" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg">Закрыть</button>
+        </div>',
                 500
             );
         }
@@ -1084,5 +1094,160 @@ class TaskController extends Controller
         $sizes = ["Bytes", "KB", "MB", "GB"];
         $i = floor(log($bytes) / log($k));
         return round($bytes / pow($k, $i), 2) . " " . $sizes[$i];
+    }
+
+    /**
+     * Store a newly created subtask
+     */
+    public function storeSubtask(Request $request, Task $task)
+    {
+        $user = Auth::user();
+
+        // Проверка прав
+        if (!$user->canViewAllCompanyTasks() && $task->author_id !== $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'У вас нет прав для создания подзадач'
+            ], 403);
+        }
+
+        $validator = \Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'priority' => 'required|in:низкий,средний,высокий,критический',
+            'deadline' => 'nullable|date',
+            'estimated_hours' => 'nullable|numeric|min:0',
+            'user_id' => 'nullable|exists:users,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибки валидации',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $subtask = Subtask::create([
+                'task_id' => $task->id,
+                'name' => $request->name,
+                'description' => $request->description,
+                'user_id' => $request->user_id,
+                'priority' => $request->priority,
+                'status' => $request->user_id ? Subtask::STATUS_ASSIGNED : Subtask::STATUS_ASSIGNED,
+                'deadline' => $request->deadline,
+                'estimated_hours' => $request->estimated_hours,
+                'created_by' => $user->id,
+            ]);
+
+            DB::commit();
+
+            // Загружаем только существующие связи
+            $subtask->load('user'); // Убираем 'author', так как его нет
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Подзадача успешно создана',
+                'subtask' => $subtask
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error in storeSubtask: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при создании подзадачи: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Toggle subtask status (mark as completed/in progress)
+     */
+    public function toggleSubtaskStatus(Subtask $subtask)
+    {
+        $user = Auth::user();
+        $parentTask = $subtask->parentTask;
+
+        // Проверка прав
+        $canManage = $user->canViewAllCompanyTasks() ||
+            $subtask->user_id === $user->id ||
+            $parentTask->author_id === $user->id;
+
+        if (!$canManage) {
+            return response()->json([
+                'success' => false,
+                'message' => 'У вас нет прав для изменения этой подзадачи'
+            ], 403);
+        }
+
+        try {
+            $newStatus = $subtask->status === Subtask::STATUS_COMPLETED
+                ? Subtask::STATUS_IN_PROGRESS
+                : Subtask::STATUS_COMPLETED;
+
+            $updateData = ['status' => $newStatus];
+
+            if ($newStatus === Subtask::STATUS_COMPLETED) {
+                $updateData['completed_at'] = now();
+            } else {
+                $updateData['completed_at'] = null;
+            }
+
+            $subtask->update($updateData);
+
+            // УБИРАЕМ ЭТУ СТРОКУ - НЕ МЕНЯЕМ СТАТУС РОДИТЕЛЯ
+            // Subtask::updateParentTaskProgress($parentTask->id);
+
+            return response()->json([
+                'success' => true,
+                'message' => $newStatus === Subtask::STATUS_COMPLETED
+                    ? 'Подзадача выполнена'
+                    : 'Подзадача возвращена в работу',
+                'status' => $newStatus,
+                'progress' => Subtask::getProgress($parentTask->id) // Это просто для отображения прогресса, не меняет статус
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error in toggleSubtaskStatus: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при изменении статуса подзадачи'
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete subtask
+     */
+    public function deleteSubtask(Subtask $subtask)
+    {
+        $user = Auth::user();
+        $parentTask = $subtask->parentTask;
+
+        if (!$user->canViewAllCompanyTasks() && $parentTask->author_id !== $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'У вас нет прав для удаления этой подзадачи'
+            ], 403);
+        }
+
+        try {
+            $subtask->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Подзадача удалена'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при удалении подзадачи'
+            ], 500);
+        }
     }
 }

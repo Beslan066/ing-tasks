@@ -31,15 +31,33 @@ trait LogsActivity
         }
 
         $user = auth()->user();
-        $companyId = $this->company_id ?? $user->company_id;
 
+        // Получаем company_id из модели или из родительской задачи
+        $companyId = $this->company_id ?? null;
+
+        // Если company_id нет и это подзадача, берем из родительской
+        if (!$companyId && method_exists($this, 'parent') && $this->parent) {
+            $companyId = $this->parent->company_id;
+            // Обновляем company_id в подзадаче для будущих логов
+            if ($companyId && $this->id) {
+                $this->update(['company_id' => $companyId]);
+            }
+        }
+
+        // Если все еще нет company_id, берем из пользователя
         if (!$companyId) {
+            $companyId = $user->company_id;
+        }
+
+        // Если company_id все еще null, пропускаем логгирование
+        if (!$companyId) {
+            \Log::warning('Cannot log activity: company_id is null for model ' . get_class($this) . ' id: ' . ($this->id ?? 'new'));
             return;
         }
 
         $description = $this->generateDescription($action);
 
-        $activity = Activity::create(array_merge([
+        $activityData = [
             'user_id' => $user->id,
             'company_id' => $companyId,
             'subject_type' => get_class($this),
@@ -47,9 +65,15 @@ trait LogsActivity
             'action' => $this->getActivityAction($action),
             'description' => $description,
             'properties' => $additionalData,
-            'old_values' => $action === 'updated' ? $this->getOriginal() : null,
-            'new_values' => $action === 'updated' ? $this->getChanges() : null,
-        ], $additionalData));
+        ];
+
+        // Добавляем old_values и new_values только для обновления
+        if ($action === 'updated') {
+            $activityData['old_values'] = $this->getOriginal();
+            $activityData['new_values'] = $this->getChanges();
+        }
+
+        $activity = Activity::create($activityData);
 
         return $activity;
     }

@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <!-- YouGile-style Filters -->
+    <!-- Фильтры -->
     <div class="mb-4 max-[500px]:mb-1">
         <div class="flex items-center gap-2 flex-wrap">
 
@@ -329,7 +329,10 @@
                                                     <i class="fas fa-edit mr-2 text-blue-500"></i> Редактировать
                                                 </button>
                                             @endif
-                                            <button onclick="startTask({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                                            <button onclick="openCreateSubtaskModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                                                <i class="fas fa-list mr-2 text-green-500"></i>Подзадача
+                                            </button>
+                                                <button onclick="startTask({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
                                                 <i class="fas fa-play mr-2 text-green-500"></i> Начать
                                             </button>
                                             <button onclick="showRejectModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center">
@@ -699,6 +702,7 @@
 
     <!-- Модальные окна -->
     @include('partials.modal.task.show')
+    @include('partials.modal.task.create-subtask')
 
     <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
@@ -1064,7 +1068,7 @@
         </div>
     </div>
 
-    <!-- ==================== МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ ЗАДАЧИ ==================== -->
+    <!-- МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ ЗАДАЧИ  -->
     <div id="editTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
         <div class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
             <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-100">
@@ -1298,7 +1302,7 @@
   type="module"
 ></script>
     <script>
-        // ==================== ПЕРЕМЕННЫЕ ====================
+        //  ПЕРЕМЕННЫЕ
         let taskSelectedFiles = [];
         let taskAllFiles = [];
         let taskEditSelectedFiles = [];

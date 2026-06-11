@@ -1,4 +1,13 @@
-{{-- resources/views/partials/modal/task/modal_content.blade.php --}}
+{{-- ВРЕМЕННО: отладка подзадач --}}
+@php
+    \Log::info('=== IN VIEW ===');
+    \Log::info('$subtasks count: ' . (isset($subtasks) ? $subtasks->count() : 'NOT SET'));
+    if (isset($subtasks) && $subtasks->count() > 0) {
+        foreach($subtasks as $st) {
+            \Log::info('View subtask: ' . $st->id . ' - ' . $st->name);
+        }
+    }
+@endphp
 
 <div class="flex h-full">
     {{-- ЛЕВАЯ КОЛОНКА - Информация о задаче --}}
@@ -197,14 +206,13 @@
                                 </a>
                             </div>
                             <span class="text-xs text-gray-400 flex-shrink-0 ml-2">
-                {{ $formattedSize }}
-            </span>
+                                {{ $formattedSize }}
+                            </span>
                         </div>
                     @endforeach
                 </div>
             </div>
         @else
-            {{-- Временная отладка --}}
             <div class="mt-6 pt-4 border-t border-gray-200">
                 <div class="text-xs text-gray-400 p-2 bg-gray-50 rounded">
                     <i class="fas fa-info-circle mr-1"></i>
@@ -214,69 +222,140 @@
         @endif
     </div>
 
-    {{-- ПРАВАЯ КОЛОНКА - Комментарии в стиле мессенджера --}}
+    {{-- ПРАВАЯ КОЛОНКА --}}
     <div class="w-3/5 flex flex-col h-100 chat-background rounded-lg">
-        <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-200 p-2 bg-white rounded-lg">
-            <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                <i class="fas fa-comments text-blue-500 mr-2"></i>Сообщения к задаче
-                @if(!$task->is_personal && isset($comments) && $comments)
-                    <span class="ml-1 text-gray-400">({{ $comments->total() ?? 0 }})</span>
-                @endif
-            </h2>
+        {{-- Табы для переключения между комментариями и подзадачами --}}
+        <div class="flex items-center border-b border-gray-200 bg-white rounded-t-lg">
+            <button onclick="switchTaskTab('comments')"
+                    id="tabCommentsBtn"
+                    class="flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 border-green-500 text-green-600">
+                <i class="fas fa-comments mr-2"></i>Сообщения
+                <span id="commentsCount" class="ml-1 text-xs text-gray-400">
+                    ({{ isset($comments) && $comments ? (method_exists($comments, 'total') ? $comments->total() : $comments->count()) : 0 }})
+                </span>
+            </button>
+            <button onclick="switchTaskTab('subtasks')"
+                    id="tabSubtasksBtn"
+                    class="flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                <i class="fas fa-tasks mr-2"></i>Подзадачи
+                <span id="subtasksCount" class="ml-1 text-xs text-gray-400">({{ $subtasks->count() }})</span>
+            </button>
         </div>
 
-        @if($task->is_personal)
-            <div class="flex-1 flex items-center justify-center">
-                <div class="text-center">
-                    <i class="fas fa-lock text-5xl text-gray-300 mb-3"></i>
-                    <p class="text-gray-500">Сообщений к задаче нет</p>
-                    <p class="text-sm text-gray-400 mt-1">Сообщения недоступны для личных задач</p>
-                </div>
+        {{-- КОНТЕНТ: Комментаии --}}
+        <div id="commentsTab" class="flex-1 flex flex-col h-full">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-200 p-2 bg-white rounded-lg">
+                <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                    <i class="fas fa-comments text-blue-500 mr-2"></i>Сообщения к задаче
+                </h2>
             </div>
-        @else
-            {{-- Список комментариев в стиле чата --}}
-            <div id="commentsList" class="flex-1 overflow-y-auto space-y-3 p-2" style="max-height: calc(90vh - 200px);">
-                @if(isset($comments) && $comments && $comments->count() > 0)
-                    @foreach($comments as $comment)
-                        @include('partials.modal.task.comment_item', ['comment' => $comment, 'taskId' => $task->id, 'level' => 0])
-                    @endforeach
 
-                    @if($comments->hasMorePages())
-                        <div class="text-center py-2">
-                            <button onclick="loadMoreComments({{ $task->id }}, '{{ $comments->nextPageUrl() }}')"
-                                    class="text-sm text-blue-500 hover:text-blue-600">
-                                <i class="fas fa-chevron-down mr-1"></i> Загрузить еще
-                            </button>
+            @if($task->is_personal)
+                <div class="flex-1 flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fas fa-lock text-5xl text-gray-300 mb-3"></i>
+                        <p class="text-gray-500">Сообщений к задаче нет</p>
+                        <p class="text-sm text-gray-400 mt-1">Сообщения недоступны для личных задач</p>
+                    </div>
+                </div>
+            @else
+                {{-- Список комментариев --}}
+                <div id="commentsList" class="flex-1 overflow-y-auto space-y-3 p-2" style="max-height: calc(90vh - 200px);">
+                    @if(isset($comments) && $comments && $comments->count() > 0)
+                        @foreach($comments as $comment)
+                            @include('partials.modal.task.comment_item', ['comment' => $comment, 'taskId' => $task->id, 'level' => 0])
+                        @endforeach
+
+                        @if($comments->hasMorePages())
+                            <div class="text-center py-2">
+                                <button onclick="loadMoreComments({{ $task->id }}, '{{ $comments->nextPageUrl() }}')"
+                                        class="text-sm text-blue-500 hover:text-blue-600">
+                                    <i class="fas fa-chevron-down mr-1"></i> Загрузить еще
+                                </button>
+                            </div>
+                        @endif
+                    @else
+                        <div class="flex-1 flex items-center justify-center">
+                            <div class="text-center">
+                                <i class="fas fa-comment-dots text-5xl text-gray-300 mb-3"></i>
+                                <p class="text-sm text-gray-400 mt-1">Напишите первое сообщение</p>
+                            </div>
                         </div>
                     @endif
-                @else
-                    <div class="flex-1 flex items-center justify-center">
-                        <div class="text-center">
-                            <i class="fas fa-comment-dots text-5xl text-white mb-3"></i>
-                            <p class="text-sm text-gray-400 mt-1">Напишите первое сообщение</p>
+                </div>
+
+                {{-- Форма добавления комментария --}}
+                @if(isset($canComment) && $canComment)
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-1 relative p-4">
+                                <textarea id="commentInput"
+                                          rows="2"
+                                          class="w-full px-3 py-2 pr-12 border placeholder-pt-2 border-gray-300 rounded-lg focus:ring-2 h-[80px] focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+                                          placeholder="Напишите сообщение..."></textarea>
+                                <button onclick="submitComment({{ $task->id }})"
+                                        class="absolute right-[2rem] top-1/2 -translate-y-1/2 p-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm flex w-[40px] h-[40px] items-center justify-center">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 @endif
+            @endif
+        </div>
+
+        {{-- КОНТЕНТ: Подзадачи --}}
+        <div id="subtasksTab" class="flex-1 flex flex-col h-full hidden">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-200 p-2 bg-white rounded-lg">
+                <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                    <i class="fas fa-tasks text-green-600 mr-2"></i>Подзадачи
+                    <span id="subtasksCountBadge" class="ml-1 text-xs text-gray-400">({{ isset($subtasks) ? $subtasks->count() : 0 }})</span>
+                </h2>
+                @if(auth()->user()->canViewAllCompanyTasks() || $task->author_id === auth()->id())
+                    <button onclick="openCreateSubtaskModal({{ $task->id }})"
+                            class="text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg transition flex items-center">
+                        <i class="fas fa-plus mr-1"></i> Добавить подзадачу
+                    </button>
+                @endif
             </div>
 
-            {{-- Форма добавления комментария --}}
-            @if(isset($canComment) && $canComment)
-                <div class="mt-4 pt-4 border-t border-gray-200">
-                    <div class="flex items-start space-x-3">
-                        <div class="flex-1 relative p-4">
-                <textarea id="commentInput"
-                          rows="2"
-                          class="w-full px-3 py-2 pr-12 border placeholder-pt-2 border-gray-300 rounded-lg focus:ring-2 h-[80px] focus:ring-blue-500 focus:border-transparent resize-none text-sm"
-                          placeholder="Напишите сообщение..."></textarea>
-                            <button onclick="submitComment({{ $task->id }})"
-                                    class="absolute right-[2rem] top-1/2 -translate-y-1/2 p-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm flex w-[40px] h-[40px] items-center justify-center">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
+            <div id="subtasksList" class="flex-1 overflow-y-auto space-y-2 p-2" style="max-height: calc(90vh - 200px);">
+                @if($task->subtasks && $task->subtasks->count() > 0)
+                    @foreach($task->subtasks as $subtask)
+                        <div class="subtask-item bg-gray-50 rounded-lg p-3 border border-gray-200" data-subtask-id="{{ $subtask->id }}">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start space-x-3 flex-1">
+                                    <button onclick="toggleSubtask({{ $subtask->id }})"
+                                            class="mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all
+                                {{ $subtask->status === 'выполнена' ? 'bg-green-500 border-green-500' : 'border-gray-300' }}">
+                                        @if($subtask->status === 'выполнена')
+                                            <i class="fas fa-check text-white text-xs"></i>
+                                        @endif
+                                    </button>
+                                    <div>
+                                        <p class="font-medium text-gray-800">{{ $subtask->name }}</p>
+                                        @if($subtask->description)
+                                            <p class="text-sm text-gray-500">{{ $subtask->description }}</p>
+                                        @endif
+                                        <div class="flex items-center gap-2 mt-1 text-xs text-gray-400">
+                                            @if($subtask->user)
+                                                <span>👤 {{ $subtask->user->name }}</span>
+                                            @endif
+                                            @if($subtask->deadline)
+                                                <span>📅 {{ $subtask->deadline->format('d.m.Y') }}</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onclick="deleteSubtask({{ $subtask->id }})" class="text-red-500 hover:text-red-700">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            @endif
-        @endif
+                    @endforeach
+                @endif
+            </div>
+        </div>
     </div>
 </div>
 
@@ -284,10 +363,34 @@
     // Устанавливаем ID задачи ГЛОБАЛЬНО
     if (typeof window !== 'undefined') {
         window.currentTaskId = {{ $task->id }};
-        window.taskId = {{ $task->id }}; // дублируем для надежности
+        window.taskId = {{ $task->id }};
     }
 
     console.log('Task ID set to:', window.currentTaskId);
+
+    // Переключение между вкладками
+    function switchTaskTab(tab) {
+        const commentsTab = document.getElementById('commentsTab');
+        const subtasksTab = document.getElementById('subtasksTab');
+        const commentsBtn = document.getElementById('tabCommentsBtn');
+        const subtasksBtn = document.getElementById('tabSubtasksBtn');
+
+        if (tab === 'comments') {
+            commentsTab.classList.remove('hidden');
+            subtasksTab.classList.add('hidden');
+            commentsBtn.classList.add('border-green-500', 'text-green-600');
+            commentsBtn.classList.remove('border-transparent', 'text-gray-500');
+            subtasksBtn.classList.remove('border-green-500', 'text-green-600');
+            subtasksBtn.classList.add('border-transparent', 'text-gray-500');
+        } else {
+            commentsTab.classList.add('hidden');
+            subtasksTab.classList.remove('hidden');
+            subtasksBtn.classList.add('border-green-500', 'text-green-600');
+            subtasksBtn.classList.remove('border-transparent', 'text-gray-500');
+            commentsBtn.classList.remove('border-green-500', 'text-green-600');
+            commentsBtn.classList.add('border-transparent', 'text-gray-500');
+        }
+    }
 
     // Функция загрузки дополнительных комментариев
     function loadMoreComments(taskId, nextPageUrl) {
@@ -309,7 +412,6 @@
 
                 newComments.forEach(comment => {
                     if (commentsList) {
-                        // Вставляем перед кнопкой загрузки, если она есть
                         const loadMoreBtn = commentsList.querySelector('.text-center.pt-2');
                         if (loadMoreBtn) {
                             commentsList.insertBefore(comment, loadMoreBtn);
@@ -319,7 +421,6 @@
                     }
                 });
 
-                // Удаляем кнопку загрузки если это последняя страница
                 const loadMoreBtn = document.querySelector('#commentsList .text-center.pt-2 button');
                 if (loadMoreBtn && !temp.querySelector('#commentsList .text-center.pt-2 button')) {
                     loadMoreBtn.closest('.text-center.pt-2')?.remove();

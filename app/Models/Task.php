@@ -48,6 +48,7 @@ class Task extends Model
         'actual_hours',
         'deleted_by',
         'is_personal',
+        'parent_id',
     ];
 
     protected $casts = [
@@ -121,7 +122,7 @@ class Task extends Model
      */
     public function subtasks(): HasMany
     {
-        return $this->hasMany(Task::class, 'parent_id');
+        return $this->hasMany(Subtask::class, 'task_id');
     }
 
     /**
@@ -457,5 +458,13 @@ class Task extends Model
         $isInDepartment = $user->isInDepartment($this->department_id);
         \Log::info('Department check result: ' . ($isInDepartment ? 'true' : 'false'));
         return $isInDepartment;
+    }
+
+    /**
+     * Получает прогресс выполнения подзадач
+     */
+    public function getSubtasksProgress(): array
+    {
+        return Subtask::getProgress($this->id);
     }
 }

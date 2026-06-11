@@ -150,8 +150,8 @@ class HomeController extends Controller
         if ($user->isManagerRole() && !$user->isLeader()) {
             // Менеджер видит только задачи своих отделов и где он автор
             $departmentIds = $user->departments()->pluck('departments.id')->toArray();
-            $baseQuery = Task::with(['author', 'user', 'department', 'category'])
-                ->withCount('rejections')
+            $baseQuery = Task::with(['author', 'user', 'department', 'category', 'subtasks']) // Добавил 'subtasks'
+            ->withCount('rejections')
                 ->where('is_personal', '!=', true)
                 ->where('company_id', $user->company_id)
                 ->where(function($query) use ($user, $departmentIds) {
@@ -160,8 +160,8 @@ class HomeController extends Controller
                 });
         } else {
             // Руководитель видит все задачи компании
-            $baseQuery = Task::with(['author', 'user', 'department', 'category'])
-                ->withCount('rejections')
+            $baseQuery = Task::with(['author', 'user', 'department', 'category', 'subtasks']) // Добавил 'subtasks'
+            ->withCount('rejections')
                 ->where('is_personal', '!=', true)
                 ->where('company_id', $user->company_id);
         }
@@ -186,10 +186,10 @@ class HomeController extends Controller
                 'выполнена' => collect()
             ];
 
-            foreach ($allTasks as $task) {
-                $status = $task->status;
+            foreach ($allTasks as $taskItem) {
+                $status = $taskItem->status;
                 if (isset($tasksByStatusForKanban[$status])) {
-                    $tasksByStatusForKanban[$status]->push($task);
+                    $tasksByStatusForKanban[$status]->push($taskItem);
                 }
             }
 

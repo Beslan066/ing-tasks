@@ -239,7 +239,6 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
         return response()->json(['success' => true]);
     });
 
-
 });
 
 Route::get('/test-mailable-fixed', function () {
@@ -511,6 +510,11 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified', 'trackUs
     // Маршруты для редактирования задачи
     Route::get('/{task}/get', [App\Http\Controllers\Frontend\TaskController::class, 'getTask'])->name('tasks.get');
     Route::post('/{task}/update', [App\Http\Controllers\Frontend\TaskController::class, 'update'])->name('tasks.update');
+
+    // Подзадачи
+    Route::post('/{task}/subtasks', [App\Http\Controllers\Frontend\TaskController::class, 'storeSubtask'])->name('tasks.subtasks.store');
+    Route::post('/subtasks/{subtask}/toggle', [App\Http\Controllers\Frontend\TaskController::class, 'toggleSubtaskStatus'])->name('subtasks.toggle');
+    Route::delete('/subtasks/{subtask}', [App\Http\Controllers\Frontend\TaskController::class, 'deleteSubtask'])->name('subtasks.delete');
 
     // МАРШРУТЫ ДЛЯ УПРАВЛЕНИЯ ЗАДАЧАМИ СОТРУДНИКАМИ
     Route::post('/{task}/take', [App\Http\Controllers\Frontend\TaskController::class, 'takeTask'])->name('tasks.take');

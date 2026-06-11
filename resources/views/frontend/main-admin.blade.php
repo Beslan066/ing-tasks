@@ -470,6 +470,9 @@
                                                         <button onclick="openEditModal({{ $task->id }})" class="text-yellow-700 hover:text-yellow-900 p-1" title="Редактировать">
                                                             <i class="fa-solid fa-file-pen"></i>
                                                         </button>
+                                                        <button onclick="openCreateSubtaskModal({{ $task->id }})" class="text-yellow-700 hover:text-yellow-900 p-1" title="Подзадача">
+                                                            <i class="fa-solid fa-list"></i>
+                                                        </button>
                                                         @if($task->status === 'на проверке')
                                                             <button onclick="returnToWork({{ $task->id }})" class="text-orange-600 hover:text-orange-900 p-1 text-sm" title="Вернуть на доработку">
                                                                 <i class="fas fa-redo"></i>
@@ -717,6 +720,7 @@
                                                     @else
                                                         <div class="flex space-x-2 action-buttons">
                                                             <button onclick="openEditModal({{ $task->id }})" class="text-yellow-700 hover:text-yellow-900 p-1" title="Редактировать"><i class="fa-solid fa-file-pen"></i></button>
+                                                            <button onclick="openCreateSubtaskModal({{ $task->id }})" class="text-yellow-700 hover:text-yellow-900 p-1" title="Подзадача"><i class="fa-solid fa-list"></i></button>
                                                             @if($task->status === 'на проверке')<button onclick="returnToWork({{ $task->id }})" class="text-orange-600 hover:text-orange-900 p-1 text-sm" title="Вернуть на доработку"><i class="fas fa-redo"></i></button>@endif
                                                             @if($task->author_id === Auth::id())<button onclick="openDeleteModal({{ $task->id }})" class="text-red-600 hover:text-red-900 p-1" title="Удалить"><i class="fa-solid fa-trash"></i></button>@else<button class="text-gray-400 cursor-not-allowed p-1" title="Можно удалять только свои задачи"><i class="fa-solid fa-trash"></i></button>@endif
                                                         </div>
@@ -740,6 +744,7 @@
                                                 <div class="flex space-x-1">
                                                     @if(!$task->trashed())
                                                         <button onclick="openEditModal({{ $task->id }})" class="text-yellow-700 hover:text-yellow-900 p-1" title="Редактировать"><i class="fa-solid fa-file-pen"></i></button>
+                                                        <button onclick="openCreateSubtaskModal({{ $task->id }})" class="text-yellow-700 hover:text-yellow-900 p-1" title="Подзадача"><i class="fa-solid fa-list"></i></button>
                                                         @if($task->author_id === Auth::id())<button onclick="openDeleteModal({{ $task->id }})" class="text-red-600 hover:text-red-900 p-1" title="Удалить"><i class="fa-solid fa-trash"></i></button>@endif
                                                     @endif
                                                 </div>
@@ -882,6 +887,11 @@
                                                                         <i class="fas fa-edit mr-2 text-blue-500 text-xs"></i> Редактировать
                                                                     </button>
                                                                 @endif
+                                                                    @if($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                        <button onclick="openCreateSubtaskModal({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
+                                                                            <i class="fas fa-list mr-2 text-blue-500 text-xs"></i> Подзадача
+                                                                        </button>
+                                                                    @endif
                                                                 @if($statusKey === 'назначена')
                                                                     <button onclick="startTask({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
                                                                         <i class="fas fa-play mr-2 text-green-500 text-xs"></i> Начать
@@ -1045,6 +1055,13 @@
                                                                         <i class="fas fa-edit mr-2 text-blue-500 text-xs"></i> Редактировать
                                                                     </button>
                                                                 @endif
+
+                                                                    @if($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                        <button onclick="openCreateSubtaskModal({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
+                                                                            <i class="fas fa-list mr-2 text-blue-500 text-xs"></i> Подзадача
+                                                                        </button>
+                                                                    @endif
+
                                                                 @if($statusKey === 'назначена')
                                                                     <button onclick="startTask({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
                                                                         <i class="fas fa-play mr-2 text-green-500 text-xs"></i> Начать
@@ -2954,6 +2971,7 @@
                 url.searchParams.set('view_mode', mode);
                 window.location.href = url.toString();
             }
+
         </script>
     @endpush
 

@@ -497,6 +497,7 @@ media-src https://meet.jit.si https:;
 
 <!-- Модальное окно для новой задачи -->
 @include('partials.modal.task.create')
+@include('partials.modal.task.create-subtask')
 
 <!-- Модальное окно уведомлений -->
 @include('partials.modal.notifications-modal')
@@ -2644,6 +2645,183 @@ media-src https://meet.jit.si https:;
             hour: '2-digit',
             minute: '2-digit'
         });
+    }
+
+    // ==================== ПОДЗАДАЧИ ====================
+
+
+    // ==================== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК (КОММЕНТАРИИ / ПОДЗАДАЧИ) ====================
+    function switchTaskTab(tab) {
+        const commentsTab = document.getElementById('commentsTab');
+        const subtasksTab = document.getElementById('subtasksTab');
+        const commentsBtn = document.getElementById('tabCommentsBtn');
+        const subtasksBtn = document.getElementById('tabSubtasksBtn');
+
+        if (!commentsTab || !subtasksTab) return;
+
+        if (tab === 'comments') {
+            commentsTab.classList.remove('hidden');
+            subtasksTab.classList.add('hidden');
+            if (commentsBtn) {
+                commentsBtn.classList.add('border-green-500', 'text-green-600');
+                commentsBtn.classList.remove('border-transparent', 'text-gray-500');
+            }
+            if (subtasksBtn) {
+                subtasksBtn.classList.remove('border-green-500', 'text-green-600');
+                subtasksBtn.classList.add('border-transparent', 'text-gray-500');
+            }
+        } else {
+            commentsTab.classList.add('hidden');
+            subtasksTab.classList.remove('hidden');
+            if (subtasksBtn) {
+                subtasksBtn.classList.add('border-green-500', 'text-green-600');
+                subtasksBtn.classList.remove('border-transparent', 'text-gray-500');
+            }
+            if (commentsBtn) {
+                commentsBtn.classList.remove('border-green-500', 'text-green-600');
+                commentsBtn.classList.add('border-transparent', 'text-gray-500');
+            }
+        }
+    }
+
+    let currentParentTaskId = null;
+
+    function openCreateSubtaskModal(parentTaskId) {
+        currentParentTaskId = parentTaskId;
+        document.getElementById('subtask_parent_id').value = parentTaskId;
+        document.getElementById('createSubtaskForm').reset();
+        document.getElementById('createSubtaskModal').classList.remove('hidden');
+    }
+
+    function closeCreateSubtaskModal() {
+        document.getElementById('createSubtaskModal').classList.add('hidden');
+        currentParentTaskId = null;
+    }
+
+    // Обработчик формы создания подзадачи
+    document.getElementById('createSubtaskForm')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn?.innerHTML;
+
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Создание...';
+            submitBtn.disabled = true;
+        }
+
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetch(`/tasks/${currentParentTaskId}/subtasks`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('Подзадача успешно создана', 'success');
+                closeCreateSubtaskModal();
+                // Обновляем модальное окно задачи
+                if (window.currentTaskId) {
+                    openTaskViewModal(window.currentTaskId);
+                }
+            } else {
+                showNotification(result.message || 'Ошибка при создании подзадачи', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Ошибка при создании подзадачи', 'error');
+        } finally {
+            if (submitBtn) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+    });
+
+    // Переключение статуса подзадачи
+    async function toggleSubtask(subtaskId) {
+        try {
+            const response = await fetch(`/tasks/subtasks/${subtaskId}/toggle`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification(result.message, 'success');
+                // Обновляем модальное окно задачи
+                if (window.currentTaskId) {
+                    openTaskViewModal(window.currentTaskId);
+                }
+            } else {
+                showNotification(result.message || 'Ошибка', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Ошибка при изменении статуса', 'error');
+        }
+    }
+
+    // Меню подзадачи
+    function toggleSubtaskMenu(event, subtaskId) {
+        event.stopPropagation();
+
+        // Закрываем все другие меню
+        document.querySelectorAll('[id^="subtaskMenu-"]').forEach(menu => {
+            if (menu.id !== `subtaskMenu-${subtaskId}`) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        const menu = document.getElementById(`subtaskMenu-${subtaskId}`);
+        if (menu) menu.classList.toggle('hidden');
+    }
+
+    // Редактирование подзадачи
+    function editSubtask(subtaskId) {
+        // TODO: реализовать редактирование подзадачи
+        showNotification('Редактирование подзадачи в разработке', 'info');
+    }
+
+    // Удаление подзадачи
+    async function deleteSubtask(subtaskId) {
+        if (!confirm('Вы уверены, что хотите удалить эту подзадачу?')) return;
+
+        try {
+            const response = await fetch(`/tasks/subtasks/${subtaskId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                    'Accept': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('Подзадача удалена', 'success');
+                if (window.currentTaskId) {
+                    openTaskViewModal(window.currentTaskId);
+                }
+            } else {
+                showNotification(result.message || 'Ошибка при удалении', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Ошибка при удалении подзадачи', 'error');
+        }
     }
 
 </script>
