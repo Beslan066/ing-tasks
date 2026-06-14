@@ -84,6 +84,32 @@ class ImageProcessingService
     }
 
     /**
+     * Получение GD ресурса из пути к файлу
+     */
+    public function createGdResourceFromPath(string $path, string $mimeType)
+    {
+        if (!file_exists($path)) {
+            throw new \Exception('Файл не найден: ' . $path);
+        }
+
+        switch ($mimeType) {
+            case 'image/jpeg':
+                return imagecreatefromjpeg($path);
+            case 'image/png':
+                $resource = imagecreatefrompng($path);
+                imagealphablending($resource, false);
+                imagesavealpha($resource, true);
+                return $resource;
+            case 'image/gif':
+                return imagecreatefromgif($path);
+            case 'image/webp':
+                return imagecreatefromwebp($path);
+            default:
+                throw new \Exception('Неподдерживаемый формат изображения');
+        }
+    }
+
+    /**
      * Оптимизация изображения
      */
     private function optimizeImage($gdResource, string $mimeType, int $width, int $height)
@@ -115,23 +141,29 @@ class ImageProcessingService
     }
 
     /**
-     * Конвертация в другой формат
+     * Конвертация в другой формат с возможностью указания качества
      */
-    public function convertFormat($gdResource, string $fromMime, string $toFormat): string
+    public function convertFormat($gdResource, string $fromMime, string $toFormat, int $quality = 85): string
     {
+        // Для PNG качество игнорируется, так как используется сжатие без потерь
+        $quality = max(1, min(100, $quality));
+
         switch ($toFormat) {
             case 'jpeg':
             case 'jpg':
                 ob_start();
-                imagejpeg($gdResource, null, 85);
+                imagejpeg($gdResource, null, $quality);
                 return ob_get_clean();
             case 'png':
+                // Для PNG качество преобразуется в уровень сжатия (0-9)
+                $compression = 9 - (int)($quality / 11.11); // 85 качество -> ~1-2 уровень сжатия
+                $compression = max(0, min(9, $compression));
                 ob_start();
-                imagepng($gdResource, null, 8);
+                imagepng($gdResource, null, $compression);
                 return ob_get_clean();
             case 'webp':
                 ob_start();
-                imagewebp($gdResource, null, 80);
+                imagewebp($gdResource, null, $quality);
                 return ob_get_clean();
             case 'gif':
                 ob_start();
@@ -140,6 +172,36 @@ class ImageProcessingService
             default:
                 throw new \Exception('Неподдерживаемый формат для конвертации');
         }
+    }
+
+    /**
+     * Конвертация изображения с проверкой MIME типа
+     */
+    public function convertImageWithMimeCheck($gdResource, string $originalMime, string $targetFormat, int $quality = 85): string
+    {
+        // Если формат совпадает, просто возвращаем изображение в исходном формате
+        $originalFormat = $this->getFormatFromMime($originalMime);
+        if ($originalFormat === $targetFormat) {
+            return $this->getImageBlob($gdResource, $originalMime, $quality);
+        }
+
+        return $this->convertFormat($gdResource, $originalMime, $targetFormat, $quality);
+    }
+
+    /**
+     * Получение формата из MIME типа
+     */
+    private function getFormatFromMime(string $mimeType): string
+    {
+        $map = [
+            'image/jpeg' => 'jpeg',
+            'image/jpg' => 'jpeg',
+            'image/png' => 'png',
+            'image/gif' => 'gif',
+            'image/webp' => 'webp'
+        ];
+
+        return $map[$mimeType] ?? 'jpeg';
     }
 
     /**
@@ -201,14 +263,46 @@ class ImageProcessingService
     }
 
     /**
+     * Изменение размера с автоматическим вычислением недостающих параметров
+     */
+    public function resizeAuto($gdResource, ?int $targetWidth, ?int $targetHeight, bool $crop = false, bool $keepProportions = true): object
+    {
+        $originalWidth = imagesx($gdResource);
+        $originalHeight = imagesy($gdResource);
+
+        // Если оба параметра не указаны, возвращаем оригинал
+        if (!$targetWidth && !$targetHeight) {
+            return (object)[
+                'resource' => $gdResource,
+                'width' => $originalWidth,
+                'height' => $originalHeight
+            ];
+        }
+
+        // Если указан только один параметр, вычисляем второй с сохранением пропорций
+        if ($keepProportions && (!$targetWidth || !$targetHeight)) {
+            $ratio = $originalWidth / $originalHeight;
+
+            if ($targetWidth && !$targetHeight) {
+                $targetHeight = (int)($targetWidth / $ratio);
+            } elseif (!$targetWidth && $targetHeight) {
+                $targetWidth = (int)($targetHeight * $ratio);
+            }
+        }
+
+        // Если все еще нет значений, используем оригинальные
+        $targetWidth = $targetWidth ?? $originalWidth;
+        $targetHeight = $targetHeight ?? $originalHeight;
+
+        return $this->resize($gdResource, $targetWidth, $targetHeight, $crop);
+    }
+
+    /**
      * Сохранение прозрачности для изображений
      */
     private function preserveTransparency($newImage, $gdResource): void
     {
         // Проверяем, есть ли прозрачность в исходном изображении
-        $hasTransparency = false;
-
-        // Для PNG изображений сохраняем прозрачность
         imagealphablending($newImage, false);
         imagesavealpha($newImage, true);
 
@@ -247,26 +341,31 @@ class ImageProcessingService
     }
 
     /**
-     * Получение blob изображения
+     * Получение blob изображения с учетом качества
      */
-    private function getImageBlob($gdResource, string $mimeType): string
+    private function getImageBlob($gdResource, string $mimeType, int $quality = 85): string
     {
+        $quality = max(1, min(100, $quality));
+
         ob_start();
         switch ($mimeType) {
             case 'image/jpeg':
-                imagejpeg($gdResource, null, 85);
+                imagejpeg($gdResource, null, $quality);
                 break;
             case 'image/png':
-                imagepng($gdResource, null, 8);
+                // Для PNG качество преобразуется в уровень сжатия
+                $compression = 9 - (int)($quality / 11.11);
+                $compression = max(0, min(9, $compression));
+                imagepng($gdResource, null, $compression);
                 break;
             case 'image/gif':
                 imagegif($gdResource);
                 break;
             case 'image/webp':
-                imagewebp($gdResource, null, 80);
+                imagewebp($gdResource, null, $quality);
                 break;
             default:
-                imagejpeg($gdResource, null, 85);
+                imagejpeg($gdResource, null, $quality);
         }
         return ob_get_clean();
     }
@@ -332,5 +431,129 @@ class ImageProcessingService
                 }
             }
         }
+    }
+
+    /**
+     * Получение информации об изображении по пути
+     */
+    public function getImageInfo(string $path): array
+    {
+        $fullPath = Storage::disk('public')->path($path);
+
+        if (!file_exists($fullPath)) {
+            throw new \Exception('Файл не найден');
+        }
+
+        $info = getimagesize($fullPath);
+        if (!$info) {
+            throw new \Exception('Не удалось получить информацию об изображении');
+        }
+
+        return [
+            'width' => $info[0],
+            'height' => $info[1],
+            'mime' => $info['mime'],
+            'size' => filesize($fullPath)
+        ];
+    }
+
+    /**
+     * Применение всех операций к изображению (цепочка преобразований)
+     */
+    public function applyOperations(string $filePath, array $operations = []): string
+    {
+        $fullPath = Storage::disk('public')->path($filePath);
+
+        if (!file_exists($fullPath)) {
+            throw new \Exception('Файл не найден');
+        }
+
+        $mimeType = mime_content_type($fullPath);
+        $gdResource = $this->createGdResourceFromPath($fullPath, $mimeType);
+
+        // Применяем соотношение сторон
+        if (isset($operations['ratio'])) {
+            $ratios = [
+                '16:9' => 16/9,
+                '4:3' => 4/3,
+                '1:1' => 1,
+                '3:2' => 1.5,
+                '2:3' => 0.6667
+            ];
+
+            $targetRatio = $ratios[$operations['ratio']] ?? null;
+            if ($targetRatio) {
+                $currentWidth = imagesx($gdResource);
+                $currentHeight = imagesy($gdResource);
+                $currentRatio = $currentWidth / $currentHeight;
+
+                if ($currentRatio > $targetRatio) {
+                    $newWidth = (int)($currentHeight * $targetRatio);
+                    $cropX = (int)(($currentWidth - $newWidth) / 2);
+                    $result = $this->resize($gdResource, $newWidth, $currentHeight, true);
+                    imagedestroy($gdResource);
+                    $gdResource = $result->resource;
+                } else {
+                    $newHeight = (int)($currentWidth / $targetRatio);
+                    $result = $this->resize($gdResource, $currentWidth, $newHeight, true);
+                    imagedestroy($gdResource);
+                    $gdResource = $result->resource;
+                }
+            }
+        }
+
+        // Применяем изменение размера
+        if (isset($operations['resize'])) {
+            $resize = $operations['resize'];
+            $result = $this->resizeAuto(
+                $gdResource,
+                $resize['width'] ?? null,
+                $resize['height'] ?? null,
+                $resize['crop'] ?? false,
+                $resize['keep_proportions'] ?? true
+            );
+            imagedestroy($gdResource);
+            $gdResource = $result->resource;
+        }
+
+        // Применяем конвертацию
+        $format = $operations['format'] ?? $this->getFormatFromMime($mimeType);
+        $quality = $operations['quality'] ?? 85;
+
+        $blob = $this->convertFormat($gdResource, $mimeType, $format, $quality);
+        imagedestroy($gdResource);
+
+        // Сохраняем временный файл
+        $tempFileName = 'temp_' . bin2hex(random_bytes(8)) . '.' . ($format === 'jpeg' ? 'jpg' : $format);
+        $tempPath = 'photos/temp/' . $tempFileName;
+        Storage::disk('public')->put($tempPath, $blob);
+
+        return $tempPath;
+    }
+
+    /**
+     * Получение blob изображения с указанным качеством
+     */
+    public function getImageBlobWithQuality($gdResource, string $mimeType, int $quality = 85): string
+    {
+        $quality = max(1, min(100, $quality));
+
+        ob_start();
+        switch ($mimeType) {
+            case 'image/jpeg':
+                imagejpeg($gdResource, null, $quality);
+                break;
+            case 'image/png':
+                $compression = 9 - (int)($quality / 11.11);
+                $compression = max(0, min(9, $compression));
+                imagepng($gdResource, null, $compression);
+                break;
+            case 'image/webp':
+                imagewebp($gdResource, null, $quality);
+                break;
+            default:
+                imagejpeg($gdResource, null, $quality);
+        }
+        return ob_get_clean();
     }
 }

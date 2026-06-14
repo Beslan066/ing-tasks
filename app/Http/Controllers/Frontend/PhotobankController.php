@@ -22,27 +22,48 @@ class PhotobankController extends Controller
         $this->imageProcessor = $imageProcessor;
     }
 
+    /**
+     * Получение GD ресурса из загруженного файла
+     */
+    private function createGdResourceFromUploadedFile($file, string $mimeType)
+    {
+        switch ($mimeType) {
+            case 'image/jpeg':
+                return imagecreatefromjpeg($file->getRealPath());
+            case 'image/png':
+                $resource = imagecreatefrompng($file->getRealPath());
+                imagealphablending($resource, false);
+                imagesavealpha($resource, true);
+                return $resource;
+            case 'image/gif':
+                return imagecreatefromgif($file->getRealPath());
+            case 'image/webp':
+                return imagecreatefromwebp($file->getRealPath());
+            default:
+                throw new \Exception('Неподдерживаемый формат изображения');
+        }
+    }
+
     public function index(Request $request)
     {
         // Для первоначальной загрузки страницы
         if (!$request->ajax()) {
-            // Исправлено: явно загружаем данные с проверкой
             $categories = PhotoCategory::orderBy('name')->get();
             $tags = Tag::orderBy('name')->get();
 
-            // Отладка - проверяем есть ли данные
-            \Log::info('Photobank index - Categories count: ' . $categories->count());
-            \Log::info('Photobank index - Tags count: ' . $tags->count());
+            // ОТЛАДКА - проверяем в логах
+            \Log::info('=== INDEX METHOD DEBUG ===');
+            \Log::info('Categories count: ' . $categories->count());
+            \Log::info('Tags count: ' . $tags->count());
 
-            if ($categories->isEmpty()) {
-                \Log::warning('No categories found! Please add some categories.');
+            if ($categories->count() > 0) {
+                \Log::info('First category: ' . $categories->first()->name);
             }
 
-            if ($tags->isEmpty()) {
-                \Log::warning('No tags found! Please add some tags.');
-            }
-
-            return view('frontend.photobank.index', compact('categories', 'tags'));
+            // ПЕРЕДАЕМ ДАННЫЕ ЧЕРЕЗ with()
+            return view('frontend.photobank.index')
+                ->with('categories', $categories)
+                ->with('tags', $tags);
         }
 
         // Асинхронная загрузка фотографий (только одобренные для публичного просмотра)
@@ -226,9 +247,6 @@ class PhotobankController extends Controller
     {
         $categories = PhotoCategory::orderBy('name')->get();
 
-        // Отладка
-        \Log::info('getCategories called, count: ' . $categories->count());
-
         return response()->json([
             'success' => true,
             'data' => $categories
@@ -238,9 +256,6 @@ class PhotobankController extends Controller
     public function getTags()
     {
         $tags = Tag::orderBy('name')->get();
-
-        // Отладка
-        \Log::info('getTags called, count: ' . $tags->count());
 
         return response()->json([
             'success' => true,
@@ -262,24 +277,34 @@ class PhotobankController extends Controller
         }
 
         $request->validate([
-            'format' => 'required|in:jpeg,png,webp,gif'
+            'format' => 'required|in:jpeg,png,webp,gif',
+            'quality' => 'sometimes|integer|min:1|max:100'
         ]);
 
         try {
             $filePath = Storage::disk('public')->path($photo->file_path);
 
             if (!file_exists($filePath)) {
-                throw new \Exception('Файл изображения не найден');
+                throw new \Exception('Файл изображения не найден: ' . $filePath);
             }
 
-            $gdResource = $this->getGdResourceFromPath($filePath, $photo->mime_type);
+            $quality = $request->input('quality', 85);
+            $gdResource = $this->createGdResourceFromPath($filePath, $photo->mime_type);
 
-            $converted = $this->imageProcessor->convertFormat($gdResource, $photo->mime_type, $request->format);
+            $targetFormat = $request->format;
 
-            $newFileName = pathinfo($photo->file_name, PATHINFO_FILENAME) . '_converted.' . $request->format;
+            // Создаем директорию если не существует
+            $convertDir = storage_path('app/public/photos/converted');
+            if (!file_exists($convertDir)) {
+                mkdir($convertDir, 0755, true);
+            }
+
+            $newFileName = pathinfo($photo->file_name, PATHINFO_FILENAME) . '_converted.' . ($targetFormat === 'jpeg' ? 'jpg' : $targetFormat);
             $newPath = 'photos/converted/' . $newFileName;
 
-            Storage::disk('public')->put($newPath, $converted);
+            // Получаем blob в нужном формате
+            $blob = $this->getImageBlobWithFormat($gdResource, $targetFormat, $quality);
+            Storage::disk('public')->put($newPath, $blob);
 
             imagedestroy($gdResource);
 
@@ -288,16 +313,100 @@ class PhotobankController extends Controller
                 'message' => 'Изображение успешно конвертировано',
                 'url' => Storage::url($newPath),
                 'path' => $newPath,
-                'format' => $request->format
+                'format' => $targetFormat
             ]);
 
         } catch (\Exception $e) {
             \Log::error('Ошибка конвертации: ' . $e->getMessage());
+            \Log::error('Trace: ' . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
                 'message' => 'Ошибка конвертации: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Создание GD ресурса из пути к файлу
+     */
+    private function createGdResourceFromPath(string $path, string $mimeType)
+    {
+        if (!file_exists($path)) {
+            throw new \Exception('Файл не найден: ' . $path);
+        }
+
+        switch ($mimeType) {
+            case 'image/jpeg':
+                return imagecreatefromjpeg($path);
+            case 'image/png':
+                $resource = imagecreatefrompng($path);
+                imagealphablending($resource, false);
+                imagesavealpha($resource, true);
+                return $resource;
+            case 'image/gif':
+                return imagecreatefromgif($path);
+            case 'image/webp':
+                return imagecreatefromwebp($path);
+            default:
+                throw new \Exception('Неподдерживаемый формат изображения: ' . $mimeType);
+        }
+    }
+
+    /**
+     * Получение blob изображения из GD ресурса
+     */
+    private function getImageBlobFromResource($gdResource, string $mimeType, int $quality = 85): string
+    {
+        ob_start();
+        switch ($mimeType) {
+            case 'image/jpeg':
+                imagejpeg($gdResource, null, $quality);
+                break;
+            case 'image/png':
+                // Для PNG качество преобразуется в уровень сжатия (0-9)
+                $compression = 9 - (int)($quality / 11.11);
+                $compression = max(0, min(9, $compression));
+                imagepng($gdResource, null, $compression);
+                break;
+            case 'image/gif':
+                imagegif($gdResource);
+                break;
+            case 'image/webp':
+                imagewebp($gdResource, null, $quality);
+                break;
+            default:
+                imagejpeg($gdResource, null, $quality);
+        }
+        return ob_get_clean();
+    }
+
+    /**
+     * Получение blob изображения с конвертацией в указанный формат
+     */
+    private function getImageBlobWithFormat($gdResource, string $targetFormat, int $quality = 85): string
+    {
+        $quality = max(1, min(100, $quality));
+
+        ob_start();
+        switch ($targetFormat) {
+            case 'jpeg':
+                imagejpeg($gdResource, null, $quality);
+                break;
+            case 'png':
+                $compression = 9 - (int)($quality / 11.11);
+                $compression = max(0, min(9, $compression));
+                imagepng($gdResource, null, $compression);
+                break;
+            case 'webp':
+                imagewebp($gdResource, null, $quality);
+                break;
+            case 'gif':
+                imagegif($gdResource);
+                break;
+            default:
+                imagejpeg($gdResource, null, $quality);
+        }
+        return ob_get_clean();
     }
 
     /**
@@ -314,50 +423,118 @@ class PhotobankController extends Controller
         }
 
         $request->validate([
-            'width' => 'required|integer|min:1|max:4000',
-            'height' => 'required|integer|min:1|max:4000',
-            'crop' => 'boolean'
+            'width' => 'nullable|integer|min:1|max:4000',
+            'height' => 'nullable|integer|min:1|max:4000',
+            'crop' => 'boolean',
+            'keep_proportions' => 'boolean'
         ]);
 
         try {
             $filePath = Storage::disk('public')->path($photo->file_path);
 
             if (!file_exists($filePath)) {
-                throw new \Exception('Файл изображения не найден');
+                throw new \Exception('Файл изображения не найден: ' . $filePath);
             }
 
-            // Получаем расширение файла
+            $gdResource = $this->createGdResourceFromPath($filePath, $photo->mime_type);
+
+            $originalWidth = imagesx($gdResource);
+            $originalHeight = imagesy($gdResource);
+
+            $width = $request->input('width');
+            $height = $request->input('height');
+            $crop = $request->input('crop', false);
+            $keepProportions = $request->input('keep_proportions', true);
+
+            // Если указан только один параметр, вычисляем второй с сохранением пропорций
+            if ($keepProportions) {
+                $ratio = $originalWidth / $originalHeight;
+
+                if ($width && !$height) {
+                    $height = (int)($width / $ratio);
+                } elseif (!$width && $height) {
+                    $width = (int)($height * $ratio);
+                }
+            }
+
+            // Если оба параметра не указаны, используем оригинальные размеры
+            if (!$width && !$height) {
+                $width = $originalWidth;
+                $height = $originalHeight;
+            }
+
+            // Применяем ресайз
+            if ($crop) {
+                // Кроп под заданные размеры
+                $targetRatio = $width / $height;
+                $originalRatio = $originalWidth / $originalHeight;
+
+                if ($originalRatio > $targetRatio) {
+                    $cropWidth = $originalHeight * $targetRatio;
+                    $cropHeight = $originalHeight;
+                    $cropX = ($originalWidth - $cropWidth) / 2;
+                    $cropY = 0;
+                } else {
+                    $cropWidth = $originalWidth;
+                    $cropHeight = $originalWidth / $targetRatio;
+                    $cropX = 0;
+                    $cropY = ($originalHeight - $cropHeight) / 2;
+                }
+
+                $resized = imagecreatetruecolor($width, $height);
+
+                if ($photo->mime_type === 'image/png') {
+                    imagealphablending($resized, false);
+                    imagesavealpha($resized, true);
+                    $transparent = imagecolorallocatealpha($resized, 0, 0, 0, 127);
+                    imagefilledrectangle($resized, 0, 0, $width, $height, $transparent);
+                }
+
+                imagecopyresampled($resized, $gdResource, 0, 0, (int)$cropX, (int)$cropY, $width, $height, (int)$cropWidth, (int)$cropHeight);
+                $newWidth = $width;
+                $newHeight = $height;
+            } else {
+                // Ресайз с сохранением пропорций
+                $ratio = min($width / $originalWidth, $height / $originalHeight);
+                $newWidth = (int)($originalWidth * $ratio);
+                $newHeight = (int)($originalHeight * $ratio);
+
+                $resized = imagecreatetruecolor($newWidth, $newHeight);
+
+                if ($photo->mime_type === 'image/png') {
+                    imagealphablending($resized, false);
+                    imagesavealpha($resized, true);
+                    $transparent = imagecolorallocatealpha($resized, 0, 0, 0, 127);
+                    imagefilledrectangle($resized, 0, 0, $newWidth, $newHeight, $transparent);
+                }
+
+                imagecopyresampled($resized, $gdResource, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
+            }
+
+            // Создаем директорию если не существует
+            $resizeDir = storage_path('app/public/photos/resized');
+            if (!file_exists($resizeDir)) {
+                mkdir($resizeDir, 0755, true);
+            }
+
             $extension = pathinfo($photo->file_path, PATHINFO_EXTENSION);
-            $mimeType = $photo->mime_type;
-
-            $gdResource = $this->getGdResourceFromPath($filePath, $mimeType);
-
-            $resized = $this->imageProcessor->resize(
-                $gdResource,
-                (int)$request->width,
-                (int)$request->height,
-                $request->input('crop', false)
-            );
-
-            // Формируем имя файла с правильным расширением
             $newFileName = pathinfo($photo->file_name, PATHINFO_FILENAME) .
-                "_{$request->width}x{$request->height}." . $extension;
+                "_{$newWidth}x{$newHeight}." . $extension;
             $newPath = 'photos/resized/' . $newFileName;
 
-            // Получаем blob с правильным MIME типом
-            $blob = $this->getImageBlob($resized->resource, $mimeType);
+            $blob = $this->getImageBlobFromResource($resized, $photo->mime_type);
             Storage::disk('public')->put($newPath, $blob);
 
             imagedestroy($gdResource);
-            imagedestroy($resized->resource);
+            imagedestroy($resized);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Изображение успешно изменено',
                 'url' => Storage::url($newPath),
                 'path' => $newPath,
-                'width' => $resized->width,
-                'height' => $resized->height
+                'width' => $newWidth,
+                'height' => $newHeight
             ]);
 
         } catch (\Exception $e) {
@@ -398,13 +575,15 @@ class PhotobankController extends Controller
         $targetRatio = $ratios[$request->ratio];
 
         try {
+            // Получаем полный путь к файлу
             $filePath = Storage::disk('public')->path($photo->file_path);
 
             if (!file_exists($filePath)) {
-                throw new \Exception('Файл изображения не найден');
+                throw new \Exception('Файл изображения не найден: ' . $filePath);
             }
 
-            $gdResource = $this->getGdResourceFromPath($filePath, $photo->mime_type);
+            // Создаем ресурс GD в зависимости от типа файла
+            $gdResource = $this->createGdResourceFromPath($filePath, $photo->mime_type);
 
             $originalWidth = imagesx($gdResource);
             $originalHeight = imagesy($gdResource);
@@ -430,16 +609,25 @@ class PhotobankController extends Controller
             if ($photo->mime_type === 'image/png') {
                 imagealphablending($cropped, false);
                 imagesavealpha($cropped, true);
+                $transparent = imagecolorallocatealpha($cropped, 0, 0, 0, 127);
+                imagefilledrectangle($cropped, 0, 0, $newWidth, $newHeight, $transparent);
             }
 
             imagecopyresampled($cropped, $gdResource, 0, 0, $cropX, $cropY, $newWidth, $newHeight, $newWidth, $newHeight);
 
+            // Создаем директорию если не существует
+            $ratioDir = storage_path('app/public/photos/ratio');
+            if (!file_exists($ratioDir)) {
+                mkdir($ratioDir, 0755, true);
+            }
+
+            $extension = pathinfo($photo->file_path, PATHINFO_EXTENSION);
             $newFileName = pathinfo($photo->file_name, PATHINFO_FILENAME) .
-                "_ratio_" . str_replace(':', 'x', $request->ratio) . "." .
-                pathinfo($photo->file_name, PATHINFO_EXTENSION);
+                "_ratio_" . str_replace(':', 'x', $request->ratio) . "." . $extension;
             $newPath = 'photos/ratio/' . $newFileName;
 
-            $blob = $this->getImageBlob($cropped, $photo->mime_type);
+            // Сохраняем изображение
+            $blob = $this->getImageBlobFromResource($cropped, $photo->mime_type);
             Storage::disk('public')->put($newPath, $blob);
 
             imagedestroy($gdResource);
@@ -457,6 +645,7 @@ class PhotobankController extends Controller
 
         } catch (\Exception $e) {
             \Log::error('Ошибка изменения соотношения: ' . $e->getMessage());
+            \Log::error('Trace: ' . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
                 'message' => 'Ошибка изменения соотношения: ' . $e->getMessage()
@@ -581,60 +770,6 @@ class PhotobankController extends Controller
         ]);
     }
 
-    // Вспомогательные методы
-
-    private function getGdResourceFromPath(string $path, string $mimeType)
-    {
-        switch ($mimeType) {
-            case 'image/jpeg':
-                return imagecreatefromjpeg($path);
-            case 'image/png':
-                $resource = imagecreatefrompng($path);
-                imagealphablending($resource, false);
-                imagesavealpha($resource, true);
-                return $resource;
-            case 'image/gif':
-                return imagecreatefromgif($path);
-            case 'image/webp':
-                return imagecreatefromwebp($path);
-            default:
-                throw new \Exception('Неподдерживаемый формат изображения');
-        }
-    }
-
-    private function getImageBlob($gdResource, string $mimeType): string
-    {
-        ob_start();
-        switch ($mimeType) {
-            case 'image/jpeg':
-                imagejpeg($gdResource, null, 85);
-                break;
-            case 'image/png':
-                imagepng($gdResource, null, 8);
-                break;
-            case 'image/gif':
-                imagegif($gdResource);
-                break;
-            case 'image/webp':
-                imagewebp($gdResource, null, 80);
-                break;
-            default:
-                imagejpeg($gdResource, null, 85);
-        }
-        return ob_get_clean();
-    }
-
-    private function formatBytes($bytes, $precision = 2)
-    {
-        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        $bytes = max($bytes, 0);
-        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-        $pow = min($pow, count($units) - 1);
-        $bytes /= pow(1024, $pow);
-
-        return round($bytes, $precision) . ' ' . $units[$pow];
-    }
-
     /**
      * Обновление информации о фото
      */
@@ -685,5 +820,19 @@ class PhotobankController extends Controller
                 'message' => 'Ошибка при обновлении: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Форматирование байтов
+     */
+    private function formatBytes($bytes, $precision = 2)
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        $bytes /= pow(1024, $pow);
+
+        return round($bytes, $precision) . ' ' . $units[$pow];
     }
 }

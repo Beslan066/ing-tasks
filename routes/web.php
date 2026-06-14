@@ -534,8 +534,6 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified', 'trackUs
     Route::delete('/{task}/comments/{comment}', [App\Http\Controllers\Frontend\TaskCommentController::class, 'destroy']);
 });
 
-
-// Остальные маршруты остаются без изменений
 Route::middleware(['auth', 'verified', 'trackUserActivity', 'require.company'])->group(function () {
     Route::get('/photobank', [\App\Http\Controllers\Frontend\PhotobankController::class, 'index'])->name('photobank');
     Route::post('/photobank/categories', [\App\Http\Controllers\Frontend\PhotobankController::class, 'createCategory'])->name('photobank.categories.store');
