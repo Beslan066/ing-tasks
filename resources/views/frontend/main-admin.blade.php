@@ -333,7 +333,7 @@
                     </div>
 
                     <div class="overflow-x-auto -mx-4 md:mx-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-                        <div class="inline-block min-w-full align-middle">
+                        <div class="inline-block min-w-full align-middle max-[500px]:min-w-[unset] w-full">
                             <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
                                 <table class="min-w-full hidden md:table">
                                     <thead class="bg-transparent/20">
@@ -500,7 +500,7 @@
                                 </table>
 
                                 <!-- Мобильный вид таблицы (карточки) -->
-                                <div class="md:hidden space-y-3">
+                                <div class="md:hidden space-y-3 p-4">
                                     @forelse($tasks as $task)
                                         <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm cursor-pointer hover:shadow-md transition @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif"
                                              onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})">
@@ -575,7 +575,7 @@
                                                             <div class="w-1.5 rounded-sm {{ $style['level'] >= 3 ? $style['filled'] : $style['empty'] }} h-4"></div>
                                                             <div class="w-1.5 rounded-sm {{ $style['level'] >= 4 ? $style['filled'] : $style['empty'] }} h-5"></div>
                                                         </div>
-                                                        <span class="text-xs font-medium {{ $style['text'] }}">с{{ ucfirst($task->priority) }}</span>
+                                                        <span class="text-xs font-medium {{ $style['text'] }}">{{ ucfirst($task->priority) }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-2 gap-2 max-[500px]:grid-cols-1">
