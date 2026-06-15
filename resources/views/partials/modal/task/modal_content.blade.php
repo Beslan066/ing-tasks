@@ -244,11 +244,6 @@
 
         {{-- КОНТЕНТ: Комментаии --}}
         <div id="commentsTab" class="flex-1 flex flex-col h-full">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-200 p-2 bg-white rounded-lg">
-                <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                    <i class="fas fa-comments text-blue-500 mr-2"></i>Сообщения к задаче
-                </h2>
-            </div>
 
             @if($task->is_personal)
                 <div class="flex-1 flex items-center justify-center">

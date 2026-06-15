@@ -429,6 +429,38 @@ media-src https://meet.jit.si https:;
             }
         }
 
+        /* стили для анимации открытия фильтров */
+.fade-in-x {
+    animation: enterAnimationX 0.3s ease-out forwards;
+}
+
+.fade-out-x {
+    animation: leaveAnimationX 0.2s ease-in forwards;
+}
+
+@keyframes enterAnimationX {
+    0% {
+        opacity: 0;
+        transform: translateY(-1rem);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+@keyframes leaveAnimationX {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-1rem);
+    }
+}
+/* стили для анимации открытия фильтров конец*/
         .chat-background {
             background-image: url({{asset('images/chat1.svg')}}), url({{asset('images/chat-2.png')}});
             background-position: right top, center center;

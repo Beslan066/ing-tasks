@@ -182,7 +182,7 @@
                         </div>
                         <div>
                             <button type="submit"
-                                    class="w-20 bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-1.5 px-4 rounded-lg text-sm transition">
+                                    class="bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-1.5 px-4 rounded-lg text-sm transition">
                                 Отправить
                             </button>
                         </div>
