@@ -17,17 +17,17 @@
                     <p class="text-gray-700 text-sm">Управляйте отделами, задачами и почтовой системой</p>
                 @endif
             </div>
-            <div class="flex flex-wrap gap-3 w-full md:w-auto">
+            <div class="flex flex-wrap gap-3 w-full md:w-auto items-start">
                 @if($backgroundEnabled && $backgroundImage)
                     <button id="filterToggle"
-                            class="bg-transparent/20 border-none text-white px-4 py-3 rounded-lg flex items-center space-x-2 transition">
+                            class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition">
                         <i class="fas fa-filter"></i>
                         <span>Фильтры</span>
                         <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform duration-200"></i>
                     </button>
                 @else
                     <button id="filterToggle"
-                            class="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg flex items-center space-x-2 hover:bg-gray-50 transition">
+                            class="bg-white border border-gray-300 text-gray-700 text-sm md:text-base px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-50 transition">
                         <i class="fas fa-filter"></i>
                         <span>Фильтры</span>
                         <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform duration-200"></i>
@@ -54,7 +54,7 @@
                         <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                     </div>
                 </div>
-                <div class="ml-4 flex space-x-4 max-[500px]:flex-col max-[500px]:space-y-3 max-[500px]:space-x-0 mt-4 md:mt-0 max-[500px]:w-full max-[500px]:ml-0">
+                <div class="ml-4 flex space-x-4 max-[500px]:flex-col max-[500px]:space-y-3 max-[500px]:space-x-0 mt-4 md:mt-0 max-[500px]:w-full max-[765px]:ml-0">
                     <select class="border-none rounded-lg  px-4 py-2 bg-transparent/20 text-white"
                             id="filterStatus"
                             onchange="filterDepartments(this.value)">
@@ -84,7 +84,7 @@
                         <i class="fas fa-search absolute left-3 top-3 text-gray-300"></i>
                     </div>
                 </div>
-                <div class="ml-4 flex space-x-4 max-[500px]:flex-col max-[500px]:space-y-3 max-[500px]:space-x-0 mt-4 md:mt-0 max-[500px]:w-full max-[500px]:ml-0">
+                <div class="ml-4 flex space-x-4 max-[500px]:flex-col max-[500px]:space-y-3 max-[500px]:space-x-0 mt-4 md:mt-0 max-[500px]:w-full max-[765px]:ml-0">
                     <select class="rounded-lg  px-4 py-2 bg-white text-black border-2 border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
                             id="filterStatus"
                             onchange="filterDepartments(this.value)">
