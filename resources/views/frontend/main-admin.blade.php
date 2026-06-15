@@ -67,14 +67,14 @@
 
 
                 @if($backgroundEnabled && $backgroundImage)
-                    <button id="filterToggle"
+                    <button id="filterToggle" onclick="toggleFiltersDropdown()"
                             class="flex-1 md:flex-none bg-transparent/20 border-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 transition text-sm md:text-base">
                         <i class="fas fa-filter"></i>
                         <span>Фильтры</span>
                         <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform"></i>
                     </button>
                 @else
-                    <button id="filterToggle"
+                    <button id="filterToggle" onclick="toggleFiltersDropdown()"
                             class="flex-1 md:flex-none bg-white border border-gray-300 text-gray-700 px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-50 transition text-sm md:text-base">
                         <i class="fas fa-filter"></i>
                         <span>Фильтры</span>
@@ -711,8 +711,33 @@
                                                 </td>
                                                 <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : 'Без отдела') }}</td>
                                                 <td class="px-3 py-4 whitespace-nowrap">
-                                                    @php $priorityColors = ['низкий' => 'bg-gray-100 text-gray-800','средний' => 'bg-blue-100 text-blue-800','высокий' => 'bg-orange-100 text-orange-800','критический' => 'bg-red-100 text-red-800']; @endphp
-                                                    @if(!$task->trashed())<span class="px-2 py-1 text-xs font-semibold rounded-full {{ $priorityColors[$task->priority] ?? 'bg-gray-100 text-gray-800' }}">{{ $task->priority }}</span>@else<span class="text-sm text-gray-400">—</span>@endif
+
+                                                    @if(!$task->trashed())
+                                                    <!-- <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $priorityColors[$task->priority] ?? 'bg-gray-100 text-gray-800' }}">
+                                                    {{ $task->priority }}</span> -->
+
+                                                       @php
+                                                        $priorityStyles = [
+                                                            'низкий' => ['level' => 1, 'color' => 'gray', 'bg' => 'bg-gray-50', 'border' => 'border-gray-200', 'filled' => 'bg-gray-500', 'empty' => 'bg-gray-200', 'text' => 'text-gray-700'],
+                                                            'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
+                                                            'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
+                                                            'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
+                                                        ];
+                                                        $style = $priorityStyles[$task->priority] ?? $priorityStyles['средний'];
+                                                    @endphp
+
+                                                    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $style['bg'] }} border {{ $style['border'] }}">
+                                                        <div class="flex items-end gap-[3px] h-5">
+                                                            <div class="w-1.5 rounded-sm {{ $style['level'] >= 1 ? $style['filled'] : $style['empty'] }} h-2"></div>
+                                                            <div class="w-1.5 rounded-sm {{ $style['level'] >= 2 ? $style['filled'] : $style['empty'] }} h-3"></div>
+                                                            <div class="w-1.5 rounded-sm {{ $style['level'] >= 3 ? $style['filled'] : $style['empty'] }} h-4"></div>
+                                                            <div class="w-1.5 rounded-sm {{ $style['level'] >= 4 ? $style['filled'] : $style['empty'] }} h-5"></div>
+                                                        </div>
+                                                        <span class="text-xs font-medium {{ $style['text'] }}">{{ ucfirst($task->priority) }}</span>
+                                                    </div>
+                                                    @else
+                                                    <span class="text-sm text-gray-400">—</span>
+                                                    @endif
                                                 </td>
                                                 <td class="px-3 py-4 whitespace-nowrap">@if($task->author)<div class="text-sm font-medium text-gray-900 truncate max-w-[100px]">{{ $task->author->name }}</div>@else<span class="text-sm text-gray-500">Нет автора</span>@endif</td>
                                                 <td class="px-3 py-4">@if($task->deadline && !$task->trashed())<div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }} text-sm">{{ $task->deadline->format('d.m.Y H:i') }}</div><div class="text-xs text-gray-400">{{ $task->getTimeRemaining() }}</div>@else<span class="text-gray-400 text-sm">—</span>@endif</td>
@@ -1427,10 +1452,34 @@
         });
 
         // ==================== ПЕРЕКЛЮЧЕНИЕ ФИЛЬТРОВ ====================
-        document.getElementById('filterToggle')?.addEventListener('click', function () {
-            document.getElementById('filtersPanel').classList.toggle('hidden');
-        });
+        // document.getElementById('filterToggle')?.addEventListener('click', function () {
+        //     document.getElementById('filtersPanel').classList.toggle('hidden');
+        // });
+  function toggleFiltersDropdown() {
+    const dropdown = document.getElementById('filtersPanel');
+    const chevron = document.getElementById('filterIcon');
 
+    if (!dropdown || !chevron) return;
+    const isHidden = dropdown.classList.contains('hidden');
+
+    if (isHidden) {
+        dropdown.classList.remove('hidden');
+        dropdown.classList.remove('fade-out-x');
+        dropdown.classList.add('fade-in-x');
+        chevron.style.transform = 'rotate(180deg)';
+    } else {
+        dropdown.classList.remove('fade-in-x');
+        dropdown.classList.add('fade-out-x');
+
+        chevron.style.transform = 'rotate(0deg)';
+
+        setTimeout(() => {
+            if (dropdown.classList.contains('fade-out-x')) {
+                dropdown.classList.add('hidden');
+            }
+        }, 200);
+    }
+}
         // ==================== СОРТИРОВКА ====================
         // Обновите обработчики сортировки
         document.getElementById('sortSelect')?.addEventListener('change', function () {

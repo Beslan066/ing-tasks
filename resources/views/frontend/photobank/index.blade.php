@@ -14,7 +14,7 @@
                     <p class="text-white text-sm">Инструменты для продуктивной работы</p>
                 @else
                     <h2 class="text-3xl font-bold text-[#16a34a]">Фотобанк</h2>
-                    <p class="text-white text-sm">Инструменты для продуктивной работы</p>
+                    <p class="text-gray-700 text-sm">Инструменты для продуктивной работы</p>
                 @endif
             </div>
             <div class="flex gap-3">
