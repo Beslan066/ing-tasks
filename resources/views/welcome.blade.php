@@ -25,14 +25,29 @@
                 <i class="fas fa-plus"></i>
                 <span>Добавить</span>
             </button>
+             <div class="hidden max-[450px]:block">
+             @if($backgroundEnabled && $backgroundImage)
+                    <a href="{{route('allTasks')}}" class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
+                        <span>Все задачи</span>
+                        <span id="activeFiltersCount"
+                              class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
+                    </a>
+                @else
+                    <a href="{{route('allTasks')}}" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
+                        <span>Все задачи</span>
+                        <span id="activeFiltersCount"
+                              class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
+                    </a>
+                @endif
+                </div>
         </div>
     </div>
 
     <!-- Фильтры -->
     <div class="mb-4 max-[500px]:mb-1 relative">
         <div class="flex items-center gap-2 flex-wrap">
-
-            <div>
+<!-- class="max-[450px]:fixed max-[450px]:bottom-3 max-[450px]:left-3" -->
+            <div class="max-[450px]:hidden">
                 @if($backgroundEnabled && $backgroundImage)
                     <a href="{{route('allTasks')}}" class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
                         <span>Все задачи</span>
@@ -72,7 +87,7 @@
 
                 <!-- Выпадающая панель фильтров -->
                 <div id="filtersDropdown"
-                     class="hidden absolute left-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border z-50 max-[500px]:w-[95vw] max-[500px]:left-[-100%] max-[500px]:transform max-[500px]:translate-x-[5%]">
+                     class="hidden absolute left-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border z-50 max-[500px]:w-[95vw] max-[500px]:left-[-100%] max-[500px]:transform max-[500px]:translate-x-[5%] max-[450px]:left-[-0%]  max-[450px]:translate-x-[0%]">
                     <div class="p-4 border-b border-gray-100">
                         <div class="flex justify-between items-center">
                             <h3 class="font-semibold text-gray-800">Фильтрация задач</h3>
