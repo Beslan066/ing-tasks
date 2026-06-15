@@ -92,7 +92,7 @@
                 </div>
 
                 <!-- Дополнительные фильтры -->
-                <div id="advancedFilters" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 hidden">
+                <div id="advancedFilters" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 p-2 hidden">
                     <div>
                         <label class="block text-sm font-medium text-white mb-1">Дата регистрации от</label>
                         <input type="date" id="dateFrom"
@@ -188,7 +188,7 @@
                 </div>
 
                 <!-- Дополнительные фильтры -->
-                <div id="advancedFilters" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 hidden">
+                <div id="advancedFilters" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-2 md:gap-4 hidden">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Дата регистрации от</label>
                         <input type="date" id="dateFrom"
