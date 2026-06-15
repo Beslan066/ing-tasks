@@ -200,11 +200,11 @@
         <!-- Нижняя часть -->
         <div class="mt-auto space-y-4 pt-4 border-t border-white/10">
             <!-- Файловое хранилище -->
-            <div class="bg-transparent/10 p-4 rounded-xl border border-white/5">
-                <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
+            <div class="storage bg-transparent/10 p-4 rounded-xl border border-white/5">
+                <div class="storage__top_wrapper flex items-center justify-between mb-2">
+                    <div class="storage__top flex items-center gap-2">
                         <i class="fas fa-hard-drive text-primary-500"></i>
-                        <h6 class="font-medium text-white text-sm">Хранилище</h6>
+                        <h6 class="storage__title font-medium text-white text-sm">Хранилище</h6>
                         <!-- Иконка типа подписки -->
                         <i class="fas {{ $licenseIcon }} {{ $licenseColor }} text-xs" title="{{ $licenseText }}"></i>
                     </div>
@@ -212,7 +212,7 @@
                 </div>
 
                 <!-- Прогресс бар -->
-                <div class="w-full bg-white/10 rounded-full h-1.5 mb-2 overflow-hidden">
+                <div class="storage__progress-bar w-full bg-white/10 rounded-full h-1.5 mb-2 overflow-hidden">
                     <div class="progress-bar h-full rounded-full transition-all duration-300"
                          style="width: {{ min($usagePercentage, 100) }}%;
                                 background: {{ $usagePercentage > 90 ? '#ef4444' : ($usagePercentage > 70 ? '#f59e0b' : '#22c55e') }}">
@@ -220,7 +220,7 @@
                 </div>
 
                 <!-- Информация об использовании -->
-                <div class="text-xs text-sidebar-text space-y-1">
+                <div class="storage__info text-xs text-sidebar-text space-y-1">
                     <div class="flex justify-between">
                         <span>Использовано:</span>
                         <span class="text-white">{{ $usedStorageFormatted }}</span>
@@ -394,7 +394,50 @@
             .main-container.sidebar-mode-collapsed {
                 .sidebar {
                     max-width: 4.5rem !important;
+                    .storage {
+                        padding-top: 0.5rem;
+                        padding-bottom: 0rem;
+                    }
+                        .storage__top {
 
+                            h6 {
+                                position: absolute;
+                              visibility: hidden;
+                    opacity: 0;
+                    max-width: 0;
+                    max-height: 0;
+                    transition: all 0.3s ease;
+                            }
+                            i:last-child {
+                                position: absolute;
+                              visibility: hidden;
+                    opacity: 0;
+                    max-width: 0;
+                    max-height: 0;
+                    transition: all 0.3s ease;
+                            }
+                        }
+                        .storage__info {
+                            white-space: nowrap;
+                          visibility: hidden;
+                    opacity: 0;
+                    max-width: 0;
+                    max-height: 0;
+                    transition: all 0.3s ease;
+                        }
+                        .storage__top_wrapper {
+                             flex-direction: column;
+                             /* align-items: center; */
+                             gap:0.5rem;
+                        }
+
+                        .storage__progress-bar {
+                         visibility: hidden;
+                    opacity: 0;
+                    max-width: 0;
+                    max-height: 0;
+                    transition: all 0.3s ease;
+                        }
                     .logotype__text {
                         visibility: hidden;
                         opacity: 0;
@@ -412,9 +455,9 @@
                         position: absolute;
                     }
                 }
-.sidebar-toggle-btn i {
-    transform: rotate(180deg);
-}
+                .sidebar-toggle-btn i {
+                    transform: rotate(180deg);
+                }
                 .active-page {
                     padding-left: calc(1.5rem + 4.5rem);
                 }
@@ -525,6 +568,45 @@
                         background-color: rgb(0 0 0 / 0.2);
                         border-radius: 0.5rem;
                     }
+  .storage {
+                        padding-top:1rem;
+                        padding-bottom: 1rem;
+                    }
+                    .storage__top {
+
+                            h6 {
+                                position: unset;
+                                 visibility: visible;
+                        opacity: 1;
+                        max-width: none;
+                        max-height: none;
+                            }
+                            i:last-child {
+                                position: unset;
+                                 visibility: visible;
+                        opacity: 1;
+                        max-width: none;
+                        max-height: none;
+                            }
+                        }
+                        .storage__info {
+                             visibility: visible;
+                        opacity: 1;
+                        max-width: none;
+                        max-height: none;
+                        }
+                        .storage__top_wrapper {
+                             flex-direction: row;
+                             /* align-items: center; */
+                             gap:0.5rem;
+                        }
+
+                        .storage__progress-bar {
+                             visibility: visible;
+                        opacity: 1;
+                        max-width: none;
+                        max-height: none;
+                        }
                 }
             }
             .main-container.has-background.sidebar-mode-collapsed {

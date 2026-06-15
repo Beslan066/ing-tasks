@@ -10,7 +10,7 @@
 
     <!-- Страница статистики компании -->
     <div id="company-stats">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
+        <div class="flex flex-col md:flex-row justify-between items-start mb-6 md:mb-8 gap-4">
             <div>
                 @if($backgroundEnabled && $backgroundImage)
                     <h2 class="text-3xl font-bold text-white">Задачи компании</h2>
@@ -21,7 +21,7 @@
                 @endif
             </div>
 
-            <div class="flex flex-wrap gap-2 w-full md:w-auto">
+            <div class="flex flex-wrap gap-2 w-full md:w-auto items-start">
                 @if(auth()->user()->isManager() || auth()->user()->isSupervisor())
                     @if($company && $company->license_type === 'basic')
                         @include('partials.subscription')
@@ -3027,9 +3027,15 @@
             background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
             transform: scale(0.98);
         }
-        .modal-content {
-            animation: fadeIn 0.3s ease-out;
-        }
+         .modal-content {
+    animation: fadeIn 0.3s ease-out;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.modal-content::-webkit-scrollbar {
+    display: none;
+}
         .task-menu {
             animation: fadeIn 0.15s ease-out;
         }
