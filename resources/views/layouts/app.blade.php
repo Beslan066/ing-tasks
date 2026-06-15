@@ -2100,21 +2100,16 @@ media-src https://meet.jit.si https:;
                 showNotification('Задача "' + escapeHtml(taskName) + '" успешно создана!', 'success');
                 hideQuickAddForm();
 
-                // Добавляем новую задачу в колонку без перезагрузки страницы
-                if (data.task) {
-                    addTaskToColumn(data.task);
-                } else {
-                    // Если нет данных задачи в ответе, просто перезагружаем
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
-                }
+                // Просто перезагружаем страницу для обновления списка задач
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
             } else {
                 showNotification(data.message || 'Ошибка при создании задачи', 'error');
             }
         } catch (error) {
             console.error('Ошибка:', error);
-            showNotification('Ошибка при создании задачи', 'error');
+            showNotification('Ошибка при создании задачи: ' + error.message, 'error');
         } finally {
             if (submitBtn) {
                 submitBtn.innerHTML = originalText;
