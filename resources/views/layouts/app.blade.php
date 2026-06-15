@@ -1999,6 +1999,193 @@ media-src https://meet.jit.si https:;
         });
     }
 
+    // ==================== БЫСТРОЕ ДОБАВЛЕНИЕ ЗАДАЧИ (НОВЫЙ СТИЛЬ) ====================
+    function showQuickAddForm() {
+        const showBtn = document.getElementById('showQuickAddBtn');
+        const form = document.getElementById('quickAddForm');
+        const formInner = document.getElementById('quickAddFormInner');
+
+        if (showBtn && form && formInner) {
+            showBtn.classList.add('hidden');
+            form.classList.remove('hidden');
+
+            // Анимация появления
+            setTimeout(() => {
+                formInner.classList.remove('scale-95', 'opacity-0');
+                formInner.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            // Фокусируемся на поле ввода названия
+            setTimeout(() => {
+                document.getElementById('quickTaskName').focus();
+            }, 200);
+        }
+    }
+
+    function hideQuickAddForm() {
+        const showBtn = document.getElementById('showQuickAddBtn');
+        const form = document.getElementById('quickAddForm');
+        const formInner = document.getElementById('quickAddFormInner');
+
+        if (formInner) {
+            formInner.classList.remove('scale-100', 'opacity-100');
+            formInner.classList.add('scale-95', 'opacity-0');
+        }
+
+        setTimeout(() => {
+            if (form && showBtn) {
+                form.classList.add('hidden');
+                showBtn.classList.remove('hidden');
+            }
+        }, 200);
+
+        // Очищаем форму
+        document.getElementById('quickTaskName').value = '';
+        document.getElementById('quickTaskDescription').value = '';
+        document.getElementById('quickTaskDeadline').value = '';
+        document.getElementById('quickTaskPriority').value = 'средний';
+    }
+
+    async function createQuickTask() {
+        const taskName = document.getElementById('quickTaskName').value.trim();
+
+        if (!taskName) {
+            const input = document.getElementById('quickTaskName');
+            input.classList.add('shake');
+            input.style.border = '2px solid #ef4444';
+            setTimeout(() => {
+                input.classList.remove('shake');
+                input.style.border = '';
+            }, 500);
+            showNotification('Пожалуйста, укажите название задачи', 'error');
+            document.getElementById('quickTaskName').focus();
+            return;
+        }
+
+        const submitBtn = document.querySelector('#quickAddForm button[onclick="createQuickTask()"]');
+        const originalText = submitBtn?.innerHTML;
+
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i><span>Создание...</span>';
+            submitBtn.disabled = true;
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('name', taskName);
+            formData.append('description', document.getElementById('quickTaskDescription').value);
+            formData.append('priority', document.getElementById('quickTaskPriority').value);
+            formData.append('deadline', document.getElementById('quickTaskDeadline').value || '');
+            formData.append('status', 'назначена');
+            formData.append('is_personal', '1');
+            formData.append('_token', '{{ csrf_token() }}');
+
+            @if(auth()->check())
+            formData.append('user_id', '{{ auth()->id() }}');
+            formData.append('author_id', '{{ auth()->id() }}');
+            @endif
+
+            const response = await fetch('/tasks/personal/store', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showNotification('Задача "' + escapeHtml(taskName) + '" успешно создана!', 'success');
+                hideQuickAddForm();
+
+                // Просто перезагружаем страницу для обновления списка задач
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                showNotification(data.message || 'Ошибка при создании задачи', 'error');
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+            showNotification('Ошибка при создании задачи: ' + error.message, 'error');
+        } finally {
+            if (submitBtn) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+    }
+
+    function showSuccessNotification(message, taskName) {
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-20 right-4 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-xl shadow-2xl z-50 transform transition-all duration-300 translate-x-full';
+        notification.innerHTML = `
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                <i class="fas fa-check-circle text-xl"></i>
+            </div>
+            <div>
+                <p class="font-semibold">${message}</p>
+                <p class="text-sm text-white/80">"${escapeHtml(taskName.substring(0, 50))}${taskName.length > 50 ? '...' : ''}"</p>
+            </div>
+        </div>
+    `;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.classList.remove('translate-x-full');
+            notification.classList.add('translate-x-0');
+        }, 100);
+
+        setTimeout(() => {
+            notification.classList.remove('translate-x-0');
+            notification.classList.add('translate-x-full');
+            setTimeout(() => {
+                if (notification.parentNode) notification.parentNode.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+
+    // Добавляем поддержку Enter и Escape
+    document.addEventListener('DOMContentLoaded', function () {
+        const quickTaskName = document.getElementById('quickTaskName');
+        if (quickTaskName) {
+            quickTaskName.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    createQuickTask();
+                }
+            });
+        }
+
+        // Escape для закрытия формы
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                const form = document.getElementById('quickAddForm');
+                if (form && !form.classList.contains('hidden')) {
+                    hideQuickAddForm();
+                }
+            }
+        });
+    });
+
+    // Эффект встряски для инпутов
+    const style = document.createElement('style');
+    style.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    .shake {
+        animation: shake 0.3s ease-in-out;
+    }
+`;
+    document.head.appendChild(style);
+
+    // Конец быстрого добавления
 </script>
 
 <script>
