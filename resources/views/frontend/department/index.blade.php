@@ -54,7 +54,7 @@
                         <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                     </div>
                 </div>
-                <div class="ml-4 flex space-x-4 max-[500px]:flex-col max-[500px]:space-y-3 max-[500px]:space-x-0 mt-4 md:mt-0 max-[500px]:w-full max-[500px]:ml-0">
+                <div class="ml-4 flex space-x-4 max-[500px]:flex-col max-[500px]:space-y-3 max-[500px]:space-x-0 mt-4 md:mt-0 max-[500px]:w-full max-[765px]:ml-0">
                     <select class="border-none rounded-lg  px-4 py-2 bg-transparent/20 text-white"
                             id="filterStatus"
                             onchange="filterDepartments(this.value)">
@@ -84,7 +84,7 @@
                         <i class="fas fa-search absolute left-3 top-3 text-gray-300"></i>
                     </div>
                 </div>
-                <div class="ml-4 flex space-x-4 max-[500px]:flex-col max-[500px]:space-y-3 max-[500px]:space-x-0 mt-4 md:mt-0 max-[500px]:w-full max-[500px]:ml-0">
+                <div class="ml-4 flex space-x-4 max-[500px]:flex-col max-[500px]:space-y-3 max-[500px]:space-x-0 mt-4 md:mt-0 max-[500px]:w-full max-[765px]:ml-0">
                     <select class="rounded-lg  px-4 py-2 bg-white text-black border-2 border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
                             id="filterStatus"
                             onchange="filterDepartments(this.value)">

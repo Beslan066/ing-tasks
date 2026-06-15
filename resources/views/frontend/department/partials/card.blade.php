@@ -55,7 +55,7 @@
             </div>
 
             <!-- Статистика отдела -->
-            <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="grid grid-cols-2 gap-4 mb-6 max-[400px]:grid-cols-1">
                 <div class="backdrop-blur-md bg-transparent/10 rounded-lg p-4">
                     <div class="flex items-center justify-between">
                         <div>
@@ -253,7 +253,7 @@
             </div>
 
             <!-- Статистика отдела -->
-            <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="grid grid-cols-2 gap-4 mb-6 max-[400px]:grid-cols-1">
                 <div class="bg-gray-50 rounded-lg p-4">
                     <div class="flex items-center justify-between">
                         <div>

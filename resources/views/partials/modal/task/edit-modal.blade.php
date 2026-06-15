@@ -298,7 +298,7 @@
             </div>
 
             <!-- Кнопки действий -->
-            <div class="flex justify-end space-x-3 pt-6 mt-4 border-t border-gray-200">
+            <div class="flex justify-end space-x-3 pt-6 mt-4 border-t border-gray-200 max-[500px]:flex-col-reverse max-[500px]:space-x-0 max-[500px]:gap-3">
                 <button type="button" onclick="closeEditModal()"
                         class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
                     Отмена
