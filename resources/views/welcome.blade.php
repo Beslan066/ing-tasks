@@ -29,7 +29,7 @@
     </div>
 
     <!-- Фильтры -->
-    <div class="mb-4 max-[500px]:mb-1">
+    <div class="mb-4 max-[500px]:mb-1 relative">
         <div class="flex items-center gap-2 flex-wrap">
 
             <div>
@@ -72,7 +72,7 @@
 
                 <!-- Выпадающая панель фильтров -->
                 <div id="filtersDropdown"
-                     class="hidden absolute left-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border z-50 max-[500px]:w-[100vw]">
+                     class="hidden absolute left-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border z-50 max-[500px]:w-[95vw] max-[500px]:left-[-100%] max-[500px]:transform max-[500px]:translate-x-[5%]">
                     <div class="p-4 border-b border-gray-100">
                         <div class="flex justify-between items-center">
                             <h3 class="font-semibold text-gray-800">Фильтрация задач</h3>
@@ -96,13 +96,11 @@
                                     <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
                                            data-filter-type="priority" value="critical">
                                     <span class="text-sm text-gray-700">Критический</span>
-                                    <span class="text-sm">🚨</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
                                     <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
                                            data-filter-type="priority" value="high">
                                     <span class="text-sm text-gray-700">Высокий</span>
-                                    <span class="text-sm">‼️</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
                                     <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
@@ -130,13 +128,11 @@
                                     <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
                                            data-filter-type="deadline" value="overdue">
                                     <span class="text-sm text-gray-700">Просроченные</span>
-                                    <span class="text-sm text-red-500">⚠️</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
                                     <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
                                            data-filter-type="deadline" value="today">
                                     <span class="text-sm text-gray-700">Сегодня</span>
-                                    <span class="text-sm text-orange-500">📅</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
                                     <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
@@ -164,7 +160,6 @@
                                     <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
                                            data-filter-type="has-files" value="true">
                                     <span class="text-sm text-gray-700">Есть файлы</span>
-                                    <span class="text-sm">📎</span>
                                 </label>
                                 <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
                                     <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
