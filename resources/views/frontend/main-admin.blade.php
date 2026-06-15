@@ -478,6 +478,10 @@
                                                                 <i class="fas fa-redo"></i>
                                                             </button>
                                                         @endif
+                                                        <!-- КНОПКА АРХИВАЦИИ -->
+                                                        <button onclick="archiveTask({{ $task->id }})" class="text-yellow-600 hover:text-yellow-900 p-1" title="В архив">
+                                                            <i class="fas fa-archive"></i>
+                                                        </button>
                                                         @if($task->author_id === Auth::id())
                                                             <button onclick="openDeleteModal({{ $task->id }})" class="text-red-600 hover:text-red-900 p-1" title="Удалить">
                                                                 <i class="fa-solid fa-trash"></i>
@@ -940,9 +944,15 @@
                                                                         <i class="fas fa-edit mr-2 text-blue-500 text-xs"></i> Редактировать
                                                                     </button>
                                                                 @endif
-                                                                    @if($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                @if($task->author_id == auth()->id() || auth()->user()->isLeader())
                                                                         <button onclick="openCreateSubtaskModal({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
                                                                             <i class="fas fa-list mr-2 text-blue-500 text-xs"></i> Подзадача
+                                                                        </button>
+                                                                @endif
+                                                                    <!-- КНОПКА АРХИВАЦИИ -->
+                                                                    @if($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                        <button onclick="archiveTask({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
+                                                                            <i class="fas fa-archive mr-2 text-yellow-500 text-xs"></i> В архив
                                                                         </button>
                                                                     @endif
                                                                 @if($statusKey === 'назначена')
@@ -955,6 +965,7 @@
                                                                         <i class="fas fa-check-circle mr-2 text-green-500 text-xs"></i> На проверку
                                                                     </button>
                                                                 @endif
+
                                                                 @if($statusKey === 'на проверке' && auth()->user()->isLeader())
                                                                     <button onclick="approveTask({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
                                                                         <i class="fas fa-check-double mr-2 text-green-500 text-xs"></i> Одобрить
@@ -1109,11 +1120,18 @@
                                                                     </button>
                                                                 @endif
 
-                                                                    @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                                        <button onclick="openCreateSubtaskModal({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                            <i class="fas fa-list mr-2 text-blue-500 text-xs"></i> Подзадача
-                                                                        </button>
-                                                                    @endif
+                                                                @if($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                    <button onclick="openCreateSubtaskModal({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
+                                                                        <i class="fas fa-list mr-2 text-blue-500 text-xs"></i> Подзадача
+                                                                    </button>
+                                                                @endif
+
+                                                                <!-- КНОПКА АРХИВАЦИИ -->
+                                                                @if($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                    <button onclick="archiveTask({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
+                                                                        <i class="fas fa-archive mr-2 text-yellow-500 text-xs"></i> В архив
+                                                                    </button>
+                                                                @endif
 
                                                                 @if($statusKey === 'назначена')
                                                                     <button onclick="startTask({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
@@ -1202,6 +1220,105 @@
                     </div>
                 </div>
             @endif
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения архивации -->
+    <div id="confirmArchiveModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[100] backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0" id="confirmArchiveModalContent">
+            <div class="p-6">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-archive text-3xl text-yellow-600"></i>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold text-center text-gray-800 mb-2">Архивация задачи</h3>
+                <p class="text-gray-600 text-center mb-6" id="archiveTaskMessage">
+                    Вы уверены, что хотите отправить эту задачу в архив?
+                </p>
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-yellow-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-yellow-700">
+                                Архивированные задачи можно будет восстановить на странице "Все задачи"
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <button onclick="closeConfirmArchiveModal()" class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition font-medium">
+                        Отмена
+                    </button>
+                    <button onclick="confirmArchive()" class="flex-1 px-4 py-2.5 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600 transition font-medium">
+                        <i class="fas fa-archive mr-2"></i>Архивировать
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения восстановления -->
+    <div id="confirmRestoreModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[100] backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0" id="confirmRestoreModalContent">
+            <div class="p-6">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-trash-restore text-3xl text-green-600"></i>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold text-center text-gray-800 mb-2">Восстановление задачи</h3>
+                <p class="text-gray-600 text-center mb-6">
+                    Задача будет восстановлена и появится на доске. Продолжить?
+                </p>
+                <div class="flex space-x-3">
+                    <button onclick="closeConfirmRestoreModal()" class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition font-medium">
+                        Отмена
+                    </button>
+                    <button onclick="confirmRestore()" class="flex-1 px-4 py-2.5 bg-green-500 text-white rounded-xl hover:bg-green-600 transition font-medium">
+                        <i class="fas fa-check mr-2"></i>Восстановить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения полного удаления -->
+    <div id="confirmForceDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[100] backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0" id="confirmForceDeleteModalContent">
+            <div class="p-6">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-3xl text-red-600"></i>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold text-center text-gray-800 mb-2">Удаление задачи</h3>
+                <p class="text-gray-600 text-center mb-4">
+                    Вы действительно хотите удалить эту задачу <span class="font-bold text-red-600">НАВСЕГДА</span>?
+                </p>
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-red-700">
+                                Это действие невозможно отменить. Задача и все связанные с ней данные будут удалены безвозвратно.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <button onclick="closeConfirmForceDeleteModal()" class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition font-medium">
+                        Отмена
+                    </button>
+                    <button onclick="confirmForceDelete()" class="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-xl hover:bg-red-600 transition font-medium">
+                        <i class="fas fa-trash-alt mr-2"></i>Удалить навсегда
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -3049,6 +3166,230 @@
                 window.location.href = url.toString();
             }
 
+            // Переменные для хранения ID задачи
+            let pendingArchiveTaskId = null;
+            let pendingRestoreTaskId = null;
+            let pendingForceDeleteTaskId = null;
+
+            // ==================== АРХИВАЦИЯ С МОДАЛЬНЫМ ОКНОМ ====================
+            function archiveTask(taskId) {
+                pendingArchiveTaskId = taskId;
+                const modal = document.getElementById('confirmArchiveModal');
+                const modalContent = document.getElementById('confirmArchiveModalContent');
+
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modalContent.classList.remove('scale-95', 'opacity-0');
+                        modalContent.classList.add('scale-100', 'opacity-100');
+                    }, 10);
+                }
+            }
+
+            function closeConfirmArchiveModal() {
+                const modal = document.getElementById('confirmArchiveModal');
+                const modalContent = document.getElementById('confirmArchiveModalContent');
+
+                if (modal) {
+                    modalContent.classList.remove('scale-100', 'opacity-100');
+                    modalContent.classList.add('scale-95', 'opacity-0');
+
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        pendingArchiveTaskId = null;
+                    }, 300);
+                }
+            }
+
+            async function confirmArchive() {
+                if (!pendingArchiveTaskId) return;
+
+                const confirmBtn = document.querySelector('#confirmArchiveModal .bg-yellow-500');
+                const originalText = confirmBtn.innerHTML;
+                confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Архивация...';
+                confirmBtn.disabled = true;
+
+                try {
+                    const response = await fetch(`/tasks/${pendingArchiveTaskId}/archive`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showNotification(data.message, 'success');
+                        closeConfirmArchiveModal();
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showNotification(data.message, 'error');
+                        closeConfirmArchiveModal();
+                    }
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    showNotification('Ошибка при архивации задачи', 'error');
+                    closeConfirmArchiveModal();
+                } finally {
+                    confirmBtn.innerHTML = originalText;
+                    confirmBtn.disabled = false;
+                }
+            }
+
+            // ==================== ВОССТАНОВЛЕНИЕ С МОДАЛЬНЫМ ОКНОМ ====================
+            function restoreTask(taskId) {
+                pendingRestoreTaskId = taskId;
+                const modal = document.getElementById('confirmRestoreModal');
+                const modalContent = document.getElementById('confirmRestoreModalContent');
+
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modalContent.classList.remove('scale-95', 'opacity-0');
+                        modalContent.classList.add('scale-100', 'opacity-100');
+                    }, 10);
+                }
+            }
+
+            function closeConfirmRestoreModal() {
+                const modal = document.getElementById('confirmRestoreModal');
+                const modalContent = document.getElementById('confirmRestoreModalContent');
+
+                if (modal) {
+                    modalContent.classList.remove('scale-100', 'opacity-100');
+                    modalContent.classList.add('scale-95', 'opacity-0');
+
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        pendingRestoreTaskId = null;
+                    }, 300);
+                }
+            }
+
+            async function confirmRestore() {
+                if (!pendingRestoreTaskId) return;
+
+                const confirmBtn = document.querySelector('#confirmRestoreModal .bg-green-500');
+                const originalText = confirmBtn.innerHTML;
+                confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Восстановление...';
+                confirmBtn.disabled = true;
+
+                try {
+                    const response = await fetch(`/tasks/${pendingRestoreTaskId}/restore`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showNotification(data.message, 'success');
+                        closeConfirmRestoreModal();
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showNotification(data.message, 'error');
+                        closeConfirmRestoreModal();
+                    }
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    showNotification('Ошибка при восстановлении задачи', 'error');
+                    closeConfirmRestoreModal();
+                } finally {
+                    confirmBtn.innerHTML = originalText;
+                    confirmBtn.disabled = false;
+                }
+            }
+
+            // ==================== ПОЛНОЕ УДАЛЕНИЕ С МОДАЛЬНЫМ ОКНОМ ====================
+            function forceDeleteTask(taskId) {
+                pendingForceDeleteTaskId = taskId;
+                const modal = document.getElementById('confirmForceDeleteModal');
+                const modalContent = document.getElementById('confirmForceDeleteModalContent');
+
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modalContent.classList.remove('scale-95', 'opacity-0');
+                        modalContent.classList.add('scale-100', 'opacity-100');
+                    }, 10);
+                }
+            }
+
+            function closeConfirmForceDeleteModal() {
+                const modal = document.getElementById('confirmForceDeleteModal');
+                const modalContent = document.getElementById('confirmForceDeleteModalContent');
+
+                if (modal) {
+                    modalContent.classList.remove('scale-100', 'opacity-100');
+                    modalContent.classList.add('scale-95', 'opacity-0');
+
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        pendingForceDeleteTaskId = null;
+                    }, 300);
+                }
+            }
+
+            async function confirmForceDelete() {
+                if (!pendingForceDeleteTaskId) return;
+
+                const confirmBtn = document.querySelector('#confirmForceDeleteModal .bg-red-500');
+                const originalText = confirmBtn.innerHTML;
+                confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Удаление...';
+                confirmBtn.disabled = true;
+
+                try {
+                    const response = await fetch(`/tasks/${pendingForceDeleteTaskId}/force-delete`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showNotification(data.message, 'success');
+                        closeConfirmForceDeleteModal();
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showNotification(data.message, 'error');
+                        closeConfirmForceDeleteModal();
+                    }
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    showNotification('Ошибка при удалении задачи', 'error');
+                    closeConfirmForceDeleteModal();
+                } finally {
+                    confirmBtn.innerHTML = originalText;
+                    confirmBtn.disabled = false;
+                }
+            }
+
+            // Закрытие модальных окон по клику на фон
+            document.addEventListener('click', function(e) {
+                if (e.target.id === 'confirmArchiveModal') closeConfirmArchiveModal();
+                if (e.target.id === 'confirmRestoreModal') closeConfirmRestoreModal();
+                if (e.target.id === 'confirmForceDeleteModal') closeConfirmForceDeleteModal();
+            });
+
+            // Закрытие по Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeConfirmArchiveModal();
+                    closeConfirmRestoreModal();
+                    closeConfirmForceDeleteModal();
+                }
+            });
         </script>
     @endpush
 
