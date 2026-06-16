@@ -2031,7 +2031,7 @@ media-src https://meet.jit.si https:;
         });
     }
 
-    // ==================== БЫСТРОЕ ДОБАВЛЕНИЕ ЗАДАЧИ (НОВЫЙ СТИЛЬ) ====================
+    // БЫСТРОЕ ДОБАВЛЕНИЕ ЗАДАЧИ
     function showQuickAddForm() {
         const showBtn = document.getElementById('showQuickAddBtn');
         const form = document.getElementById('quickAddForm');
