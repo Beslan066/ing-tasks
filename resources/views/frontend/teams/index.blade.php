@@ -1250,7 +1250,7 @@
                 <div class="mb-6">
                     <h4 class="text-lg font-semibold mb-4">Статистика выполнения задач</h4>
                     <div class="flex space-x-2 mb-4">
-                        <button class="period-filter-btn px-3 py-1 text-white rounded text-sm" data-period="week" style="background-color: #16a34a">Неделя</button>
+                        <button class="period-filter-btn px-3 py-1 bg-green-600 text-white text-white rounded text-sm" data-period="week">Неделя</button>
                         <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
                         <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="year">Год</button>
                         <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="all">Все время</button>
@@ -1279,7 +1279,7 @@
             <div id="tab-visits" class="tab-content hidden">
                 <div class="mb-4">
                     <div class="flex flex-wrap gap-2 mb-4">
-                        <button class="visit-period-btn px-3 py-1 rounded text-sm" data-period="today" style="background-color: #16a34a; color: white;">Сегодня</button>
+                        <button class="visit-period-btn px-3 py-1 bg-green-600 text-white rounded text-sm" data-period="today">Сегодня</button>
                         <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="yesterday">Вчера</button>
                         <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="week">Неделя</button>
                         <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
@@ -1467,11 +1467,11 @@
                 modalContent.querySelectorAll('.period-filter-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         modalContent.querySelectorAll('.period-filter-btn').forEach(b => {
-                            b.classList.remove('bg-blue-600', 'text-white');
+                            b.classList.remove('bg-green-600', 'text-white');
                             b.classList.add('bg-gray-200', 'text-gray-700');
                         });
                         this.classList.remove('bg-gray-200', 'text-gray-700');
-                        this.classList.add('bg-blue-600', 'text-white');
+                        this.classList.add('bg-green-600', 'text-white');
                         loadUserTasks(user.id, this.dataset.period);
                     });
                 });
