@@ -52,11 +52,19 @@ class HomeController extends Controller
 
         // Получаем задачи пользователя по статусам
         $tasksByStatus = [
+            // 🔥 ИСПРАВЛЕНО: ВКЛЮЧАЕМ ПРОСРОЧЕННЫЕ ЗАДАЧИ В КОЛОНКУ "НОВЫЕ"
             'new' => Task::with(['author', 'department', 'category', 'files'])
                 ->withCount('files')
                 ->where('user_id', $user->id)
-                ->where('status', 'назначена')
-                ->orderBy('created_at', 'desc')
+                ->where(function($query) {
+                    $query->where('status', 'назначена')
+                        ->orWhere('status', 'просрочена');
+                })
+                ->orderByRaw("CASE
+                WHEN status = 'просрочена' THEN 1
+                ELSE 0
+            END")
+                ->orderBy('deadline', 'asc')
                 ->get(),
 
             'in_progress' => Task::with(['author', 'department', 'category', 'files'])
@@ -484,23 +492,122 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-        // Получаем все задачи пользователя с пагинацией
-        $allTasks = Task::with(['author', 'department', 'category', 'files', 'comments', 'subtasks', ])
+        // Получаем ВСЕ задачи (активные + архивные) без фильтрации
+        $allTasks = Task::with(['author', 'department', 'category', 'files', 'comments', 'subtasks'])
+            ->withTrashed() // Показываем и архивные тоже
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
-            ->paginate(10); // По 20 задач на странице
+            ->paginate(10);
 
-        // Статистика по статусам
+        // Статистика по ВСЕМ задачам
         $stats = [
-            'total' => Task::where('user_id', $user->id)->count(),
-            'new' => Task::where('user_id', $user->id)->where('status', 'назначена')->count(),
-            'in_progress' => Task::where('user_id', $user->id)->where('status', 'в работе')->count(),
-            'review' => Task::where('user_id', $user->id)->where('status', 'на проверке')->count(),
-            'done' => Task::where('user_id', $user->id)->where('status', 'выполнена')->count(),
-            'archived' => Task::onlyTrashed()->where('user_id', $user->id)->count(), // если есть мягкое удаление
+            'total' => Task::withTrashed()->where('user_id', $user->id)->count(),
+            'new' => Task::withTrashed()->where('user_id', $user->id)->where('status', 'назначена')->count(),
+            'in_progress' => Task::withTrashed()->where('user_id', $user->id)->where('status', 'в работе')->count(),
+            'review' => Task::withTrashed()->where('user_id', $user->id)->where('status', 'на проверке')->count(),
+            'done' => Task::withTrashed()->where('user_id', $user->id)->where('status', 'выполнена')->count(),
+            'archived' => Task::onlyTrashed()->where('user_id', $user->id)->count(),
         ];
 
         return view('frontend.tasks.all-tasks', compact('user', 'allTasks', 'stats'));
+    }
+
+    /**
+     * Архивировать задачу (мягкое удаление)
+     */
+    public function archive(Task $task)
+    {
+        try {
+            // Проверяем права: только автор или руководитель может архивировать
+            if ($task->author_id !== Auth::id() && !Auth::user()->isLeader()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'У вас нет прав на архивацию этой задачи'
+                ], 403);
+            }
+
+            // Архивация (мягкое удаление)
+            $task->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Задача отправлена в архив'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при архивации: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Восстановить задачу из архива
+     */
+    public function restore($taskId)
+    {
+        try {
+            $task = Task::onlyTrashed()->findOrFail($taskId);
+
+            // Проверяем права
+            if ($task->author_id !== Auth::id() && !Auth::user()->isLeader()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'У вас нет прав на восстановление этой задачи'
+                ], 403);
+            }
+
+            $task->restore();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Задача восстановлена из архива'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при восстановлении: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Полностью удалить задачу (из архива)
+     */
+    public function forceDelete($taskId)
+    {
+        try {
+            $task = Task::onlyTrashed()->findOrFail($taskId);
+
+            // Проверяем права
+            if ($task->author_id !== Auth::id() && !Auth::user()->isLeader()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'У вас нет прав на удаление этой задачи'
+                ], 403);
+            }
+
+            // Удаляем связанные файлы (опционально)
+            foreach ($task->files as $file) {
+                // Удаляем физический файл
+                if (file_exists(public_path('storage/' . $file->path))) {
+                    unlink(public_path('storage/' . $file->path));
+                }
+                $file->delete();
+            }
+
+            $task->forceDelete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Задача полностью удалена'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при удалении: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

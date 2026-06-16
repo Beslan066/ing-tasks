@@ -504,6 +504,10 @@ Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified', 'trackUs
     // Задачи себе
     Route::post('/personal/store', [App\Http\Controllers\Frontend\TaskController::class, 'storePersonal'])->name('tasks.personal.store');
 
+    Route::patch('/{task}/archive', [App\Http\Controllers\Frontend\TaskController::class, 'archive'])->name('tasks.archive');
+    Route::patch('/{taskId}/restore', [App\Http\Controllers\Frontend\TaskController::class, 'restore'])->name('tasks.restore');
+    Route::delete('/{taskId}/force-delete', [App\Http\Controllers\Frontend\TaskController::class, 'forceDelete'])->name('tasks.force-delete');
+
     // Модальное окно (AJAX)
     Route::get('/{task}', [App\Http\Controllers\Frontend\TaskController::class, 'view'])->name('tasks.show');
 

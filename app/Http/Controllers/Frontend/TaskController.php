@@ -1065,6 +1065,104 @@ class TaskController extends Controller
         }
     }
 
+    /**
+     * Архивировать задачу (мягкое удаление)
+     */
+    public function archive(Task $task)
+    {
+        try {
+            // Проверяем права: только автор или руководитель может архивировать
+            if ($task->author_id !== Auth::id() && !Auth::user()->isLeader()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'У вас нет прав на архивацию этой задачи'
+                ], 403);
+            }
+
+            // Архивация (мягкое удаление)
+            $task->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Задача отправлена в архив'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при архивации: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Восстановить задачу из архива
+     */
+    public function restore($taskId)
+    {
+        try {
+            $task = Task::onlyTrashed()->findOrFail($taskId);
+
+            // Проверяем права
+            if ($task->author_id !== Auth::id() && !Auth::user()->isLeader()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'У вас нет прав на восстановление этой задачи'
+                ], 403);
+            }
+
+            $task->restore();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Задача восстановлена из архива'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при восстановлении: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Полностью удалить задачу (из архива)
+     */
+    public function forceDelete($taskId)
+    {
+        try {
+            $task = Task::onlyTrashed()->findOrFail($taskId);
+
+            // Проверяем права
+            if ($task->author_id !== Auth::id() && !Auth::user()->isLeader()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'У вас нет прав на удаление этой задачи'
+                ], 403);
+            }
+
+            // Удаляем связанные файлы (опционально)
+            foreach ($task->files as $file) {
+                // Удаляем физический файл
+                if (file_exists(public_path('storage/' . $file->path))) {
+                    unlink(public_path('storage/' . $file->path));
+                }
+                $file->delete();
+            }
+
+            $task->forceDelete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Задача полностью удалена'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при удалении: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function getFiles(Request $request)
     {
         $user = Auth::user();
