@@ -105,17 +105,25 @@ class TeamController extends Controller
     /**
      * Обновить роль пользователя
      */
+    /**
+     * Обновить роль пользователя
+     */
     public function updateUserRole(Request $request, User $user)
     {
         try {
             $authUser = auth()->user();
 
-            // Проверка прав
+            // Проверка авторизации
+            if (!$authUser) {
+                return response()->json(['success' => false, 'error' => 'Не авторизован'], 401);
+            }
+
+            // Проверка, что пользователь из той же компании
             if ($user->company_id !== $authUser->company_id) {
                 return response()->json(['success' => false, 'error' => 'Нет доступа'], 403);
             }
 
-            // Проверка, может ли пользователь редактировать роли
+            // Проверка прав на изменение ролей
             if (!$authUser->isCompanyOwner() && !$authUser->isManager() && !$authUser->isManagerRole()) {
                 return response()->json(['success' => false, 'error' => 'У вас нет прав для изменения ролей'], 403);
             }
@@ -131,23 +139,51 @@ class TeamController extends Controller
 
             $roleId = $request->get('role_id');
 
-            // Проверяем, что роль принадлежит той же компании
+            // Если role_id передан и не пустой
             if ($roleId) {
-                $role = Role::where('company_id', $authUser->company_id)
+                // Ищем роль с учетом company_id (глобальные роли или роли компании)
+                $role = Role::where(function($query) use ($authUser) {
+                    $query->where('company_id', $authUser->company_id)
+                        ->orWhereNull('company_id');
+                })
                     ->where('id', $roleId)
                     ->first();
 
                 if (!$role) {
-                    return response()->json(['success' => false, 'error' => 'Роль не найдена'], 404);
+                    // Логируем для отладки
+                    \Log::error('Role not found', [
+                        'role_id' => $roleId,
+                        'company_id' => $authUser->company_id,
+                        'user_id' => $authUser->id
+                    ]);
+
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Роль не найдена или не доступна для вашей компании'
+                    ], 404);
                 }
             }
 
+            // Сохраняем старую роль для логирования
+            $oldRoleName = $user->role ? $user->role->name : 'Не назначена';
+
             // Обновляем роль
-            $user->role_id = $roleId;
+            $user->role_id = $roleId ?: null;
             $user->save();
 
+            // Получаем обновленного пользователя с ролью
+            $user->refresh();
+            $user->load('role');
+
             // Логируем действие
-            ActivityLogger::roleChanged($user, $authUser, $roleId);
+            \Log::info('Роль пользователя изменена', [
+                'user_id' => $user->id,
+                'user_name' => $user->name,
+                'old_role' => $oldRoleName,
+                'new_role' => $user->role ? $user->role->name : 'Не назначена',
+                'changed_by' => $authUser->id,
+                'company_id' => $authUser->company_id
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -160,6 +196,7 @@ class TeamController extends Controller
 
         } catch (\Exception $e) {
             \Log::error('Update user role error: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
             return response()->json([
                 'success' => false,
                 'error' => 'Ошибка при обновлении роли: ' . $e->getMessage()
