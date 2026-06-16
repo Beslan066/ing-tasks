@@ -458,18 +458,29 @@
 
         // Переключение панели фильтров
         function toggleFilters() {
-            const panel = document.getElementById('filtersPanel');
-            const icon = document.getElementById('filterIcon');
+                const dropdown = document.getElementById('filtersPanel');
+                const chevron = document.getElementById('filterIcon');
 
-            if (panel.classList.contains('hidden')) {
-                panel.classList.remove('hidden');
-                icon.classList.add('fa-chevron-up');
-                icon.classList.remove('fa-chevron-down');
-            } else {
-                panel.classList.add('hidden');
-                icon.classList.remove('fa-chevron-up');
-                icon.classList.add('fa-chevron-down');
-            }
+                if (!dropdown || !chevron) return;
+
+                if (dropdown.classList.contains('hidden')) {
+                    dropdown.classList.remove('hidden');
+                    dropdown.classList.remove('fade-out-x');
+                    dropdown.classList.add('fade-in-x');
+                    chevron.style.transform = 'rotate(180deg)';
+                    console.log('if')
+                } else {
+                    console.log('else')
+                    dropdown.classList.remove('fade-in-x');
+                    dropdown.classList.add('fade-out-x');
+                    chevron.style.transform = 'rotate(0deg)';
+
+                    setTimeout(() => {
+                        if (dropdown.classList.contains('fade-out-x')) {
+                            dropdown.classList.add('hidden');
+                        }
+                    }, 200);
+                }
         }
 
         // ==================== ФУНКЦИЯ ДЛЯ ОТКРЫТИЯ МОДАЛЬНОГО ОКНА ====================

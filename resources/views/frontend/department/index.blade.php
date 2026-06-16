@@ -526,27 +526,56 @@
         });
 
         // Переключение панели фильтров
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const filterToggle = document.getElementById('filterToggle');
+        //     const filtersPanel = document.getElementById('filtersPanel');
+        //     const filterIcon = document.getElementById('filterIcon');
+
+        //     if (filterToggle && filtersPanel) {
+        //         filterToggle.addEventListener('click', function() {
+        //             const isHidden = filtersPanel.classList.contains('hidden');
+
+        //             if (isHidden) {
+        //                 filtersPanel.classList.remove('hidden');
+        //                 filterIcon.style.transform = 'rotate(180deg)';
+        //                 // Анимация появления
+        //                 filtersPanel.style.animation = 'slideDown 0.3s ease';
+        //             } else {
+        //                 filtersPanel.classList.add('hidden');
+        //                 filterIcon.style.transform = 'rotate(0deg)';
+        //             }
+        //         });
+        //     }
+        // });
         document.addEventListener('DOMContentLoaded', function() {
-            const filterToggle = document.getElementById('filterToggle');
-            const filtersPanel = document.getElementById('filtersPanel');
-            const filterIcon = document.getElementById('filterIcon');
+                const filterToggle = document.getElementById('filterToggle');
+                const dropdown = document.getElementById('filtersPanel');
+                const chevron = document.getElementById('filterIcon');
 
-            if (filterToggle && filtersPanel) {
-                filterToggle.addEventListener('click', function() {
-                    const isHidden = filtersPanel.classList.contains('hidden');
+                if (!dropdown || !chevron||!filterToggle) return;
 
-                    if (isHidden) {
-                        filtersPanel.classList.remove('hidden');
-                        filterIcon.style.transform = 'rotate(180deg)';
-                        // Анимация появления
-                        filtersPanel.style.animation = 'slideDown 0.3s ease';
-                    } else {
-                        filtersPanel.classList.add('hidden');
-                        filterIcon.style.transform = 'rotate(0deg)';
-                    }
-                });
-            }
-        });
+
+                filterToggle.addEventListener('click', ()=> {
+                if (dropdown.classList.contains('hidden')) {
+                    dropdown.classList.remove('hidden');
+                    dropdown.classList.remove('fade-out-x');
+                    dropdown.classList.add('fade-in-x');
+                    chevron.style.transform = 'rotate(180deg)';
+                    console.log('if')
+                } else {
+                    console.log('else')
+                    dropdown.classList.remove('fade-in-x');
+                    dropdown.classList.add('fade-out-x');
+                    chevron.style.transform = 'rotate(0deg)';
+
+                    setTimeout(() => {
+                        if (dropdown.classList.contains('fade-out-x')) {
+                            dropdown.classList.add('hidden');
+                        }
+                    }, 200);
+                }
+                })
+        })
     </script>
 @endpush
 
