@@ -81,7 +81,7 @@
 
     <main>
         <!-- ===== Hero Start ===== -->
-        <section id="#home" class="th rn dr uh er ve">
+        <section id="#home" class="th rn dr ve">
             <div class="ba md _g nn 2xl:ud-px-0">
                 <div class="qb ro to gq">
                     <div class="animate_left vm/2">
@@ -120,6 +120,93 @@
             </div>
         </section>
         <!-- ===== Hero End ===== -->
+        <!-- Блок с фишками -->
+        <section class="features">
+            <div class="features__container">
+
+                <!-- Блок фишек-функций -->
+                <div class="feature-chips">
+
+                    <!-- Фишка 1 - Мессенджер -->
+                    <div class="feature-chips__item">
+                        <div class="feature-chips__button" data-chip>
+                            <svg class="feature-chips__icon feature-chips__icon--red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                <path d="M8 10h.01"/>
+                                <path d="M12 10h.01"/>
+                                <path d="M16 10h.01"/>
+                            </svg>
+                            <span class="feature-chips__label">Мессенджер</span>
+                        </div>
+                    </div>
+
+                    <!-- Фишка 2 - Совместная работа -->
+                    <div class="feature-chips__item">
+                        <div class="feature-chips__button" data-chip>
+                            <svg class="feature-chips__icon feature-chips__icon--orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            <span class="feature-chips__label">Совместная работа</span>
+                        </div>
+                    </div>
+
+                    <!-- Фишка 3 - CRM -->
+                    <div class="feature-chips__item">
+                        <div class="feature-chips__button" data-chip>
+                            <svg class="feature-chips__icon feature-chips__icon--blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            <span class="feature-chips__label">CRM</span>
+                        </div>
+                    </div>
+
+                    <!-- Фишка 4 - Задачи и проекты -->
+                    <div class="feature-chips__item">
+                        <div class="feature-chips__button" data-chip>
+                            <svg class="feature-chips__icon feature-chips__icon--gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                            <span class="feature-chips__label">Задачи и проекты</span>
+                        </div>
+                    </div>
+
+                    <!-- Фишка 5 - ИИ + Копилот -->
+                    <div class="feature-chips__item">
+                        <div class="feature-chips__button" data-chip>
+                            <svg class="feature-chips__icon feature-chips__icon--purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2a10 10 0 1 0 10 10 10 10 0 0 0-10-10z"/>
+                                <path d="M12 6v6l4 2"/>
+                                <path d="M18 6l-4 4"/>
+                                <path d="M6 18l4-4"/>
+                            </svg>
+                            <div class="feature-chips__label-group">
+                                <span class="feature-chips__label">Искусственный интеллект</span>
+                                <span class="feature-chips__badge">Копилот</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Фишка 6 - Сайты и магазины -->
+                    <div class="feature-chips__item">
+                        <div class="feature-chips__button" data-chip>
+                            <svg class="feature-chips__icon feature-chips__icon--green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                <line x1="3" y1="6" x2="21" y2="6"/>
+                                <path d="M16 10a4 4 0 0 1-8 0"/>
+                            </svg>
+                            <span class="feature-chips__label">Сайты и магазины</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
 
         <!-- ===== Clients Start ===== -->
         <section class="vf tl hf jf rf ql fh mt-40">
