@@ -192,7 +192,7 @@
 
                     <div class="flex items-end gap-2">
                         <button onclick="applyFilters()"
-                            class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition">
+                              class="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700 transition">
                             <i class="fas fa-search mr-2"></i>Применить
                         </button>
                         <button onclick="resetFilters()"
