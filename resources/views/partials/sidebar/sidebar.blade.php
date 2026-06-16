@@ -256,7 +256,7 @@
 </div>
 <!-- Оверлей для боковой панели -->
 <div id="sidebar-overlay"
-     class="fixed inset-0 bg-black/50 z-[998] hidden max-[638px]:[&.active]:block transition-opacity duration-300 max-[500px]:bg-black/90">
+     class="fixed inset-0 bg-black/50 z-[47] hidden max-[638px]:[&.active]:block transition-opacity duration-300 max-[500px]:bg-black/90">
 </div>
 
 @once
@@ -629,7 +629,7 @@
                 top: 0;
                 left: -100%;
                 height: 100%;
-                z-index: 999;
+                z-index: 48;
                 width: 20rem !important;
                 padding-bottom: 0.5rem;
 
