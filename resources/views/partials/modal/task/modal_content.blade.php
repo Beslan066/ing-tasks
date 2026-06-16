@@ -11,8 +11,9 @@
 
 <div class="flex h-full">
     {{-- ЛЕВАЯ КОЛОНКА - Информация о задаче --}}
-    <div class="w-2/5 border-r border-gray-200 pr-6 overflow-y-auto">
-        {{-- Заголовок и статус --}}
+    <div class="w-2/5 border-r border-gray-200 pr-6 overflow-y-auto flex flex-col">
+        <div>
+            {{-- Заголовок и статус --}}
         <div class="mb-6">
             <div class="flex items-start justify-between">
                 <h2 class="text-xl font-bold text-gray-800 break-words pr-4">{{ $task->name }}</h2>
@@ -220,6 +221,43 @@
                 </div>
             </div>
         @endif
+        </div>
+
+
+        <div class="mt-auto">
+           <div class="py-1 grid grid-cols-6 gap-1">
+
+                 @if($task->status === 'назначена') <button onclick="startTask({{ $task->id }})" class="bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base col-span-3">
+                    <i class="fas fa-play mr-2 text-white"></i> Начать
+                </button>
+                 @elseif($task->status === 'в работе') <button onclick="sendForReview({{ $task->id }})" class="bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base col-span-3">
+                    <i class="fas fa-play mr-2 text-white"></i> Отправить на проверку
+                </button>
+                @else <button onclick="startTask({{ $task->id }})" class="bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base col-span-3">
+                    <i class="fas fa-play mr-2 text-white"></i> Завершить
+                </button>
+                @endif
+
+                <button onclick="showRejectModal({{ $task->id }})" class="bg-red-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-red-700 transition flex items-center justify-center space-x-2 text-sm md:text-base col-span-3">
+                    <i class="fas fa-times-circle mr-2"></i> Отказаться
+                </button>
+                @if($task->author_id == auth()->id() || auth()->user()->isLeader())
+                    <button onclick="openEditModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center justify-center col-span-2">
+                        <i class="fas fa-edit mr-2 text-blue-500"></i> Редактировать
+                    </button>
+                @endif
+                    <!-- КНОПКА АРХИВАЦИИ -->
+                    @if($task->author_id == auth()->id() || auth()->user()->isLeader())
+                        <button onclick="archiveTask({{ $task->id }})"
+                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center justify-center col-span-2">
+                            <i class="fas fa-archive mr-2 text-yellow-500"></i> В архив
+                        </button>
+                    @endif
+                <button onclick="openCreateSubtaskModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center justify-center col-span-2">
+                    <i class="fas fa-list mr-2 text-green-500"></i>Подзадача
+                </button>
+            </div>
+        </div>
     </div>
 
     {{-- ПРАВАЯ КОЛОНКА --}}
