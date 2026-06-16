@@ -1187,7 +1187,7 @@
                 const stats = data.stats;
 
                 modalContent.innerHTML = `
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 min-[800px]:grid-cols-3 gap-6">
         <div class="lg:col-span-1">
             <div class="bg-gray-50 rounded-lg p-6">
                 <div class="text-center mb-6">
@@ -1232,7 +1232,7 @@
                 </div>
             </div>
         </div>
-        <div class="lg:col-span-2">
+        <div class="min-[800px]:col-span-2">
             <!-- Вкладки -->
             <div class="border-b border-gray-200 mb-4">
                 <nav class="flex space-x-4">
@@ -1249,8 +1249,8 @@
             <div id="tab-tasks" class="tab-content">
                 <div class="mb-6">
                     <h4 class="text-lg font-semibold mb-4">Статистика выполнения задач</h4>
-                    <div class="flex space-x-2 mb-4">
-                        <button class="period-filter-btn px-3 py-1 text-white rounded text-sm" data-period="week" style="background-color: #16a34a">Неделя</button>
+                    <div class="flex space-x-2 mb-4 max-[420px]:flex-wrap max-[420px]:space-x-0 max-[420px]:gap-2">
+                        <button class="period-filter-btn px-3 py-1 bg-green-600 text-white text-white rounded text-sm" data-period="week">Неделя</button>
                         <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
                         <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="year">Год</button>
                         <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="all">Все время</button>
@@ -1267,7 +1267,7 @@
                         <div class="flex justify-between text-xs text-gray-500 mt-1"><span>0%</span><span>50%</span><span>100%</span></div>
                     </div>
                 </div>
-                <div class="flex space-x-2 mb-6">
+                <div class="flex space-x-2 mb-6 max-[365px]:grid max-[365px]:grid-cols-2 max-[365px]:space-x-0 max-[365px]:gap-2">
                     <a href="/team/user/${user.id}/export?type=excel&period=all" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center space-x-2"><i class="fas fa-file-excel"></i><span>Excel</span></a>
                     <a href="/team/user/${user.id}/export?type=pdf&period=all" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center space-x-2"><i class="fas fa-file-pdf"></i><span>PDF</span></a>
                     <a href="/team/user/${user.id}/print" target="_blank" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center space-x-2"><i class="fas fa-print"></i><span>Печать</span></a>
@@ -1279,7 +1279,7 @@
             <div id="tab-visits" class="tab-content hidden">
                 <div class="mb-4">
                     <div class="flex flex-wrap gap-2 mb-4">
-                        <button class="visit-period-btn px-3 py-1 rounded text-sm" data-period="today" style="background-color: #16a34a; color: white;">Сегодня</button>
+                        <button class="visit-period-btn px-3 py-1 bg-green-600 text-white rounded text-sm" data-period="today">Сегодня</button>
                         <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="yesterday">Вчера</button>
                         <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="week">Неделя</button>
                         <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
@@ -1467,11 +1467,11 @@
                 modalContent.querySelectorAll('.period-filter-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         modalContent.querySelectorAll('.period-filter-btn').forEach(b => {
-                            b.classList.remove('bg-blue-600', 'text-white');
+                            b.classList.remove('bg-green-600', 'text-white');
                             b.classList.add('bg-gray-200', 'text-gray-700');
                         });
                         this.classList.remove('bg-gray-200', 'text-gray-700');
-                        this.classList.add('bg-blue-600', 'text-white');
+                        this.classList.add('bg-green-600', 'text-white');
                         loadUserTasks(user.id, this.dataset.period);
                     });
                 });

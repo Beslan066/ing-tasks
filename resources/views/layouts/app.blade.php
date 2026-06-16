@@ -307,7 +307,7 @@ media-src https://meet.jit.si https:;
             flex-direction: column;
             justify-content: space-between;
             cursor: pointer;
-            z-index: 1000;
+            z-index: 49;
             background: transparent;
             border: none;
             padding: 0;
@@ -2678,39 +2678,86 @@ media-src https://meet.jit.si https:;
 
 
     // ==================== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК (КОММЕНТАРИИ / ПОДЗАДАЧИ) ====================
-    function switchTaskTab(tab) {
+    // function switchTaskTab(tab) {
+    //     const commentsTab = document.getElementById('commentsTab');
+    //     const subtasksTab = document.getElementById('subtasksTab');
+    //     const commentsBtn = document.getElementById('tabCommentsBtn');
+    //     const subtasksBtn = document.getElementById('tabSubtasksBtn');
+
+    //     if (!commentsTab || !subtasksTab) return;
+
+    //     if (tab === 'comments') {
+    //         commentsTab.classList.remove('hidden');
+    //         subtasksTab.classList.add('hidden');
+    //         if (commentsBtn) {
+    //             commentsBtn.classList.add('border-green-500', 'text-green-600');
+    //             commentsBtn.classList.remove('border-transparent', 'text-gray-500');
+    //         }
+    //         if (subtasksBtn) {
+    //             subtasksBtn.classList.remove('border-green-500', 'text-green-600');
+    //             subtasksBtn.classList.add('border-transparent', 'text-gray-500');
+    //         }
+    //     } else {
+    //         commentsTab.classList.add('hidden');
+    //         subtasksTab.classList.remove('hidden');
+    //         if (subtasksBtn) {
+    //             subtasksBtn.classList.add('border-green-500', 'text-green-600');
+    //             subtasksBtn.classList.remove('border-transparent', 'text-gray-500');
+    //         }
+    //         if (commentsBtn) {
+    //             commentsBtn.classList.remove('border-green-500', 'text-green-600');
+    //             commentsBtn.classList.add('border-transparent', 'text-gray-500');
+    //         }
+    //     }
+    // }
+ function switchTaskTab(tab) {
+     console.log('switchTaskTab2',tab)
         const commentsTab = document.getElementById('commentsTab');
+        const infoTab = document.getElementById('infoTab');
         const subtasksTab = document.getElementById('subtasksTab');
         const commentsBtn = document.getElementById('tabCommentsBtn');
         const subtasksBtn = document.getElementById('tabSubtasksBtn');
-
-        if (!commentsTab || !subtasksTab) return;
+        const infoBtn = document.getElementById('tabInfoBtn')
 
         if (tab === 'comments') {
             commentsTab.classList.remove('hidden');
             subtasksTab.classList.add('hidden');
-            if (commentsBtn) {
-                commentsBtn.classList.add('border-green-500', 'text-green-600');
-                commentsBtn.classList.remove('border-transparent', 'text-gray-500');
-            }
-            if (subtasksBtn) {
-                subtasksBtn.classList.remove('border-green-500', 'text-green-600');
-                subtasksBtn.classList.add('border-transparent', 'text-gray-500');
-            }
-        } else {
+             infoTab.classList.add('hidden');
+             infoTab.classList.remove('flex');
+
+            commentsBtn.classList.add('border-green-500', 'text-green-600');
+            commentsBtn.classList.remove('border-transparent', 'text-gray-500');
+            subtasksBtn.classList.remove('border-green-500', 'text-green-600');
+            subtasksBtn.classList.add('border-transparent', 'text-gray-500');
+            infoBtn.classList.remove('border-green-500', 'text-green-600');
+            infoBtn.classList.add('border-transparent', 'text-gray-500');
+
+        } else if(tab==='info') {
+        infoTab.classList.remove('max-[800px]:hidden','hidden')
+        infoTab.classList.add('flex')
+         commentsTab.classList.add('hidden');
+          subtasksTab.classList.add('hidden');
+
+      commentsBtn.classList.remove('border-green-500', 'text-green-600');
+            commentsBtn.classList.add('border-transparent', 'text-gray-500');
+            subtasksBtn.classList.remove('border-green-500', 'text-green-600');
+            subtasksBtn.classList.add('border-transparent', 'text-gray-500');
+            infoBtn.classList.add('border-green-500', 'text-green-600');
+            infoBtn.classList.remove('border-transparent', 'text-gray-500');
+
+        }else {
             commentsTab.classList.add('hidden');
+             infoTab.classList.add('max-[800px]:hidden');
             subtasksTab.classList.remove('hidden');
-            if (subtasksBtn) {
-                subtasksBtn.classList.add('border-green-500', 'text-green-600');
-                subtasksBtn.classList.remove('border-transparent', 'text-gray-500');
-            }
-            if (commentsBtn) {
-                commentsBtn.classList.remove('border-green-500', 'text-green-600');
-                commentsBtn.classList.add('border-transparent', 'text-gray-500');
-            }
+
+           commentsBtn.classList.remove('border-green-500', 'text-green-600');
+            commentsBtn.classList.add('border-transparent', 'text-gray-500');
+            subtasksBtn.classList.add('border-green-500', 'text-green-600');
+            subtasksBtn.classList.remove('border-transparent', 'text-gray-500');
+            infoBtn.classList.remove('border-green-500', 'text-green-600');
+            infoBtn.classList.add('border-transparent', 'text-gray-500');
         }
     }
-
     let currentParentTaskId = null;
 
     function openCreateSubtaskModal(parentTaskId) {
