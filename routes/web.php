@@ -600,6 +600,11 @@ Route::middleware(['auth', 'verified', 'trackUserActivity', 'require.company'])-
         Route::get('/departments/list', [TeamController::class, 'getDepartmentsList'])->name('team.departments.list');
         Route::put('/user/{user}/departments', [TeamController::class, 'updateUserDepartments'])->name('team.user.departments.update');
 
+        Route::put('/user/{user}/role', [App\Http\Controllers\Frontend\TeamController::class, 'updateUserRole'])->name('team.update-role');
+        Route::get('/roles/list', [App\Http\Controllers\Frontend\TeamController::class, 'getRolesList'])
+            ->name('team.roles.list')
+            ->middleware('auth');
+
         // Маршруты для работы с пользователями
         Route::get('/user/{user}', [TeamController::class, 'getUserDetails'])->name('user.details');
         Route::get('/user/{user}/print', [TeamController::class, 'printUserDetails'])->name('user.print');

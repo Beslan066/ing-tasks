@@ -85,14 +85,18 @@
                         <select id="statusFilter"
                                 class="w-full px-3 py-2 border-none rounded-lg focus:outline-none bg-transparent/20 text-white">
                             <option value="">Все</option>
-                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Активные</option>
-                            <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Неактивные</option>
+                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Активные
+                            </option>
+                            <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>
+                                Неактивные
+                            </option>
                         </select>
                     </div>
                 </div>
 
                 <!-- Дополнительные фильтры -->
-                <div id="advancedFilters" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 p-2 hidden">
+                <div id="advancedFilters"
+                     class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 p-2 hidden">
                     <div>
                         <label class="block text-sm font-medium text-white mb-1">Дата регистрации от</label>
                         <input type="date" id="dateFrom"
@@ -116,7 +120,8 @@
                 </div>
 
                 <div class="flex flex-col px-2 pb-2 sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
-                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto px-2 mb-2">
+                    <div
+                        class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto px-2 mb-2">
                         <button id="applyFilters"
                                 class="bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
                             <i class="fas fa-check"></i>
@@ -181,14 +186,18 @@
                         <select id="statusFilter"
                                 class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-transparent text-sm md:text-base">
                             <option value="">Все</option>
-                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Активные</option>
-                            <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Неактивные</option>
+                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Активные
+                            </option>
+                            <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>
+                                Неактивные
+                            </option>
                         </select>
                     </div>
                 </div>
 
                 <!-- Дополнительные фильтры -->
-                <div id="advancedFilters" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-2 md:gap-4 hidden">
+                <div id="advancedFilters"
+                     class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-2 md:gap-4 hidden">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Дата регистрации от</label>
                         <input type="date" id="dateFrom"
@@ -279,7 +288,8 @@
                                            class="flex items-center space-x-1 hover:text-blue-600 {{ $currentSort == 'name' ? 'text-blue-600 font-semibold' : '' }}">
                                             <span>Пользователь</span>
                                             @if($currentSort == 'name')
-                                                <span class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
+                                                <span
+                                                    class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
                                             @endif
                                         </a>
                                     </th>
@@ -313,7 +323,8 @@
                                            class="flex items-center space-x-1 hover:text-blue-600 {{ $currentSort == 'created_at' ? 'text-blue-600 font-semibold' : '' }}">
                                             <span>Зарегистрирован</span>
                                             @if($currentSort == 'created_at')
-                                                <span class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
+                                                <span
+                                                    class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
                                             @endif
                                         </a>
                                     </th>
@@ -344,19 +355,24 @@
                                                              class="w-8 h-8 rounded-full object-cover"
                                                              style="width:40px; height: 40px;">
                                                     @else
-                                                        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                                                            <span class="text-white text-xs font-medium">{{ substr($user->name, 0, 1) }}</span>
+                                                        <div
+                                                            class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                                                            <span
+                                                                class="text-white text-xs font-medium">{{ substr($user->name, 0, 1) }}</span>
                                                         </div>
                                                     @endif
                                                     <div class="min-w-0 ">
-                                                        <div class="text-sm font-medium  truncate">{{ $user->name }}</div>
-                                                        <div class="text-xs text-gray-500 truncate">{{ $user->email }}</div>
+                                                        <div
+                                                            class="text-sm font-medium  truncate">{{ $user->name }}</div>
+                                                        <div
+                                                            class="text-xs text-gray-500 truncate">{{ $user->email }}</div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="px-3 py-4">
                                                 @if($user->role)
-                                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                                    <span
+                                                        class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
                                                         {{ $user->role->name }}
                                                     </span>
                                                 @else
@@ -367,7 +383,8 @@
                                                 @if($user->departments->count() > 0)
                                                     <div class="flex flex-wrap gap-1">
                                                         @foreach($user->departments as $dept)
-                                                            <span class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                            <span
+                                                                class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
                                                                 {{ $dept->name }}
                                                             </span>
                                                         @endforeach
@@ -381,10 +398,12 @@
                                             <td class="px-3 py-4">
                                                 <div class="flex items-center space-x-2">
                                                     <div class="w-12 bg-gray-200 rounded-full h-1.5">
-                                                        <div class="h-1.5 rounded-full {{ $stats['completion_rate'] >= 80 ? 'bg-green-600' : ($stats['completion_rate'] >= 50 ? 'bg-yellow-500' : 'bg-red-600') }}"
-                                                             style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
+                                                        <div
+                                                            class="h-1.5 rounded-full {{ $stats['completion_rate'] >= 80 ? 'bg-green-600' : ($stats['completion_rate'] >= 50 ? 'bg-yellow-500' : 'bg-red-600') }}"
+                                                            style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
                                                     </div>
-                                                    <span class="text-xs font-medium {{ $stats['completion_rate'] >= 80 ? 'text-green-600' : ($stats['completion_rate'] >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
+                                                    <span
+                                                        class="text-xs font-medium {{ $stats['completion_rate'] >= 80 ? 'text-green-600' : ($stats['completion_rate'] >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
                                                         {{ $stats['completion_rate'] }}%
                                                     </span>
                                                 </div>
@@ -397,12 +416,19 @@
                                             <td class="px-3 py-4 text-sm ">{{ $user->created_at->format('d.m.Y') }}</td>
                                             <td class="px-3 py-4">
                                                 <div class="flex items-center space-x-2">
-                                                    <button class="view-user-btn text-green-600 hover:text-green-800 p-1"
-                                                            data-user-id="{{ $user->id }}" title="Просмотр">
+                                                    <button
+                                                        class="view-user-btn text-green-600 hover:text-green-800 p-1"
+                                                        data-user-id="{{ $user->id }}" title="Просмотр">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
+                                                    <button
+                                                        class="change-role-btn text-purple-600 hover:text-purple-800 p-1"
+                                                        data-user-id="{{ $user->id }}" title="Изменить роль">
+                                                        <i class="fas fa-user-cog"></i>
+                                                    </button>
                                                     <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
-                                                            data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" title="Удалить">
+                                                            data-user-id="{{ $user->id }}"
+                                                            data-user-name="{{ $user->name }}" title="Удалить">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </div>
@@ -415,7 +441,8 @@
                                             <div class="flex flex-col items-center justify-center py-8">
                                                 <i class="fas fa-users text-4xl text-gray-300 mb-4"></i>
                                                 <p class="text-lg font-medium text-gray-500">Сотрудники не найдены</p>
-                                                <p class="text-gray-400 text-sm">Попробуйте изменить параметры фильтрации</p>
+                                                <p class="text-gray-400 text-sm">Попробуйте изменить параметры
+                                                    фильтрации</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -442,10 +469,13 @@
                             <div class="flex justify-between items-start mb-3">
                                 <div class="flex items-center space-x-3">
                                     @if($user->avatar)
-                                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full">
+                                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}"
+                                             class="w-10 h-10 rounded-full">
                                     @else
-                                        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                                            <span class="text-gray-600 font-medium">{{ substr($user->name, 0, 1) }}</span>
+                                        <div
+                                            class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                                            <span
+                                                class="text-gray-600 font-medium">{{ substr($user->name, 0, 1) }}</span>
                                         </div>
                                     @endif
                                     <div class="min-w-0">
@@ -458,8 +488,13 @@
                                             data-user-id="{{ $user->id }}" title="Просмотр">
                                         <i class="fas fa-eye"></i>
                                     </button>
+                                    <button class="change-role-btn text-purple-600 hover:text-purple-800 p-1"
+                                            data-user-id="{{ $user->id }}" title="Изменить роль">
+                                        <i class="fas fa-user-cog"></i>
+                                    </button>
                                     <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
-                                            data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" title="Удалить">
+                                            data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
+                                            title="Удалить">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -481,7 +516,8 @@
                                         <span class="text-xs text-gray-600 block mb-1">Отделы:</span>
                                         <div class="flex flex-wrap gap-1">
                                             @forelse($user->departments as $dept)
-                                                <span class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                <span
+                                                    class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
                                                     {{ $dept->name }}
                                                 </span>
                                             @empty
@@ -498,27 +534,31 @@
                                     </div>
                                     <div>
                                         <span class="text-xs text-gray-600 block mb-1">Выполнено:</span>
-                                        <span class="text-sm font-medium text-green-600">{{ $stats['completed'] }}</span>
+                                        <span
+                                            class="text-sm font-medium text-green-600">{{ $stats['completed'] }}</span>
                                     </div>
                                 </div>
 
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
                                         <span class="text-xs text-gray-600">% выполнения:</span>
-                                        <span class="text-xs font-medium {{ $stats['completion_rate'] >= 80 ? 'text-green-600' : ($stats['completion_rate'] >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
+                                        <span
+                                            class="text-xs font-medium {{ $stats['completion_rate'] >= 80 ? 'text-green-600' : ($stats['completion_rate'] >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
                                             {{ $stats['completion_rate'] }}%
                                         </span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                        <div class="h-1.5 rounded-full {{ $stats['completion_rate'] >= 80 ? 'bg-green-600' : ($stats['completion_rate'] >= 50 ? 'bg-yellow-500' : 'bg-red-600') }}"
-                                             style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
+                                        <div
+                                            class="h-1.5 rounded-full {{ $stats['completion_rate'] >= 80 ? 'bg-green-600' : ($stats['completion_rate'] >= 50 ? 'bg-yellow-500' : 'bg-red-600') }}"
+                                            style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
                                     </div>
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
                                         <span class="text-xs text-gray-600 block mb-1">Просрочено:</span>
-                                        <span class="text-sm font-medium {{ $overdue > 0 ? 'text-red-600' : 'text-green-600' }}">
+                                        <span
+                                            class="text-sm font-medium {{ $overdue > 0 ? 'text-red-600' : 'text-green-600' }}">
                                             {{ $overdue }}
                                         </span>
                                     </div>
@@ -586,7 +626,8 @@
                                            class="flex items-center space-x-1 hover:text-blue-600 {{ $currentSort == 'name' ? 'text-blue-600 font-semibold' : '' }}">
                                             <span>Пользователь</span>
                                             @if($currentSort == 'name')
-                                                <span class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
+                                                <span
+                                                    class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
                                             @endif
                                         </a>
                                     </th>
@@ -620,7 +661,8 @@
                                            class="flex items-center space-x-1 hover:text-blue-600 {{ $currentSort == 'created_at' ? 'text-blue-600 font-semibold' : '' }}">
                                             <span>Зарегистрирован</span>
                                             @if($currentSort == 'created_at')
-                                                <span class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
+                                                <span
+                                                    class="text-xs">{{ $currentDirection == 'asc' ? '↑' : '↓' }}</span>
                                             @endif
                                         </a>
                                     </th>
@@ -651,19 +693,24 @@
                                                              class="w-8 h-8 rounded-full object-cover"
                                                              style="width:40px; height: 40px;">
                                                     @else
-                                                        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                                                            <span class="text-gray-600 text-xs font-medium">{{ substr($user->name, 0, 1) }}</span>
+                                                        <div
+                                                            class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                                                            <span
+                                                                class="text-gray-600 text-xs font-medium">{{ substr($user->name, 0, 1) }}</span>
                                                         </div>
                                                     @endif
                                                     <div class="min-w-0">
-                                                        <div class="text-sm font-medium text-gray-900 truncate">{{ $user->name }}</div>
-                                                        <div class="text-xs text-gray-500 truncate">{{ $user->email }}</div>
+                                                        <div
+                                                            class="text-sm font-medium text-gray-900 truncate">{{ $user->name }}</div>
+                                                        <div
+                                                            class="text-xs text-gray-500 truncate">{{ $user->email }}</div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="px-3 py-4">
                                                 @if($user->role)
-                                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                                    <span
+                                                        class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
                                                     {{ $user->role->name }}
                                                 </span>
                                                 @else
@@ -674,7 +721,8 @@
                                                 @if($user->departments->count() > 0)
                                                     <div class="flex flex-wrap gap-1">
                                                         @foreach($user->departments as $dept)
-                                                            <span class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                            <span
+                                                                class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
                                                             {{ $dept->name }}
                                                         </span>
                                                         @endforeach
@@ -688,28 +736,33 @@
                                             <td class="px-3 py-4">
                                                 <div class="flex items-center space-x-2">
                                                     <div class="w-12 bg-gray-200 rounded-full h-1.5">
-                                                        <div class="h-1.5 rounded-full {{ $stats['completion_rate'] >= 80 ? 'bg-green-600' : ($stats['completion_rate'] >= 50 ? 'bg-yellow-500' : 'bg-red-600') }}"
-                                                             style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
+                                                        <div
+                                                            class="h-1.5 rounded-full {{ $stats['completion_rate'] >= 80 ? 'bg-green-600' : ($stats['completion_rate'] >= 50 ? 'bg-yellow-500' : 'bg-red-600') }}"
+                                                            style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
                                                     </div>
-                                                    <span class="text-xs font-medium {{ $stats['completion_rate'] >= 80 ? 'text-green-600' : ($stats['completion_rate'] >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
+                                                    <span
+                                                        class="text-xs font-medium {{ $stats['completion_rate'] >= 80 ? 'text-green-600' : ($stats['completion_rate'] >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
                                                     {{ $stats['completion_rate'] }}%
                                                 </span>
                                                 </div>
                                             </td>
                                             <td class="px-3 py-4">
-                                            <span class="text-sm {{ $overdue > 0 ? 'text-red-600 font-medium' : 'text-green-600' }}">
+                                            <span
+                                                class="text-sm {{ $overdue > 0 ? 'text-red-600 font-medium' : 'text-green-600' }}">
                                                 {{ $overdue }}
                                             </span>
                                             </td>
                                             <td class="px-3 py-4 text-sm text-gray-900">{{ $user->created_at->format('d.m.Y') }}</td>
                                             <td class="px-3 py-4">
                                                 <div class="flex items-center space-x-2">
-                                                    <button class="view-user-btn text-green-600 hover:text-green-800 p-1"
-                                                            data-user-id="{{ $user->id }}" title="Просмотр">
+                                                    <button
+                                                        class="view-user-btn text-green-600 hover:text-green-800 p-1"
+                                                        data-user-id="{{ $user->id }}" title="Просмотр">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
                                                     <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
-                                                            data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" title="Удалить">
+                                                            data-user-id="{{ $user->id }}"
+                                                            data-user-name="{{ $user->name }}" title="Удалить">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </div>
@@ -722,7 +775,8 @@
                                             <div class="flex flex-col items-center justify-center py-8">
                                                 <i class="fas fa-users text-4xl text-gray-300 mb-4"></i>
                                                 <p class="text-lg font-medium text-gray-500">Сотрудники не найдены</p>
-                                                <p class="text-gray-400 text-sm">Попробуйте изменить параметры фильтрации</p>
+                                                <p class="text-gray-400 text-sm">Попробуйте изменить параметры
+                                                    фильтрации</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -749,10 +803,13 @@
                             <div class="flex justify-between items-start mb-3">
                                 <div class="flex items-center space-x-3">
                                     @if($user->avatar)
-                                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full">
+                                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}"
+                                             class="w-10 h-10 rounded-full">
                                     @else
-                                        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                                            <span class="text-gray-600 font-medium">{{ substr($user->name, 0, 1) }}</span>
+                                        <div
+                                            class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                                            <span
+                                                class="text-gray-600 font-medium">{{ substr($user->name, 0, 1) }}</span>
                                         </div>
                                     @endif
                                     <div class="min-w-0">
@@ -766,7 +823,8 @@
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
-                                            data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" title="Удалить">
+                                            data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
+                                            title="Удалить">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -788,7 +846,8 @@
                                         <span class="text-xs text-gray-600 block mb-1">Отделы:</span>
                                         <div class="flex flex-wrap gap-1">
                                             @forelse($user->departments as $dept)
-                                                <span class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                <span
+                                                    class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
                                                 {{ $dept->name }}
                                             </span>
                                             @empty
@@ -805,27 +864,31 @@
                                     </div>
                                     <div>
                                         <span class="text-xs text-gray-600 block mb-1">Выполнено:</span>
-                                        <span class="text-sm font-medium text-green-600">{{ $stats['completed'] }}</span>
+                                        <span
+                                            class="text-sm font-medium text-green-600">{{ $stats['completed'] }}</span>
                                     </div>
                                 </div>
 
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
                                         <span class="text-xs text-gray-600">% выполнения:</span>
-                                        <span class="text-xs font-medium {{ $stats['completion_rate'] >= 80 ? 'text-green-600' : ($stats['completion_rate'] >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
+                                        <span
+                                            class="text-xs font-medium {{ $stats['completion_rate'] >= 80 ? 'text-green-600' : ($stats['completion_rate'] >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
                                         {{ $stats['completion_rate'] }}%
                                     </span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                        <div class="h-1.5 rounded-full {{ $stats['completion_rate'] >= 80 ? 'bg-green-600' : ($stats['completion_rate'] >= 50 ? 'bg-yellow-500' : 'bg-red-600') }}"
-                                             style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
+                                        <div
+                                            class="h-1.5 rounded-full {{ $stats['completion_rate'] >= 80 ? 'bg-green-600' : ($stats['completion_rate'] >= 50 ? 'bg-yellow-500' : 'bg-red-600') }}"
+                                            style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
                                     </div>
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
                                         <span class="text-xs text-gray-600 block mb-1">Просрочено:</span>
-                                        <span class="text-sm font-medium {{ $overdue > 0 ? 'text-red-600' : 'text-green-600' }}">
+                                        <span
+                                            class="text-sm font-medium {{ $overdue > 0 ? 'text-red-600' : 'text-green-600' }}">
                                         {{ $overdue }}
                                     </span>
                                     </div>
@@ -857,121 +920,13 @@
     </div>
 
     <!-- Модальное окно пользователя -->
-    <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4" style="backdrop-filter: blur(10px)">
-        <div class="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div class="p-4 md:p-6">
-                <div class="flex justify-between items-center mb-4 md:mb-6">
-                    <h3 class="text-lg md:text-xl font-bold text-gray-900">Детали пользователя</h3>
-                    <button id="closeModal" class="text-gray-500 hover:text-gray-700 p-1">
-                        <i class="fas fa-times text-lg"></i>
-                    </button>
-                </div>
-
-                <div id="modalContent">
-                    <div class="flex justify-center items-center py-8">
-                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                        <span class="ml-3 text-gray-600">Загрузка...</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('partials.modal.team.user-modal')
 
     <!-- Модальное окно приглашения -->
-    <div id="inviteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div class="p-4 md:p-6">
-                <div class="flex justify-between items-center mb-4 md:mb-6">
-                    <h3 class="text-lg md:text-xl font-bold text-gray-900">Пригласить сотрудников</h3>
-                    <button type="button" id="closeInviteModal" class="text-gray-500 hover:text-gray-700 p-1">
-                        <i class="fas fa-times text-lg"></i>
-                    </button>
-                </div>
-
-                <form id="inviteForm">
-                    @csrf
-                    <div class="space-y-4 md:space-y-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Поиск пользователей
-                            </label>
-                            <div class="relative">
-                                <input type="text" id="userSearch" placeholder="Введите имя или email пользователя..."
-                                       class="w-full px-3 py-2 md:px-4 md:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base"
-                                       autocomplete="off">
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                    <i class="fas fa-search text-gray-400"></i>
-                                </div>
-                            </div>
-                            <div id="searchResults" class="hidden mt-2 border border-gray-200 rounded-lg bg-white shadow-lg max-h-48 md:max-h-60 overflow-y-auto"></div>
-                            <div id="selectedUsers" class="mt-3 space-y-2"></div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1 md:mb-2">Роль</label>
-                                <select id="inviteRole" name="role_id"
-                                        class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base bg-white">
-                                    <option value="">Выберите роль</option>
-                                    @foreach($roles as $role)
-                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1 md:mb-2">Отдел</label>
-                                <select id="inviteDepartment" name="department_id"
-                                        class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base bg-white">
-                                    <option value="">Выберите отдел</option>
-                                    @foreach($departments as $department)
-                                        <option value="{{ $department->id }}">{{ $department->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 mt-4 md:mt-6 pt-4 border-t border-gray-200">
-                        <button type="button" id="cancelInvite"
-                                class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition font-medium text-sm md:text-base">
-                            Отмена
-                        </button>
-                        <button type="submit" id="submitInvite"
-                                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
-                                disabled>
-                            <i class="fas fa-paper-plane"></i>
-                            <span>Отправить приглашения</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    @include('partials.modal.team.invite-user')
 
     <!-- Модальное окно подтверждения удаления -->
-    <div id="deleteConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-white rounded-lg w-full max-w-md">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-bold text-gray-900">Подтверждение удаления</h3>
-                    <button id="closeDeleteModal" class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <p class="text-gray-700 mb-6">Вы действительно хотите удалить пользователя <span id="deleteUserName" class="font-semibold"></span>?</p>
-                <div class="flex justify-end space-x-3">
-                    <button id="cancelDeleteBtn"
-                            class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">
-                        Отмена
-                    </button>
-                    <button id="confirmDeleteBtn"
-                            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-                        Удалить
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('partials.modal.team.delete-user')
 @endsection
 
 @push('scripts')
@@ -1025,6 +980,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
+
             const modal = document.getElementById('userModal');
             const modalContent = document.getElementById('modalContent');
             const closeModal = document.getElementById('closeModal');
@@ -1047,6 +1003,54 @@
             let filtersVisible = localStorage.getItem('teamFiltersVisible') === 'true';
             let advancedFiltersVisible = localStorage.getItem('teamAdvancedFiltersVisible') === 'true';
 
+            // ============================================
+            // ОБРАБОТЧИК ДЛЯ КНОПКИ ИЗМЕНЕНИЯ РОЛИ - ПЕРВЫЙ
+            // ============================================
+            document.querySelectorAll('.change-role-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    const userId = this.dataset.userId;
+                    console.log('Change role clicked for user:', userId);
+                    if (userId) {
+                        openRoleEditModal(userId);
+                    }
+                });
+            });
+
+            // ============================================
+            // ОТКРЫТИЕ МОДАЛЬНОГО ОКНА ПОЛЬЗОВАТЕЛЯ
+            // ============================================
+            // Обработчик для кнопки просмотра
+            document.querySelectorAll('.view-user-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const userId = this.dataset.userId;
+                    console.log('View user clicked:', userId);
+                    if (userId) {
+                        loadUserDetails(userId);
+                    }
+                });
+            });
+
+            // Обработчик для клика по строке
+            document.querySelectorAll('.user-row').forEach(row => {
+                row.addEventListener('click', function(e) {
+                    // Проверяем, не кликнули ли по кнопке или ссылке
+                    if (e.target.closest('button') || e.target.closest('a')) {
+                        return;
+                    }
+                    const userId = this.dataset.userId;
+                    console.log('Row clicked:', userId);
+                    if (userId) {
+                        loadUserDetails(userId);
+                    }
+                });
+            });
+
+            // ============================================
+            // ФУНКЦИИ ФИЛЬТРОВ
+            // ============================================
             function showFilters() {
                 filtersSection.style.maxHeight = filtersSection.scrollHeight + 'px';
                 filtersSection.style.opacity = '1';
@@ -1072,7 +1076,9 @@
                 toggleAdvancedFiltersBtn.innerHTML = `<i class="fas fa-cog"></i><span>Скрыть расширенные</span><i class="fas fa-chevron-up text-xs ml-1" id="advancedArrow"></i>`;
                 advancedFiltersVisible = true;
                 localStorage.setItem('teamAdvancedFiltersVisible', 'true');
-                setTimeout(() => { if (filtersVisible) filtersSection.style.maxHeight = filtersSection.scrollHeight + 'px'; }, 10);
+                setTimeout(() => {
+                    if (filtersVisible) filtersSection.style.maxHeight = filtersSection.scrollHeight + 'px';
+                }, 10);
             }
 
             function hideAdvancedFilters() {
@@ -1081,7 +1087,9 @@
                 toggleAdvancedFiltersBtn.innerHTML = `<i class="fas fa-cog"></i><span>Расширенные</span><i class="fas fa-chevron-down text-xs ml-1" id="advancedArrow"></i>`;
                 advancedFiltersVisible = false;
                 localStorage.setItem('teamAdvancedFiltersVisible', 'false');
-                setTimeout(() => { if (filtersVisible) filtersSection.style.maxHeight = filtersSection.scrollHeight + 'px'; }, 10);
+                setTimeout(() => {
+                    if (filtersVisible) filtersSection.style.maxHeight = filtersSection.scrollHeight + 'px';
+                }, 10);
             }
 
             if (filtersVisible) showFilters(); else hideFilters();
@@ -1090,17 +1098,9 @@
             toggleFiltersBtn?.addEventListener('click', () => filtersVisible ? hideFilters() : showFilters());
             toggleAdvancedFiltersBtn?.addEventListener('click', () => advancedFiltersVisible ? hideAdvancedFilters() : showAdvancedFilters());
 
-            // Открытие модального окна пользователя
-            document.querySelectorAll('.view-user-btn, .user-row').forEach(element => {
-                element.addEventListener('click', function (e) {
-                    if (e.target.tagName === 'A' || e.target.closest('a')) return;
-                    if (this.classList.contains('delete-user-btn')) return;
-                    const userId = this.dataset.userId;
-                    if (userId) loadUserDetails(userId);
-                });
-            });
-
-            // Удаление пользователя
+            // ============================================
+            // УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ
+            // ============================================
             document.querySelectorAll('.delete-user-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -1143,132 +1143,166 @@
             });
 
             closeModal?.addEventListener('click', () => modal.classList.add('hidden'));
-            modal?.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+            modal?.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.add('hidden');
+            });
 
+            // ============================================
+            // ФУНКЦИЯ ЗАГРУЗКИ ДАННЫХ ПОЛЬЗОВАТЕЛЯ
+            // ============================================
             function loadUserDetails(userId) {
-                modalContent.innerHTML = `<div class="flex justify-center items-center py-8"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div><span class="ml-3 text-gray-600">Загрузка данных...</span></div>`;
+                console.log('Loading user details for:', userId);
+                modalContent.innerHTML = `<div class="flex justify-center items-center py-8">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <span class="ml-3 text-gray-600">Загрузка данных...</span>
+        </div>`;
                 modal.classList.remove('hidden');
-                fetch(`/team/user/${userId}`).then(res => res.json()).then(data => {
-                    if (data.success) renderUserModal(data);
-                    else throw new Error(data.error || 'Unknown error');
-                }).catch(error => {
-                    console.error('Error:', error);
-                    modalContent.innerHTML = `<div class="text-center py-8"><div class="text-red-600 text-xl mb-4"><i class="fas fa-exclamation-triangle"></i></div><p class="text-red-600 font-semibold">Ошибка загрузки данных</p><p class="text-gray-600 mt-2">${error.message}</p><button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition" onclick="location.reload()">Попробовать снова</button></div>`;
-                });
+
+                fetch(`/team/user/${userId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('User data received:', data);
+                        if (data.success) {
+                            renderUserModal(data);
+                        } else {
+                            throw new Error(data.error || 'Unknown error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        modalContent.innerHTML = `<div class="text-center py-8">
+                    <div class="text-red-600 text-xl mb-4"><i class="fas fa-exclamation-triangle"></i></div>
+                    <p class="text-red-600 font-semibold">Ошибка загрузки данных</p>
+                    <p class="text-gray-600 mt-2">${error.message}</p>
+                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition" onclick="location.reload()">Попробовать снова</button>
+                </div>`;
+                    });
             }
 
+            // ============================================
+            // ФУНКЦИЯ RENDER USER MODAL
+            // ============================================
             function renderUserModal(data) {
                 const user = data.user;
                 const stats = data.stats;
 
                 modalContent.innerHTML = `
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-1">
-                        <div class="bg-gray-50 rounded-lg p-6">
-                            <div class="text-center mb-6">
-                                ${user.avatar_url ? `<img src="${user.avatar_url}" alt="${user.name}" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">` :
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-1">
+            <div class="bg-gray-50 rounded-lg p-6">
+                <div class="text-center mb-6">
+                    ${user.avatar_url ? `<img src="${user.avatar_url}" alt="${user.name}" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">` :
                     `<div class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4" style="background-color: #16a34a"><span class="text-white text-2xl font-bold">${user.name.charAt(0)}</span></div>`}
-                                <h4 class="text-xl font-bold text-gray-900">${escapeHtml(user.name)}</h4>
-                                <p class="text-gray-600">${escapeHtml(user.email)}</p>
-                                <div class="mt-2"><span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">${user.role ? user.role.name : 'Роль не назначена'}</span></div>
-                            </div>
-                            <div class="space-y-4">
-                                <div>
-                                    <div class="flex justify-between items-center mb-2">
-                                        <label class="text-sm font-medium text-gray-600">Отделы:</label>
-                                        <button id="editDepartmentsBtn" class="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1">
-                                            <i class="fas fa-edit text-xs"></i> <span>Редактировать</span>
-                                        </button>
-                                    </div>
-                                    <div id="departmentsList" class="flex flex-wrap gap-2">
-                                        ${user.departments && user.departments.length > 0 ?
+                    <h4 class="text-xl font-bold text-gray-900">${escapeHtml(user.name)}</h4>
+                    <p class="text-gray-600">${escapeHtml(user.email)}</p>
+                    <div class="mt-2 flex items-center justify-center gap-2">
+                        <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                            ${user.role ? user.role.name : 'Роль не назначена'}
+                        </span>
+                        <button onclick="openRoleEditModal(${user.id})"
+                                class="inline-block px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200 transition flex items-center gap-1">
+                            <i class="fas fa-edit text-xs"></i>
+                            <span>Изменить</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-sm font-medium text-gray-600">Отделы:</label>
+                            <button id="editDepartmentsBtn" class="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1">
+                                <i class="fas fa-edit text-xs"></i> <span>Редактировать</span>
+                            </button>
+                        </div>
+                        <div id="departmentsList" class="flex flex-wrap gap-2">
+                            ${user.departments && user.departments.length > 0 ?
                     user.departments.map(dept => `<span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">${escapeHtml(dept.name)}</span>`).join('') :
                     '<span class="text-gray-400 text-sm">Не назначен</span>'}
-                                    </div>
-                                    <div id="departmentsEditForm" class="hidden mt-3">
-                                        <select id="departmentsSelect" multiple class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" size="5"></select>
-                                        <div class="flex gap-2 mt-2">
-                                            <button id="saveDepartmentsBtn" class="bg-green-600 text-white px-3 py-1 rounded text-sm">Сохранить</button>
-                                            <button id="cancelDepartmentsBtn" class="bg-gray-500 text-white px-3 py-1 rounded text-sm">Отмена</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div><label class="text-sm font-medium text-gray-600">Зарегистрирован:</label><p class="text-gray-900">${new Date(user.created_at).toLocaleDateString('ru-RU')}</p></div>
-                                ${user.last_login_at ? `<div><label class="text-sm font-medium text-gray-600">Последний вход:</label><p class="text-gray-900">${new Date(user.last_login_at).toLocaleString('ru-RU')}</p></div>` : ''}
+                        </div>
+                        <div id="departmentsEditForm" class="hidden mt-3">
+                            <select id="departmentsSelect" multiple class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" size="5"></select>
+                            <div class="flex gap-2 mt-2">
+                                <button id="saveDepartmentsBtn" class="bg-green-600 text-white px-3 py-1 rounded text-sm">Сохранить</button>
+                                <button id="cancelDepartmentsBtn" class="bg-gray-500 text-white px-3 py-1 rounded text-sm">Отмена</button>
                             </div>
                         </div>
                     </div>
-                    <div class="lg:col-span-2">
-                        <!-- Вкладки -->
-                        <div class="border-b border-gray-200 mb-4">
-                            <nav class="flex space-x-4">
-                                <button class="tab-btn px-4 py-2 text-sm font-medium text-green-600 border-b-2 border-green-600" data-tab="tasks">
-                                    Задачи
-                                </button>
-                                <button class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700" data-tab="visits">
-                                    Посещения
-                                </button>
-                            </nav>
-                        </div>
+                    <div><label class="text-sm font-medium text-gray-600">Зарегистрирован:</label><p class="text-gray-900">${new Date(user.created_at).toLocaleDateString('ru-RU')}</p></div>
+                    ${user.last_login_at ? `<div><label class="text-sm font-medium text-gray-600">Последний вход:</label><p class="text-gray-900">${new Date(user.last_login_at).toLocaleString('ru-RU')}</p></div>` : ''}
+                </div>
+            </div>
+        </div>
+        <div class="lg:col-span-2">
+            <!-- Вкладки -->
+            <div class="border-b border-gray-200 mb-4">
+                <nav class="flex space-x-4">
+                    <button class="tab-btn px-4 py-2 text-sm font-medium text-green-600 border-b-2 border-green-600" data-tab="tasks">
+                        Задачи
+                    </button>
+                    <button class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700" data-tab="visits">
+                        Посещения
+                    </button>
+                </nav>
+            </div>
 
-                        <!-- Вкладка Задачи -->
-                        <div id="tab-tasks" class="tab-content">
-                            <div class="mb-6">
-                                <h4 class="text-lg font-semibold mb-4">Статистика выполнения задач</h4>
-                                <div class="flex space-x-2 mb-4">
-                                    <button class="period-filter-btn px-3 py-1 bg-blue-600 text-white rounded text-sm" data-period="week">Неделя</button>
-                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
-                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="year">Год</button>
-                                    <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="all">Все время</button>
-                                </div>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold text-blue-600">${stats.total_tasks}</div><div class="text-sm text-gray-600">Всего задач</div></div>
-                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold text-green-600">${stats.completed_tasks}</div><div class="text-sm text-gray-600">Выполнено</div></div>
-                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</div><div class="text-sm text-gray-600">Средний % выполнения</div></div>
-                                    <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold ${stats.overdue_tasks > 0 ? 'text-red-600' : 'text-green-600'}">${stats.overdue_tasks}</div><div class="text-sm text-gray-600">Просрочено</div></div>
-                                </div>
-                                <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
-                                    <div class="flex justify-between items-center mb-2"><span class="font-medium text-gray-700">Средний процент выполнения задач</span><span class="font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</span></div>
-                                    <div class="w-full bg-gray-200 rounded-full h-3"><div class="h-3 rounded-full transition-all duration-500 ${getCompletionRateColor(data.completion_rate).replace('text-', 'bg-')}" style="width: ${Math.min(data.completion_rate, 100)}%"></div></div>
-                                    <div class="flex justify-between text-xs text-gray-500 mt-1"><span>0%</span><span>50%</span><span>100%</span></div>
-                                </div>
-                            </div>
-                            <div class="flex space-x-2 mb-6">
-                                <a href="/team/user/${user.id}/export?type=excel&period=all" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center space-x-2"><i class="fas fa-file-excel"></i><span>Excel</span></a>
-                                <a href="/team/user/${user.id}/export?type=pdf&period=all" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center space-x-2"><i class="fas fa-file-pdf"></i><span>PDF</span></a>
-                                <a href="/team/user/${user.id}/print" target="_blank" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center space-x-2"><i class="fas fa-print"></i><span>Печать</span></a>
-                            </div>
-                            <div><h4 class="text-lg font-semibold mb-4">Задачи</h4><div id="userTasksList"><div class="flex justify-center items-center py-4"><div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div><span class="ml-2 text-gray-600">Загрузка задач...</span></div></div></div>
-                        </div>
-
-                        <!-- Вкладка Посещения -->
-                        <div id="tab-visits" class="tab-content hidden">
-                            <div class="mb-4">
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    <button class="visit-period-btn px-3 py-1 bg-green-600 text-white rounded text-sm" data-period="today">Сегодня</button>
-                                    <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="yesterday">Вчера</button>
-                                    <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="week">Неделя</button>
-                                    <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
-                                    <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="custom" id="customPeriodBtn">Выбрать период</button>
-                                    <a href="#" class="export-visits-btn px-3 py-1 bg-blue-600 text-white rounded text-sm flex items-center ml-auto">
-                                        <i class="fas fa-download mr-1"></i> CSV
-                                    </a>
-                                </div>
-                                <div id="customDateRange" class="hidden mb-4 flex gap-2">
-                                    <input type="date" id="startDate" class="px-3 py-1 border rounded text-sm">
-                                    <input type="date" id="endDate" class="px-3 py-1 border rounded text-sm">
-                                    <button id="applyCustomRange" class="px-3 py-1 bg-green-600 text-white rounded text-sm">Применить</button>
-                                </div>
-                            </div>
-                            <div id="visitStatsContent">
-                                <div class="flex justify-center items-center py-8">
-                                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                                    <span class="ml-2 text-gray-600">Загрузка статистики...</span>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Вкладка Задачи -->
+            <div id="tab-tasks" class="tab-content">
+                <div class="mb-6">
+                    <h4 class="text-lg font-semibold mb-4">Статистика выполнения задач</h4>
+                    <div class="flex space-x-2 mb-4">
+                        <button class="period-filter-btn px-3 py-1 text-white rounded text-sm" data-period="week" style="background-color: #16a34a">Неделя</button>
+                        <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
+                        <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="year">Год</button>
+                        <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="all">Все время</button>
                     </div>
-                </div>`;
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold text-blue-600">${stats.total_tasks}</div><div class="text-sm text-gray-600">Всего задач</div></div>
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold text-green-600">${stats.completed_tasks}</div><div class="text-sm text-gray-600">Выполнено</div></div>
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</div><div class="text-sm text-gray-600">Средний % выполнения</div></div>
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 text-center"><div class="text-2xl font-bold ${stats.overdue_tasks > 0 ? 'text-red-600' : 'text-green-600'}">${stats.overdue_tasks}</div><div class="text-sm text-gray-600">Просрочено</div></div>
+                    </div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+                        <div class="flex justify-between items-center mb-2"><span class="font-medium text-gray-700">Средний процент выполнения задач</span><span class="font-bold ${getCompletionRateColor(data.completion_rate)}">${data.completion_rate}%</span></div>
+                        <div class="w-full bg-gray-200 rounded-full h-3"><div class="h-3 rounded-full transition-all duration-500 ${getCompletionRateColor(data.completion_rate).replace('text-', 'bg-')}" style="width: ${Math.min(data.completion_rate, 100)}%"></div></div>
+                        <div class="flex justify-between text-xs text-gray-500 mt-1"><span>0%</span><span>50%</span><span>100%</span></div>
+                    </div>
+                </div>
+                <div class="flex space-x-2 mb-6">
+                    <a href="/team/user/${user.id}/export?type=excel&period=all" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center space-x-2"><i class="fas fa-file-excel"></i><span>Excel</span></a>
+                    <a href="/team/user/${user.id}/export?type=pdf&period=all" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center space-x-2"><i class="fas fa-file-pdf"></i><span>PDF</span></a>
+                    <a href="/team/user/${user.id}/print" target="_blank" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center space-x-2"><i class="fas fa-print"></i><span>Печать</span></a>
+                </div>
+                <div><h4 class="text-lg font-semibold mb-4">Задачи</h4><div id="userTasksList"><div class="flex justify-center items-center py-4"><div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div><span class="ml-2 text-gray-600">Загрузка задач...</span></div></div></div>
+            </div>
+
+            <!-- Вкладка Посещения -->
+            <div id="tab-visits" class="tab-content hidden">
+                <div class="mb-4">
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button class="visit-period-btn px-3 py-1 rounded text-sm" data-period="today" style="background-color: #16a34a; color: white;">Сегодня</button>
+                        <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="yesterday">Вчера</button>
+                        <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="week">Неделя</button>
+                        <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
+                        <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="custom" id="customPeriodBtn">Выбрать период</button>
+                        <a href="#" class="export-visits-btn px-3 py-1 bg-blue-600 text-white rounded text-sm flex items-center ml-auto">
+                            <i class="fas fa-download mr-1"></i> CSV
+                        </a>
+                    </div>
+                    <div id="customDateRange" class="hidden mb-4 flex gap-2">
+                        <input type="date" id="startDate" class="px-3 py-1 border rounded text-sm">
+                        <input type="date" id="endDate" class="px-3 py-1 border rounded text-sm">
+                        <button id="applyCustomRange" class="px-3 py-1 bg-green-600 text-white rounded text-sm">Применить</button>
+                    </div>
+                </div>
+                <div id="visitStatsContent">
+                    <div class="flex justify-center items-center py-8">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <span class="ml-2 text-gray-600">Загрузка статистики...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
 
                 // Обработчики вкладок
                 modalContent.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1302,9 +1336,9 @@
                     if (!container) return;
 
                     container.innerHTML = `<div class="flex justify-center items-center py-8">
-                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                        <span class="ml-2 text-gray-600">Загрузка статистики...</span>
-                    </div>`;
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <span class="ml-2 text-gray-600">Загрузка статистики...</span>
+            </div>`;
 
                     let url = `/team/user/${userId}/detailed-stats?period=${period}`;
                     if (startDate && endDate) {
@@ -1332,48 +1366,48 @@
                     const stats = data.visit_stats;
 
                     container.innerHTML = `
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-            <div class="bg-blue-50 rounded-lg p-4 text-center">
-                <div class="text-2xl font-bold text-blue-600">${stats.total_visits}</div>
-                <div class="text-sm text-gray-600">Рабочих дней</div>
-            </div>
-            <div class="bg-purple-50 rounded-lg p-4 text-center">
-                <div class="text-2xl font-bold text-purple-600">${formatDurationTotal(stats.total_time_seconds)}</div>
-                <div class="text-sm text-gray-600">Общее время работы</div>
-            </div>
-            <div class="bg-orange-50 rounded-lg p-4 text-center">
-                <div class="text-2xl font-bold text-orange-600">${formatDurationTotal(stats.average_time_per_visit)}</div>
-                <div class="text-sm text-gray-600">Среднее в день</div>
-            </div>
-        </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-blue-50 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-blue-600">${stats.total_visits}</div>
+                        <div class="text-sm text-gray-600">Рабочих дней</div>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-purple-600">${formatDurationTotal(stats.total_time_seconds)}</div>
+                        <div class="text-sm text-gray-600">Общее время работы</div>
+                    </div>
+                    <div class="bg-orange-50 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-orange-600">${formatDurationTotal(stats.average_time_per_visit)}</div>
+                        <div class="text-sm text-gray-600">Среднее в день</div>
+                    </div>
+                </div>
 
-        <div class="bg-white border border-gray-200 rounded-lg p-4">
-            <h5 class="font-semibold mb-3">Время работы по дням</h5>
-            <div class="overflow-x-auto">
-                <table class="min-w-full">
-                    <thead>
-                        <tr class="border-b">
-                            <th class="text-left py-2">Дата</th>
-                            <th class="text-left py-2">Время работы</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${stats.daily_stats.map(day => `
-                            <tr class="border-b">
-                                <td class="py-2">${day.date}</td>
-                                <td class="py-2 font-medium ${day.seconds > 0 ? 'text-green-600' : 'text-gray-400'}">${day.time}</td>
-                            </tr>
-                        `).join('')}
-                        ${stats.daily_stats.length === 0 ? `
-                            <tr>
-                                <td colspan="2" class="text-center py-4 text-gray-500">Нет данных</td>
-                            </tr>
-                        ` : ''}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
+                <div class="bg-white border border-gray-200 rounded-lg p-4">
+                    <h5 class="font-semibold mb-3">Время работы по дням</h5>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead>
+                                <tr class="border-b">
+                                    <th class="text-left py-2">Дата</th>
+                                    <th class="text-left py-2">Время работы</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${stats.daily_stats.map(day => `
+                                    <tr class="border-b">
+                                        <td class="py-2">${day.date}</td>
+                                        <td class="py-2 font-medium ${day.seconds > 0 ? 'text-green-600' : 'text-gray-400'}">${day.time}</td>
+                                    </tr>
+                                `).join('')}
+                                ${stats.daily_stats.length === 0 ? `
+                                    <tr>
+                                        <td colspan="2" class="text-center py-4 text-gray-500">Нет данных</td>
+                                    </tr>
+                                ` : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
 
                     // Обновляем ссылку на экспорт
                     const exportBtn = modalContent.querySelector('.export-visits-btn');
@@ -1400,7 +1434,6 @@
                     btn.addEventListener('click', function() {
                         const period = this.dataset.period;
 
-                        // Обновляем стили
                         modalContent.querySelectorAll('.visit-period-btn').forEach(b => {
                             b.classList.remove('bg-green-600', 'text-white');
                             b.classList.add('bg-gray-200', 'text-gray-700');
@@ -1408,7 +1441,6 @@
                         this.classList.remove('bg-gray-200', 'text-gray-700');
                         this.classList.add('bg-green-600', 'text-white');
 
-                        // Показываем/скрываем кастомный выбор даты
                         if (period === 'custom') {
                             customDateRange.classList.remove('hidden');
                         } else {
@@ -1418,7 +1450,6 @@
                     });
                 });
 
-                // Обработчик применения кастомного периода
                 const applyCustomRange = document.getElementById('applyCustomRange');
                 if (applyCustomRange) {
                     applyCustomRange.addEventListener('click', function() {
@@ -1495,37 +1526,69 @@
             function loadUserTasks(userId, period = 'month') {
                 const tasksList = document.getElementById('userTasksList');
                 if (!tasksList) return;
-                tasksList.innerHTML = `<div class="flex justify-center items-center py-4"><div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div><span class="ml-2 text-gray-600">Загрузка задач...</span></div>`;
+                tasksList.innerHTML = `<div class="flex justify-center items-center py-4">
+            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+            <span class="ml-2 text-gray-600">Загрузка задач...</span>
+        </div>`;
 
-                fetch(`/team/user/${userId}/tasks?period=${period}`).then(res => res.json()).then(data => {
-                    if (data.success) {
-                        let tasksHtml = '';
-                        if (data.period_completion_rate !== undefined) {
-                            tasksHtml += `<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4"><div class="flex justify-between items-center"><span class="font-medium text-blue-800">Статистика за период:</span><span class="font-bold ${getCompletionRateColor(data.period_completion_rate)}">${data.period_completion_rate}% выполнения</span></div></div>`;
-                        }
-                        if (data.tasks.length === 0) {
-                            tasksHtml += '<p class="text-gray-500 text-center py-4">Задачи не найдены</p>';
+                fetch(`/team/user/${userId}/tasks?period=${period}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            let tasksHtml = '';
+                            if (data.period_completion_rate !== undefined) {
+                                tasksHtml += `<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium text-blue-800">Статистика за период:</span>
+                                <span class="font-bold ${getCompletionRateColor(data.period_completion_rate)}">${data.period_completion_rate}% выполнения</span>
+                            </div>
+                        </div>`;
+                            }
+                            if (data.tasks.length === 0) {
+                                tasksHtml += '<p class="text-gray-500 text-center py-4">Задачи не найдены</p>';
+                            } else {
+                                tasksHtml += '<div class="space-y-3 max-h-96 overflow-y-auto">';
+                                data.tasks.forEach(task => {
+                                    const statusColors = {
+                                        'выполнена': 'bg-green-100 text-green-800',
+                                        'в работе': 'bg-blue-100 text-blue-800',
+                                        'просрочена': 'bg-red-100 text-red-800',
+                                        'не назначена': 'bg-gray-100 text-gray-800'
+                                    };
+                                    tasksHtml += `<div class="bg-white border border-gray-200 rounded-lg p-4">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h5 class="font-semibold text-gray-900">${escapeHtml(task.name)}</h5>
+                                    <span class="px-2 py-1 ${statusColors[task.status] || 'bg-gray-100'} rounded-full text-xs">${task.status}</span>
+                                </div>
+                                <div class="text-sm text-gray-600 mb-2">${task.description ? escapeHtml(task.description.substring(0, 100)) + '...' : 'Описание отсутствует'}</div>
+                                <div class="flex justify-between text-xs text-gray-500">
+                                    <span>Создана: ${new Date(task.created_at).toLocaleDateString('ru-RU')}</span>
+                                    ${task.deadline ? `<span>Дедлайн: ${new Date(task.deadline).toLocaleDateString('ru-RU')}</span>` : ''}
+                                </div>
+                            </div>`;
+                                });
+                                tasksHtml += '</div>';
+                            }
+                            tasksList.innerHTML = tasksHtml;
                         } else {
-                            tasksHtml += '<div class="space-y-3 max-h-96 overflow-y-auto">';
-                            data.tasks.forEach(task => {
-                                const statusColors = { 'выполнена': 'bg-green-100 text-green-800', 'в работе': 'bg-blue-100 text-blue-800', 'просрочена': 'bg-red-100 text-red-800', 'не назначена': 'bg-gray-100 text-gray-800' };
-                                tasksHtml += `<div class="bg-white border border-gray-200 rounded-lg p-4"><div class="flex justify-between items-start mb-2"><h5 class="font-semibold text-gray-900">${escapeHtml(task.name)}</h5><span class="px-2 py-1 ${statusColors[task.status] || 'bg-gray-100'} rounded-full text-xs">${task.status}</span></div><div class="text-sm text-gray-600 mb-2">${task.description ? escapeHtml(task.description.substring(0, 100)) + '...' : 'Описание отсутствует'}</div><div class="flex justify-between text-xs text-gray-500"><span>Создана: ${new Date(task.created_at).toLocaleDateString('ru-RU')}</span>${task.deadline ? `<span>Дедлайн: ${new Date(task.deadline).toLocaleDateString('ru-RU')}</span>` : ''}</div></div>`;
-                            });
-                            tasksHtml += '</div>';
+                            throw new Error(data.error || 'Unknown error');
                         }
-                        tasksList.innerHTML = tasksHtml;
-                    } else {
-                        throw new Error(data.error || 'Unknown error');
-                    }
-                }).catch(error => {
-                    console.error('Error loading tasks:', error);
-                    if (tasksList) tasksList.innerHTML = `<div class="text-center py-4"><p class="text-red-600">Ошибка загрузки задач</p><p class="text-gray-600 text-sm mt-1">${error.message}</p></div>`;
-                });
+                    })
+                    .catch(error => {
+                        console.error('Error loading tasks:', error);
+                        if (tasksList) tasksList.innerHTML = `<div class="text-center py-4">
+                    <p class="text-red-600">Ошибка загрузки задач</p>
+                    <p class="text-gray-600 text-sm mt-1">${error.message}</p>
+                </div>`;
+                    });
             }
 
-            // Фильтрация
+            // ============================================
+            // ФИЛЬТРАЦИЯ
+            // ============================================
             const applyFiltersBtn = document.getElementById('applyFilters');
             const resetFiltersBtn = document.getElementById('resetFilters');
+
             function applyFilters() {
                 let url = new URL(window.location.href);
                 const search = document.getElementById('searchInput')?.value;
@@ -1536,6 +1599,7 @@
                 const dateTo = document.getElementById('dateTo')?.value;
                 const completionMin = document.getElementById('completionMin')?.value;
                 const completionMax = document.getElementById('completionMax')?.value;
+
                 if (search) url.searchParams.set('search', search); else url.searchParams.delete('search');
                 if (department) url.searchParams.set('department', department); else url.searchParams.delete('department');
                 if (role) url.searchParams.set('role', role); else url.searchParams.delete('role');
@@ -1547,18 +1611,36 @@
                 url.searchParams.delete('page');
                 window.location.href = url.toString();
             }
+
             function resetFilters() {
                 const inputs = ['searchInput', 'departmentFilter', 'roleFilter', 'statusFilter', 'dateFrom', 'dateTo', 'completionMin', 'completionMax'];
-                inputs.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+                inputs.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
                 window.location.href = window.location.pathname;
             }
+
             applyFiltersBtn?.addEventListener('click', applyFilters);
             resetFiltersBtn?.addEventListener('click', resetFilters);
+
             let searchTimeoutFilter;
             document.getElementById('searchInput')?.addEventListener('input', function() {
                 clearTimeout(searchTimeoutFilter);
                 searchTimeoutFilter = setTimeout(applyFilters, 800);
             });
+
+            // ============================================
+            // ДЕЛАЕМ ФУНКЦИИ ГЛОБАЛЬНЫМИ
+            // ============================================
+            window.loadUserDetails = loadUserDetails;
+            window.renderUserModal = renderUserModal;
+            window.loadUserTasks = loadUserTasks;
+            window.openRoleEditModal = openRoleEditModal;
+            window.closeRoleEditModal = closeRoleEditModal;
+            window.saveUserRole = saveUserRole;
+
+            console.log('DOMContentLoaded completed successfully');
         });
 
         // Логика приглашений (оставляем как было)
@@ -1573,7 +1655,7 @@
 
         function selectUser(email, name) {
             if (selectedUsersData.has(email)) return;
-            selectedUsersData.set(email, { email: email, name: name });
+            selectedUsersData.set(email, {email: email, name: name});
             updateSelectedUsers();
             if (userSearch) userSearch.value = '';
             hideSearchResults();
@@ -1581,7 +1663,7 @@
         }
 
         window.selectUser = selectUser;
-        window.removeSelectedUser = function(email) {
+        window.removeSelectedUser = function (email) {
             selectedUsersData.delete(email);
             updateSelectedUsers();
             updateSubmitButton();
@@ -1650,11 +1732,14 @@
             url.searchParams.append('search', searchTerm);
             fetch(url.toString(), {
                 method: 'GET',
-                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                headers: {'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json'}
             }).then(response => response.json()).then(data => {
                 if (data.success) displaySearchResults(data.users);
                 else hideSearchResults();
-            }).catch(error => { console.error('Search error:', error); hideSearchResults(); });
+            }).catch(error => {
+                console.error('Search error:', error);
+                hideSearchResults();
+            });
         }
 
         if (inviteModal && closeInviteModal && cancelInvite && inviteForm && userSearch) {
@@ -1666,12 +1751,21 @@
                     resetForm();
                 });
             }
-            closeInviteModal.addEventListener('click', function () { inviteModal.classList.add('hidden'); resetForm(); });
-            cancelInvite.addEventListener('click', function () { inviteModal.classList.add('hidden'); resetForm(); });
+            closeInviteModal.addEventListener('click', function () {
+                inviteModal.classList.add('hidden');
+                resetForm();
+            });
+            cancelInvite.addEventListener('click', function () {
+                inviteModal.classList.add('hidden');
+                resetForm();
+            });
             userSearch.addEventListener('input', function (e) {
                 const searchTerm = e.target.value.trim();
                 clearTimeout(searchTimeout);
-                if (searchTerm.length < 2) { hideSearchResults(); return; }
+                if (searchTerm.length < 2) {
+                    hideSearchResults();
+                    return;
+                }
                 searchTimeout = setTimeout(() => searchUsers(searchTerm), 300);
             });
             document.addEventListener('click', function (e) {
@@ -1679,7 +1773,10 @@
             });
             inviteForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-                if (selectedUsersData.size === 0) { showNotification('error', 'Выберите хотя бы одного пользователя'); return; }
+                if (selectedUsersData.size === 0) {
+                    showNotification('error', 'Выберите хотя бы одного пользователя');
+                    return;
+                }
                 const formData = new FormData();
                 const emailsArray = Array.from(selectedUsersData.keys());
                 formData.append('emails', emailsArray.join(','));
@@ -1694,14 +1791,17 @@
                 submitInvite.disabled = true;
                 fetch('/team/invite', {
                     method: 'POST',
-                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                    headers: {'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json'},
                     body: formData
                 }).then(response => response.json()).then(data => {
                     if (data.success) {
                         showNotification('success', data.message || 'Приглашения отправлены!');
                         if (data.warning) showNotification('warning', data.warning);
                         if (data.info) showNotification('info', data.info);
-                        setTimeout(() => { inviteModal.classList.add('hidden'); resetForm(); }, 1000);
+                        setTimeout(() => {
+                            inviteModal.classList.add('hidden');
+                            resetForm();
+                        }, 1000);
                     } else {
                         showNotification('error', data.error || 'Произошла ошибка при отправке приглашений');
                     }
@@ -1726,15 +1826,286 @@
             if (deptSelect) deptSelect.value = '';
             updateSubmitButton();
         }
+
+        // Функция для открытия модального окна изменения роли
+        function openRoleEditModal(userId) {
+            // Проверяем, есть ли уже открытое модальное окно
+            const existingModal = document.getElementById('roleEditModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // Показываем индикатор загрузки
+            showNotification('info', 'Загрузка данных...');
+
+            fetch(`/team/user/${userId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const user = data.user;
+
+                        // Создаем модальное окно
+                        const modal = document.createElement('div');
+                        modal.id = 'roleEditModal';
+                        modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4';
+                        modal.onclick = function (e) {
+                            if (e.target === this) {
+                                closeRoleEditModal();
+                            }
+                        };
+
+                        modal.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative animate-fadeIn">
+                        <button onclick="closeRoleEditModal()"
+                                class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+
+                        <div class="flex items-center gap-3 mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900">Изменение роли</h3>
+                                <p class="text-sm text-gray-500">Назначьте новую роль пользователю</p>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-200 pt-4 mb-4">
+                            <div class="flex items-center gap-3 mb-4">
+                                ${user.avatar_url ?
+                            `<img src="${user.avatar_url}" alt="${user.name}" class="w-10 h-10 rounded-full object-cover">` :
+                            `<div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                        <span class="text-gray-600 font-bold">${user.name.charAt(0)}</span>
+                                     </div>`
+                        }
+                                <div>
+                                    <p class="font-semibold text-gray-900">${escapeHtml(user.name)}</p>
+                                    <p class="text-sm text-gray-600">${escapeHtml(user.email)}</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-3 mb-4">
+                                <p class="text-sm text-gray-600">Текущая роль:</p>
+                                <p class="font-medium text-gray-900">
+                                    ${user.role ? escapeHtml(user.role.name) : 'Не назначена'}
+                                </p>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Выберите новую роль
+                                </label>
+                                <select id="roleSelect"
+                                        class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none bg-white focus:green-600 focus:ring-2 focus:ring-green-100 transition">
+                                    <option value="">Без роли</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                            <button onclick="closeRoleEditModal()"
+                                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium">
+                                Отмена
+                            </button>
+                            <button onclick="saveUserRole(${user.id})"
+                                    id="saveRoleBtn"
+                                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-600 transition font-medium flex items-center space-x-2">
+                                <i class="fas fa-save"></i>
+                                <span>Сохранить</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                        document.body.appendChild(modal);
+
+                        // Добавляем анимацию
+                        const modalContent = modal.querySelector('.animate-fadeIn');
+                        if (modalContent) {
+                            modalContent.style.animation = 'fadeIn 0.3s ease-out';
+                        }
+
+                        // Загружаем список ролей
+                        fetch('/team/roles/list', {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                            .then(res => res.json())
+                            .then(rolesData => {
+                                const select = document.getElementById('roleSelect');
+                                if (select && rolesData.success) {
+                                    select.innerHTML = '<option value="">Без роли</option>';
+                                    rolesData.roles.forEach(role => {
+                                        const option = document.createElement('option');
+                                        option.value = role.id;
+                                        option.textContent = role.name;
+                                        if (user.role && user.role.id === role.id) {
+                                            option.selected = true;
+                                        }
+                                        select.appendChild(option);
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error loading roles:', error);
+                                showNotification('error', 'Ошибка при загрузке списка ролей');
+                            });
+
+                    } else {
+                        showNotification('error', data.error || 'Ошибка при загрузке данных пользователя');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('error', 'Ошибка при загрузке данных пользователя');
+                });
+        }
+
+
+        // Функция закрытия модального окна изменения роли
+        function closeRoleEditModal() {
+            const modal = document.getElementById('roleEditModal');
+            if (modal) {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    if (document.body.contains(modal)) {
+                        modal.remove();
+                    }
+                }, 300);
+            }
+        }
+
+        // Функция сохранения роли
+        function saveUserRole(userId) {
+            const select = document.getElementById('roleSelect');
+            if (!select) {
+                showNotification('error', 'Ошибка: форма не найдена');
+                return;
+            }
+
+            const roleId = select.value;
+            const saveBtn = document.getElementById('saveRoleBtn');
+            const originalText = saveBtn ? saveBtn.innerHTML : '';
+
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = `
+            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+            <span>Сохранение...</span>
+        `;
+            }
+
+            fetch(`/team/user/${userId}/role`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': getCsrfToken(),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({role_id: roleId || null})
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('success', data.message || 'Роль успешно обновлена');
+                        closeRoleEditModal();
+
+                        // Обновляем данные в модальном окне пользователя, если оно открыто
+                        const userModal = document.getElementById('userModal');
+                        if (userModal && !userModal.classList.contains('hidden')) {
+                            // Находим ID пользователя из текущего модального окна
+                            const userIdElement = document.querySelector('[data-user-id]');
+                            if (userIdElement) {
+                                const currentUserId = userIdElement.dataset.userId;
+                                if (currentUserId) {
+                                    loadUserDetails(currentUserId);
+                                }
+                            }
+                        } else {
+                            // Обновляем таблицу через перезагрузку страницы
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1500);
+                        }
+                    } else {
+                        showNotification('error', data.error || 'Ошибка при обновлении роли');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('error', 'Ошибка при обновлении роли');
+                })
+                .finally(() => {
+                    if (saveBtn) {
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = originalText;
+                    }
+                });
+        }
+
+        function updateRoleDisplay(userId, roleName) {
+            // Обновляем в таблице
+            document.querySelectorAll(`.user-row[data-user-id="${userId}"]`).forEach(row => {
+                const roleCell = row.querySelector('td:nth-child(2)');
+                if (roleCell) {
+                    if (roleName) {
+                        roleCell.innerHTML = `
+                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                        ${escapeHtml(roleName)}
+                    </span>
+                `;
+                    } else {
+                        roleCell.innerHTML = `<span class="text-gray-400 text-xs">Не назначена</span>`;
+                    }
+                }
+            });
+
+            // Обновляем в мобильных карточках
+            document.querySelectorAll(`.user-row[data-user-id="${userId}"] .grid-cols-2`).forEach(card => {
+                const roleDiv = card.querySelector('div:first-child');
+                if (roleDiv) {
+                    const roleSpan = roleDiv.querySelector('span');
+                    if (roleSpan) {
+                        if (roleName) {
+                            roleSpan.className = 'px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs';
+                            roleSpan.textContent = roleName;
+                        } else {
+                            roleSpan.className = 'text-gray-400 text-xs';
+                            roleSpan.textContent = 'Не назначена';
+                        }
+                    }
+                }
+            });
+        }
+
     </script>
 
     <style>
-        #filtersSection { transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; opacity: 0; }
-        .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .min-w-0 { min-width: 0; }
+        #filtersSection {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .min-w-0 {
+            min-width: 0;
+        }
+
         @media (max-width: 768px) {
-            #userModal > div, #inviteModal > div { width: 100%; max-height: 90vh; }
-            .overflow-y-auto { -webkit-overflow-scrolling: touch; }
+            #userModal > div, #inviteModal > div {
+                width: 100%;
+                max-height: 90vh;
+            }
+
+            .overflow-y-auto {
+                -webkit-overflow-scrolling: touch;
+            }
         }
     </style>
 @endpush

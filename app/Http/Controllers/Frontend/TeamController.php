@@ -102,6 +102,71 @@ class TeamController extends Controller
         }
     }
 
+    /**
+     * Обновить роль пользователя
+     */
+    public function updateUserRole(Request $request, User $user)
+    {
+        try {
+            $authUser = auth()->user();
+
+            // Проверка прав
+            if ($user->company_id !== $authUser->company_id) {
+                return response()->json(['success' => false, 'error' => 'Нет доступа'], 403);
+            }
+
+            // Проверка, может ли пользователь редактировать роли
+            if (!$authUser->isCompanyOwner() && !$authUser->isManager() && !$authUser->isManagerRole()) {
+                return response()->json(['success' => false, 'error' => 'У вас нет прав для изменения ролей'], 403);
+            }
+
+            // Нельзя изменить роль владельца компании
+            if ($user->isCompanyOwner()) {
+                return response()->json(['success' => false, 'error' => 'Нельзя изменить роль владельца компании'], 403);
+            }
+
+            $request->validate([
+                'role_id' => 'nullable|exists:roles,id'
+            ]);
+
+            $roleId = $request->get('role_id');
+
+            // Проверяем, что роль принадлежит той же компании
+            if ($roleId) {
+                $role = Role::where('company_id', $authUser->company_id)
+                    ->where('id', $roleId)
+                    ->first();
+
+                if (!$role) {
+                    return response()->json(['success' => false, 'error' => 'Роль не найдена'], 404);
+                }
+            }
+
+            // Обновляем роль
+            $user->role_id = $roleId;
+            $user->save();
+
+            // Логируем действие
+            ActivityLogger::roleChanged($user, $authUser, $roleId);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Роль пользователя обновлена',
+                'role' => $user->role ? [
+                    'id' => $user->role->id,
+                    'name' => $user->role->name,
+                ] : null
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Update user role error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Ошибка при обновлении роли: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 
     public function destroy(Request $request, $id)
     {
@@ -1079,5 +1144,43 @@ class TeamController extends Controller
             'all' => 'Все время',
             default => 'Месяц'
         };
+    }
+
+    /**
+     * Получить список всех ролей компании
+     */
+    public function getRolesList()
+    {
+        try {
+            $authUser = auth()->user();
+
+            if (!$authUser) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Не авторизован'
+                ], 401);
+            }
+
+            // Получаем роли, которые принадлежат компании ИЛИ глобальные роли (company_id = null)
+            $roles = Role::where(function($query) use ($authUser) {
+                $query->where('company_id', $authUser->company_id)
+                    ->orWhereNull('company_id');
+            })
+                ->select('id', 'name')
+                ->orderBy('name')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'roles' => $roles
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Get roles list error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
