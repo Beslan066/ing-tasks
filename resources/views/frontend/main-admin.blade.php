@@ -895,7 +895,8 @@
                     </div>
 
                     <!-- Канбан доска -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                     <div class="swx-v overflow-hidden w-full">
+                    <div class="swx-v-wrapper flex lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-[500px]:gap-0">
                         @foreach($statusKeys as $statusKey)
                             <div class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
                                  data-status="{{ $statusDataValues[$statusKey] }}"
@@ -1041,6 +1042,8 @@
                             </div>
                         @endforeach
                     </div>
+                    <div class="swiper-pagination flex justify-center pt-5 px-0 !bottom-2 min-[501px]:hidden"></div>
+                       </div>
                 </div>
             @else
                 <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
@@ -1069,7 +1072,8 @@
                     </div>
 
                     <!-- Канбан доска -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+<div class="swx-v overflow-hidden w-full">
+                    <div class="swx-v-wrapper flex lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-[500px]:gap-0">
                         @foreach($statusKeys as $statusKey)
                             <div class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
                                  data-status="{{ $statusDataValues[$statusKey] }}"
@@ -1218,6 +1222,8 @@
                             </div>
                         @endforeach
                     </div>
+                    <div class="swiper-pagination flex justify-center pt-5 px-0 !bottom-2 min-[501px]:hidden"></div>
+</div>
                 </div>
             @endif
         </div>
@@ -3117,6 +3123,53 @@
         });
     </script>
 
+
+ <script>
+document.addEventListener('DOMContentLoaded', () => {
+console.log('test1')
+    if (window.DragDropTouch) {
+        window.DragDropTouch._HOLD_DELAY = 150;
+        console.log('Полифил успешно найден и настроен!',1);
+    } else {
+        console.log('drag not found — полифил всё еще не загрузился.');
+    }
+
+
+    if (window.innerWidth > 500) return;
+
+    const sliderElement = document.querySelector('.swx-v');
+
+
+    if (sliderElement) {
+      window.mySwiper = new Swiper('.swx-v', {
+    wrapperClass: 'swx-v-wrapper',
+    slideClass: 'board-column',
+    centeredSlides: true,
+    centeredSlidesBounds: true,
+    slidesPerView: 'auto',
+    spaceBetween: 10,
+    loop: false,
+
+    /* УДАЛЕНО / ЗАКОММЕНТИРОВАНО: */
+    /* noSwiping: true, */
+    /* noSwipingClass: 'task-card', */
+
+    observer: true,
+    observeParents: true,
+    watchSlidesProgress: true,
+     touchStartPreventDefault: false,
+     pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+        bulletClass: 'swiper-pagination-bullet bg-gray-400 opacity-50 mx-1 inline-block rounded-full w-2 h-2',
+        bulletActiveClass: '!bg-[#22c55e] !opacity-100 w-4 rounded-lg transition-all duration-300'
+    },
+});
+        console.log('Swiper успешно запущен для мобильного экрана!');
+    }
+});
+console.log('test2')
+</script>
     @push('scripts')
         <script>
             function copyTaskLink() {
