@@ -267,12 +267,12 @@
         <div class="items-center border-b border-gray-200 bg-white rounded-t-lg flex">
              <button onclick="switchTaskTab('info')"
                             id="tabInfoBtn"
-                            class="flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hidden max-[800px]:block">
+                            class="flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hidden max-[800px]:block max-[500px]:h-full">
                         <i class="fas fa-info-circle mr-2"></i>Информация о задаче
                     </button>
             <button onclick="switchTaskTab('comments')"
                     id="tabCommentsBtn"
-                    class="flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 border-green-500 text-green-600  hover:text-gray-700">
+                    class="flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 border-green-500 text-green-600  hover:text-gray-700 max-[500px]:h-full">
                 <i class="fas fa-comments mr-2"></i>Сообщения
                 <span id="commentsCount" class="ml-1 text-xs text-gray-400">
                     ({{ isset($comments) && $comments ? (method_exists($comments, 'total') ? $comments->total() : $comments->count()) : 0 }})
@@ -280,7 +280,7 @@
             </button>
             <button onclick="switchTaskTab('subtasks')"
                     id="tabSubtasksBtn"
-                    class="flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                    class="flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 border-transparent text-gray-500 hover:text-gray-700 max-[500px]:h-full">
                 <i class="fas fa-tasks mr-2"></i>Подзадачи
                 <span id="subtasksCount" class="ml-1 text-xs text-gray-400">({{ $subtasks->count() }})</span>
             </button>
@@ -760,6 +760,11 @@
     @media(max-width:800px) {
         #taskModalContent {
             padding-left: 0 !important;
+        }
+    }
+    @media(max-width:500px) {
+        #taskModalContent {
+            padding-top: 0 !important;
         }
     }
 </style>
