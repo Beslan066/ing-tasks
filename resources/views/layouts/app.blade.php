@@ -2901,7 +2901,7 @@ media-src https://meet.jit.si https:;
 </script>
 <script>
     function switchEditFileTab(tabName) {
-             console.log('switchdsdasdas', tabName);
+             console.log('switchEditFileTab', tabName);
 
              const tabButtons = document.querySelectorAll('#editTaskModal .tab-button');
              const tabContents = document.querySelectorAll('#editTaskModal .tab-content');
