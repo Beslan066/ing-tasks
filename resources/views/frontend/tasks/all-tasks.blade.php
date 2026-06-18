@@ -423,7 +423,234 @@
             </div>
         </div>
     </div>
+ <!-- МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ ЗАДАЧИ  -->
+    <div id="editTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
+        <div class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
+            <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+                <div class="flex justify-between items-center p-6">
+                    <div>
+                        <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                            Редактирование задачи
+                        </h3>
+                        <p class="text-sm text-gray-500 mt-1">Измените информацию о задаче</p>
+                    </div>
+                    <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 transition-all duration-200 p-2 rounded-xl hover:bg-gray-100">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+            </div>
 
+            <form id="editTaskForm" class="p-6 space-y-6">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="task_id" id="editTaskId">
+                <input type="hidden" name="selected_files" id="editSelectedFiles" value="[]">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2 space-y-2">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                            <i class="fas fa-tag text-green-500 mr-2 text-xs"></i>Название задачи *
+                        </label>
+                        <input type="text" name="name" id="editTaskName" required
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100">
+                    </div>
+
+                    <div class="md:col-span-2 space-y-2">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                            <i class="fas fa-align-left text-green-500 mr-2 text-xs"></i>Описание
+                        </label>
+                        <textarea name="description" id="editTaskDescription" rows="4"
+                                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100"></textarea>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                            <i class="fas fa-building text-green-500 mr-2 text-xs"></i>Отдел *
+                        </label>
+                        <select name="department_id" id="editTaskDepartment" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:outline-none focus:border-green-400">
+                            <option value="">Выберите отдел</option>
+                            @foreach($departments ?? [] as $department)
+                                <option value="{{ $department->id }}">{{ $department->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                            <i class="fas fa-folder text-green-500 mr-2 text-xs"></i>Категория
+                        </label>
+                        <select name="category_id" id="editTaskCategory"
+                                class="w-full px-4 py-3 border-2 border-gray-200 bg-white rounded-xl focus:outline-none focus:border-green-400">
+                            <option value="">Без категории</option>
+                            @foreach($categories ?? [] as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                            <i class="fas fa-user-check text-green-500 mr-2 text-xs"></i>Исполнитель
+                        </label>
+                        <select name="user_id" id="editTaskUser"
+                                class="w-full px-4 py-3 border-2 border-gray-200 bg-white rounded-xl focus:outline-none focus:border-green-400">
+                            <option value="">Не назначен</option>
+                            @foreach($assignableUsers ?? [] as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                            <i class="fas fa-flag text-green-500 mr-2 text-xs"></i>Приоритет *
+                        </label>
+                        <select name="priority" id="editTaskPriority" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 bg-white rounded-xl focus:outline-none focus:border-green-400">
+                            <option value="низкий">Низкий</option>
+                            <option value="средний">Средний</option>
+                            <option value="высокий">Высокий</option>
+                            <option value="критический">Критический</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                            <i class="fas fa-chart-line text-green-500 mr-2 text-xs"></i>Статус *
+                        </label>
+                        <select name="status" id="editTaskStatus" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 bg-white rounded-xl focus:outline-none focus:border-green-400">
+                            <option value="назначена">Назначена</option>
+                            <option value="в работе">В работе</option>
+                            <option value="на проверке">На проверке</option>
+                            <option value="выполнена">Выполнена</option>
+                            <option value="просрочена">Просрочена</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                            <i class="fas fa-calendar-alt text-green-500 mr-2 text-xs"></i>Дедлайн
+                        </label>
+                        <input type="datetime-local" name="deadline" id="editTaskDeadline"
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                            <i class="fas fa-hourglass-half text-green-500 mr-2 text-xs"></i>Планируемые часы
+                        </label>
+                        <input type="number" name="estimated_hours" id="editTaskEstimatedHours" step="0.5" min="0"
+                               class="w-full px-4 pl-8 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                            <i class="fas fa-clock text-green-500 mr-2 text-xs"></i>Фактические часы
+                        </label>
+                        <input type="number" name="actual_hours" id="editTaskActualHours" step="0.5" min="0"
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400">
+                    </div>
+                </div>
+
+                <!-- Вкладки для файлов в редактировании -->
+                <div class="space-y-4">
+                    <div class="border-b border-gray-200">
+                        <nav class="flex space-x-6" aria-label="Tabs">
+                            <button type="button"
+                                    onclick="switchEditFileTab('storage')"
+                                    id="editStorageTab"
+                                    class="py-2 px-1 border-b-2 font-medium text-sm focus:outline-none tab-button active transition-all duration-200"
+                                    data-tab="storage">
+                                <i class="fas fa-database mr-2"></i>Из хранилища
+                            </button>
+                            <button type="button"
+                                    onclick="switchEditFileTab('upload')"
+                                    id="editUploadTab"
+                                    class="py-2 px-1 border-b-2 font-medium text-sm focus:outline-none tab-button transition-all duration-200"
+                                    data-tab="upload">
+                                <i class="fas fa-cloud-upload-alt mr-2"></i>Новая загрузка
+                            </button>
+                        </nav>
+                    </div>
+
+                    <!-- Контейнер для файлов из хранилища -->
+                    <div id="editStorageTabContent" class="tab-content active">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                            <div>
+                                <h4 class="text-sm font-semibold text-gray-700">Выберите файлы из хранилища</h4>
+                                <p class="text-xs text-gray-500 mt-1">Файлы будут прикреплены к задаче</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button type="button" onclick="openTaskEditFileManager()"
+                                        class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200">
+                                    <i class="fas fa-folder-open mr-2"></i>Открыть хранилище
+                                </button>
+                                <button type="button" onclick="clearEditSelectedFiles()"
+                                        class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-red-50 hover:border-red-300 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200">
+                                    <i class="fas fa-times mr-2"></i>Очистить
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Выбранные файлы -->
+                        <div id="editSelectedFilesContainer" class="space-y-3 min-h-[100px]">
+                            <div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
+                                <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
+                                <p class="text-sm text-gray-500">Файлы не выбраны</p>
+                                <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
+                            </div>
+                        </div>
+
+                        <!-- Счетчик файлов -->
+                        <div id="editFileCounter" class="hidden text-sm text-gray-600 mt-3">
+                            <i class="fas fa-paperclip mr-1"></i>
+                            <span id="editFileCount">0</span> файлов выбрано
+                        </div>
+                    </div>
+
+                    <!-- Контейнер для загрузки новых файлов -->
+                    <div id="editUploadTabContent" class="tab-content hidden">
+                        <div class="mb-4">
+                            <h4 class="text-sm font-semibold text-gray-700">Загрузите новые файлы</h4>
+                            <p class="text-xs text-gray-500 mt-1">Файлы будут сохранены в хранилище и прикреплены к задаче</p>
+                        </div>
+
+                        <div class="file-upload-area border-2 border-dashed border-gray-300 rounded-xl p-8 text-center transition-all duration-300 bg-gradient-to-br from-gray-50 to-white hover:from-green-50 hover:to-white cursor-pointer group"
+                             onclick="document.getElementById('editUploadNewFilesInput').click()">
+                            <input type="file" name="new_files[]" multiple class="hidden" id="editUploadNewFilesInput">
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-white"></i>
+                                </div>
+                                <p class="text-base font-medium text-gray-700 mb-2">Нажмите или перетащите файлы сюда</p>
+                                <p class="text-sm text-gray-500">Поддерживаются: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF, ZIP</p>
+                                <p class="text-xs text-gray-400 mt-1">Максимальный размер: 10MB на файл</p>
+                            </div>
+                        </div>
+
+                        <!-- Список новых файлов -->
+                        <div id="editUploadFilesList" class="space-y-3 mt-4 hidden">
+                            <h5 class="text-sm font-semibold text-gray-700">Выбранные файлы:</h5>
+                            <div id="editUploadFilesContainer" class="space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                    <button type="button" onclick="closeEditModal()"
+                            class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition">
+                        Отмена
+                    </button>
+                    <button type="submit"
+                            class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        <i class="fas fa-save mr-2"></i>Сохранить изменения
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
     <div id="timeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-4">Отправка на проверку</h3>
@@ -444,9 +671,36 @@
     </div>
 
 @endsection
-
+@once
+<style>
+     .tab-button {
+            border-color: transparent;
+            color: #6b7280;
+        }
+        .tab-button:hover {
+            color: #374151;
+            border-color: #d1d5db;
+        }
+        .tab-button.active {
+            border-color: #10b981;
+            color: #10b981;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+</style>
+@endonce
 
 @push('scripts')
+    <!-- @vite('resources/js/all-tasks.page.js') -->
     <script>
         let currentTaskId = null;
         let currentRows = [];
@@ -957,6 +1211,358 @@
             }
         });
     </script>
+    <script>
+          // ==================== ФУНКЦИИ ДЛЯ РЕДАКТИРОВАНИЯ ====================
+        let currentEditTaskId = null;
+
+        async function openEditModal(taskId) {
+            currentEditTaskId = taskId;
+            taskEditSelectedFiles = [];
+
+            try {
+                const response = await fetch(`/tasks/${taskId}/get`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const task = data.task;
+
+                    const currentUserId = {{ auth()->id() }};
+                    const isLeader = {{ auth()->user()->isLeader() ? 'true' : 'false' }};
+
+                    if (task.author_id !== currentUserId && !isLeader) {
+                        alert('Вы не можете редактировать эту задачу. Редактировать может только автор задачи или руководитель.');
+                        return;
+                    }
+
+                    document.getElementById('editTaskId').value = task.id;
+                    document.getElementById('editTaskName').value = task.name;
+                    document.getElementById('editTaskDescription').value = task.description || '';
+                    document.getElementById('editTaskDepartment').value = task.department_id || '';
+                    document.getElementById('editTaskCategory').value = task.category_id || '';
+                    document.getElementById('editTaskUser').value = task.user_id || '';
+                    document.getElementById('editTaskPriority').value = task.priority || 'средний';
+                    document.getElementById('editTaskStatus').value = task.status;
+                    document.getElementById('editTaskDeadline').value = task.deadline ? task.deadline.slice(0, 16) : '';
+                    document.getElementById('editTaskEstimatedHours').value = task.estimated_hours || '';
+                    document.getElementById('editTaskActualHours').value = task.actual_hours || '';
+
+                    if (task.files && task.files.length > 0) {
+                        taskEditSelectedFiles = task.files;
+                        console.log('Загружены файлы задачи:', taskEditSelectedFiles.map(f => f.id));
+                        updateTaskEditSelectedFilesDisplay();
+                    } else {
+                        updateTaskEditSelectedFilesDisplay();
+                    }
+
+                    document.getElementById('editTaskModal').classList.remove('hidden');
+                } else {
+                    alert(data.message || 'Ошибка при загрузке задачи');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка при загрузке данных задачи');
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editTaskModal').classList.add('hidden');
+            document.getElementById('editTaskForm').reset();
+            currentEditTaskId = null;
+            taskEditSelectedFiles = [];
+            document.getElementById('editUploadNewFilesInput').value = '';
+            document.getElementById('editUploadFilesList').classList.add('hidden');
+        }
+
+        function updateTaskEditSelectedFilesDisplay() {
+            const container = document.getElementById('editSelectedFilesContainer');
+            const fileCounter = document.getElementById('editFileCounter');
+            const fileCount = document.getElementById('editFileCount');
+
+            if (!container) return;
+
+            if (taskEditSelectedFiles.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
+                    <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
+                    <p class="text-sm text-gray-500">Файлы не выбраны</p>
+                    <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
+                </div>`;
+                if (fileCounter) fileCounter.classList.add('hidden');
+            } else {
+                let html = '';
+                taskEditSelectedFiles.forEach(file => {
+                    const fileIcon = getFileIcon(file.extension);
+                    const fileType = getFileTypeClass(file.extension);
+                    html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <div class="flex items-center space-x-3 flex-1">
+                            <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
+                                <span class="text-lg">${fileIcon}</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-800">${escapeHtml(file.name)}</p>
+                                <span class="text-xs text-gray-500">${formatFileSize(file.size)}</span>
+                            </div>
+                        </div>
+                        <button onclick="removeTaskEditSelectedFile(${file.id})" class="text-red-500 hover:text-red-700 p-1">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>`;
+                });
+                container.innerHTML = html;
+                if (fileCount) fileCount.textContent = taskEditSelectedFiles.length;
+                if (fileCounter) fileCounter.classList.remove('hidden');
+            }
+        }
+
+        function removeTaskEditSelectedFile(fileId) {
+            taskEditSelectedFiles = taskEditSelectedFiles.filter(f => f.id !== fileId);
+            updateTaskEditSelectedFilesDisplay();
+        }
+
+        function clearTaskEditSelectedFiles() {
+            if (taskEditSelectedFiles.length === 0) return;
+            if (confirm(`Удалить все выбранные файлы (${taskEditSelectedFiles.length})?`)) {
+                taskEditSelectedFiles = [];
+                updateTaskEditSelectedFilesDisplay();
+            }
+        }
+
+
+        async function openTaskEditFileManager() {
+            const modal = document.getElementById('fileManagerModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+                await loadTaskEditFiles();
+            }
+        }
+
+        async function loadTaskEditFiles() {
+            const contentDiv = document.getElementById('fileManagerContent');
+            if (!contentDiv) return;
+            contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Загрузка...</div>`;
+
+            try {
+                const response = await fetch('/tasks/file-storage/get-files', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    }
+                });
+                if (!response.ok) throw new Error('Ошибка');
+                taskEditAllFiles = await response.json();
+                console.log('Загружены все файлы из хранилища:', taskEditAllFiles.length);
+                console.log('Текущие выбранные файлы (taskEditSelectedFiles):', taskEditSelectedFiles.map(f => f.id));
+                renderTaskEditFiles(taskEditAllFiles);
+
+                const searchInput = document.getElementById('fileManagerSearch');
+                if (searchInput) {
+                    searchInput.removeEventListener('input', handleTaskEditFileSearch);
+                    searchInput.addEventListener('input', handleTaskEditFileSearch);
+                }
+            } catch (error) {
+                contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">Ошибка загрузки</div>`;
+            }
+        }
+
+        function handleTaskEditFileSearch(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            if (!taskEditAllFiles) return;
+            const filtered = taskEditAllFiles.filter(file => file.name.toLowerCase().includes(searchTerm));
+            renderTaskEditFiles(filtered);
+        }
+
+        function renderTaskEditFiles(files) {
+            const contentDiv = document.getElementById('fileManagerContent');
+            if (!contentDiv) return;
+            if (!files || files.length === 0) {
+                contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Нет файлов</div>`;
+                return;
+            }
+
+            let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
+            files.forEach(file => {
+                const isSelected = taskEditSelectedFiles.some(f => f.id === file.id);
+                const fileIcon = getFileIcon(file.extension);
+                const fileType = getFileTypeClass(file.extension);
+                html += `
+                    <div class="file-card bg-white border ${isSelected ? 'border-green-500 shadow-md' : 'border-gray-200'} rounded-lg p-3">
+                        <div class="flex justify-end mb-2">
+                            <input type="checkbox"
+                                   value="${file.id}"
+                                   class="task-edit-file-checkbox w-5 h-5 rounded border-gray-300 cursor-pointer"
+                                   ${isSelected ? 'checked' : ''}>
+                        </div>
+                        <div class="text-center cursor-pointer" onclick="toggleTaskEditFileSelection(${file.id})">
+                            <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
+                                <span class="text-2xl">${fileIcon}</span>
+                            </div>
+                            <p class="text-sm font-medium truncate">${escapeHtml(file.name)}</p>
+                            <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                            <p class="text-xs text-gray-400 mt-1">${formatDate(file.created_at)}</p>
+                        </div>
+                        <div class="flex justify-center space-x-2 mt-2 pt-2 border-t border-gray-100">
+                            <button type="button" onclick="event.stopPropagation(); downloadTaskFile(${file.id})"
+                                    class="text-gray-400 hover:text-green-600 p-1" title="Скачать">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>`;
+            });
+            html += '</div>';
+            contentDiv.innerHTML = html;
+
+            document.querySelectorAll('#fileManagerContent .task-edit-file-checkbox').forEach(checkbox => {
+                checkbox.removeEventListener('change', handleTaskEditCheckboxChange);
+                checkbox.addEventListener('change', handleTaskEditCheckboxChange);
+            });
+
+            updateTaskEditSelectedCount();
+        }
+
+        function handleTaskEditCheckboxChange(e) {
+            e.stopPropagation();
+            const fileId = parseInt(this.value);
+            const file = taskEditAllFiles.find(f => f.id === fileId);
+            if (file) {
+                if (this.checked) {
+                    if (!taskEditSelectedFiles.some(f => f.id === fileId)) {
+                        taskEditSelectedFiles.push(file);
+                    }
+                } else {
+                    taskEditSelectedFiles = taskEditSelectedFiles.filter(f => f.id !== fileId);
+                }
+                const card = this.closest('.file-card');
+                if (card) {
+                    if (this.checked) {
+                        card.classList.add('border-green-500', 'shadow-md');
+                        card.classList.remove('border-gray-200');
+                    } else {
+                        card.classList.remove('border-green-500', 'shadow-md');
+                        card.classList.add('border-gray-200');
+                    }
+                }
+                updateTaskEditSelectedCount();
+                console.log('taskEditSelectedFiles после изменения:', taskEditSelectedFiles.map(f => f.id));
+            }
+        }
+
+        function toggleTaskEditFileSelection(fileId) {
+            let file = taskEditAllFiles.find(f => f.id === fileId);
+            if (!file) return;
+
+            const index = taskEditSelectedFiles.findIndex(f => f.id === fileId);
+            if (index === -1) {
+                taskEditSelectedFiles.push(file);
+            } else {
+                taskEditSelectedFiles.splice(index, 1);
+            }
+
+            const checkbox = document.querySelector(`#fileManagerContent .task-edit-file-checkbox[value="${fileId}"]`);
+            if (checkbox) {
+                checkbox.checked = index === -1;
+                const card = checkbox.closest('.file-card');
+                if (card) {
+                    if (checkbox.checked) {
+                        card.classList.add('border-green-500', 'shadow-md');
+                        card.classList.remove('border-gray-200');
+                    } else {
+                        card.classList.remove('border-green-500', 'shadow-md');
+                        card.classList.add('border-gray-200');
+                    }
+                }
+            }
+
+            updateTaskEditSelectedCount();
+            console.log('taskEditSelectedFiles после toggle:', taskEditSelectedFiles.map(f => f.id));
+        }
+
+        function updateTaskEditSelectedCount() {
+            const selectedCountSpan = document.getElementById('selectedCount');
+            const confirmCountSpan = document.getElementById('confirmCount');
+            const confirmBtn = document.getElementById('confirmFileSelectionBtn');
+
+            const count = taskEditSelectedFiles.length;
+
+            if (selectedCountSpan) selectedCountSpan.textContent = count;
+            if (confirmCountSpan) confirmCountSpan.textContent = count;
+
+            if (confirmBtn) {
+                if (count === 0) {
+                    confirmBtn.disabled = true;
+                    confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    confirmBtn.disabled = false;
+                    confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+         document.getElementById('editTaskForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const taskId = document.getElementById('editTaskId').value;
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn?.innerHTML;
+
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Сохранение...';
+                submitBtn.disabled = true;
+            }
+
+            try {
+                const formData = new FormData(this);
+                formData.append('_method', 'POST');
+
+                const selectedFileIds = taskEditSelectedFiles.map(f => f.id);
+                console.log('Отправляемые ID файлов на сервер:', selectedFileIds);
+
+                formData.append('selected_files', JSON.stringify(selectedFileIds));
+
+                const newFilesInput = document.getElementById('editUploadNewFilesInput');
+                if (newFilesInput && newFilesInput.files.length > 0) {
+                    for (let i = 0; i < newFilesInput.files.length; i++) {
+                        formData.append('new_files[]', newFilesInput.files[i]);
+                    }
+                    console.log('Новых файлов для загрузки:', newFilesInput.files.length);
+                }
+
+                const response = await fetch(`/tasks/${taskId}/update`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                console.log('Ответ сервера:', data);
+
+                if (data.success) {
+                    alert('Задача успешно обновлена!');
+                    closeEditModal();
+                    location.reload();
+                } else {
+                    alert(data.message || 'Ошибка при обновлении задачи');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка при обновлении задачи: ' + error.message);
+            } finally {
+                if (submitBtn) {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+        });
+    </script>
 @endpush
 
 @push('styles')
@@ -990,5 +1596,6 @@
         .transition-all {
             transition: all 0.3s ease;
         }
+
     </style>
 @endpush

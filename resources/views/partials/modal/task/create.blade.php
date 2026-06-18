@@ -511,16 +511,18 @@
         }
 
         function switchCreateFileTab(tabName) {
-            document.querySelectorAll('#taskModal .tab-button').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.tab === tabName) btn.classList.add('active');
-            });
-            document.querySelectorAll('#taskModal .tab-content').forEach(content => {
-                content.classList.add('hidden');
-            });
-            const activeContent = document.getElementById(tabName + 'TabContent');
-            if (activeContent) activeContent.classList.remove('hidden');
-        }
+console.log('ttavv')
+    document.querySelectorAll('#taskModal .tab-button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+    });
+
+    document.querySelectorAll('#taskModal .tab-content').forEach(content => {
+        const isCurrent = content.id === `${tabName}TabContent`;
+
+        content.classList.toggle('active', isCurrent);
+        content.classList.toggle('hidden', !isCurrent);
+    });
+}
 
         async function downloadCreateFile(fileId) {
             window.open(`/file-storage/download/${fileId}`, '_blank');
