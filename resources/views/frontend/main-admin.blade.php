@@ -1819,17 +1819,34 @@
             }
         }
 
-        function switchEditFileTab(tabName) {
-            const tabButtons = document.querySelectorAll('#editTaskModal .tab-button');
-            const tabContents = document.querySelectorAll('#editTaskModal .tab-content');
+         function switchEditFileTab(tabName) {
+             console.log('switch', tabName);
+
+             const tabButtons = document.querySelectorAll('#editTaskModal .tab-button');
+             const tabContents = document.querySelectorAll('#editTaskModal .tab-content');
+
             tabButtons.forEach(btn => {
                 btn.classList.remove('active');
-                if (btn.getAttribute('data-tab') === tabName) btn.classList.add('active');
+                if (btn.getAttribute('data-tab') === tabName) {
+                    btn.classList.add('active');
+                }
             });
-            tabContents.forEach(content => content.classList.add('hidden'));
-            const activeContent = document.getElementById('edit' + tabName.charAt(0).toUpperCase() + tabName.slice(1) + 'TabContent');
-            if (activeContent) activeContent.classList.remove('hidden');
-        }
+
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('active');
+            });
+
+    const formattedTabName = tabName.charAt(0).toUpperCase() + tabName.slice(1);
+    const targetId = 'edit' + formattedTabName + 'TabContent';
+    const activeContent = document.getElementById(targetId);
+    if (activeContent) {
+        activeContent.classList.remove('hidden');
+        activeContent.classList.add('active');
+    } else {
+        console.error(`Элемент  "${targetId}" не найден`);
+    }
+}
 
         // ==================== ФАЙЛОВЫЙ МЕНЕДЖЕР ДЛЯ РЕДАКТИРОВАНИЯ ====================
         async function openEditFileManager() {
