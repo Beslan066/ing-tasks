@@ -13,9 +13,9 @@
             <div class="flex flex-wrap items-center justify-between gap-3 pb-6">
                 <div>
                     @if($backgroundEnabled && $backgroundImage)
-                        <h2 class="text-3xl font-bold text-white">Хранилище</h2>
+                        <h2 class="text-3xl font-bold text-white  max-[500px]:text-[26px]">Хранилище</h2>
                     @else
-                        <h2 class="text-3xl font-bold text-[#16a34a]">Хранилище</h2>
+                        <h2 class="text-3xl font-bold text-[#16a34a]  max-[500px]:text-[26px]">Хранилище</h2>
                     @endif
                 </div>
                 <nav>

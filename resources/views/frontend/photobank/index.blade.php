@@ -10,11 +10,11 @@
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
             <div>
                 @if($backgroundEnabled && $backgroundImage)
-                    <h2 class="text-3xl font-bold text-white">Фотобанк</h2>
-                    <p class="text-white text-sm">Инструменты для продуктивной работы</p>
+                    <h2 class="text-3xl font-bold text-white max-[500px]:text-[26px]">Фотобанк</h2>
+                    <p class="text-white text-sm max-[500px]:text-[13px]">Инструменты для продуктивной работы</p>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a]">Фотобанк</h2>
-                    <p class="text-gray-700 text-sm">Инструменты для продуктивной работы</p>
+                    <h2 class="text-3xl font-bold text-[#16a34a] max-[500px]:text-[26px]">Фотобанк</h2>
+                    <p class="text-gray-700 text-sm max-[500px]:text-[13px]">Инструменты для продуктивной работы</p>
                 @endif
             </div>
             <div class="flex gap-3">

@@ -11,11 +11,11 @@
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
         <div>
             @if($backgroundEnabled && $backgroundImage)
-                <h2 class="text-3xl font-bold text-white">Мои задачи</h2>
-                <p class="text-white text-sm">Ваши личные задачи не видны на странице Команда</p>
+                <h2 class="text-3xl font-bold text-white max-[500px]:text-[26px]">Мои задачи</h2>
+                <p class="text-white text-sm max-[500px]:text-[13px]">Ваши личные задачи не видны на странице Команда</p>
             @else
-                <h2 class="text-3xl font-bold text-[#16a34a]">Мои задачи</h2>
-                <p class="text-gray-700 text-sm">Ваши личные задачи не видны на странице Команда</p>
+                <h2 class="text-3xl font-bold text-[#16a34a] max-[500px]:text-[26px]">Мои задачи</h2>
+                <p class="text-gray-700 text-sm max-[500px]:text-[13px]">Ваши личные задачи не видны на странице Команда</p>
             @endif
         </div>
 
@@ -2251,7 +2251,8 @@ function drop(e) {
                 });
                 const data = await response.json();
                 if (data.success) {
-                    location.reload();
+                    // location.reload();
+                    console.log('changed task status ')
                 } else {
                     alert(data.message || 'Ошибка при перемещении задачи');
                 }

@@ -12,11 +12,11 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
             <div>
                 @if($backgroundEnabled && $backgroundImage)
-                    <h2 class="text-3xl font-bold text-white">Лицензия и оплата</h2>
-                    <p class="text-white/70 mt-1">Управление подпиской и пользователями</p>
+                    <h2 class="text-3xl font-bold text-white max-[500px]:text-[26px]">Лицензия и оплата</h2>
+                    <p class="text-white/70 mt-1 max-[500px]:text-[13px]">Управление подпиской и пользователями</p>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a]">Лицензия и оплата</h2>
-                    <p class="text-gray-500 mt-1">Управление подпиской и пользователями</p>
+                    <h2 class="text-3xl font-bold text-[#16a34a] max-[500px]:text-[26px]">Лицензия и оплата</h2>
+                    <p class="text-gray-500 mt-1 max-[500px]:text-[13px]">Управление подпиской и пользователями</p>
                 @endif
             </div>
         </div>
@@ -28,7 +28,7 @@
                 <div class="lg:col-span-2 backdrop-blur-md bg-black/30 rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h3 class="text-xl font-bold text-white">Текущий план</h3>
+                            <h3 class="text-xl font-bold text-white max-[500px]:text-[18px]">Текущий план</h3>
                             <p class="text-white/70 text-sm mt-1">
                                 @if($isPremium)
                                     Премиум
@@ -103,7 +103,7 @@
                 <div class="lg:col-span-2 bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h3 class="text-xl font-bold text-gray-800">Текущий план</h3>
+                            <h3 class="text-xl font-bold text-gray-800 max-[500px]:text-[18px]">Текущий план</h3>
                             <p class="text-gray-500 text-sm mt-1">
                                 @if($isPremium)
                                     Премиум

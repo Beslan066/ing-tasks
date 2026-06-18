@@ -10,11 +10,11 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
             <div>
                 @if($backgroundEnabled && $backgroundImage)
-                    <h2 class="text-3xl font-bold text-white">Команда</h2>
-                    <p class="text-white text-sm">Участники вашей организации</p>
+                    <h2 class="text-3xl font-bold text-white  max-[500px]:text-[26px]">Команда</h2>
+                    <p class="text-white text-sm  max-[500px]:text-[13px]">Участники вашей организации</p>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a]">Команда</h2>
-                    <p class="text-gray-700 text-sm">Участники вашей организации</p>
+                    <h2 class="text-3xl font-bold text-[#16a34a]  max-[500px]:text-[26px]">Команда</h2>
+                    <p class="text-gray-700 text-sm  max-[500px]:text-[13px]">Участники вашей организации</p>
                 @endif
             </div>
 

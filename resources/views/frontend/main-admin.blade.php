@@ -13,11 +13,11 @@
         <div class="flex flex-col md:flex-row justify-between items-start mb-6 md:mb-8 gap-4">
             <div>
                 @if($backgroundEnabled && $backgroundImage)
-                    <h2 class="text-3xl font-bold text-white">Задачи компании</h2>
-                    <p class="text-white text-sm">Обзор производительности и задач</p>
+                    <h2 class="text-3xl font-bold text-white max-[500px]:text-[26px]">Задачи компании</h2>
+                    <p class="text-white text-sm max-[500px]:text-[13px]">Обзор производительности и задач</p>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a]">Задачи компании</h2>
-                    <p class="text-gray-700 text-sm">Обзор производительности и задач</p>
+                    <h2 class="text-3xl font-bold text-[#16a34a] max-[500px]:text-[26px]">Задачи компании</h2>
+                    <p class="text-gray-700 text-sm max-[500px]:text-[13px]">Обзор производительности и задач</p>
                 @endif
             </div>
 
@@ -2966,7 +2966,8 @@
                 });
                 const data = await response.json();
                 if (data.success) {
-                    location.reload();
+                    // location.reload();
+                    console.log('success main.admin.blade.php')
                 } else {
                     showNotification(data.message || 'Ошибка при перемещении задачи', 'error');
                 }

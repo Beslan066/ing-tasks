@@ -10,11 +10,11 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
             <div>
                 @if($backgroundEnabled && $backgroundImage)
-                    <h2 class="text-3xl font-bold text-white">Мои отделы</h2>
-                    <p class="text-white text-sm">Управляйте отделами, задачами и почтовой системой</p>
+                    <h2 class="text-3xl font-bold text-white max-[500px]:text-[26px]">Мои отделы</h2>
+                    <p class="text-white text-sm max-[500px]:text-[13px]">Управляйте отделами, задачами и почтовой системой</p>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a]">Мои отделы</h2>
-                    <p class="text-gray-700 text-sm">Управляйте отделами, задачами и почтовой системой</p>
+                    <h2 class="text-3xl font-bold text-[#16a34a] max-[500px]:text-[26px]">Мои отделы</h2>
+                    <p class="text-gray-700 text-sm max-[500px]:text-[13px]">Управляйте отделами, задачами и почтовой системой</p>
                 @endif
             </div>
             <div class="flex flex-wrap gap-3 w-full md:w-auto items-start">
