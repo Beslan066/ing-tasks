@@ -2899,7 +2899,36 @@ media-src https://meet.jit.si https:;
     }
 
 </script>
+<script>
+    function switchEditFileTab(tabName) {
+             console.log('switchdsdasdas', tabName);
 
+             const tabButtons = document.querySelectorAll('#editTaskModal .tab-button');
+             const tabContents = document.querySelectorAll('#editTaskModal .tab-content');
+
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-tab') === tabName) {
+                    btn.classList.add('active');
+                }
+            });
+
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('active');
+            });
+
+    const formattedTabName = tabName.charAt(0).toUpperCase() + tabName.slice(1);
+    const targetId = 'edit' + formattedTabName + 'TabContent';
+    const activeContent = document.getElementById(targetId);
+    if (activeContent) {
+        activeContent.classList.remove('hidden');
+        activeContent.classList.add('active');
+    } else {
+        console.error(`Элемент  "${targetId}" не найден`);
+    }
+}
+</script>
 
 <script>
     const burgerBtn = document.getElementById('burger-btn');
