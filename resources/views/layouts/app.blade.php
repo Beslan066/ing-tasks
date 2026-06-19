@@ -920,6 +920,7 @@ media-src https://meet.jit.si https:;
         const modal = document.getElementById('taskModal');
         if (modal) modal.classList.remove('hidden');
         resetTaskForm();
+         document.body.classList.add('overflow-y-hidden')
     }
 
     async function openEditTaskModal(taskId) {

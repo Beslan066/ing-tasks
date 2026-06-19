@@ -1759,6 +1759,7 @@
                     }
 
                     document.getElementById('editTaskModal').classList.remove('hidden');
+                    document.body.classList.add('overflow-y-hidden')
                 } else {
                     showNotification(data.message || 'Ошибка при загрузке данных задачи', 'error');
                 }
@@ -1775,6 +1776,7 @@
             currentTaskId = null;
             editSelectedFiles = [];
             editTempSelectedFiles = [];
+             document.body.classList.remove('overflow-y-hidden')
         }
 
         function updateEditSelectedFilesDisplay() {
@@ -2139,19 +2141,23 @@
         });
 
         // ==================== ФУНКЦИИ ДЛЯ СОЗДАНИЯ ЗАДАЧИ ====================
-        function openTaskModal() {
-            const modal = document.getElementById('taskModal');
-            if (modal) modal.classList.remove('hidden');
-        }
+        // function openTaskModal() { -эта функция уже есть в app.blade.php
+        //     const modal = document.getElementById('taskModal');
+        //     if (modal) modal.classList.remove('hidden');
+        //     document.body.classList.add('overflow-y-hidden')
+        //     console.log('main-admin')
+        // }
 
-        function closeTaskModal() {
-            const modal = document.getElementById('taskModal');
-            const form = document.getElementById('taskForm');
-            if (modal) modal.classList.add('hidden');
-            if (form) form.reset();
-            taskSelectedFiles = [];
-            updateTaskSelectedFilesDisplay();
-        }
+        // function closeTaskModal() {-эта функция уже есть в app.blade.php
+        //     const modal = document.getElementById('taskModal');
+        //     const form = document.getElementById('taskForm');
+        //     if (modal) modal.classList.add('hidden');
+        //     if (form) form.reset();
+        //     taskSelectedFiles = [];
+        //     updateTaskSelectedFilesDisplay();
+        //     document.body.classList.remove('overflow-y-hidden')
+        //     console.log('closeTaskModal main-admin')
+        // }
 
         function updateTaskSelectedFilesDisplay() {
             const container = document.getElementById('selectedFilesContainer');
