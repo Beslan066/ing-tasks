@@ -1467,6 +1467,7 @@
         let currentEditTaskId = null;
 
         async function openEditModal(taskId) {
+            console.log('openEditTaskModal2')
             currentEditTaskId = taskId;
             taskEditSelectedFiles = [];
 
@@ -1514,6 +1515,7 @@
                     }
 
                     document.getElementById('editTaskModal').classList.remove('hidden');
+                    document.body.classList.add('overflow-y-hidden')
                 } else {
                     alert(data.message || 'Ошибка при загрузке задачи');
                 }
@@ -1530,6 +1532,7 @@
             taskEditSelectedFiles = [];
             document.getElementById('editUploadNewFilesInput').value = '';
             document.getElementById('editUploadFilesList').classList.add('hidden');
+            document.body.classList.remove('overflow-y-hidden')
         }
 
         function updateTaskEditSelectedFilesDisplay() {
@@ -2279,6 +2282,7 @@ function drop(e) {
 
         // ==================== ФУНКЦИИ ДЛЯ ЛИЧНЫХ ЗАДАЧ ====================
         function openPersonalTaskModal() {
+            console.log('openPersonalTaskModal welcome.page')
             const modal = document.getElementById('taskModal');
             const form = document.getElementById('taskForm');
 
@@ -2325,6 +2329,7 @@ function drop(e) {
             if (statusField) statusField.style.display = 'none';
 
             modal.classList.remove('hidden');
+            document.body.classList.add('overflow-y-hidden');
         }
 
         function closeTaskModal() {
@@ -2365,6 +2370,8 @@ function drop(e) {
             updateTaskSelectedFilesDisplay();
 
             modal.classList.add('hidden');
+document.body.classList.remove('overflow-y-hidden');
+
         }
 
         async function startTask(taskId) {
@@ -2478,91 +2485,92 @@ function drop(e) {
             currentTaskId = null;
         }
 
-        // Открыть модальное окно просмотра задачи
-        async function openTaskViewModal(taskId) {
-            const modal = document.getElementById('taskViewModal');
-            const content = document.getElementById('taskModalContent');
+        // Открыть модальное окно просмотра задачи- эта функция уже написана в  app.blade.php
+    //     async function openTaskViewModal(taskId) {
+    //         console.log('openTaskViewModal')
+    //         const modal = document.getElementById('taskViewModal');
+    //         const content = document.getElementById('taskModalContent');
 
-            if (!modal || !content) {
-                console.error('Модальное окно не найдено');
-                return;
-            }
+    //         if (!modal || !content) {
+    //             console.error('Модальное окно не найдено');
+    //             return;
+    //         }
 
-            // Сохраняем ID задачи
-            window.currentTaskId = taskId;
-            window.taskId = taskId;
+    //         // Сохраняем ID задачи
+    //         window.currentTaskId = taskId;
+    //         window.taskId = taskId;
 
-            // МЕНЯЕМ URL БЕЗ ПЕРЕЗАГРУЗКИ СТРАНИЦЫ
-            const newUrl = `/team/tasks/${taskId}`;
-            window.history.pushState({ taskId: taskId, modalOpen: true }, '', newUrl);
+    //         // МЕНЯЕМ URL БЕЗ ПЕРЕЗАГРУЗКИ СТРАНИЦЫ
+    //         const newUrl = `/team/tasks/${taskId}`;
+    //         window.history.pushState({ taskId: taskId, modalOpen: true }, '', newUrl);
 
-            // Показываем загрузчик
-            content.innerHTML = `
-        <div class="text-center py-8">
-            <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
-            <p class="text-gray-500 mt-2">Загрузка задачи...</p>
-        </div>
-    `;
+    //         // Показываем загрузчик
+    //         content.innerHTML = `
+    //     <div class="text-center py-8">
+    //         <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
+    //         <p class="text-gray-500 mt-2">Загрузка задачи...</p>
+    //     </div>
+    // `;
 
-            // Показываем модальное окно
-            modal.style.backdropFilter = 'blur(10px)';
-            modal.classList.remove('hidden');
+    //         // Показываем модальное окно
+    //         modal.style.backdropFilter = 'blur(10px)';
+    //         modal.classList.remove('hidden');
 
-            try {
-                // ПРАВИЛЬНЫЙ URL - без /view и без /page
-                const response = await fetch(`/tasks/${taskId}`, {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'text/html'
-                    }
-                });
+    //         try {
+    //             // ПРАВИЛЬНЫЙ URL - без /view и без /page
+    //             const response = await fetch(`/tasks/${taskId}`, {
+    //                 method: 'GET',
+    //                 headers: {
+    //                     'X-Requested-With': 'XMLHttpRequest',
+    //                     'Accept': 'text/html'
+    //                 }
+    //             });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+    //             if (!response.ok) {
+    //                 throw new Error(`HTTP error! status: ${response.status}`);
+    //             }
 
-                const html = await response.text();
-                content.innerHTML = html;
+    //             const html = await response.text();
+    //             content.innerHTML = html;
 
-            } catch (error) {
-                console.error('Ошибка:', error);
-                content.innerHTML = `
-            <div class="text-center py-8">
-                <i class="fas fa-exclamation-triangle text-3xl text-red-400"></i>
-                <p class="text-gray-500 mt-2">Не удалось загрузить задачу</p>
-                <p class="text-sm text-gray-400 mt-1">${error.message}</p>
-                <button onclick="openTaskViewModal(${taskId})"
-                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
-                    <i class="fas fa-sync-alt mr-2"></i>Повторить
-                </button>
-            </div>
-        `;
-            }
-        }
+    //         } catch (error) {
+    //             console.error('Ошибка:', error);
+    //             content.innerHTML = `
+    //         <div class="text-center py-8">
+    //             <i class="fas fa-exclamation-triangle text-3xl text-red-400"></i>
+    //             <p class="text-gray-500 mt-2">Не удалось загрузить задачу</p>
+    //             <p class="text-sm text-gray-400 mt-1">${error.message}</p>
+    //             <button onclick="openTaskViewModal(${taskId})"
+    //                     class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+    //                 <i class="fas fa-sync-alt mr-2"></i>Повторить
+    //             </button>
+    //         </div>
+    //     `;
+    //         }
+    //     }
 
-        // Закрыть модальное окно просмотра задачи
-        function closeTaskViewModal() {
-            const modal = document.getElementById('taskViewModal');
-            const content = document.getElementById('taskModalContent');
+        // Закрыть модальное окно просмотра задачи - эта функция уже написана в  app.blade.php
+        // function closeTaskViewModal() {
+        //     const modal = document.getElementById('taskViewModal');
+        //     const content = document.getElementById('taskModalContent');
 
-            if (modal) {
-                modal.classList.add('hidden');
-                modal.style.backdropFilter = '';
-            }
+        //     if (modal) {
+        //         modal.classList.add('hidden');
+        //         modal.style.backdropFilter = '';
+        //     }
 
-            if (content) {
-                content.innerHTML = `
-            <div class="text-center py-8">
-                <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
-                <p class="text-gray-500 mt-2">Загрузка задачи...</p>
-            </div>
-        `;
-            }
+        //     if (content) {
+        //         content.innerHTML = `
+        //     <div class="text-center py-8">
+        //         <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
+        //         <p class="text-gray-500 mt-2">Загрузка задачи...</p>
+        //     </div>
+        // `;
+        //     }
 
-            // Меняем URL обратно на /team/tasks без перезагрузки
-            window.history.pushState({}, '', '/home');
-        }
+        //     // Меняем URL обратно на /team/tasks без перезагрузки
+        //     window.history.pushState({}, '', '/home');
+        // }
 
         // Обрабатываем кнопку "Назад" в браузере
         window.addEventListener('popstate', function(event) {
