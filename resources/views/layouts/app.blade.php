@@ -326,7 +326,19 @@ media-src https://meet.jit.si https:;
                 position: fixed;
     top: 20px;
     right: 15px;
+
         }
+        @media (max-width: 500px) {
+     .burger-btn.active {
+        width: 30px;
+        height: 22px;
+        outline: 1px solid #ffffff;
+        outline-offset: 5px;
+        border-radius: 5px;
+        border: none;
+        background-color: transparent;
+    }
+}
         @media (max-width: 638px) {
             .burger-btn {
                 display: flex;
@@ -908,9 +920,11 @@ media-src https://meet.jit.si https:;
         const modal = document.getElementById('taskModal');
         if (modal) modal.classList.remove('hidden');
         resetTaskForm();
+         document.body.classList.add('overflow-y-hidden')
     }
 
     async function openEditTaskModal(taskId) {
+        console.log('openEditTaskModal')
         currentModalType = 'task';
         currentEditingTaskId = taskId;
 
@@ -1023,6 +1037,8 @@ media-src https://meet.jit.si https:;
         const modal = document.getElementById('taskModal');
         if (modal) modal.classList.add('hidden');
         resetTaskForm();
+        console.log('closeTaskModal2')
+        document.body.classList.remove('overflow-y-hidden')
     }
 
 
@@ -2342,6 +2358,7 @@ media-src https://meet.jit.si https:;
 
     // Открыть модальное окно просмотра задачи
     async function openTaskViewModal(taskId) {
+        console.log('openTaskViewModal2')
         const modal = document.getElementById('taskViewModal');
         const content = document.getElementById('taskModalContent');
 
@@ -2404,6 +2421,8 @@ media-src https://meet.jit.si https:;
                 </button>
             </div>
         `;
+        }finally {
+            document.body.classList.add('overflow-y-hidden')
         }
     }
 
@@ -2437,6 +2456,7 @@ media-src https://meet.jit.si https:;
             // Иначе просто назад
             window.history.back();
         }
+         document.body.classList.remove('overflow-y-hidden')
     }
 
     // Обрабатываем кнопку "Назад" в браузере
@@ -2765,11 +2785,13 @@ media-src https://meet.jit.si https:;
         document.getElementById('subtask_parent_id').value = parentTaskId;
         document.getElementById('createSubtaskForm').reset();
         document.getElementById('createSubtaskModal').classList.remove('hidden');
+         document.body.classList.add('overflow-y-hidden')
     }
 
     function closeCreateSubtaskModal() {
         document.getElementById('createSubtaskModal').classList.add('hidden');
         currentParentTaskId = null;
+         document.body.classList.remove('overflow-y-hidden')
     }
 
     // Обработчик формы создания подзадачи

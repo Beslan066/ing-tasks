@@ -11,9 +11,9 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
             <div>
                 @if($backgroundEnabled && $backgroundImage)
-                    <h2 class="text-3xl font-bold text-white">Новости и поддержка</h2>
+                    <h2 class="text-3xl font-bold text-white max-[500px]:text-[26px]">Новости и поддержка</h2>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a]">Новости и поддержка</h2>
+                    <h2 class="text-3xl font-bold text-[#16a34a] max-[500px]:text-[26px]">Новости и поддержка</h2>
                 @endif
             </div>
         </div>
@@ -23,7 +23,7 @@
             <!-- КОЛОНКА 1: НОВОСТИ С ПАГИНАЦИЕЙ -->
             @if($backgroundEnabled && $backgroundImage)
                 <div class="backdrop-blur-md bg-black/30 rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
-                    <h3 class="text-xl font-bold text-white border-b border-white/30 pb-2 mb-4">📰 Последние новости</h3>
+                    <h3 class="text-xl font-bold text-white border-b border-white/30 pb-2 mb-4 max-[500px]:text-[18px]">📰 Последние новости</h3>
                     <div class="space-y-4 custom-scroll">
                         @if(isset($newsList) && count($newsList) > 0)
                             @foreach($newsList as $news)
@@ -59,7 +59,7 @@
                 </div>
             @else
                 <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
-                    <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">📰 Последние новости</h3>
+                    <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4 max-[500px]:text-[18px]">📰 Последние новости</h3>
                     <div class="space-y-4">
                         @forelse($newsList ?? [] as $news)
                             <div class="border-b border-gray-100 pb-3 last:border-0 cursor-pointer transition hover:bg-gray-50 rounded p-2 -mx-2"

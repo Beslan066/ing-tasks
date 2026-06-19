@@ -8,13 +8,29 @@
     <div id="team">
         <!-- Заголовок и кнопка -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
-            <div>
+             <nav class="hidden max-[500px]:block">
+                            <ol class="flex items-center gap-1.5">
+                                <li>
+                                    <a class="inline-flex items-center gap-1.5 text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-500 dark:text-gray-400' }}"
+                                       href="{{ route('welcome') }}">
+                                        Главная
+                                        <svg class="stroke-current" width="17" height="16" viewBox="0 0 17 16" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366" stroke="" stroke-width="1.2"
+                                                  stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
+                                    </a>
+                                </li>
+                                <li class="text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-800 dark:text-white/90' }}" x-text="pageName">Инструменты</li>
+                            </ol>
+                        </nav>
+        <div class="max-[500px]:hidden">
                 @if($backgroundEnabled && $backgroundImage)
-                    <h2 class="text-3xl font-bold text-white">Инструменты</h2>
-                    <p class="text-white text-sm">Инструменты для продуктивной работы</p>
+                    <h2 class="text-3xl font-bold text-white  max-[500px]:text-[26px]">Инструменты</h2>
+                    <p class="text-white text-sm  max-[500px]:text-[13px]">Инструменты для продуктивной работы</p>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a]">Инструменты</h2>
-                    <p class="text-gray-700 text-sm">Инструменты для продуктивной работы</p>
+                    <h2 class="text-3xl font-bold text-[#16a34a]  max-[500px]:text-[26px]">Инструменты</h2>
+                    <p class="text-gray-700 text-sm  max-[500px]:text-[13px]">Инструменты для продуктивной работы</p>
                 @endif
             </div>
         </div>
@@ -45,9 +61,9 @@
                                 </svg>
                             </div>
                             <div class="flex-1">
-                                <h3 class="text-lg font-semibold text-white transition-colors">
+                                <h3 class="text-lg font-semibold text-white transition-colors  max-[500px]:text-[16px]">
                                     Фотобанк</h3>
-                                <p class="text-gray-500 text-sm mt-1">Хранилище изображений и медиафайлов</p>
+                                <p class="text-gray-500 text-sm mt-1 max-[500px]:text-[13px]">Хранилище изображений и медиафайлов</p>
                             </div>
                         </div>
                     </div>
@@ -65,9 +81,9 @@
                                 </svg>
                             </div>
                             <div class="flex-1">
-                                <h3 class="text-lg font-semibold text-white transition-colors">
+                                <h3 class="text-lg font-semibold text-white transition-colors max-[500px]:text-[16px]">
                                     Видеоконференции</h3>
-                                <p class="text-gray-500 text-sm mt-1">Создайте комнату и пригласите коллег</p>
+                                <p class="text-gray-500 text-sm mt-1 max-[500px]:text-[13px]">Создайте комнату и пригласите коллег</p>
                             </div>
                         </div>
                     </div>
@@ -96,9 +112,9 @@
                                 </svg>
                             </div>
                             <div class="flex-1">
-                                <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors">
+                                <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors max-[500px]:text-[16px]">
                                     Фотобанк</h3>
-                                <p class="text-gray-500 text-sm mt-1">Хранилище изображений и медиафайлов</p>
+                                <p class="text-gray-500 text-sm mt-1 max-[500px]:text-[13px]">Хранилище изображений и медиафайлов</p>
                             </div>
                         </div>
                     </div>
@@ -116,9 +132,9 @@
                                 </svg>
                             </div>
                             <div class="flex-1">
-                                <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors">
+                                <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors max-[500px]:text-[16px]">
                                     Видеоконференции</h3>
-                                <p class="text-gray-500 text-sm mt-1">Создайте комнату и пригласите коллег</p>
+                                <p class="text-gray-500 text-sm mt-1 max-[500px]:text-[13px]">Создайте комнату и пригласите коллег</p>
                             </div>
                         </div>
                     </div>
