@@ -762,6 +762,11 @@
                                             <td class="px-3 py-4 text-sm text-gray-900">{{ $user->created_at->format('d.m.Y') }}</td>
                                             <td class="px-3 py-4">
                                                 <div class="flex items-center space-x-2">
+                                                    <button
+                                                        class="change-role-btn text-purple-600 hover:text-purple-800 p-1"
+                                                        data-user-id="{{ $user->id }}" title="Изменить роль">
+                                                        <i class="fas fa-user-cog"></i>
+                                                    </button>
                                                     <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
                                                             data-user-id="{{ $user->id }}"
                                                             data-user-name="{{ $user->name }}" title="Удалить">
@@ -1906,7 +1911,6 @@
                             <button onclick="saveUserRole(${user.id})"
                                     id="saveRoleBtn"
                                     class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-600 transition font-medium flex items-center space-x-2">
-                                <i class="fas fa-save"></i>
                                 <span>Сохранить</span>
                             </button>
                         </div>
