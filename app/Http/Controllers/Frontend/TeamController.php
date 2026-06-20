@@ -1013,7 +1013,8 @@ class TeamController extends Controller
                     $query->whereDate('date', today()->subDay());
                     break;
                 case 'week':
-                    $query->where('date', '>=', now()->startOfWeek());
+                    // ИСПРАВЛЕНО: последние 7 дней вместо начала недели
+                    $query->where('date', '>=', now()->subDays(7)->startOfDay());
                     break;
                 case 'month':
                     $query->where('date', '>=', now()->startOfMonth());
@@ -1039,13 +1040,13 @@ class TeamController extends Controller
             $visitStats = [
                 'total_visits' => $visits->count(),
                 'total_page_views' => $totalPageViews,
-                'total_time_seconds' => $totalWorkSeconds, // Используем рабочее время
+                'total_time_seconds' => $totalWorkSeconds,
                 'average_time_per_visit' => $visits->count() > 0 ? round($totalWorkSeconds / $visits->count()) : 0,
                 'daily_stats' => $visits->map(function($visit) {
                     return [
                         'date' => $visit->date->format('d.m.Y'),
                         'page_views' => $visit->page_views,
-                        'time' => $this->formatDuration($visit->total_work_seconds), // Используем рабочее время
+                        'time' => $this->formatDuration($visit->total_work_seconds),
                         'seconds' => $visit->total_work_seconds,
                     ];
                 }),
@@ -1078,7 +1079,6 @@ class TeamController extends Controller
             ], 500);
         }
     }
-
 
     /**
      * Экспорт статистики пользователя в CSV
