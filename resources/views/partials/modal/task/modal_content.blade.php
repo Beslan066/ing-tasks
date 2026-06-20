@@ -272,7 +272,7 @@
                     </button>
             <button onclick="switchTaskTab('comments')"
                     id="tabCommentsBtn"
-                    class="flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 border-green-500 text-green-600  hover:text-gray-700 max-[500px]:h-full">
+                    class="flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 border-transparent text-gray-500 hover:text-gray-700  max-[500px]:h-full">
                 <i class="fas fa-comments mr-2"></i>Сообщения
                 <span id="commentsCount" class="ml-1 text-xs text-gray-400">
                     ({{ isset($comments) && $comments ? (method_exists($comments, 'total') ? $comments->total() : $comments->count()) : 0 }})
@@ -706,7 +706,13 @@
     //         infoBtn.classList.add('border-transparent', 'text-gray-500');
     //     }
     // }
-
+//   document.addEventListener('DOMContentLoaded', () => {
+//         console.log('default tab')
+//     const isMobile = window.matchMedia('(max-width: 500px)').matches;
+//     const defaultTab = isMobile ? 'info' : 'comments';
+//     console.log(defaultTab,'lldsadsakdsa')
+//     switchTaskTab(defaultTab);
+// });
     // Функция загрузки дополнительных комментариев
     function loadMoreComments(taskId, nextPageUrl) {
         const button = event?.target;
