@@ -2406,7 +2406,7 @@ media-src https://meet.jit.si https:;
             if (!response.ok) {
                 console.warn(`HTTP status: ${response.status} - отображаем сообщение от сервера`);
             }
-
+setDefaultTab()
         } catch (error) {
             console.error('Сетевая ошибка:', error);
             // Эта ошибка возникает только при проблемах с сетью (нет интернета и т.д.)
@@ -2425,7 +2425,23 @@ media-src https://meet.jit.si https:;
             document.body.classList.add('overflow-y-hidden')
         }
     }
+function setDefaultTab() {
 
+        console.log('def tab')
+             const commentsTab = document.getElementById('commentsTab');
+        const infoTab = document.getElementById('infoTab');
+        const subtasksTab = document.getElementById('subtasksTab');
+        if(commentsTab && infoTab && subtasksTab) {
+
+            console.log('default tab')
+    const isMobile = window.matchMedia('(max-width: 500px)').matches;
+    const defaultTab = isMobile ? 'info' : 'comments';
+    console.log(defaultTab,'lldsadsakdsa')
+    switchTaskTab(defaultTab);
+}else {
+    return;
+}
+}
     // Закрыть модальное окно просмотра задачи
     function closeTaskViewModal() {
         const modal = document.getElementById('taskViewModal');
@@ -2778,6 +2794,10 @@ media-src https://meet.jit.si https:;
             infoBtn.classList.add('border-transparent', 'text-gray-500');
         }
     }
+
+
+
+
     let currentParentTaskId = null;
 
     function openCreateSubtaskModal(parentTaskId) {
