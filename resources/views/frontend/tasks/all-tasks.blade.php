@@ -40,56 +40,56 @@
 
         <!-- Статистика -->
         @if($backgroundEnabled && $backgroundImage)
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8 max-[500px]:grid-cols-1 max-[500px]:gap-2">
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+            <div  class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8 max-[500px]:grid-cols-1 max-[500px]:gap-2 max-[500px]:flex max-[500px]:overflow-x-auto max-[500px]:snap-x max-[500px]:snap-mandatory scrollbar-none">
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-col-reverse max-[500px]:justify-between max-[500px]:items-center max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[76px] shrink-0 snap-start max-[500px]:p-2"
                     onclick="filterByStatus('')">
                     <div class="text-2xl font-bold text-white">{{ $stats['total'] }}</div>
                     <div class="text-sm text-white">Всего задач</div>
                 </div>
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-col-reverse max-[500px]:justify-between max-[500px]:items-center max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[76px] shrink-0 snap-start max-[500px]:p-2"
                     onclick="filterByStatus('назначена')">
                     <div class="text-2xl font-bold text-white">{{ $stats['new'] }}</div>
                     <div class="text-sm text-white">Новые</div>
                 </div>
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-col-reverse max-[500px]:justify-between max-[500px]:items-center max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[76px] shrink-0 snap-start max-[500px]:p-2"
                     onclick="filterByStatus('в работе')">
                     <div class="text-2xl font-bold text-white">{{ $stats['in_progress'] }}</div>
                     <div class="text-sm text-white">В работе</div>
                 </div>
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-col-reverse max-[500px]:justify-between max-[500px]:items-center max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[76px] shrink-0 snap-start max-[500px]:p-2"
                     onclick="filterByStatus('на проверке')">
                     <div class="text-2xl font-bold text-white">{{ $stats['review'] }}</div>
                     <div class="text-sm text-white">На проверке</div>
                 </div>
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-col-reverse max-[500px]:justify-between max-[500px]:items-center max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[76px] shrink-0 snap-start max-[500px]:p-2"
                     onclick="filterByStatus('выполнена')">
                     <div class="text-2xl font-bold text-white">{{ $stats['done'] }}</div>
                     <div class="text-sm text-white">Завершено</div>
                 </div>
             </div>
         @else
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8 max-[500px]:grid-cols-1 max-[500px]:gap-2">
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8 max-[500px]:grid-cols-1 max-[500px]:gap-2 max-[500px]:flex max-[500px]:overflow-x-auto max-[500px]:snap-x max-[500px]:snap-mandatory scrollbar-none">
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-col-reverse max-[500px]:justify-between max-[500px]:items-center max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[76px] shrink-0 snap-start max-[500px]:p-2"
                     onclick="filterByStatus('')">
                     <div class="text-2xl font-bold text-blue-600">{{ $stats['total'] }}</div>
                     <div class="text-sm text-gray-600">Всего задач</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-col-reverse max-[500px]:justify-between max-[500px]:items-center max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[76px] shrink-0 snap-start max-[500px]:p-2"
                     onclick="filterByStatus('назначена')">
                     <div class="text-2xl font-bold text-purple-600">{{ $stats['new'] }}</div>
                     <div class="text-sm text-gray-600">Новые</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-col-reverse max-[500px]:justify-between max-[500px]:items-center max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[76px] shrink-0 snap-start max-[500px]:p-2"
                     onclick="filterByStatus('в работе')">
                     <div class="text-2xl font-bold text-orange-600">{{ $stats['in_progress'] }}</div>
                     <div class="text-sm text-gray-600">В работе</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-col-reverse max-[500px]:justify-between max-[500px]:items-center max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[76px] shrink-0 snap-start max-[500px]:p-2"
                     onclick="filterByStatus('на проверке')">
                     <div class="text-2xl font-bold text-yellow-600">{{ $stats['review'] }}</div>
                     <div class="text-sm text-gray-600">На проверке</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-col-reverse max-[500px]:justify-between max-[500px]:items-center max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[76px] shrink-0 snap-start max-[500px]:p-2"
                     onclick="filterByStatus('выполнена')">
                     <div class="text-2xl font-bold text-green-600">{{ $stats['done'] }}</div>
                     <div class="text-sm text-gray-600">Завершено</div>
@@ -671,36 +671,8 @@
     </div>
 
 @endsection
-@once
-<style>
-     .tab-button {
-            border-color: transparent;
-            color: #6b7280;
-        }
-        .tab-button:hover {
-            color: #374151;
-            border-color: #d1d5db;
-        }
-        .tab-button.active {
-            border-color: #10b981;
-            color: #10b981;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-</style>
-@endonce
 
 @push('scripts')
-    <!-- @vite('resources/js/all-tasks.page.js') -->
     <script>
         let currentTaskId = null;
         let currentRows = [];
@@ -1602,6 +1574,35 @@
         .transition-all {
             transition: all 0.3s ease;
         }
-
+ .tab-button {
+            border-color: transparent;
+            color: #6b7280;
+        }
+        .tab-button:hover {
+            color: #374151;
+            border-color: #d1d5db;
+        }
+        .tab-button.active {
+            border-color: #10b981;
+            color: #10b981;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .scrollbar-none::-webkit-scrollbar {
+    display: none; /* Скрывает скроллбар в Chrome, Safari и Opera */
+}
+.scrollbar-none {
+-ms-overflow-style: none;  /* Скрывает скроллбар в IE и Edge */
+    scrollbar-width: none;
+}
     </style>
 @endpush
