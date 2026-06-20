@@ -433,11 +433,6 @@
                                             <td class="px-3 py-4">
                                                 <div class="flex items-center space-x-2">
                                                     <button
-                                                        class="view-user-btn text-green-600 hover:text-green-800 p-1"
-                                                        data-user-id="{{ $user->id }}" title="Просмотр">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    <button
                                                         class="change-role-btn text-purple-600 hover:text-purple-800 p-1"
                                                         data-user-id="{{ $user->id }}" title="Изменить роль">
                                                         <i class="fas fa-user-cog"></i>
@@ -500,10 +495,6 @@
                                     </div>
                                 </div>
                                 <div class="flex space-x-1">
-                                    <button class="view-user-btn text-green-600 hover:text-green-800 p-1"
-                                            data-user-id="{{ $user->id }}" title="Просмотр">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
                                     <button class="change-role-btn text-purple-600 hover:text-purple-800 p-1"
                                             data-user-id="{{ $user->id }}" title="Изменить роль">
                                         <i class="fas fa-user-cog"></i>
@@ -771,11 +762,6 @@
                                             <td class="px-3 py-4 text-sm text-gray-900">{{ $user->created_at->format('d.m.Y') }}</td>
                                             <td class="px-3 py-4">
                                                 <div class="flex items-center space-x-2">
-                                                    <button
-                                                        class="view-user-btn text-green-600 hover:text-green-800 p-1"
-                                                        data-user-id="{{ $user->id }}" title="Просмотр">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
                                                     <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
                                                             data-user-id="{{ $user->id }}"
                                                             data-user-name="{{ $user->name }}" title="Удалить">
@@ -834,10 +820,6 @@
                                     </div>
                                 </div>
                                 <div class="flex space-x-1">
-                                    <button class="view-user-btn text-green-600 hover:text-green-800 p-1"
-                                            data-user-id="{{ $user->id }}" title="Просмотр">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
                                     <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
                                             data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
                                             title="Удалить">
@@ -1863,7 +1845,7 @@
                         // Создаем модальное окно
                         const modal = document.createElement('div');
                         modal.id = 'roleEditModal';
-                        modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4';
+                        modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4 backdrop-blur-md';
                         modal.onclick = function (e) {
                             if (e.target === this) {
                                 closeRoleEditModal();
