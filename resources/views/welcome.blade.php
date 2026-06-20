@@ -36,22 +36,20 @@
 
         <div class="flex space-x-4 w-full md:w-auto">
             <button onclick="openPersonalTaskModal()"
-                    class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base">
+                    class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base max-[500px]:basis-1/2">
                 <i class="fas fa-plus"></i>
                 <span>Добавить</span>
             </button>
-             <div class="hidden max-[450px]:block">
+             <div class="hidden max-[450px]:block max-[500px]:basis-1/2">
              @if($backgroundEnabled && $backgroundImage)
-                    <a href="{{route('allTasks')}}" class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
+                    <a href="{{route('allTasks')}}" class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm max-[500px]:text-center max-[500px]:justify-center">
                         <span>Все задачи</span>
-                        <span id="activeFiltersCount"
-                              class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
+
                     </a>
                 @else
-                    <a href="{{route('allTasks')}}" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
+                    <a href="{{route('allTasks')}}" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm max-[500px]:text-center max-[500px]:justify-center">
                         <span>Все задачи</span>
-                        <span id="activeFiltersCount"
-                              class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
+
                     </a>
                 @endif
                 </div>

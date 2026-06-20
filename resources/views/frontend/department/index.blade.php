@@ -121,9 +121,9 @@
         @endif
         <!-- Статистика по отделам -->
         @if($backgroundEnabled && $backgroundImage)
-            <div class="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-4 gap-6 mb-8">
-                <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow p-6 border-none">
-                    <div class="flex items-center justify-between">
+            <div class="flex gap-3 mb-4 overflow-x-auto snap-x snap-mandatory scrollbar-none sm:grid sm:grid-cols-1 md:grid-cols-2  xl:grid-cols-4 sm:gap-6 sm:mb-8">
+                <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow p-6 border-none max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:p-3">
+                    <div class="flex items-center justify-between max-[500px]:items-start">
                         <div>
                             <h2 class="text-lg font-bold text-white">Отделов</h2>
                             <p class="text-2xl font-bold text-white">{{ $departments->count() }}</p>
@@ -131,8 +131,8 @@
                     </div>
                 </div>
 
-                <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow p-6 border-none">
-                    <div class="flex items-center justify-between">
+                <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow p-6 border-none max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:p-3">
+                    <div class="flex items-center justify-between max-[500px]:items-start">
                         <div>
                             <h2 class="text-lg font-bold text-white">Задач</h2>
                             <p class="text-2xl font-bold text-white">{{ $totalActiveTasks }}</p>
@@ -140,8 +140,8 @@
                     </div>
                 </div>
 
-                <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow p-6 border-none">
-                    <div class="flex items-center justify-between">
+                <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow p-6 border-none max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:p-3">
+                    <div class="flex items-center justify-between max-[500px]:items-start">
                         <div>
                             <h2 class="text-lg font-bold text-white">Писем</h2>
                             <p class="text-2xl font-bold text-white">{{ $totalUnreadEmails }}</p>
@@ -149,8 +149,8 @@
                     </div>
                 </div>
 
-                <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow p-6 border-none">
-                    <div class="flex items-center justify-between">
+                <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow p-6 border-none max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:p-3">
+                    <div class="flex items-center justify-between max-[500px]:items-start">
                         <div>
                             <h2 class="text-lg font-bold text-white">Сотрудников</h2>
                             <p class="text-2xl font-bold text-white">{{ $totalUsers }}</p>
@@ -159,51 +159,51 @@
                 </div>
             </div>
         @else
-            <div class="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-xl shadow p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
+            <div class="flex gap-3 mb-4 overflow-x-auto snap-x snap-mandatory scrollbar-none sm:grid sm:grid-cols-1 md:grid-cols-2  xl:grid-cols-4 sm:gap-6 sm:mb-8">
+                <div class="bg-white rounded-xl shadow p-6 border border-gray-100 max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:p-3">
+                    <div class="flex items-center justify-between max-[500px]:items-start">
+                        <div class="max-[500px]:space-y-2">
                             <p class="text-gray-500 text-sm">Всего отделов</p>
                             <p class="text-2xl font-bold text-gray-800">{{ $departments->count() }}</p>
                         </div>
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-building text-blue-500 text-xl"></i>
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center max-[500px]:w-5 max-[500px]:h-5 max-[500px]:bg-transparent">
+                            <i class="fas fa-building text-blue-500 text-xl max-[500px]:text-[17px]/[18px]"></i>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
+                <div class="bg-white rounded-xl shadow p-6 border border-gray-100 max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:p-3">
+                    <div class="flex items-center justify-between max-[500px]:items-start">
+                        <div class="max-[500px]:space-y-2">
                             <p class="text-gray-500 text-sm">Активных задач</p>
                             <p class="text-2xl font-bold text-gray-800">{{ $totalActiveTasks }}</p>
                         </div>
-                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-tasks text-green-500 text-xl"></i>
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center max-[500px]:w-5 max-[500px]:h-5  max-[500px]:bg-transparent">
+                            <i class="fas fa-tasks text-green-500 text-xl max-[500px]:text-[17px]/[18px]"></i>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
+                <div class="bg-white rounded-xl shadow p-6 border border-gray-100 max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:p-3">
+                    <div class="flex items-center justify-between max-[500px]:items-start">
+                        <div class="max-[500px]:space-y-2">
                             <p class="text-gray-500 text-sm">Непрочитанных писем</p>
                             <p class="text-2xl font-bold text-gray-800">{{ $totalUnreadEmails }}</p>
                         </div>
-                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-envelope text-purple-500 text-xl"></i>
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center max-[500px]:w-5 max-[500px]:h-5  max-[500px]:bg-transparent">
+                            <i class="fas fa-envelope text-purple-500 text-xl max-[500px]:text-[17px]/[18px]"></i>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
+                <div class="bg-white rounded-xl shadow p-6 border border-gray-100 max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:p-3">
+                    <div class="flex items-center justify-between max-[500px]:items-start">
+                        <div class="max-[500px]:space-y-2">
                             <p class="text-gray-500 text-sm">Всего сотрудников</p>
                             <p class="text-2xl font-bold text-gray-800">{{ $totalUsers }}</p>
                         </div>
-                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-users text-orange-500 text-xl"></i>
+                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center max-[500px]:w-5 max-[500px]:h-5  max-[500px]:bg-transparent">
+                            <i class="fas fa-users text-orange-500 text-xl max-[500px]:text-[17px]/[18px]"></i>
                         </div>
                     </div>
                 </div>
