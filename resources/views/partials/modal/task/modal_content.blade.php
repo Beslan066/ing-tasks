@@ -397,7 +397,7 @@
         </div>
 
         {{-- КОНТЕНТ: Информация --}}
-        <div id="infoTab" class="w-2/5 border-r border-gray-200 p-6 overflow-y-auto flex-col hidden max-[800px]:w-full">
+        <div id="infoTab" class="w-2/5 border-r border-gray-200 p-6 overflow-y-auto flex-col hidden max-[800px]:w-full max-[500px]:p-4">
         <div>
             {{-- Заголовок и статус --}}
         <div class="mb-6">

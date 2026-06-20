@@ -1,5 +1,5 @@
 <div id="editTaskModal"
-     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[51] backdrop-blur-md">
+     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[51] backdrop-blur-md max-[500px]:p-4">
     <div
         class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
         <!-- Заголовок -->

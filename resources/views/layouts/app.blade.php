@@ -90,6 +90,21 @@ media-src https://meet.jit.si https:;
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
+.scrollbar-none::-webkit-scrollbar {
+    display: none; /* Скрывает скроллбар в Chrome, Safari и Opera */
+}
+.scrollbar-none {
+-ms-overflow-style: none;  /* Скрывает скроллбар в IE и Edge */
+    scrollbar-width: none;
+}
+   .no-scrollbar {
+    -ms-overflow-style: none;  /* Скрывает скроллбар в IE и Edge */
+    scrollbar-width: none;  /* Скрывает скроллбар в Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none; /* Скрывает скроллбар в Chrome, Safari и Opera */
+}
         .main-container {
             background-color: #f9fafb;
         }
