@@ -1013,8 +1013,8 @@ class TeamController extends Controller
                     $query->whereDate('date', today()->subDay());
                     break;
                 case 'week':
-                    // ИСПРАВЛЕНО: последние 7 дней вместо начала недели
-                    $query->where('date', '>=', now()->subDays(7)->startOfDay());
+                    $query->where('date', '>=', now()->subDays(7)->startOfDay())
+                        ->where('date', '<', now()->startOfDay());
                     break;
                 case 'month':
                     $query->where('date', '>=', now()->startOfMonth());
