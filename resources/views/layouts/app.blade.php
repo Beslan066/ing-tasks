@@ -3206,8 +3206,12 @@ function setDefaultTab() {
 `;
     document.head.appendChild(style);
 
-    // Конец быстрого добавления
+     // Конец быстрого добавления
+
+
+
 </script>
+
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function (m, e, t, r, i, k, a) {

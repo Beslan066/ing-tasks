@@ -96,7 +96,6 @@ class InvitationController extends Controller
                 Mail::to($email)->send(new UserInvitationMail($invitation, $authUser));
                 $invitedCount++;
 
-                // Логируем отправку email
                 Log::info('Invitation email sent', [
                     'invitation_id' => $invitation->id,
                     'email' => $email,
@@ -142,16 +141,14 @@ class InvitationController extends Controller
             return view('frontend.invitation-expired', compact('invitation'));
         }
 
-        // Если пользователь уже авторизован
         if (auth()->check()) {
             $user = auth()->user();
 
-            // Если это приглашение на email текущего пользователя
             if ($user->email === $invitation->email) {
+                // Перенаправляем на процесс принятия
                 return $this->processInvitationAcceptance($user, $invitation);
             }
 
-            // Если email не совпадает, предлагаем выйти или использовать другой email
             return view('frontend.invitation-different-email', compact('invitation'));
         }
 
@@ -166,7 +163,6 @@ class InvitationController extends Controller
             return redirect()->route('login')->with('error', 'Приглашение истекло или уже использовано.');
         }
 
-        // Если пользователь не авторизован, перенаправляем на регистрацию
         if (!auth()->check()) {
             $request->session()->put('invitation_token', $token);
             return redirect()->route('register')->with('invitation', $invitation);
@@ -174,7 +170,6 @@ class InvitationController extends Controller
 
         $user = auth()->user();
 
-        // Проверяем, что email совпадает
         if ($user->email !== $invitation->email) {
             return back()->with('error', 'Приглашение предназначено для другого email адреса.');
         }
@@ -182,30 +177,55 @@ class InvitationController extends Controller
         return $this->processInvitationAcceptance($user, $invitation);
     }
 
+    /**
+     * Обработка принятия приглашения
+     */
     private function processInvitationAcceptance(User $user, Invitation $invitation)
     {
         try {
             DB::transaction(function () use ($user, $invitation) {
                 $oldCompanyId = $user->company_id;
                 $oldRoleId = $user->role_id;
-                $oldDepartmentId = $user->department_id;
 
-                // Обновляем пользователя
+                // Сохраняем старые отделы пользователя
+                $oldDepartmentIds = $user->departments()->pluck('departments.id')->toArray();
+
+                // ✅ ОБНОВЛЯЕМ ПОЛЬЗОВАТЕЛЯ БЕЗ department_id
                 $user->update([
                     'company_id' => $invitation->company_id,
                     'role_id' => $invitation->role_id,
-                    'department_id' => $invitation->department_id,
+                    // ❌ НЕ ДОБАВЛЯЕМ department_id
                 ]);
 
-                // Если пользователь был в другом отделе, открепляем его от старых отделов
+                // Если пользователь переходит из другой компании
                 if ($oldCompanyId && $oldCompanyId !== $invitation->company_id) {
                     // Открепляем от всех старых отделов
                     $user->departments()->detach();
+
+                    // Логируем выход из старой компании
+                    ActivityLogger::userLeftCompany($user, $oldCompanyId);
+                } else {
+                    // Если пользователь остается в той же компании, но меняет отделы
+                    // Очищаем старые отделы, если они не совпадают с новым
+                    if ($invitation->department_id) {
+                        // Удаляем все старые отделы и добавляем новый
+                        $user->departments()->sync([$invitation->department_id]);
+                    } else {
+                        // Если отдел не указан, открепляем от всех отделов
+                        $user->departments()->detach();
+                    }
                 }
 
-                // Добавляем в новый отдел (если указан)
+                // ✅ Добавляем в новый отдел (если указан) через связь многие-ко-многим
                 if ($invitation->department_id) {
-                    $user->departments()->syncWithoutDetaching([$invitation->department_id]);
+                    // Проверяем, не привязан ли уже пользователь к этому отделу
+                    $exists = $user->departments()
+                        ->where('department_id', $invitation->department_id)
+                        ->exists();
+
+                    if (!$exists) {
+                        $user->departments()->attach($invitation->department_id);
+                    }
                 }
 
                 // Отмечаем приглашение как принятое
@@ -213,11 +233,6 @@ class InvitationController extends Controller
 
                 // Логируем присоединение пользователя к компании
                 ActivityLogger::userJoined($user, $invitation->company);
-
-                // Дополнительное логирование если пользователь покинул старую компанию
-                if ($oldCompanyId && $oldCompanyId !== $invitation->company_id) {
-                    ActivityLogger::userLeftCompany($user, $oldCompanyId);
-                }
 
                 // Логируем в файл
                 Log::info('User accepted invitation', [
@@ -229,6 +244,7 @@ class InvitationController extends Controller
                     'invited_by' => $invitation->inviter->id,
                     'role_id' => $invitation->role_id,
                     'department_id' => $invitation->department_id,
+                    'old_department_ids' => $oldDepartmentIds,
                     'accepted_at' => now()->toDateTimeString(),
                 ]);
             });
@@ -292,10 +308,8 @@ class InvitationController extends Controller
 
         $invitation->update(['expires_at' => now()]);
 
-        // Логируем отмену приглашения
         ActivityLogger::invitationCancelled($invitation, $authUser);
 
-        // Логируем в файл
         Log::info('Invitation cancelled', [
             'invitation_id' => $invitation->id,
             'cancelled_by' => $authUser->id,
@@ -327,12 +341,11 @@ class InvitationController extends Controller
 
         $searchTerm = $request->search;
 
-        // Ищем пользователей по имени или email
         $users = User::where(function($query) use ($searchTerm) {
             $query->where('name', 'like', "%{$searchTerm}%")
                 ->orWhere('email', 'like', "%{$searchTerm}%");
         })
-            ->where('id', '!=', $authUser->id) // Исключаем текущего пользователя
+            ->where('id', '!=', $authUser->id)
             ->limit(10)
             ->get(['id', 'name', 'email', 'company_id']);
 
@@ -343,7 +356,6 @@ class InvitationController extends Controller
             $hasActiveInvitation = false;
 
             if (!$isInCompany) {
-                // Проверяем активные приглашения
                 $hasActiveInvitation = $company->invitations()
                     ->where('email', $user->email)
                     ->where('expires_at', '>', now())
@@ -372,9 +384,6 @@ class InvitationController extends Controller
         ]);
     }
 
-    /**
-     * Отправить повторное приглашение
-     */
     public function resendInvitation($id)
     {
         $authUser = auth()->user();
@@ -392,10 +401,8 @@ class InvitationController extends Controller
         }
 
         try {
-            // Отправляем email повторно
             Mail::to($invitation->email)->send(new UserInvitationMail($invitation, $authUser));
 
-            // Логируем повторную отправку
             Log::info('Invitation resent', [
                 'invitation_id' => $invitation->id,
                 'email' => $invitation->email,

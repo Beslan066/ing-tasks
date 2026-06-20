@@ -50,12 +50,14 @@
                         <i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>
                     </button>
                 @endif
-                <button
-                    class="flex-1 md:flex-none bg-primary-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-secondary transition text-sm md:text-base"
-                    id="inviteUserBtn">
-                    <i class="fas fa-user-plus"></i>
-                    <span>Пригласить</span>
-                </button>
+                @if(auth()->user()->isLeader())
+                    <button
+                        class="flex-1 md:flex-none bg-primary-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-secondary transition text-sm md:text-base"
+                        id="inviteUserBtn">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Пригласить</span>
+                    </button>
+                @endif
             </div>
         </div>
 
@@ -430,20 +432,26 @@
                                                 </span>
                                             </td>
                                             <td class="px-3 py-4 text-sm ">{{ $user->created_at->format('d.m.Y') }}</td>
-                                            <td class="px-3 py-4">
-                                                <div class="flex items-center space-x-2">
-                                                    <button
-                                                        class="change-role-btn text-purple-600 hover:text-purple-800 p-1"
-                                                        data-user-id="{{ $user->id }}" title="Изменить роль">
-                                                        <i class="fas fa-user-cog"></i>
-                                                    </button>
-                                                    <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
-                                                            data-user-id="{{ $user->id }}"
-                                                            data-user-name="{{ $user->name }}" title="Удалить">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
+                                            @if(auth()->user()->isLeader())
+                                                <td class="px-3 py-4">
+                                                    <div class="flex items-center space-x-2">
+                                                        <button
+                                                            class="change-role-btn text-purple-600 hover:text-purple-800 p-1"
+                                                            data-user-id="{{ $user->id }}" title="Изменить роль">
+                                                            <i class="fas fa-user-cog"></i>
+                                                        </button>
+                                                        <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
+                                                                data-user-id="{{ $user->id }}"
+                                                                data-user-name="{{ $user->name }}" title="Удалить">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            @else
+                                                <td class="px-3 py-4">
+
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 @else
@@ -494,17 +502,22 @@
                                         <p class="text-sm text-gray-600 truncate">{{ $user->email }}</p>
                                     </div>
                                 </div>
-                                <div class="flex space-x-1">
-                                    <button class="change-role-btn text-purple-600 hover:text-purple-800 p-1"
-                                            data-user-id="{{ $user->id }}" title="Изменить роль">
-                                        <i class="fas fa-user-cog"></i>
-                                    </button>
-                                    <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
-                                            data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
-                                            title="Удалить">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
+                                @if(auth()->user()->isLeader())
+                                    <div class="flex space-x-1">
+                                        <button class="change-role-btn text-purple-600 hover:text-purple-800 p-1"
+                                                data-user-id="{{ $user->id }}" title="Изменить роль">
+                                            <i class="fas fa-user-cog"></i>
+                                        </button>
+                                        <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
+                                                data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
+                                                title="Удалить">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                @else
+                                    <div class="flex space-x-1">
+                                    </div>
+                                @endif
                             </div>
 
                             <div class="space-y-3">
@@ -760,20 +773,26 @@
                                             </span>
                                             </td>
                                             <td class="px-3 py-4 text-sm text-gray-900">{{ $user->created_at->format('d.m.Y') }}</td>
-                                            <td class="px-3 py-4">
-                                                <div class="flex items-center space-x-2">
-                                                    <button
-                                                        class="change-role-btn text-purple-600 hover:text-purple-800 p-1"
-                                                        data-user-id="{{ $user->id }}" title="Изменить роль">
-                                                        <i class="fas fa-user-cog"></i>
-                                                    </button>
-                                                    <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
-                                                            data-user-id="{{ $user->id }}"
-                                                            data-user-name="{{ $user->name }}" title="Удалить">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
+                                            @if(auth()->user()->isLeader())
+                                                <td class="px-3 py-4">
+                                                    <div class="flex items-center space-x-2">
+                                                        <button
+                                                            class="change-role-btn text-purple-600 hover:text-purple-800 p-1"
+                                                            data-user-id="{{ $user->id }}" title="Изменить роль">
+                                                            <i class="fas fa-user-cog"></i>
+                                                        </button>
+                                                        <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
+                                                                data-user-id="{{ $user->id }}"
+                                                                data-user-name="{{ $user->name }}" title="Удалить">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            @else
+                                                <td class="px-3 py-4">
+
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 @else
@@ -1202,20 +1221,24 @@
                         <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
                             ${user.role ? user.role.name : 'Роль не назначена'}
                         </span>
-                        <button onclick="openRoleEditModal(${user.id})"
-                                class="inline-block px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200 transition flex items-center gap-1">
+                        @if(auth()->user()->isLeader())
+                            <button onclick="openRoleEditModal(${user.id})"
+                                            class="inline-block px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200 transition flex items-center gap-1">
                             <i class="fas fa-edit text-xs"></i>
                             <span>Изменить</span>
-                        </button>
+                            </button>
+                        @endif
                     </div>
                 </div>
                 <div class="space-y-4">
                     <div>
                         <div class="flex justify-between items-center mb-2">
                             <label class="text-sm font-medium text-gray-600">Отделы:</label>
-                            <button id="editDepartmentsBtn" class="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1">
-                                <i class="fas fa-edit text-xs"></i> <span>Редактировать</span>
-                            </button>
+                            @if(auth()->user()->isLeader())
+                                <button id="editDepartmentsBtn" class="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1">
+                                    <i class="fas fa-edit text-xs"></i> <span>Редактировать</span>
+                                </button>
+                            @endif
                         </div>
                         <div id="departmentsList" class="flex flex-wrap gap-2">
                             ${user.departments && user.departments.length > 0 ?

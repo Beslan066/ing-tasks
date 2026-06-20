@@ -37,19 +37,21 @@
                     </button>
                     <!-- Выпадающее меню -->
                     <div class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 border border-gray-200">
-                        <div class="py-1">
-                            <div class="border-t border-gray-100"></div>
-                            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                               onclick="openEditDepartmentModal({{ $department->id }})">
-                                <i class="fas fa-edit mr-3 text-primary"></i>
-                                Редактировать
-                            </a>
-                            <a href="javascript:void(0);" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                               onclick="deleteDepartment({{ $department->id }})">
-                                <i class="fas fa-trash mr-3"></i>
-                                Удалить отдел
-                            </a>
-                        </div>
+                        @if(auth()->user()->isLeader())
+                            <div class="py-1">
+                                <div class="border-t border-gray-100"></div>
+                                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                   onclick="openEditDepartmentModal({{ $department->id }})">
+                                    <i class="fas fa-edit mr-3 text-primary"></i>
+                                    Редактировать
+                                </a>
+                                <a href="javascript:void(0);" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                                   onclick="deleteDepartment({{ $department->id }})">
+                                    <i class="fas fa-trash mr-3"></i>
+                                    Удалить отдел
+                                </a>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -235,6 +237,7 @@
                     </button>
                     <!-- Выпадающее меню -->
                     <div class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 border border-gray-200">
+                        @if(auth()->user()->isLeader())
                         <div class="py-1">
                             <div class="border-t border-gray-100"></div>
                             <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -248,6 +251,7 @@
                                 Удалить отдел
                             </a>
                         </div>
+                        @endif
                     </div>
                 </div>
             </div>

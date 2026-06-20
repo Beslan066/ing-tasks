@@ -10,7 +10,13 @@
 
     <!-- Страница статистики компании -->
     <div id="company-stats">
+        @if(auth()->user()->isManager() || auth()->user()->isSupervisor())
+            @if($company && $company->license_type === 'basic')
+                @include('partials.subscription')
+            @endif
+        @endif
         <div class="flex flex-col md:flex-row justify-between items-start mb-6 md:mb-8 gap-4">
+
              <nav class="hidden max-[500px]:block">
                             <ol class="flex items-center gap-1.5">
                                 <li>
@@ -28,6 +34,8 @@
                             </ol>
                         </nav>
         <div class="max-[500px]:hidden">
+
+
                 @if($backgroundEnabled && $backgroundImage)
                     <h2 class="text-3xl font-bold text-white max-[500px]:text-[26px]">Задачи компании</h2>
                     <p class="text-white text-sm max-[500px]:text-[13px]">Обзор производительности и задач</p>
@@ -38,12 +46,6 @@
             </div>
 
             <div class="flex flex-wrap gap-2 w-full md:w-auto items-start">
-                @if(auth()->user()->isManager() || auth()->user()->isSupervisor())
-                    @if($company && $company->license_type === 'basic')
-                        @include('partials.subscription')
-                    @endif
-                @endif
-
                 <!-- Переключатель режимов отображения -->
                     @if($backgroundEnabled && $backgroundImage)
                         <div class="flex rounded-lg overflow-hidden border-none ">

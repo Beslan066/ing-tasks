@@ -43,26 +43,27 @@
             </ul>
         </nav>
         <div class="top-menu__right">
-            <div>
-                @if($company->license_type !== 'premium')
-                    <button onclick="openUpgradeModal()"
-                            class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600
+            @if(isset($company))
+                <div>
+                    @if($company->license_type !== 'premium')
+                        <button onclick="openUpgradeModal()"
+                                class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600
                             hover:to-yellow-700 text-white font-bold py-2 px-2  rounded-lg shadow-lg transition
                             duration-300 transform hover:scale-105 flex items-center text-sm md:text-base">
-                        <i class="fas fa-crown"></i>
-                        <span>Улучшить подписку</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                @else
-                    <span
-                        class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-2 px-2
+                            <i class="fas fa-crown"></i>
+                            <span>Улучшить подписку</span>
+                        </button>
+                    @else
+                        <span
+                            class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-2 px-2
                                 gap-2 rounded-lg shadow-lg inline-flex items-center  text-sm md:text-base">
                         <i class="fas fa-check-circle"></i>
                         <span>Премиум</span>
                         <i class="fas fa-star"></i>
                     </span>
-                @endif
-            </div>
+                    @endif
+                </div>
+            @endif
              <button type="button" class="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br
                                     from-primary-500 to-primary-700 flex items-center justify-center
                                     text-white font-bold shadow-lg" onclick="userProfileModal()">
@@ -131,6 +132,8 @@
         document.getElementById('userProfileModal').classList.add('hidden');
         document.getElementById('userForm').reset();
     }
+
+
 </script>
 
 @endonce

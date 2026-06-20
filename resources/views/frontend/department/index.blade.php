@@ -49,11 +49,13 @@
                         <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform duration-200"></i>
                     </button>
                 @endif
-                <button onclick="openDepartmentModal()"
-                        class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base">
-                    <i class="fas fa-plus"></i>
-                    <span>Новый отдел</span>
-                </button>
+                @if(auth()->user()->isLeader())
+                        <button onclick="openDepartmentModal()"
+                                class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base">
+                            <i class="fas fa-plus"></i>
+                            <span>Новый отдел</span>
+                        </button>
+                @endif
             </div>
         </div>
 

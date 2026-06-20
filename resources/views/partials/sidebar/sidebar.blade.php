@@ -70,15 +70,17 @@
                         <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Мои
                             задачи</span>
                     </a>
-                    <a href="{{route('tasks.admin')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:rounded-lg hover:bg-transparent/20 {{request()->routeIs('tasks.admin*') ? 'active' : ''}}">
-                        <div
-                            class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3 flex-shrink-0">
-                            <i class="fas fa-landmark text-purple-500 text-sm"></i>
-                        </div>
-                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Моя
+                    @if(auth()->user()->isLeader())
+                        <a href="{{route('tasks.admin')}}"
+                           class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:rounded-lg hover:bg-transparent/20 {{request()->routeIs('tasks.admin*') ? 'active' : ''}}">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-landmark text-purple-500 text-sm"></i>
+                            </div>
+                            <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Моя
                             компания</span>
-                    </a>
+                        </a>
+                    @endif
                     <a href="{{route('departments.index')}}"
                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('departments.index*') ? 'active' : ''}}">
                         <div

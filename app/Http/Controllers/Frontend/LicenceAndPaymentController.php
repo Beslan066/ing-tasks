@@ -79,7 +79,7 @@ class LicenceAndPaymentController extends Controller
                 ->latest()
                 ->first();
 
-// И добавьте в compact:
+
             return view('frontend.licence_and_payments.index', compact(
                 'company',
                 'subscription',
@@ -91,7 +91,7 @@ class LicenceAndPaymentController extends Controller
                 'storageStats',
                 'premiumUntil',
                 'features',
-                'pendingPayment'  // Добавьте эту переменную
+                'pendingPayment'
             ));
 
         } catch (\Exception $e) {
