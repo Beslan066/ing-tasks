@@ -39,6 +39,13 @@
 
                 @endif
             </div>
+
+            <div class="flex justify-between">
+                <span class="text-gray-600">Владеет:</span>
+                @if(isset(auth()->user()->company))
+                    <span class="font-medium">{{auth()->user()->ownedCompanies()}}</span>
+                @endif
+            </div>
             <div class="flex justify-between">
                 <span class="text-gray-600">Роль:</span>
                 @if(isset(auth()->user()->role))
