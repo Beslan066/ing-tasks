@@ -311,10 +311,6 @@ media-src https://meet.jit.si https:;
             }
         }
 
-        .burger-btn span {
-            background-color: #fff;
-        }
-
         .burger-btn {
             display: none;
             width: 30px;
@@ -331,29 +327,28 @@ media-src https://meet.jit.si https:;
         .burger-btn span {
             display: block;
             height: 3px;
-            width: 100%;
-            background-color: #000;
+            width: 90%;
             transition: all 0.3s ease;
             border-radius: 20px;
             transform-origin: center;
         }
         .burger-btn.active {
-                position: fixed;
-    top: 20px;
-    right: 15px;
+            position: fixed;
+            top: 20px;
+            right: 15px;
 
         }
         @media (max-width: 500px) {
-     .burger-btn.active {
-        width: 30px;
-        height: 22px;
-        outline: 1px solid #ffffff;
-        outline-offset: 5px;
-        border-radius: 5px;
-        border: none;
-        background-color: transparent;
-    }
-}
+             .burger-btn.active {
+                width: 25px;
+                height: 22px;
+                outline: 1px solid #010101;
+                outline-offset: 5px;
+                border-radius: 5px;
+                border: none;
+                background-color: transparent;
+            }
+        }
         @media (max-width: 638px) {
             .burger-btn {
                 display: flex;
@@ -541,9 +536,15 @@ media-src https://meet.jit.si https:;
             </div>
             <!-- Бургер меню -->
             <button id="burger-btn" class="burger-btn">
-                <span></span>
-                <span></span>
-                <span></span>
+                @if($backgroundImage && $backgroundEnabled)
+                    <span class="bg-white"></span>
+                    <span class="bg-white"></span>
+                    <span class="bg-white"></span>
+                @else
+                    <span class="bg-[#000]"></span>
+                    <span class="bg-[#000]"></span>
+                    <span class="bg-[#000]"></span>
+                @endif
             </button>
         </div>
 

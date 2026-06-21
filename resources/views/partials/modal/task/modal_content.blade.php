@@ -345,14 +345,10 @@
 
         {{-- КОНТЕНТ: Подзадачи --}}
         <div id="subtasksTab" class="flex-1 flex flex-col h-full hidden">
-            <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-200 p-2 bg-white rounded-lg">
-                <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                    <i class="fas fa-tasks text-green-600 mr-2"></i>Подзадачи
-                    <span id="subtasksCountBadge" class="ml-1 text-xs text-gray-400">({{ isset($subtasks) ? $subtasks->count() : 0 }})</span>
-                </h2>
+            <div class="mt-2 flex justify-end">
                 @if(auth()->user()->canViewAllCompanyTasks() || $task->author_id === auth()->id())
                     <button onclick="openCreateSubtaskModal({{ $task->id }})"
-                            class="text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg transition flex items-center">
+                            class="text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg transition flex items-center mr-2  ">
                         <i class="fas fa-plus mr-1"></i> Добавить подзадачу
                     </button>
                 @endif
