@@ -2272,6 +2272,8 @@ media-src https://meet.jit.si https:;
     // Закрытие модальных окон
     document.getElementById('closeModal')?.addEventListener('click', function () {
         document.getElementById('taskModal').classList.add('hidden');
+         document.body.classList.remove('overflow-y-hidden')
+        console.log('app.blade.php 2275 closeModal')
     });
 
     document.getElementById('cancelTask')?.addEventListener('click', function () {

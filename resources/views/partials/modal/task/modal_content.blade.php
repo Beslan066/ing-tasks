@@ -264,7 +264,7 @@
     {{-- ПРАВАЯ КОЛОНКА --}}
     <div class="w-3/5 flex flex-col h-100 chat-background rounded-lg max-[800px]:w-full">
         {{-- Табы для переключения между комментариями и подзадачами --}}
-        <div class="items-center border-b border-gray-200 bg-white rounded-t-lg flex">
+        <div class="items-center border-b border-gray-200 bg-white flex">
              <button onclick="switchTaskTab('info')"
                             id="tabInfoBtn"
                             class="flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hidden max-[800px]:block max-[500px]:h-full">
