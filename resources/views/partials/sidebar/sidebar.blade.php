@@ -626,6 +626,9 @@
         }
 
         @media (max-width: 638px) {
+              .logotype {
+                            width:calc(100% - 40px);
+                        }
             .sidebar {
                 position: fixed !important;
                 top: 0;

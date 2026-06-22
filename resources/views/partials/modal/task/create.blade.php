@@ -249,7 +249,7 @@
                          onclick="document.getElementById('uploadNewFilesInput').click()">
                         <input type="file" name="new_files[]" multiple class="hidden" id="uploadNewFilesInput">
                         <div class="flex flex-col items-center justify-center">
-                            <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 max-[500px]:hidden">
                                 <i class="fas fa-cloud-upload-alt text-3xl text-white"></i>
                             </div>
                             <p class="text-base font-medium text-gray-700 mb-2">Нажмите или перетащите файлы сюда</p>
