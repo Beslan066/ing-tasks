@@ -894,15 +894,15 @@
                             Всего задач: {{ $tasks->total() }}
                         </div>
                         <div class="w-full sm:w-auto flex items-center">
-                            <div class="mr-2">
-                                <a href="{{route('allTasks')}}" class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-md">
+                            <div class="mr-2 max-[500px]:basis-1/2">
+                                <a href="{{route('allTasks')}}" class="bg-transparent/20 border-none text-white px-3 py-2 rounded-lg flex items-center space-x-2 transition text-md max-[500px]:basis-1/2">
                                     <span>Все задачи</span>
                                     <span id="activeFiltersCount"
                                           class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
                                 </a>
                             </div>
                             <select id="sortSelectKanban"
-                                    class="w-full sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
+                                    class="w-full sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20 max-[500px]:basis-1/2">
                                 <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
                                 <option class="text-gray-800" value="created_at_asc">Старые сначала</option>
                                 <option class="text-gray-800" value="deadline_asc">Ближайший дедлайн</option>
@@ -1071,7 +1071,7 @@
                         </div>
 
                         <div class="w-full sm:w-auto flex items-center">
-                            <div class="mr-2">
+                            <div class="mr-2 max-[500px]:basis-1/2">
                                 <a href="{{route('allTasks')}}" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
                                     <span>Все задачи</span>
                                     <span id="activeFiltersCount"
@@ -1079,7 +1079,7 @@
                                 </a>
                             </div>
                             <select id="sortSelectKanban"
-                                    class="w-full sm:w-48 border-none rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
+                                    class="w-full sm:w-48 border-none rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base  max-[500px]:basis-1/2">
                                 <option value="created_at_desc">Новые сначала</option>
                                 <option value="created_at_asc">Старые сначала</option>
                                 <option value="deadline_asc">Ближайший дедлайн</option>
@@ -1248,7 +1248,7 @@
     </div>
 
     <!-- Модальное окно подтверждения архивации -->
-    <div id="confirmArchiveModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[100] backdrop-blur-sm">
+    <div id="confirmArchiveModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[100] backdrop-blur-sm max-[500px]:p-6">
         <div class="bg-white rounded-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0" id="confirmArchiveModalContent">
             <div class="p-6">
                 <div class="flex items-center justify-center mb-4">
@@ -1459,7 +1459,7 @@
     @include('partials.modal.task.create')
 
     <!-- Модальное окно отказа от задачи -->
-    <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 max-[500px]:p-6">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-4">Отказ от задачи</h3>
             <p class="text-gray-600 mb-4">Пожалуйста, укажите причину отказа от задачи:</p>

@@ -1,5 +1,5 @@
 <!-- Модальное окно просмотра задачи -->
-<div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md max-[500px]:px-0 max-[500px]:items-start max-[500px]:p-4">
+<div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md max-[500px]:items-start">
     <div class="relative flex w-[85%] h-[90vh] max-[500px]:w-[98%] max-[500px]:max-h-[90vh] max-[500px]:flex-col max-[500px]:gap-2">
         <!-- Боковая панель с кнопками  max-[500px]:top-[-50px] max-[500px]:translate-y-0 max-[500px]:-mr-0 max-[500px]:flex max-[500px]:items-center max-[500px]:flex-row-->
          <!-- max-[500px]:static max-[500px]:flex-row max-[500px]:mr-0 max-[500px]:translate-y-0 max-[500px]:self-end" -->

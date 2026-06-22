@@ -748,7 +748,7 @@
     @include('partials.modal.task.show')
     @include('partials.modal.task.create-subtask')
 
-    <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 max-[500px]:p-6">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-4">Отказ от задачи</h3>
             <p class="text-gray-600 mb-4">Пожалуйста, укажите причину отказа от задачи:</p>
@@ -838,15 +838,15 @@
     </div>
 
     <!-- МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ ЗАДАЧИ  -->
-    <div id="editTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md">
+    <div id="editTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md max-[500px]:p-4">
         <div class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
             <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-100">
                 <div class="flex justify-between items-center p-6">
                     <div>
-                        <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                        <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent max-[500px]:text-xl">
                             Редактирование задачи
                         </h3>
-                        <p class="text-sm text-gray-500 mt-1">Измените информацию о задаче</p>
+                        <p class="text-sm text-gray-500 mt-1 max-[500px]:text-[12px]">Измените информацию о задаче</p>
                     </div>
                     <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 transition-all duration-200 p-2 rounded-xl hover:bg-gray-100">
                         <i class="fas fa-times text-lg"></i>
@@ -854,7 +854,7 @@
                 </div>
             </div>
 
-            <form id="editTaskForm" class="p-6 space-y-6">
+            <form id="editTaskForm" class="p-6 space-y-6 max-[500px]:pt-2">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="task_id" id="editTaskId">
@@ -862,7 +862,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="md:col-span-2 space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                             <i class="fas fa-tag text-green-500 mr-2 text-xs"></i>Название задачи *
                         </label>
                         <input type="text" name="name" id="editTaskName" required
@@ -870,7 +870,7 @@
                     </div>
 
                     <div class="md:col-span-2 space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                             <i class="fas fa-align-left text-green-500 mr-2 text-xs"></i>Описание
                         </label>
                         <textarea name="description" id="editTaskDescription" rows="4"
@@ -878,7 +878,7 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                             <i class="fas fa-building text-green-500 mr-2 text-xs"></i>Отдел *
                         </label>
                         <select name="department_id" id="editTaskDepartment" required
@@ -891,7 +891,7 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                             <i class="fas fa-folder text-green-500 mr-2 text-xs"></i>Категория
                         </label>
                         <select name="category_id" id="editTaskCategory"
@@ -904,7 +904,7 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                             <i class="fas fa-user-check text-green-500 mr-2 text-xs"></i>Исполнитель
                         </label>
                         <select name="user_id" id="editTaskUser"
@@ -917,7 +917,7 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                             <i class="fas fa-flag text-green-500 mr-2 text-xs"></i>Приоритет *
                         </label>
                         <select name="priority" id="editTaskPriority" required
@@ -930,7 +930,7 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                             <i class="fas fa-chart-line text-green-500 mr-2 text-xs"></i>Статус *
                         </label>
                         <select name="status" id="editTaskStatus" required
@@ -944,7 +944,7 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                             <i class="fas fa-calendar-alt text-green-500 mr-2 text-xs"></i>Дедлайн
                         </label>
                         <input type="datetime-local" name="deadline" id="editTaskDeadline"
@@ -952,7 +952,7 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                             <i class="fas fa-hourglass-half text-green-500 mr-2 text-xs"></i>Планируемые часы
                         </label>
                         <input type="number" name="estimated_hours" id="editTaskEstimatedHours" step="0.5" min="0"
@@ -960,7 +960,7 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="block text-gray-700 text-sm font-semibold mb-1">
+                        <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                             <i class="fas fa-clock text-green-500 mr-2 text-xs"></i>Фактические часы
                         </label>
                         <input type="number" name="actual_hours" id="editTaskActualHours" step="0.5" min="0"
@@ -975,14 +975,14 @@
                             <button type="button"
                                     onclick="switchEditFileTab('storage')"
                                     id="editStorageTab"
-                                    class="py-2 px-1 border-b-2 font-medium text-sm focus:outline-none tab-button active transition-all duration-200"
+                                    class="py-2 px-1 border-b-2 outline-none font-medium text-sm focus:outline-none tab-button active transition-all duration-200 max-[500px]:text-[12px]"
                                     data-tab="storage">
                                 <i class="fas fa-database mr-2"></i>Из хранилища
                             </button>
                             <button type="button"
                                     onclick="switchEditFileTab('upload')"
                                     id="editUploadTab"
-                                    class="py-2 px-1 border-b-2 font-medium text-sm focus:outline-none tab-button transition-all duration-200"
+                                    class="py-2 px-1 border-b-2 font-medium text-sm focus:outline-none tab-button transition-all duration-200  max-[500px]:text-[12px]"
                                     data-tab="upload">
                                 <i class="fas fa-cloud-upload-alt mr-2"></i>Новая загрузка
                             </button>
@@ -998,11 +998,11 @@
                             </div>
                             <div class="flex space-x-2">
                                 <button type="button" onclick="openTaskEditFileManager()"
-                                        class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200">
+                                        class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 max-[500px]:text-[12px] max-[500px]:px-2">
                                     <i class="fas fa-folder-open mr-2"></i>Открыть хранилище
                                 </button>
                                 <button type="button" onclick="clearEditSelectedFiles()"
-                                        class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-red-50 hover:border-red-300 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200">
+                                        class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-red-50 hover:border-red-300 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 max-[500px]:text-[12px] max-[500px]:px-2">
                                     <i class="fas fa-times mr-2"></i>Очистить
                                 </button>
                             </div>
@@ -1067,7 +1067,7 @@
     </div>
 
     <!-- Модальное окно подтверждения архивации -->
-    <div id="confirmArchiveModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[100] backdrop-blur-sm">
+    <div id="confirmArchiveModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[100] backdrop-blur-sm max-[500px]:p-6">
         <div class="bg-white rounded-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0" id="confirmArchiveModalContent">
             <div class="p-6">
                 <div class="flex items-center justify-center mb-4">

@@ -6,10 +6,10 @@
         <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-100">
             <div class="flex justify-between items-center p-6">
                 <div>
-                    <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                    <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent max-[500px]:text-xl">
                         Редактирование задачи
                     </h3>
-                    <p class="text-sm text-gray-500 mt-1">Измените информацию о задаче</p>
+                    <p class="text-sm text-gray-500 mt-1 max-[500px]:text-[12px]">Измените информацию о задаче</p>
                 </div>
                 <button onclick="closeEditModal()"
                         class="text-gray-400 hover:text-gray-600 transition-all duration-200 p-2 rounded-xl hover:bg-gray-100 hover:scale-110">
@@ -26,7 +26,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Название задачи -->
                 <div class="md:col-span-2 space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">
+                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                         <i class="fas fa-tag text-green-500 mr-2 text-xs"></i>Название задачи *
                     </label>
                     <div class="relative group">
@@ -41,7 +41,7 @@
 
                 <!-- Описание -->
                 <div class="md:col-span-2 space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">
+                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                         <i class="fas fa-align-left text-green-500 mr-2 text-xs"></i>Описание
                     </label>
                     <textarea name="description" id="editTaskDescription" rows="4"
@@ -51,7 +51,7 @@
 
                 <!-- Отдел -->
                 <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">
+                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                         <i class="fas fa-building text-green-500 mr-2 text-xs"></i>Отдел *
                     </label>
                     <div class="relative group">
@@ -68,7 +68,7 @@
 
                 <!-- Категория -->
                 <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">
+                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                         <i class="fas fa-folder text-green-500 mr-2 text-xs"></i>Категория
                     </label>
                     <div class="relative group">
@@ -84,7 +84,7 @@
 
                 <!-- Исполнитель -->
                 <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">
+                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                         <i class="fas fa-user-check text-green-500 mr-2 text-xs"></i>Исполнитель
                     </label>
                     <div class="relative group">
@@ -100,7 +100,7 @@
 
                 <!-- Приоритет -->
                 <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">
+                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                         <i class="fas fa-flag text-green-500 mr-2 text-xs"></i>Приоритет *
                     </label>
                     <div class="relative group">
@@ -120,7 +120,7 @@
 
                 <!-- Статус -->
                 <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">
+                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                         <i class="fas fa-chart-line text-green-500 mr-2 text-xs"></i>Статус *
                     </label>
                     <div class="relative group">
@@ -142,7 +142,7 @@
 
                 <!-- Дедлайн -->
                 <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">
+                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                         <i class="fas fa-calendar-alt text-green-500 mr-2 text-xs"></i>Дедлайн
                     </label>
                     <div class="relative group">
@@ -156,7 +156,7 @@
 
                 <!-- Планируемое время -->
                 <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">
+                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                         <i class="fas fa-hourglass-half text-green-500 mr-2 text-xs"></i>Планируемое время (часы)
                     </label>
                     <div class="relative group">
@@ -173,7 +173,7 @@
 
                 <!-- Фактическое время -->
                 <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">
+                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
                         <i class="fas fa-check-circle text-green-500 mr-2 text-xs"></i>Фактическое время (часы)
                     </label>
                     <div class="relative group">
@@ -195,14 +195,14 @@
                             <button type="button"
                                     onclick="switchEditFileTab('storage')"
                                     id="editStorageTab"
-                                    class="py-2 px-1 border-b-2 outline-none font-medium text-sm focus:outline-none tab-button active transition-all duration-200"
+                                    class="py-2 px-1 border-b-2 outline-none font-medium text-sm focus:outline-none tab-button active transition-all duration-200 max-[500px]:text-[12px]"
                                     data-tab="storage">
                                 <i class="fas fa-database mr-2"></i>Из хранилища
                             </button>
                             <button type="button"
                                     onclick="switchEditFileTab('upload')"
                                     id="editUploadTab"
-                                    class="py-2 px-1 border-b-2 outline-none font-medium text-sm focus:outline-none tab-button transition-all duration-200"
+                                    class="py-2 px-1 border-b-2 outline-none font-medium text-sm focus:outline-none tab-button transition-all duration-200 max-[500px]:text-[12px]"
                                     data-tab="upload">
                                 <i class="fas fa-cloud-upload-alt mr-2"></i>Новая загрузка
                             </button>
@@ -219,11 +219,11 @@
                             </div>
                             <div class="flex space-x-2">
                                 <button type="button" onclick="openEditFileManager()"
-                                        class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200">
+                                        class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 max-[500px]:text-[12px] max-[500px]:px-2">
                                     <i class="fas fa-folder-open mr-2"></i>Открыть хранилище
                                 </button>
                                 <button type="button" onclick="clearEditSelectedFiles()"
-                                        class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-red-50 hover:border-red-300 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200">
+                                        class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-red-50 hover:border-red-300 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 max-[500px]:text-[12px] max-[500px]:px-2">
                                     <i class="fas fa-times mr-2"></i>Очистить
                                 </button>
                             </div>
