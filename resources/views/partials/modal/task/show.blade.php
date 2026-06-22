@@ -5,7 +5,7 @@
          <!-- max-[500px]:static max-[500px]:flex-row max-[500px]:mr-0 max-[500px]:translate-y-0 max-[500px]:self-end" -->
            <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 hidden justify-between items-center max-[500px]:flex">
             <h3 class="text-xl font-bold text-gray-800">
-                <i class="fas fa-plus-circle text-green-600 mr-2"></i>Просмотр задачи
+               Просмотр задачи
             </h3>
             <button onclick="closeTaskViewModal()" class="text-gray-400 hover:text-gray-600">
                 <i class="fas fa-times text-xl"></i>
