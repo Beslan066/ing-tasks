@@ -71,7 +71,7 @@
                         <label class="block text-sm font-medium text-white mb-1">Поиск</label>
                         <input type="text" id="searchInput" placeholder="Поиск по имени или email..."
                                value="{{ request('search') }}"
-                               class="w-full px-3 py-2 border-none rounded-lg placeholder:text-white focus:outline-none bg-transparent/20">
+                               class="w-full px-3 py-2 border-none rounded-lg placeholder:text-white text-white focus:outline-none bg-transparent/20">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-white mb-1">Отдел</label>

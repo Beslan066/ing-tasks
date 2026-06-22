@@ -407,7 +407,7 @@
     @include('partials.modal.task.show')
 
 
-    <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 max-[500px]:p-6">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-4">Отказ от задачи</h3>
             <p class="text-gray-600 mb-4">Пожалуйста, укажите причину отказа от задачи:</p>

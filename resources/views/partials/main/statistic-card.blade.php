@@ -3,7 +3,7 @@
         class="flex overflow-x-auto snap-x snap-mandatory scrollbar-none sm:grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 min-[1370px]:grid-cols-4 min-[1600px]:grid-cols-6 gap-3 md:gap-6 mb-6 md:mb-8 max-[500px]:no-scrollbar">
         <!-- Всего задач -->
         <div
-            class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:justify-start max-[500px]:flex-row max-[500px]:items-center">
+            class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:items-start max-[500px]:flex-col max-[500px]:justify-between max-[500px]:py-2">
             <div
                 class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center max-[500px]:mb-0">
                 <div>
@@ -12,7 +12,7 @@
                     </a>
                 </div>
                 <div
-                    class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0 max-[500px]:bg-transparent">
                     <i class="fas fa-tasks text-blue-600 text-sm md:text-xl"></i>
                 </div>
             </div>
@@ -26,14 +26,14 @@
 
         <!-- Назначены -->
         <div
-            class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:justify-start max-[500px]:flex-row max-[500px]:items-center">
+            class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:items-start max-[500px]:flex-col max-[500px]:justify-between max-[500px]:py-2">
             <div
                 class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center max-[500px]:mb-0">
                 <div>
                     <h3 class="font-bold text-sm md:text-lg text-white">Назначены</h3>
                 </div>
                 <div
-                    class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0 max-[500px]:bg-transparent">
                     <i class="fas fa-user-check text-purple-600 text-sm md:text-xl"></i>
                 </div>
             </div>
@@ -42,14 +42,14 @@
 
         <!-- В работе -->
         <div
-            class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:justify-start max-[500px]:flex-row max-[500px]:items-center">
+            class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:items-start max-[500px]:flex-col max-[500px]:justify-between max-[500px]:py-2">
             <div
                 class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center max-[500px]:mb-0">
                 <div>
                     <h3 class="font-bold text-sm md:text-lg text-white">В работе</h3>
                 </div>
                 <div
-                    class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0 max-[500px]:bg-transparent">
                     <i class="fas fa-cogs text-white text-sm md:text-xl"></i>
                 </div>
             </div>
@@ -58,14 +58,14 @@
 
         <!-- На проверке -->
         <div
-            class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:justify-start max-[500px]:flex-row max-[500px]:items-center">
+            class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:items-start max-[500px]:flex-col max-[500px]:justify-between max-[500px]:py-2">
             <div
                 class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center max-[500px]:mb-0">
                 <div>
                     <h3 class="font-bold text-sm md:text-lg text-white">На проверке</h3>
                 </div>
                 <div
-                    class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0 max-[500px]:bg-transparent">
                     <i class="fas fa-search text-yellow-600 text-sm md:text-xl"></i>
                 </div>
             </div>
@@ -74,14 +74,14 @@
 
         <!-- Выполнено -->
         <div
-            class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:justify-start max-[500px]:flex-row max-[500px]:items-center">
+            class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:items-start max-[500px]:flex-col max-[500px]:justify-between max-[500px]:py-2">
             <div
                 class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center max-[500px]:mb-0">
                 <div>
                     <h3 class="font-bold text-sm md:text-lg text-white">Выполнено</h3>
                 </div>
                 <div
-                    class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0 max-[500px]:bg-transparent">
                     <i class="fas fa-check-circle text-green-600 text-sm md:text-xl"></i>
                 </div>
             </div>
@@ -90,14 +90,14 @@
 
         <!-- Просрочено -->
         <div
-            class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:justify-start max-[500px]:flex-row max-[500px]:items-center">
+            class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 card-hover flex flex-col justify-between max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[100px] shrink-0 snap-start max-[500px]:items-start max-[500px]:flex-col max-[500px]:justify-between max-[500px]:py-2">
             <div
                 class="flex items-start justify-between mb-3 md:mb-4 max-[500px]:gap-2 max-[500px]:items-center max-[500px]:mb-0">
                 <div>
                     <h3 class="font-bold text-sm md:text-lg text-white">Просрочено</h3>
                 </div>
                 <div
-                    class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    class="w-8 h-8 md:w-12 md:h-12 bg-transparent/20 rounded-full flex items-center justify-center flex-shrink-0 max-[500px]:bg-transparent">
                     <i class="fas fa-exclamation-circle text-red-600 text-sm md:text-xl"></i>
                 </div>
             </div>
