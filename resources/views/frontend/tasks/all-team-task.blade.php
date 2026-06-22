@@ -10,7 +10,23 @@
         <!-- Заголовок -->
         <div
             class="flex justify-between items-center mb-6 max-[800px]:flex-col max-[800px]:items-baseline max-[800px]:space-y-4">
-            <div>
+               <nav class="hidden max-[500px]:block">
+                            <ol class="flex items-center gap-1.5">
+                                <li>
+                                    <a class="inline-flex items-center gap-1.5 text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-500 dark:text-gray-400' }}"
+                                       href="{{ route('welcome') }}">
+                                        Главная
+                                        <svg class="stroke-current" width="17" height="16" viewBox="0 0 17 16" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366" stroke="" stroke-width="1.2"
+                                                  stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
+                                    </a>
+                                </li>
+                                <li class="text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-800 dark:text-white/90' }}" x-text="pageName">Все задачи</li>
+                            </ol>
+                        </nav>
+            <div class="max-[500px]:hidden">
                 @if($backgroundEnabled && $backgroundImage)
                     <h2 class="text-3xl font-bold text-white">Все задачи</h2>
                     <p class="text-white text-sm">Архив всех ваших задач</p>
@@ -40,56 +56,56 @@
 
         <!-- Статистика -->
         @if($backgroundEnabled && $backgroundImage)
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8 max-[500px]:grid-cols-1 max-[500px]:gap-2">
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+            <div class="flex overflow-x-auto snap-x snap-mandatory scrollbar-none min-[500px]:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6 mb-6 md:mb-8 max-[500px]:no-scrollbar">
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer shrink-0 snap-start max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[70px] max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center max-[400px]:flex-col"
                      onclick="filterByStatus('')">
                     <div class="text-2xl font-bold text-white">{{ $stats['total'] }}</div>
                     <div class="text-sm text-white">Всего задач</div>
                 </div>
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer shrink-0 snap-start max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[70px] max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center max-[400px]:flex-col"
                      onclick="filterByStatus('назначена')">
                     <div class="text-2xl font-bold text-white">{{ $stats['new'] }}</div>
                     <div class="text-sm text-white">Новые</div>
                 </div>
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer shrink-0 snap-start max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[70px] max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center max-[400px]:flex-col"
                      onclick="filterByStatus('в работе')">
                     <div class="text-2xl font-bold text-white">{{ $stats['in_progress'] }}</div>
                     <div class="text-sm text-white">В работе</div>
                 </div>
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer shrink-0 snap-start max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[70px] max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center max-[400px]:flex-col"
                      onclick="filterByStatus('на проверке')">
                     <div class="text-2xl font-bold text-white">{{ $stats['review'] }}</div>
                     <div class="text-sm text-white">На проверке</div>
                 </div>
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer shrink-0 snap-start max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[70px] max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center max-[400px]:flex-col"
                      onclick="filterByStatus('выполнена')">
                     <div class="text-2xl font-bold text-white">{{ $stats['done'] }}</div>
                     <div class="text-sm text-white">Завершено</div>
                 </div>
             </div>
         @else
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8 max-[500px]:grid-cols-1 max-[500px]:gap-2">
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+            <div class="flex overflow-x-auto snap-x snap-mandatory scrollbar-none min-[500px]:grid grid-cols-2  sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5  gap-3 md:gap-6 mb-6 md:mb-8 max-[500px]:no-scrollbar">
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer shrink-0 snap-start max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[70px] max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center max-[400px]:flex-col"
                      onclick="filterByStatus('')">
                     <div class="text-2xl font-bold text-blue-600">{{ $stats['total'] }}</div>
                     <div class="text-sm text-gray-600">Всего задач</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer shrink-0 snap-start max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[70px] max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center max-[400px]:flex-col"
                      onclick="filterByStatus('назначена')">
                     <div class="text-2xl font-bold text-purple-600">{{ $stats['new'] }}</div>
                     <div class="text-sm text-gray-600">Новые</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer shrink-0 snap-start max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[70px] max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center max-[400px]:flex-col"
                      onclick="filterByStatus('в работе')">
                     <div class="text-2xl font-bold text-orange-600">{{ $stats['in_progress'] }}</div>
                     <div class="text-sm text-gray-600">В работе</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer shrink-0 snap-start max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[70px] max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center max-[400px]:flex-col"
                      onclick="filterByStatus('на проверке')">
                     <div class="text-2xl font-bold text-yellow-600">{{ $stats['review'] }}</div>
                     <div class="text-sm text-gray-600">На проверке</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center"
+                <div class="bg-white rounded-lg shadow p-4 text-center hover:shadow-lg transition cursor-pointer shrink-0 snap-start max-[500px]:w-[calc(45%-6px)] max-[500px]:h-[70px] max-[500px]:flex max-[500px]:flex-row-reverse max-[500px]:justify-between max-[500px]:items-center max-[400px]:flex-col"
                      onclick="filterByStatus('выполнена')">
                     <div class="text-2xl font-bold text-green-600">{{ $stats['done'] }}</div>
                     <div class="text-sm text-gray-600">Завершено</div>

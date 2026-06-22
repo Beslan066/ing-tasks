@@ -1164,9 +1164,12 @@
                     .finally(() => closeDeleteModalFunc());
             });
 
-            closeModal?.addEventListener('click', () => modal.classList.add('hidden'));
+            closeModal?.addEventListener('click', () => {
+                modal.classList.add('hidden')
+             document.body.classList.remove('overflow-y-hidden')});
             modal?.addEventListener('click', (e) => {
                 if (e.target === modal) modal.classList.add('hidden');
+                 document.body.classList.remove('overflow-y-hidden')
             });
 
             // ============================================
@@ -1179,7 +1182,7 @@
             <span class="ml-3 text-gray-600">Загрузка данных...</span>
         </div>`;
                 modal.classList.remove('hidden');
-
+                document.body.classList.add('overflow-y-hidden')
                 fetch(`/team/user/${userId}`)
                     .then(res => res.json())
                     .then(data => {
