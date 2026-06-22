@@ -839,7 +839,7 @@
 
     <!-- МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ ЗАДАЧИ  -->
     <div id="editTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 backdrop-blur-md max-[500px]:p-4">
-        <div class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
+        <div class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl max-[500px]:max-h-[80vh]">
             <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-100">
                 <div class="flex justify-between items-center p-6">
                     <div>
@@ -996,13 +996,13 @@
                                 <h4 class="text-sm font-semibold text-gray-700">Выберите файлы из хранилища</h4>
                                 <p class="text-xs text-gray-500 mt-1">Файлы будут прикреплены к задаче</p>
                             </div>
-                            <div class="flex space-x-2">
+                            <div class="flex space-x-2 max-[500px]:w-full">
                                 <button type="button" onclick="openTaskEditFileManager()"
                                         class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 max-[500px]:text-[12px] max-[500px]:px-2">
                                     <i class="fas fa-folder-open mr-2"></i>Открыть хранилище
                                 </button>
                                 <button type="button" onclick="clearEditSelectedFiles()"
-                                        class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-red-50 hover:border-red-300 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 max-[500px]:text-[12px] max-[500px]:px-2">
+                                        class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-red-50 hover:border-red-300 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 max-[500px]:text-[12px] max-[500px]:px-2 max-[500px]:grow max-[500px]:justify-center">
                                     <i class="fas fa-times mr-2"></i>Очистить
                                 </button>
                             </div>
@@ -1052,7 +1052,7 @@
                     </div>
                 </div>
 
-                <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200 max-[500px]:flex-col-reverse max-[500px]:space-x-0 max-[500px]:justify-center max-[500px]:gap-3">
                     <button type="button" onclick="closeEditModal()"
                             class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition">
                         Отмена

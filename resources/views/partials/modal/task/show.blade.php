@@ -1,8 +1,16 @@
 <!-- Модальное окно просмотра задачи -->
-<div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md max-[500px]:items-start">
-    <div class="relative flex w-[85%] h-[90vh] max-[500px]:w-[98%] max-[500px]:max-h-[90vh] max-[500px]:flex-col max-[500px]:gap-2">
+<div id="taskViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4 backdrop-blur-md max-[500px]:items-center">
+    <div class="relative flex w-[85%] h-[90vh] max-[500px]:w-[98%] max-[500px]:max-h-[80vh] max-[500px]:flex-col max-[500px]:rounded-lg max-[500px]:overflow-hidden">
         <!-- Боковая панель с кнопками  max-[500px]:top-[-50px] max-[500px]:translate-y-0 max-[500px]:-mr-0 max-[500px]:flex max-[500px]:items-center max-[500px]:flex-row-->
          <!-- max-[500px]:static max-[500px]:flex-row max-[500px]:mr-0 max-[500px]:translate-y-0 max-[500px]:self-end" -->
+           <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 hidden justify-between items-center max-[500px]:flex">
+            <h3 class="text-xl font-bold text-gray-800">
+                <i class="fas fa-plus-circle text-green-600 mr-2"></i>Просмотр задачи
+            </h3>
+            <button onclick="closeTaskViewModal()" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
         <div class="absolute right-0 top-20 -translate-y-1/2 -mr-12 flex flex-col gap-3 max-[500px]:!hidden">
         <button onclick="copyTaskLink()"
                     class="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-all duration-200 hover:scale-110"
@@ -26,8 +34,8 @@
                 <i class="fas fa-times"></i>
             </button> -->
         <!-- Контент модального окна -->
-        <div class="bg-[#eef2f4] rounded-lg shadow-xl w-full h-full overflow-y-auto">
-            <div id="taskModalContent" class="pl-6 pt-2 pb-6 h-full">
+        <div class="bg-[#eef2f4] min-[500px]:rounded-lg shadow-xl w-full h-full overflow-y-auto">
+            <div id="taskModalContent" class="pl-6 pt-2 pb-6 h-full max-[500px]:max-h-[80vh]">
                 <div class="text-center py-8">
                     <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
                     <p class="text-gray-500 mt-2">Загрузка задачи...</p>

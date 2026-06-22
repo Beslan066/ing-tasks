@@ -1,5 +1,5 @@
 <div id="createSubtaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[70] backdrop-blur-md max-[500px]:p-4">
-    <div class="bg-white rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto max-[500px]:max-h-[80vh]">
         <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
             <h3 class="text-xl font-bold text-gray-800">
                 <i class="fas fa-plus-circle text-green-600 mr-2"></i>Новая подзадача
