@@ -63,7 +63,7 @@
                             <div class="flex-1">
                                 <h3 class="text-lg font-semibold text-white transition-colors  max-[500px]:text-[16px]">
                                     Фотобанк</h3>
-                                <p class="text-gray-500 text-sm mt-1 max-[500px]:text-[13px]">Хранилище изображений и медиафайлов</p>
+                                <p class="text-gray-300 text-sm mt-1 max-[500px]:text-[13px]">Хранилище изображений и медиафайлов</p>
                             </div>
                         </div>
                     </div>
@@ -83,7 +83,7 @@
                             <div class="flex-1">
                                 <h3 class="text-lg font-semibold text-white transition-colors max-[500px]:text-[16px]">
                                     Видеоконференции</h3>
-                                <p class="text-gray-500 text-sm mt-1 max-[500px]:text-[13px]">Создайте комнату и пригласите коллег</p>
+                                <p class="text-gray-300 text-sm mt-1 max-[500px]:text-[13px]">Создайте комнату и пригласите коллег</p>
                             </div>
                         </div>
                     </div>
