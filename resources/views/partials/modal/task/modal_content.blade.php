@@ -268,13 +268,15 @@
              <button onclick="switchTaskTab('info')"
                             id="tabInfoBtn"
                             class="flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hidden max-[800px]:block max-[500px]:h-full">
-                        <i class="fas fa-info-circle mr-2"></i>Информация о задаче
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <span class="max-[500px]:hidden">Информация о задаче</span>
+                        <span class="hidden max-[500px]:inline">Инфо</span>
                     </button>
             <button onclick="switchTaskTab('comments')"
                     id="tabCommentsBtn"
                     class="flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 border-transparent text-gray-500 hover:text-gray-700  max-[500px]:h-full">
                 <i class="fas fa-comments mr-2"></i>Сообщения
-                <span id="commentsCount" class="ml-1 text-xs text-gray-400">
+                <span id="commentsCount" class="ml-1 text-xs text-gray-400 max-[500px]:hidden">
                     ({{ isset($comments) && $comments ? (method_exists($comments, 'total') ? $comments->total() : $comments->count()) : 0 }})
                 </span>
             </button>
@@ -282,7 +284,7 @@
                     id="tabSubtasksBtn"
                     class="flex-1 px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 border-transparent text-gray-500 hover:text-gray-700 max-[500px]:h-full">
                 <i class="fas fa-tasks mr-2"></i>Подзадачи
-                <span id="subtasksCount" class="ml-1 text-xs text-gray-400">({{ $subtasks->count() }})</span>
+                <span id="subtasksCount" class="ml-1 text-xs text-gray-400 max-[500px]:hidden">({{ $subtasks->count() }})</span>
             </button>
         </div>
 

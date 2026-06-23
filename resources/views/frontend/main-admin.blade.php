@@ -783,7 +783,7 @@
                                 </div>
                                 <div class="md:hidden space-y-3 p-4">
                                     @forelse($tasks as $task)
-                                        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif">
+                                        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif" onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})">
                                             <div class="flex justify-between items-start mb-3">
                                                 <div class="flex-1">
                                                     <div class="flex items-center flex-wrap gap-2 mb-1"><h3 class="font-semibold text-gray-900 truncate max-[450px]:!whitespace-normal max-[450px]:!overflow-visible max-[500px]:!text-wrap">{{ $task->name }}</h3>@if($task->trashed())<span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full"><i class="fas fa-trash mr-1"></i>Удалена</span>@endif</div>
