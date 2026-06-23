@@ -1,3 +1,7 @@
+@php
+        $backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
+        $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
+    @endphp
 @if ($paginator->hasPages())
     <nav role="navigation" aria-label="{{ __('Pagination Navigation') }}" class="flex items-center justify-between">
         <div class="flex justify-between flex-1 sm:hidden">
@@ -22,9 +26,9 @@
             @endif
         </div>
 
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between max-[1000px]:flex-col-reverse">
             <div>
-                <p class="text-sm text-white leading-5 dark:text-gray-400">
+                <p class="text-sm  @if($backgroundImage && $backgroundEnabled) text-white @else text-black @endif leading-5 dark:text-gray-400">
                     {!! __('Показано') !!}
                     @if ($paginator->firstItem())
                         <span class="font-medium">{{ $paginator->firstItem() }}</span>
@@ -40,7 +44,7 @@
             </div>
 
             <div>
-                <span class="relative z-0 inline-flex rtl:flex-row-reverse shadow-sm rounded-md justify-between">
+                <span class="relative z-0 inline-flex rtl:flex-row-reverse shadow-sm rounded-md justify-between max-[1000px]:flex-wrap max-[1000px]:justify-start max-[1000px]:gap-1">
                     {{-- Previous Page Link --}}
                     @if ($paginator->onFirstPage())
                         <span aria-disabled="true" aria-label="{{ __('pagination.previous') }}">

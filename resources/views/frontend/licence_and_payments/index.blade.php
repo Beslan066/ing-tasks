@@ -382,23 +382,23 @@
 
                 <div class="mb-4">
                     <label class="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">Период</label>
-                    <div class="flex gap-3">
+                    <div class="flex gap-3 flex-wrap">
                         <label class="flex-1 cursor-pointer">
                             <input type="radio" name="user_period" value="month" class="hidden peer" onchange="updateUserPrice()" checked>
-                            <div class="border rounded-lg p-3 text-center peer-checked:border-[#16a34a] peer-checked:bg-green-50 transition">
+                            <div class="border rounded-lg p-3 text-center peer-checked:border-[#16a34a] peer-checked:bg-green-50 transition h-full flex flex-col justify-center items-center">
                                 <span class="font-medium">1 месяц</span>
                             </div>
                         </label>
                         <label class="flex-1 cursor-pointer">
                             <input type="radio" name="user_period" value="6months" class="hidden peer" onchange="updateUserPrice()">
-                            <div class="border rounded-lg p-3 text-center peer-checked:border-[#16a34a] peer-checked:bg-green-50 transition">
+                            <div class="border rounded-lg p-3 text-center peer-checked:border-[#16a34a] peer-checked:bg-green-50 transition h-full flex flex-col justify-center items-center">
                                 <span class="font-medium">6 месяцев</span>
                                 <span class="text-xs text-green-600 block">-10%</span>
                             </div>
                         </label>
                         <label class="flex-1 cursor-pointer">
                             <input type="radio" name="user_period" value="year" class="hidden peer" onchange="updateUserPrice()">
-                            <div class="border rounded-lg p-3 text-center peer-checked:border-[#16a34a] peer-checked:bg-green-50 transition">
+                            <div class="border rounded-lg p-3 text-center peer-checked:border-[#16a34a] peer-checked:bg-green-50 transition h-full flex flex-col justify-center items-center">
                                 <span class="font-medium">12 месяцев</span>
                                 <span class="text-xs text-green-600 block">-15%</span>
                             </div>
