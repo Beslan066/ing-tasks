@@ -550,7 +550,8 @@
                             <i class="fas fa-calendar-alt text-green-500 mr-2 text-xs"></i>Дедлайн
                         </label>
                         <input type="datetime-local" name="deadline" id="editTaskDeadline"
-                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400">
+       class="w-full min-w-0 appearance-none px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400">
+
                     </div>
 
                     <div class="space-y-2">

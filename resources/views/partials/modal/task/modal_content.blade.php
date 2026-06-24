@@ -262,7 +262,7 @@
     </div>
 
     {{-- ПРАВАЯ КОЛОНКА --}}
-    <div class="w-3/5 flex flex-col h-100 chat-background rounded-lg max-[800px]:w-full">
+    <div class="w-3/5 flex flex-col h-100 chat-background rounded-lg max-[800px]:w-full max-[800px]:h-full">
         {{-- Табы для переключения между комментариями и подзадачами --}}
         <div class="items-center border-b border-gray-200 bg-white flex">
              <button onclick="switchTaskTab('info')"

@@ -176,31 +176,31 @@
                         </div>
                     </div>
 
-                    <!-- Фишка 5 - ИИ + Копилот -->
                     <div class="feature-chips__item">
                         <div class="feature-chips__button" data-chip>
-                            <svg class="feature-chips__icon feature-chips__icon--purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2a10 10 0 1 0 10 10 10 10 0 0 0-10-10z"/>
-                                <path d="M12 6v6l4 2"/>
-                                <path d="M18 6l-4 4"/>
-                                <path d="M6 18l4-4"/>
+                            <svg class="feature-chips__icon feature-chips__icon--purple" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                <circle cx="8.5" cy="8.5" r="1.5" />
+                                <polyline points="21 15 16 10 5 21" />
                             </svg>
                             <div class="feature-chips__label-group">
-                                <span class="feature-chips__label">Искусственный интеллект</span>
-                                <span class="feature-chips__badge">Копилот</span>
+                                <span class="feature-chips__label">Фотобанк</span>
+                                <!-- <span class="feature-chips__badge">Копилот</span> -->
                             </div>
                         </div>
                     </div>
 
-                    <!-- Фишка 6 - Сайты и магазины -->
+
                     <div class="feature-chips__item">
                         <div class="feature-chips__button" data-chip>
-                            <svg class="feature-chips__icon feature-chips__icon--green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-                                <line x1="3" y1="6" x2="21" y2="6"/>
-                                <path d="M16 10a4 4 0 0 1-8 0"/>
+                            <svg class="feature-chips__icon feature-chips__icon--green" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <ellipse cx="12" cy="5" rx="9" ry="3" />
+                                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                                <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3" />
                             </svg>
-                            <span class="feature-chips__label">Сайты и магазины</span>
+                            <span class="feature-chips__label">Хранилище</span>
                         </div>
                     </div>
 

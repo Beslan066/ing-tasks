@@ -13,7 +13,7 @@
             <form id="companyForm" action="{{route('companies.store')}}" method="post">
                 @csrf
                 @method('post')
-                <div class="mb-4 w-1/2">
+                <div class="mb-4 w-1/2 max-[900px]:w-[70%] max-[768px]:w-[100%]">
                     <label class="block text-gray-700 text-sm font-medium mb-2">Название</label>
                     <input type="text"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600"
@@ -24,7 +24,7 @@
                     <div class="text-danger">{{ $message }}</div>
                 @enderror
 
-                <div class="mb-4 w-1/2">
+                <div class="mb-4 w-1/2 max-[900px]:w-[70%] max-[768px]:w-[100%]">
                     <label for="phone-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Номер
                         телефона</label>
                     <div class="relative">
@@ -47,7 +47,7 @@
                     <div class="text-danger">{{ $message }}</div>
                 @enderror
 
-                <div class="mb-4 w-1/2">
+                <div class="mb-4 w-1/2 max-[900px]:w-[70%] max-[768px]:w-[100%]">
                     <label class="block text-gray-700 text-sm font-medium mb-2">Руководитель</label>
                     <select
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600 bg-white"
@@ -60,14 +60,19 @@
                     <div class="text-danger">{{ $message }}</div>
                 @enderror
 
-                <div class="flex">
+                <div class="flex gap-2 max-[340px]:flex-col-reverse">
                     <button type="button" id="cancelTask"
-                        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Отмена
+                        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 max-[340px]:py-1">Отмена
                     </button>
-                    <button type="submit"
+                    <!-- <button type="submit"
                         class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 ml-2">Создать
                         компанию
-                    </button>
+                    </button> -->
+                     <button type="submit"
+                    class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base max-[500px]:basis-1/2 max-[340px]:py-3">
+                <!-- <i class="fas fa-plus"></i> -->
+                <span>Создать компанию</span>
+            </button>
                 </div>
             </form>
         </div>
