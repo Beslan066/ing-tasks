@@ -152,7 +152,7 @@
                         <!-- <input type="datetime-local" name="deadline" id="editTaskDeadline"
                                class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white cursor-pointer hover:border-gray-300"> -->
                                <input type="datetime-local" name="deadline" id="editTaskDeadline"
-           class="w-full min-w-0 appearance-none pl-10 pr-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white cursor-pointer hover:border-gray-300">
+           class="w-full min-w-0 min-h-[52px] appearance-none pl-10 pr-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white cursor-pointer hover:border-gray-300">
                     </div>
                 </div>
 
