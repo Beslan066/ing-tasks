@@ -50,7 +50,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Дедлайн</label>
                 <input type="datetime-local" name="deadline" id="subtask_deadline"
-                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                       class="w-full min-w-0 min-h-[52px] box-border appearance-none border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
             </div>
 
             <div>

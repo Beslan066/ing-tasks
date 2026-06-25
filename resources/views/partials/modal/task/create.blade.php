@@ -133,7 +133,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-clock text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
                         </div>
-                        <input type="datetime-local" name="deadline" class="w-full min-w-0 box-border appearance-none pl-10 pr-4 py-3 border-2 outline-none border-gray-200 rounded-xl color-scheme-green focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white cursor-pointer hover:border-gray-300">
+                        <input type="datetime-local" name="deadline" class="w-full min-w-0 min-h-[52px] box-border appearance-none pl-10 pr-4 py-3 border-2 outline-none border-gray-200 rounded-xl color-scheme-green focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white cursor-pointer hover:border-gray-300">
 
                     </div>
                 </div>
