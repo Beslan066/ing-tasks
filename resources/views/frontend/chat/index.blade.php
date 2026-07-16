@@ -381,16 +381,9 @@
             </div>
 
             <div
-                class="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] xl:w-3/4 relative"
+                class="flex h-full flex-col overflow-hidden rounded-2xl border-none bg-white dark:border-gray-800 dark:bg-white/[0.03] xl:w-3/4 relative"
                 :class="{'hidden xl:flex': !activeChat, 'flex': activeChat}">
 
-                <template x-if="!activeChat">
-                    <div class="flex flex-col items-center justify-center h-full text-gray-400">
-                        <i class="fas fa-comments text-6xl mb-4 text-green-200"></i>
-                        <p class="text-lg font-medium text-gray-600">Выберите чат для начала общения</p>
-                        <p class="text-sm mt-1">Или создайте новый чат в меню слева</p>
-                    </div>
-                </template>
 
                 <template x-if="activeChat">
                     <div class="flex flex-col h-full">
@@ -554,8 +547,7 @@
 
                                             <template x-if="message.type === 'system'">
                                                 <div class="text-center text-xs text-gray-500 my-2">
-                        <span class="bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full"
-                              x-text="message.content"></span>
+
                                                 </div>
                                             </template>
 
@@ -854,6 +846,8 @@
                 oldestMessageId: null,
                 loadingMoreMessages: false,
                 replyTo: null,
+                initialLoad: true,
+
 
                 chats: [],
                 messages: [],
@@ -932,11 +926,14 @@
                 },
 
                 init() {
-                    console.log('Chat app initialized');
                     this.loadChats();
                     this.loadColleagues();
                     this.loadDepartments();
                     this.startPolling();
+
+                    setTimeout(() => {
+                        this.initialLoad = false;
+                    }, 500);
 
                     document.addEventListener('keydown', (e) => {
                         if (e.key === 'Escape') {
