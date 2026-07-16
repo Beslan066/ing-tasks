@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Crypt;
 
 class Message extends Model
 {
@@ -16,6 +17,7 @@ class Message extends Model
         'chat_id',
         'user_id',
         'content',
+        'is_encrypted', // <-- ДОБАВЬ ЭТО!
         'type',
         'file_path',
         'file_name',
@@ -30,6 +32,7 @@ class Message extends Model
 
     protected $casts = [
         'is_edited' => 'boolean',
+        'is_encrypted' => 'boolean', // <-- ДОБАВЬ ЭТО!
         'edited_at' => 'datetime',
         'delivered_at' => 'datetime',
         'read_at' => 'datetime',
@@ -68,6 +71,61 @@ class Message extends Model
     }
 
     // === МЕТОДЫ ===
+
+    /**
+     * Шифруем контент при сохранении
+     */
+    public function setContentAttribute($value)
+    {
+        if (empty($value)) {
+            $this->attributes['content'] = $value;
+            $this->attributes['is_encrypted'] = false;
+            return;
+        }
+
+        // Если это системное сообщение - не шифруем
+        if ($this->type === self::TYPE_SYSTEM) {
+            $this->attributes['content'] = $value;
+            $this->attributes['is_encrypted'] = false;
+            return;
+        }
+
+        // Если уже зашифровано - не трогаем
+        if ($this->is_encrypted) {
+            return;
+        }
+
+        // Шифруем
+        $this->attributes['content'] = Crypt::encryptString($value);
+        $this->attributes['is_encrypted'] = true;
+    }
+
+    /**
+     * Расшифровываем контент при чтении
+     */
+    public function getContentAttribute($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        // Если это системное сообщение - не расшифровываем
+        if ($this->type === self::TYPE_SYSTEM) {
+            return $value;
+        }
+
+        // Если не зашифровано - возвращаем как есть
+        if (!$this->is_encrypted) {
+            return $value;
+        }
+
+        try {
+            return Crypt::decryptString($value);
+        } catch (\Exception $e) {
+            // Если не удалось расшифровать - возвращаем как есть
+            return $value;
+        }
+    }
 
     public function markAsDelivered(): void
     {
