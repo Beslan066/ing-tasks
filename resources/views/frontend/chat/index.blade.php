@@ -951,7 +951,7 @@
                         if (this.activeChat) {
                             this.pollNewMessages();
                         }
-                        this.updateUnreadCounts();
+                        // this.updateUnreadCounts();
                     }, 5000);
                 },
 
@@ -1100,13 +1100,9 @@
                             'X-Requested-With': 'XMLHttpRequest'
                         }
                     })
-                        .then(res => {
-                            if (!res.ok) {
-                                throw new Error(`HTTP error! status: ${res.status}`);
-                            }
-                            return res.json();
-                        })
+                        .then(res => res.json())
                         .then(data => {
+                            console.log('=== ДАННЫЕ СООБЩЕНИЙ ===', data);
                             if (data && data.success) {
                                 let messagesData = [];
                                 if (data.messages && data.messages.data && Array.isArray(data.messages.data)) {
@@ -1403,6 +1399,8 @@
                 },
 
                 createCompanyChat() {
+                    console.log('Клик по кнопке!'); // Если в консоли 2 клика — проблема во фронте
+                    if (this.isCreatingChat) return;
                     if (this.hasCompanyChat) {
                         alert('Общий чат компании уже существует');
                         return;
