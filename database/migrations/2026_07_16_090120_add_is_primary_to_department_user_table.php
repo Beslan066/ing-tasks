@@ -9,19 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('messages', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('department_user', function (Blueprint $table) {
+            $table->boolean('is_primary')->default(false)->after('department_id');
         });
     }
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('messages');
+        Schema::table('department_user', function (Blueprint $table) {
+            //
+        });
     }
 };

@@ -12,7 +12,7 @@
             @if(isset(auth()->user()->avatar))
                 <div
                     class=" rounded-full bg-gradient-to-r from-primary to-secondary mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold" style="width: 170px; height: 170px;">
-                    <img src="{{auth()->user()->getAvatarUrlAttribute()}}" alt="" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover">
+                    <img src="{{asset('storage/' . auth()->user()->avatar)}}" alt="" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover">
                 </div>
             @else
                 <div

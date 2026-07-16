@@ -368,7 +368,7 @@
                                             <td class="px-3 py-4">
                                                 <div class="flex items-center space-x-3 border-1 border-gray-800">
                                                     @if($user->avatar)
-                                                        <img src="{{ $user->getAvatarUrlAttribute() }}"
+                                                        <img src="{{ asset('storage/' . $user->avatar) }}"
                                                              alt="{{ $user->name }}"
                                                              class="w-8 h-8 rounded-full object-cover"
                                                              style="width:40px; height: 40px;">

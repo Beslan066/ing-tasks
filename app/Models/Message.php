@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
 
 class Message extends Model
 {
@@ -19,141 +20,104 @@ class Message extends Model
         'file_path',
         'file_name',
         'file_size',
-        'mime_type',
-        'metadata',
+        'file_mime_type',
+        'parent_id',
         'is_edited',
         'edited_at',
-        'sent_at',
-        'delivered_at'
+        'delivered_at',
+        'read_at',
     ];
 
     protected $casts = [
-        'metadata' => 'array',
         'is_edited' => 'boolean',
-        'sent_at' => 'datetime',
+        'edited_at' => 'datetime',
         'delivered_at' => 'datetime',
-        'edited_at' => 'datetime'
+        'read_at' => 'datetime',
     ];
 
-    /**
-     * Получить чат сообщения
-     */
-    public function chat()
+    const TYPE_TEXT = 'text';
+    const TYPE_FILE = 'file';
+    const TYPE_IMAGE = 'image';
+    const TYPE_SYSTEM = 'system';
+
+    // === СВЯЗИ ===
+
+    public function chat(): BelongsTo
     {
         return $this->belongsTo(Chat::class);
     }
 
-    /**
-     * Получить автора сообщения
-     */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Получить статусы сообщения
-     */
-    public function statuses()
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Message::class, 'parent_id');
+    }
+
+    public function replies(): HasMany
+    {
+        return $this->hasMany(Message::class, 'parent_id');
+    }
+
+    public function statuses(): HasMany
     {
         return $this->hasMany(MessageStatus::class);
     }
 
-    /**
-     * Получить статус для конкретного пользователя
-     */
-    public function getStatusForUser($userId)
+    // === МЕТОДЫ ===
+
+    public function markAsDelivered(): void
+    {
+        $this->update(['delivered_at' => now()]);
+    }
+
+    public function markAsRead(): void
+    {
+        $this->update(['read_at' => now()]);
+    }
+
+    public function isReadByUser(User $user): bool
     {
         return $this->statuses()
-            ->where('user_id', $userId)
-            ->first();
-    }
-
-    /**
-     * Отметить как доставленное для пользователя
-     */
-    public function markAsDelivered($userId)
-    {
-        $status = $this->statuses()->firstOrCreate(
-            ['user_id' => $userId],
-            ['status' => 'delivered']
-        );
-
-        if ($status->status === 'sent') {
-            $status->update([
-                'status' => 'delivered'
-            ]);
-        }
-
-        // Если все получили, обновляем delivered_at
-        if ($this->statuses()->where('status', 'sent')->count() === 0) {
-            $this->update(['delivered_at' => now()]);
-        }
-
-        return $status;
-    }
-
-    /**
-     * Отметить как прочитанное для пользователя
-     */
-    public function markAsRead($userId)
-    {
-        $status = $this->statuses()->updateOrCreate(
-            ['user_id' => $userId],
-            [
-                'status' => 'read',
-                'read_at' => now()
-            ]
-        );
-
-        return $status;
-    }
-
-    /**
-     * Проверить, прочитано ли сообщение всеми
-     */
-    public function isReadByAll()
-    {
-        $totalUsers = $this->chat->users()->count();
-        $readCount = $this->statuses()
+            ->where('user_id', $user->id)
             ->where('status', 'read')
-            ->count();
-
-        return $readCount === $totalUsers - 1; // минус автор
+            ->exists();
     }
 
-    /**
-     * Получить URL файла
-     */
-    public function getFileUrlAttribute()
+    public function getReadCount(): int
     {
-        if ($this->file_path) {
-            return Storage::url($this->file_path);
-        }
-        return null;
+        return $this->statuses()->where('status', 'read')->count();
     }
 
-    /**
-     * Получить иконку для типа файла
-     */
-    public function getFileIconAttribute()
+    public function getDeliveredCount(): int
     {
-        if (!$this->mime_type) {
+        return $this->statuses()->where('status', 'delivered')->count();
+    }
+
+    public function getFileIcon(): string
+    {
+        if (!$this->file_mime_type) {
             return 'fa-file';
         }
 
-        $icons = [
-            'image' => 'fa-file-image',
-            'pdf' => 'fa-file-pdf',
-            'word' => 'fa-file-word',
-            'excel' => 'fa-file-excel',
-            'archive' => 'fa-file-archive',
-            'audio' => 'fa-file-audio',
-            'video' => 'fa-file-video',
+        $mimeToIcon = [
+            'image/' => 'fa-file-image',
+            'video/' => 'fa-file-video',
+            'audio/' => 'fa-file-audio',
+            'application/pdf' => 'fa-file-pdf',
+            'application/msword' => 'fa-file-word',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'fa-file-word',
+            'application/vnd.ms-excel' => 'fa-file-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'fa-file-excel',
+            'application/zip' => 'fa-file-archive',
+            'text/' => 'fa-file-alt',
         ];
 
-        foreach ($icons as $type => $icon) {
-            if (str_contains($this->mime_type, $type)) {
+        foreach ($mimeToIcon as $pattern => $icon) {
+            if (strpos($this->file_mime_type, $pattern) === 0) {
                 return $icon;
             }
         }
@@ -161,49 +125,47 @@ class Message extends Model
         return 'fa-file';
     }
 
-    /**
-     * Получить форматированный размер файла
-     */
-    public function getFormattedFileSizeAttribute()
+    public function getFormattedFileSize(): string
     {
         if (!$this->file_size) {
-            return null;
+            return '0 B';
         }
 
-        $bytes = $this->file_size;
         $units = ['B', 'KB', 'MB', 'GB'];
         $i = 0;
+        $size = $this->file_size;
 
-        while ($bytes >= 1024 && $i < count($units) - 1) {
-            $bytes /= 1024;
+        while ($size >= 1024 && $i < count($units) - 1) {
+            $size /= 1024;
             $i++;
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        return round($size, 2) . ' ' . $units[$i];
     }
 
     /**
-     * Редактировать сообщение
+     * Получить статус сообщения для текущего пользователя
      */
-    public function edit($newContent)
+    public function getStatusForUser(User $user): ?string
     {
-        $this->update([
-            'content' => $newContent,
-            'is_edited' => true,
-            'edited_at' => now()
-        ]);
+        $status = $this->statuses()->where('user_id', $user->id)->first();
+        return $status ? $status->status : null;
     }
 
     /**
-     * Создать системное сообщение
+     * Проверить, прочитано ли сообщение пользователем
      */
-    public static function createSystemMessage($chatId, $content)
+    public function isReadBy(User $user): bool
     {
-        return self::create([
-            'chat_id' => $chatId,
-            'user_id' => null,
-            'content' => $content,
-            'type' => 'system'
-        ]);
+        return $this->getStatusForUser($user) === 'read';
+    }
+
+    /**
+     * Проверить, доставлено ли сообщение пользователю
+     */
+    public function isDeliveredTo(User $user): bool
+    {
+        $status = $this->getStatusForUser($user);
+        return $status === 'delivered' || $status === 'read';
     }
 }

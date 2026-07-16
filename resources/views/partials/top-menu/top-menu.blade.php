@@ -67,7 +67,7 @@
              <button type="button" class="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br
                                     from-primary-500 to-primary-700 flex items-center justify-center
                                     text-white font-bold shadow-lg" onclick="userProfileModal()">
-                 <img class="rounded" src="{{auth()->user()->getAvatarUrlAttribute()}}" alt="{{auth()->user()->name}}">
+                 <img class="rounded" src="{{asset('storage/' . auth()->user()->avatar)}}" alt="{{auth()->user()->name}}">
              </button>
         </div>
     </div>

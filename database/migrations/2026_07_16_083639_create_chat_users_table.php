@@ -9,22 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('chat_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('chat_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->enum('role', ['member', 'admin'])->default('member');
+            $table->foreignId('chat_id')->constrained('chats')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->enum('role', ['admin', 'member'])->default('member');
             $table->timestamp('last_read_at')->nullable();
             $table->boolean('is_muted')->default(false);
-            $table->timestamp('joined_at')->useCurrent();
+            $table->timestamp('joined_at')->nullable();
             $table->timestamp('left_at')->nullable();
             $table->timestamps();
 
-            $table->unique(['chat_id', 'user_id', 'left_at'], 'chat_user_unique');
-            $table->index(['user_id', 'last_read_at']);
-            $table->index('left_at');
+            $table->unique(['chat_id', 'user_id']);
+            $table->index(['user_id', 'left_at']);
         });
     }
 
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chat_user');
+        Schema::dropIfExists('chat_users');
     }
 };

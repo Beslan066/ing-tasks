@@ -1053,7 +1053,6 @@ media-src https://meet.jit.si https:;
         const modal = document.getElementById('taskModal');
         if (modal) modal.classList.add('hidden');
         resetTaskForm();
-        console.log('closeTaskModal2')
         document.body.classList.remove('overflow-y-hidden')
     }
 
@@ -2443,23 +2442,24 @@ setDefaultTab()
             document.body.classList.add('overflow-y-hidden')
         }
     }
-function setDefaultTab() {
 
-        console.log('def tab')
-             const commentsTab = document.getElementById('commentsTab');
-        const infoTab = document.getElementById('infoTab');
-        const subtasksTab = document.getElementById('subtasksTab');
-        if(commentsTab && infoTab && subtasksTab) {
+    function setDefaultTab() {
 
-            console.log('default tab')
-    const isMobile = window.matchMedia('(max-width: 500px)').matches;
-    const defaultTab = isMobile ? 'info' : 'comments';
-    console.log(defaultTab,'lldsadsakdsa')
-    switchTaskTab(defaultTab);
-}else {
-    return;
-}
-}
+            console.log('def tab')
+                 const commentsTab = document.getElementById('commentsTab');
+            const infoTab = document.getElementById('infoTab');
+            const subtasksTab = document.getElementById('subtasksTab');
+            if(commentsTab && infoTab && subtasksTab) {
+
+                console.log('default tab')
+        const isMobile = window.matchMedia('(max-width: 500px)').matches;
+        const defaultTab = isMobile ? 'info' : 'comments';
+        console.log(defaultTab,'lldsadsakdsa')
+        switchTaskTab(defaultTab);
+    }else {
+        return;
+    }
+    }
     // Закрыть модальное окно просмотра задачи
     function closeTaskViewModal() {
         const modal = document.getElementById('taskViewModal');

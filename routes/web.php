@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\UserLocationController;
+use App\Http\Controllers\Api\ChatApiController;
 use App\Http\Controllers\Frontend\ChatController;
 use App\Http\Controllers\Frontend\CompanyController;
 use App\Http\Controllers\Frontend\EmailTrashController;
@@ -265,207 +266,31 @@ Route::get('/test-mailable-fixed', function () {
 });
 
 Route::middleware(['auth', 'verified', 'trackUserActivity', 'require.company'])->group(function () {
+
     Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
-    Route::prefix('chat/api')->name('chat.api.')->group(function () {
-        // GET запросы
-        Route::get('/chats', [ChatController::class, 'getChats'])->name('chats');
-        Route::get('/colleagues', [ChatController::class, 'getColleagues'])->name('colleagues');
-        Route::get('/chats/{chat}/messages', [ChatController::class, 'getMessages'])->name('messages');
 
-        // POST запросы
-        Route::post('/private-chat', [ChatController::class, 'startPrivateChat'])->name('private-chat');
-        Route::post('/group-chat', [ChatController::class, 'createGroupChat'])->name('group-chat');
-        Route::post('/chats/{chat}/send', [ChatController::class, 'sendMessage'])->name('send');
-        Route::post('/chats/{chat}/upload', [ChatController::class, 'uploadFile'])->name('upload');
-        Route::post('/chats/{chat}/add-users', [ChatController::class, 'addUsers'])->name('add-users');
-        Route::post('/chats/{chat}/remove-user', [ChatController::class, 'removeUser'])->name('remove-user');
-        Route::post('/chats/{chat}/mark-read', [ChatController::class, 'markAsRead'])->name('mark-read');
-
-        // DELETE запросы
-        Route::delete('/chats/{chat}', [ChatController::class, 'deleteChat'])->name('delete');
-    });
+    Route::get('/chat-departments', [App\Http\Controllers\Api\DepartmentController::class, 'index']);
 
 
+    Route::prefix('chat')->group(function () {
+        Route::get('/chats', [ChatApiController::class, 'getChats']);
+        Route::get('/chats/unread-counts', [ChatApiController::class, 'getUnreadCounts']);
+        Route::get('/colleagues', [ChatApiController::class, 'getColleagues']);
 
-    // ЛИЧНАЯ ПОЧТА ПОЛЬЗОВАТЕЛЯ
-// ============================================
-    Route::prefix('personal/emails')->name('personal.emails.')->middleware('auth')->group(function () {
-        // Главная страница личной почты
-        Route::get('/', [PersonalEmailController::class, 'index'])->name('index');
+        Route::post('/private-chat', [ChatApiController::class, 'createPrivateChat']);
+        Route::post('/group-chat', [ChatApiController::class, 'createGroupChat']);
+        Route::post('/department-chat', [ChatApiController::class, 'createDepartmentChat']);
+        Route::post('/company-chat', [ChatApiController::class, 'createCompanyChat']);
 
-        // Поиск писем
-        Route::get('/search', [PersonalEmailController::class, 'search'])->name('search');
-
-        // Создание письма
-        Route::get('/create', [PersonalEmailController::class, 'create'])->name('create');
-        Route::post('/', [PersonalEmailController::class, 'store'])->name('store');
-
-        // Просмотр письма
-        Route::get('/{email}', [PersonalEmailController::class, 'show'])->name('show');
-
-        // Ответ на письмо
-        Route::get('/{email}/reply', [PersonalEmailController::class, 'replyForm'])->name('reply.form');
-        Route::post('/{email}/reply', [PersonalEmailController::class, 'reply'])->name('reply');
-
-        // Пересылка письма
-        Route::get('/{email}/forward', [PersonalEmailController::class, 'forwardForm'])->name('forward.form');
-        Route::post('/{email}/forward', [PersonalEmailController::class, 'forward'])->name('forward');
-
-        // Архивация/разархивация
-        Route::post('/{email}/toggle-archive', [PersonalEmailController::class, 'toggleArchive'])->name('toggle-archive');
-
-        // Работа с метками
-        Route::post('/{email}/add-tag', [PersonalEmailController::class, 'addTag'])->name('add-tag');
-        Route::post('/{email}/remove-tag', [PersonalEmailController::class, 'removeTag'])->name('remove-tag');
-
-        // Удаление в корзину
-        Route::delete('/{email}', [PersonalEmailController::class, 'destroy'])->name('destroy');
-
-        // Массовые действия
-        Route::post('/bulk', [PersonalEmailController::class, 'bulkAction'])->name('bulk');
-
-        // Импорт/экспорт
-        Route::get('/export', [PersonalEmailController::class, 'export'])->name('export');
-        Route::post('/import', [PersonalEmailController::class, 'import'])->name('import');
-
-        // Пометить как прочитанное/непрочитанное
-        Route::post('/{email}/mark-read', [PersonalEmailController::class, 'markAsRead'])->name('mark.read');
-        Route::post('/{email}/mark-unread', [PersonalEmailController::class, 'markAsUnread'])->name('mark.unread');
-
-        // Пометить как важное/неважное
-        Route::post('/{email}/mark-important', [PersonalEmailController::class, 'markAsImportant'])->name('mark.important');
-        Route::post('/{email}/mark-unimportant', [PersonalEmailController::class, 'markAsUnimportant'])->name('mark.unimportant');
-    });
-
-// Корзина личной почты
-    Route::prefix('personal/emails/trash')->name('personal.emails.trash.')->middleware('auth')->group(function () {
-        Route::get('/', [PersonalEmailController::class, 'trashIndex'])->name('index');
-        Route::post('/restore/{email}', [PersonalEmailController::class, 'restore'])->name('restore');
-        Route::delete('/force/{email}', [PersonalEmailController::class, 'forceDestroy'])->name('force');
-        Route::post('/clear', [PersonalEmailController::class, 'clearTrash'])->name('clear');
-        Route::post('/restore-all', [PersonalEmailController::class, 'restoreAll'])->name('restore-all');
-        Route::delete('/empty', [PersonalEmailController::class, 'emptyTrash'])->name('empty');
-    });
-
-// ============================================
-// ПОЧТА ОТДЕЛА
-// ============================================
-    Route::prefix('departments/{department}/emails')->name('departments.emails.')->group(function () {
-        // Главная страница почты отдела
-        Route::get('/', [DepartmentEmailController::class, 'index'])->name('index');
-
-        // Поиск писем отдела
-        Route::get('/search', [DepartmentEmailController::class, 'search'])->name('search');
-
-        // Создание письма от имени отдела
-        Route::get('/create', [DepartmentEmailController::class, 'create'])->name('create');
-        Route::post('/', [DepartmentEmailController::class, 'store'])->name('store');
-
-        // Просмотр письма отдела
-        Route::get('/{email}', [DepartmentEmailController::class, 'show'])->name('show');
-
-        // Ответ на письмо от имени отдела
-        Route::get('/{email}/reply', [DepartmentEmailController::class, 'replyForm'])->name('reply.form');
-        Route::post('/{email}/reply', [DepartmentEmailController::class, 'reply'])->name('reply');
-
-        // Пересылка письма отдела
-        Route::get('/{email}/forward', [DepartmentEmailController::class, 'forwardForm'])->name('forward.form');
-        Route::post('/{email}/forward', [DepartmentEmailController::class, 'forward'])->name('forward');
-
-        // Архивация/разархивация письма отдела
-        Route::post('/{email}/toggle-archive', [DepartmentEmailController::class, 'toggleArchive'])->name('toggle-archive');
-
-        // Работа с метками отдела
-        Route::post('/{email}/add-tag', [DepartmentEmailController::class, 'addTag'])->name('add-tag');
-        Route::post('/{email}/remove-tag', [DepartmentEmailController::class, 'removeTag'])->name('remove-tag');
-
-        // Удаление письма отдела в корзину
-        Route::delete('/{email}', [EmailTrashController::class, 'destroy'])->name('destroy');
-
-        // Массовые действия в отделе
-        Route::post('/bulk', [DepartmentEmailController::class, 'bulkAction'])->name('bulk');
-
-        // Импорт/экспорт писем отдела
-        Route::get('/export', [DepartmentEmailController::class, 'export'])->name('export');
-        Route::post('/import', [DepartmentEmailController::class, 'import'])->name('import');
-
-        // Пометить как прочитанное/непрочитанное в отделе
-        Route::post('/{email}/mark-read', [DepartmentEmailController::class, 'markAsRead'])->name('mark.read');
-        Route::post('/{email}/mark-unread', [DepartmentEmailController::class, 'markAsUnread'])->name('mark.unread');
-
-        // Пометить как важное/неважное в отделе
-        Route::post('/{email}/mark-important', [DepartmentEmailController::class, 'markAsImportant'])->name('mark.important');
-        Route::post('/{email}/mark-unimportant', [DepartmentEmailController::class, 'markAsUnimportant'])->name('mark.unimportant');
-
-        // Статистика почты отдела
-        Route::get('/stats', [DepartmentEmailController::class, 'stats'])->name('stats');
-
-        // Автозаполнение контактов отдела
-        Route::get('/contacts', [DepartmentEmailController::class, 'contacts'])->name('contacts');
-    });
-
-// Корзина почты отдела
-    Route::prefix('departments/{department}/emails/trash')->name('departments.emails.trash.')->group(function () {
-        Route::get('/', [EmailTrashController::class, 'index'])->name('index');
-        Route::post('/restore/{email}', [EmailTrashController::class, 'restore'])->name('restore');
-        Route::delete('/force/{email}', [EmailTrashController::class, 'forceDestroy'])->name('force');
-        Route::post('/clear', [EmailTrashController::class, 'clear'])->name('clear');
-        Route::post('/restore-all', [EmailTrashController::class, 'restoreAll'])->name('restore-all');
-        Route::delete('/empty', [EmailTrashController::class, 'empty'])->name('empty');
-    });
-
-// ============================================
-// ОБЩИЕ МАРШРУТЫ ДЛЯ ПОЧТЫ
-// ============================================
-
-// Шаблоны писем (доступны и для личной почты, и для почты отдела)
-    Route::prefix('email-templates')->name('email-templates.')->middleware('auth')->group(function () {
-        Route::get('/', [EmailTemplateController::class, 'index'])->name('index');
-        Route::get('/create', [EmailTemplateController::class, 'create'])->name('create');
-        Route::post('/', [EmailTemplateController::class, 'store'])->name('store');
-        Route::get('/{template}/edit', [EmailTemplateController::class, 'edit'])->name('edit');
-        Route::put('/{template}', [EmailTemplateController::class, 'update'])->name('update');
-        Route::delete('/{template}', [EmailTemplateController::class, 'destroy'])->name('destroy');
-        Route::get('/{template}/preview', [EmailTemplateController::class, 'preview'])->name('preview');
-        Route::post('/{template}/duplicate', [EmailTemplateController::class, 'duplicate'])->name('duplicate');
-
-        // Глобальные шаблоны компании
-        Route::get('/company/global', [EmailTemplateController::class, 'companyGlobal'])->name('company.global');
-
-        // Шаблоны отдела
-        Route::get('/department/{department}', [EmailTemplateController::class, 'departmentTemplates'])->name('department');
-    });
-
-// Настройки SMTP (разные для пользователя и отдела)
-    Route::prefix('smtp-settings')->name('smtp-settings.')->middleware('auth')->group(function () {
-        // Личные настройки SMTP пользователя
-        Route::prefix('personal')->name('personal.')->group(function () {
-            Route::get('/', [SmtpSettingController::class, 'personalIndex'])->name('index');
-            Route::post('/', [SmtpSettingController::class, 'personalStore'])->name('store');
-            Route::put('/{setting}', [SmtpSettingController::class, 'personalUpdate'])->name('update');
-            Route::delete('/{setting}', [SmtpSettingController::class, 'personalDestroy'])->name('destroy');
-            Route::post('/{setting}/test', [SmtpSettingController::class, 'personalTest'])->name('test');
-            Route::post('/{setting}/set-default', [SmtpSettingController::class, 'personalSetDefault'])->name('set-default');
-        });
-
-        // Настройки SMTP отдела (только для руководителей)
-        Route::prefix('department/{department}')->name('department.')->group(function () {
-            Route::get('/', [SmtpSettingController::class, 'departmentIndex'])->name('index');
-            Route::post('/', [SmtpSettingController::class, 'departmentStore'])->name('store');
-            Route::put('/{setting}', [SmtpSettingController::class, 'departmentUpdate'])->name('update');
-            Route::delete('/{setting}', [SmtpSettingController::class, 'departmentDestroy'])->name('destroy');
-            Route::post('/{setting}/test', [SmtpSettingController::class, 'departmentTest'])->name('test');
-            Route::post('/{setting}/set-default', [SmtpSettingController::class, 'departmentSetDefault'])->name('set-default');
-        });
-
-        // Настройки SMTP компании (для администраторов)
-        Route::prefix('company/{company}')->name('company.')->group(function () {
-            Route::get('/', [SmtpSettingController::class, 'companyIndex'])->name('index');
-            Route::post('/', [SmtpSettingController::class, 'companyStore'])->name('store');
-            Route::put('/{setting}', [SmtpSettingController::class, 'companyUpdate'])->name('update');
-            Route::delete('/{setting}', [SmtpSettingController::class, 'companyDestroy'])->name('destroy');
-            Route::post('/{setting}/test', [SmtpSettingController::class, 'companyTest'])->name('test');
-            Route::post('/{setting}/set-default', [SmtpSettingController::class, 'companySetDefault'])->name('set-default');
+        Route::prefix('/chats/{chat}')->group(function () {
+            Route::get('/messages', [ChatApiController::class, 'getMessages']);
+            Route::post('/send', [ChatApiController::class, 'sendMessage']);
+            Route::post('/upload', [ChatApiController::class, 'uploadFile']);
+            Route::post('/mark-read', [ChatApiController::class, 'markRead']);
+            Route::post('/add-users', [ChatApiController::class, 'addUsers']);
+            Route::post('/remove-user', [ChatApiController::class, 'removeUser']);
+            Route::get('/available-users', [ChatApiController::class, 'getAvailableUsers']);
+            Route::delete('/', [ChatApiController::class, 'deleteChat']);
         });
     });
 

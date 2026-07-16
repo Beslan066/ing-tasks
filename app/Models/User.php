@@ -99,15 +99,6 @@ class User extends Authenticatable implements MustVerifyEmail
             ->withTimestamps();
     }
 
-    /**
-     * Получить основной отдел пользователя (первый или помеченный is_primary)
-     */
-    public function primaryDepartment(): ?Department
-    {
-        return $this->departments()
-            ->wherePivot('is_primary', true)
-            ->first();
-    }
 
     /**
      * Получить названия всех отделов пользователя в виде строки
@@ -583,18 +574,23 @@ class User extends Authenticatable implements MustVerifyEmail
         // Менеджер видит только пользователей из своих отделов
         return $this->getAssignableUsers();
     }
-    public function getAvatarUrlAttribute(): string
+    public function getAvatarUrlAttribute(): ?string
     {
-        if ($this->avatar) {
-            return Storage::url($this->avatar);
+        // Проверяем, есть ли своя аватарка
+        if ($this->avatar && !empty($this->avatar)) {
+            // Проверяем, существует ли файл
+            if (Storage::exists($this->avatar)) {
+                return Storage::url($this->avatar);
+            }
         }
 
-        // Если есть аватар из соц. сети, используем его
-        if ($this->provider_avatar) {
+        // Если есть аватар из соц. сети
+        if ($this->provider_avatar && !empty($this->provider_avatar)) {
             return $this->provider_avatar;
         }
 
-        return $this->defaultAvatarUrl();
+        // Если нет аватарки - возвращаем null
+        return null;
     }
 
     private function defaultAvatarUrl(): string
@@ -686,16 +682,22 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getAvatarColor(): string
     {
         $colors = [
-            'bg-blue-500',
-            'bg-purple-500',
-            'bg-red-500',
-            'bg-yellow-500',
-            'bg-green-500',
-            'bg-indigo-500',
-            'bg-pink-500',
-            'bg-teal-500',
-            'bg-orange-500',
-            'bg-cyan-500',
+            'bg-red-500',      // Красный
+            'bg-orange-500',   // Оранжевый
+            'bg-amber-500',    // Янтарный
+            'bg-yellow-500',   // Желтый
+            'bg-lime-500',     // Лаймовый
+            'bg-green-500',    // Зеленый
+            'bg-emerald-500',  // Изумрудный
+            'bg-teal-500',     // Бирюзовый
+            'bg-cyan-500',     // Циан
+            'bg-sky-500',      // Небесный
+            'bg-blue-500',     // Синий
+            'bg-indigo-500',   // Индиго
+            'bg-purple-500',   // Фиолетовый
+            'bg-fuchsia-500',  // Фуксия
+            'bg-pink-500',     // Розовый
+            'bg-rose-500',     // Розовый (темный)
         ];
 
         $hash = crc32($this->name);
@@ -1192,4 +1194,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return null;
     }
 
+    public function primaryDepartment(): ?Department
+    {
+        // Проверяем, существует ли колонка is_primary
+        try {
+            return $this->departments()
+                ->wherePivot('is_primary', true)
+                ->first();
+        } catch (\Exception $e) {
+            // Если колонка не существует, возвращаем первый отдел
+            return $this->departments()->first();
+        }
+    }
 }
