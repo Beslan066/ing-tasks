@@ -1047,11 +1047,23 @@ class User extends Authenticatable implements MustVerifyEmail
             return false;
         }
 
-        if (!$this->last_activity_at) {
-            return false;
+        // Проверяем через UserSession
+        $session = $this->sessions()
+            ->where('is_current', true)
+            ->where('last_activity', '>=', now()->subMinutes(5))
+            ->first();
+
+        if ($session) {
+            return true;
         }
 
-        return $this->last_activity_at->diffInMinutes(now()) < 5;
+        // Fallback на UserOnlineSession
+        $onlineSession = $this->onlineSessions()
+            ->whereNull('logout_at')
+            ->where('last_activity_at', '>=', now()->subMinutes(5))
+            ->first();
+
+        return $onlineSession !== null;
     }
 
     /**

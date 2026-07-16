@@ -16,9 +16,7 @@ class ChatService
     public function getUserChats(User $user)
     {
         return Chat::forUser($user)
-            ->with(['users' => function ($query) use ($user) {
-                $query->where('user_id', '!=', $user->id);
-            }, 'lastMessage.user', 'lastMessage.statuses'])
+            ->with(['users', 'lastMessage.user', 'lastMessage.statuses']) // <-- УБРАЛ ЕБАНЫЙ ФИЛЬТР
             ->orderBy('last_message_at', 'desc')
             ->get()
             ->map(function ($chat) use ($user) {
@@ -32,7 +30,7 @@ class ChatService
             ->with(['user', 'statuses' => function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             }])
-            ->orderBy('id', 'asc') // Сортировка по возрастанию
+            ->orderBy('id', 'asc')
             ->skip($offset)
             ->take($limit)
             ->get();
@@ -40,7 +38,6 @@ class ChatService
 
     public function createPrivateChat(User $user1, User $user2, Company $company)
     {
-        // Проверяем, существует ли уже приватный чат
         $existingChat = Chat::where('company_id', $company->id)
             ->where('type', Chat::TYPE_PRIVATE)
             ->whereHas('users', function ($query) use ($user1) {
@@ -95,13 +92,11 @@ class ChatService
                 'is_active' => true,
             ]);
 
-            // Добавляем создателя как админа
             $chat->users()->attach($creator->id, [
                 'role' => ChatUser::ROLE_ADMIN,
                 'joined_at' => now(),
             ]);
 
-            // Добавляем остальных пользователей
             foreach ($data['user_ids'] as $userId) {
                 if ($userId != $creator->id) {
                     $chat->users()->attach($userId, [
@@ -111,7 +106,6 @@ class ChatService
                 }
             }
 
-            // Отправляем системное сообщение о создании группы
             $this->sendSystemMessage($chat, "Группа '{$chat->name}' создана");
 
             DB::commit();
@@ -135,7 +129,6 @@ class ChatService
                 'is_active' => true,
             ]);
 
-            // Добавляем всех пользователей отдела
             foreach ($department->users as $user) {
                 $chat->users()->attach($user->id, [
                     'role' => $user->id === $department->supervisor_id ? ChatUser::ROLE_ADMIN : ChatUser::ROLE_MEMBER,
@@ -143,7 +136,6 @@ class ChatService
                 ]);
             }
 
-            // Отправляем системное сообщение
             $this->sendSystemMessage($chat, "Чат отдела '{$department->name}' создан");
 
             DB::commit();
@@ -166,15 +158,12 @@ class ChatService
                 'is_active' => true,
             ]);
 
-            // Добавляем создателя как админа
             $chat->users()->attach($creator->id, [
                 'role' => ChatUser::ROLE_ADMIN,
                 'joined_at' => now(),
             ]);
 
-            // Добавляем всех активных пользователей компании
             foreach ($company->users()->where('is_active', true)->get() as $user) {
-                // Пропускаем создателя, он уже добавлен
                 if ($user->id === $creator->id) {
                     continue;
                 }
@@ -205,13 +194,11 @@ class ChatService
                 'type' => $type,
             ]);
 
-            // Обновляем последнее сообщение в чате
             $chat->update([
                 'last_message_id' => $message->id,
                 'last_message_at' => now(),
             ]);
 
-            // Создаем статусы для всех участников чата, кроме отправителя
             $chat->users()
                 ->where('user_id', '!=', $user->id)
                 ->get()
@@ -245,7 +232,6 @@ class ChatService
     {
         DB::beginTransaction();
         try {
-            // Проверяем, что сообщения принадлежат этому чату
             $validMessageIds = Message::where('chat_id', $chat->id)
                 ->whereIn('id', $messageIds)
                 ->pluck('id')
@@ -256,7 +242,6 @@ class ChatService
                 return false;
             }
 
-            // Обновляем статусы сообщений
             \App\Models\MessageStatus::whereIn('message_id', $validMessageIds)
                 ->where('user_id', $user->id)
                 ->update([
@@ -264,7 +249,6 @@ class ChatService
                     'read_at' => now(),
                 ]);
 
-            // Обновляем время последнего прочтения
             $chat->users()->updateExistingPivot($user->id, [
                 'last_read_at' => now(),
             ]);
@@ -279,7 +263,6 @@ class ChatService
 
     public function addUsersToChat(Chat $chat, array $userIds, User $admin)
     {
-        // Проверяем права админа
         if (!$chat->users()->where('user_id', $admin->id)->wherePivot('role', 'admin')->exists()) {
             throw new \Exception('У вас нет прав для добавления пользователей');
         }
@@ -308,7 +291,6 @@ class ChatService
 
     public function removeUserFromChat(Chat $chat, User $user, User $admin)
     {
-        // Проверяем права
         $isAdmin = $chat->users()->where('user_id', $admin->id)->wherePivot('role', 'admin')->exists();
         $isSelf = $user->id === $admin->id;
 
@@ -331,7 +313,6 @@ class ChatService
 
     public function deleteChat(Chat $chat, User $user)
     {
-        // Проверяем права (только админ может удалить чат)
         $isAdmin = $chat->users()->where('user_id', $user->id)->wherePivot('role', 'admin')->exists();
 
         if (!$isAdmin) {
@@ -346,8 +327,14 @@ class ChatService
     {
         $unreadCount = $chat->getUnreadCount($user);
 
-        // Берем уже загруженных пользователей
         $users = $chat->users;
+
+        // ДЛЯ ПРИВАТНЫХ ЧАТОВ - ИСКЛЮЧАЕМ ТЕКУЩЕГО
+        if ($chat->type === Chat::TYPE_PRIVATE) {
+            $users = $users->filter(function ($u) use ($user) {
+                return $u->id !== $user->id;
+            });
+        }
 
         return [
             'id' => $chat->id,
@@ -367,13 +354,19 @@ class ChatService
                     $avatarUrl = $u->provider_avatar;
                 }
 
+                // ПРОВЕРЯЕМ ОНЛАЙН ЧЕРЕЗ last_activity_at
+                $isOnline = false;
+                if ($u->is_active && $u->last_activity_at) {
+                    $isOnline = $u->last_activity_at->diffInMinutes(now()) < 5;
+                }
+
                 return [
                     'id' => $u->id,
                     'name' => $u->name,
                     'avatar' => $avatarUrl,
                     'initials' => $u->getInitials(),
                     'avatar_color' => $u->getAvatarColor(),
-                    'is_online' => $u->isOnline(),
+                    'is_online' => $isOnline,
                     'last_activity' => $u->last_activity_at,
                     'role' => $u->pivot->role,
                 ];

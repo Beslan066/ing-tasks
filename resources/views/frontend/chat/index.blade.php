@@ -361,17 +361,27 @@
                                 </p>
 
                                 <div class="flex items-center justify-between mt-1">
-                                    <span class="text-xs text-gray-400 truncate max-w-[150px]"
-                                          x-text="chat.users?.map(u => u.name).join(', ')"></span>
+    <span class="text-xs text-gray-400 truncate max-w-[150px]"
+          x-text="chat.users?.map(u => u.name).join(', ')"></span>
 
                                     <div class="flex items-center gap-1 flex-shrink-0">
+                                        <!-- Статус онлайн для приватных чатов -->
+                                        <span x-show="chat.type === 'private' && chat.users && chat.users[0]">
+            <span x-show="chat.users[0].is_online" class="text-green-500 text-xs">
+                <i class="fas fa-circle text-[6px]"></i>
+            </span>
+            <span x-show="!chat.users[0].is_online" class="text-gray-400 text-xs">
+                <i class="fas fa-circle text-[6px]"></i>
+            </span>
+        </span>
+
                                         <span x-show="chat.unread_count > 0"
                                               class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-green-500 rounded-full"
                                               x-text="chat.unread_count"></span>
 
                                         <span x-show="chat.pivot?.is_muted" class="text-gray-400">
-                                            <i class="fas fa-volume-mute text-xs"></i>
-                                        </span>
+            <i class="fas fa-volume-mute text-xs"></i>
+        </span>
                                     </div>
                                 </div>
                             </div>
@@ -401,10 +411,10 @@
                                             <template x-if="activeChat.users && activeChat.users[0] && activeChat.users[0].avatar">
                                                 <img :src="activeChat.users[0].avatar" class="h-full w-full object-cover">
                                             </template>
-                                            <template x-if="!colleague.avatar">
+                                            <template x-if="!activeChat.users || !activeChat.users[0] || !activeChat.users[0].avatar">
                                                 <div class="h-full w-full flex items-center justify-center text-sm font-medium text-white"
-                                                     :class="colleague.avatar_color || 'bg-gray-500'">
-                                                    <span x-text="colleague.initials"></span>
+                                                     :class="activeChat.users && activeChat.users[0] ? activeChat.users[0].avatar_color || 'bg-gray-500' : 'bg-gray-500'">
+                                                    <span x-text="activeChat.users && activeChat.users[0] ? activeChat.users[0].initials || '?' : '?'"></span>
                                                 </div>
                                             </template>
                                         </div>
@@ -419,29 +429,36 @@
                                         </div>
                                     </template>
 
-                                    <template x-if="activeChat.type === 'private' && activeChat.users && activeChat.users[0]">
-                                        <span class="online-indicator w-3 h-3"
-                                              :class="activeChat.users[0].is_online ? 'online' : 'offline'"></span>
-                                    </template>
                                 </div>
 
                                 <div>
                                     <h5 class="text-sm font-medium text-gray-800 dark:text-white/90"
                                         x-text="activeChat.display_name || activeChat.name || 'Чат'"></h5>
                                     <p class="text-xs text-gray-500 mt-0.5">
-                                        <span x-show="activeChat.type === 'private' && activeChat.users && activeChat.users[0]"
-                                              x-text="activeChat.users[0].is_online ? 'В сети' : (activeChat.users[0].last_activity ? 'Был(а) ' + formatTime(activeChat.users[0].last_activity) : 'Не в сети')"></span>
+                                        <!-- Для ПРИВАТНЫХ чатов показываем статус онлайн/офлайн -->
+                                        <span x-show="activeChat.type === 'private' && activeChat.users && activeChat.users[0]">
+                                        <span x-show="activeChat.users[0].is_online" class="text-green-500">
+                                            <i class="fas fa-circle text-[8px] inline-block mr-1"></i> В сети
+                                        </span>
+                                        <span x-show="!activeChat.users[0].is_online"
+                                              x-text="getLastActivityText(activeChat.users[0].last_activity)">
+                                        </span>
+                                        </span>
+                                        <!-- Для ГРУППОВЫХ чатов показываем количество участников -->
                                         <span x-show="activeChat.type !== 'private'">
-                                        <span x-text="activeChat.users?.length + ' участников'"></span>
-                                        <span x-show="activeChat.type === 'department'" class="ml-1 text-green-500">
-                                            <i class="fas fa-check-circle"></i> Отдел
-                                        </span>
-                                            <span x-show="activeChat.type === 'company'" class="ml-1 text-blue-500">
-                                                <i class="fas fa-check-circle"></i> Компания
-                                            </span>
-                                        </span>
-                                        <span x-show="activeChat.type === 'company'" class="ml-2 text-xs text-gray-400">
-                                        <span x-text="activeChat.users?.length || 0"></span> участников</span>
+            <span x-text="activeChat.users?.length + ' участников'"></span>
+            <span class="ml-2 text-green-500"
+                  x-show="activeChat.users?.filter(u => u.is_online).length > 0">
+                <i class="fas fa-circle text-[6px] mr-1"></i>
+                <span x-text="activeChat.users?.filter(u => u.is_online).length"></span> в сети
+            </span>
+            <span x-show="activeChat.type === 'department'" class="ml-1 text-green-500">
+                <i class="fas fa-check-circle"></i> Отдел
+            </span>
+            <span x-show="activeChat.type === 'company'" class="ml-1 text-blue-500">
+                <i class="fas fa-check-circle"></i> Компания
+            </span>
+        </span>
                                     </p>
                                 </div>
                             </div>
@@ -1099,7 +1116,6 @@
                     })
                         .then(res => res.json())
                         .then(data => {
-                            console.log('=== ДАННЫЕ СООБЩЕНИЙ ===', data);
                             if (data && data.success) {
                                 let messagesData = [];
                                 if (data.messages && data.messages.data && Array.isArray(data.messages.data)) {
@@ -1396,7 +1412,6 @@
                 },
 
                 createCompanyChat() {
-                    console.log('Клик по кнопке!'); // Если в консоли 2 клика — проблема во фронте
                     if (this.isCreatingChat) return;
                     if (this.hasCompanyChat) {
                         alert('Общий чат компании уже существует');
@@ -1420,7 +1435,6 @@
                         .then(res => res.json())
                         .then(data => {
                             if (data.success) {
-                                this.loadChats();
                                 setTimeout(() => {
                                     this.selectChat(data.chat);
                                     this.loadMessages(data.chat);
@@ -1670,6 +1684,97 @@
                         return `${this.typingUsers[0]} и еще ${this.typingUsers.length - 1} печатают...`;
                     }
                     return '';
+                },
+
+                getLastActivityText(lastActivity) {
+                    if (!lastActivity) {
+                        return 'Не в сети';
+                    }
+
+                    const now = new Date();
+                    const last = new Date(lastActivity);
+                    const diffMs = now - last;
+                    const diffMins = Math.floor(diffMs / (1000 * 60));
+                    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                    const diffWeeks = Math.floor(diffDays / 7);
+                    const diffMonths = Math.floor(diffDays / 30);
+
+                    // Если меньше минуты
+                    if (diffMins < 1) {
+                        return 'Только что';
+                    }
+
+                    // Если меньше часа
+                    if (diffMins < 60) {
+                        return `Был(а) ${diffMins} ${this.declension(diffMins, ['минуту', 'минуты', 'минут'])} назад`;
+                    }
+
+                    // Если меньше суток
+                    if (diffHours < 24) {
+                        return `Был(а) ${diffHours} ${this.declension(diffHours, ['час', 'часа', 'часов'])} назад`;
+                    }
+
+                    // Если меньше недели
+                    if (diffDays < 7) {
+                        return `Был(а) ${diffDays} ${this.declension(diffDays, ['день', 'дня', 'дней'])} назад`;
+                    }
+
+                    // Если меньше месяца
+                    if (diffDays < 30) {
+                        return `Был(а) ${diffWeeks} ${this.declension(diffWeeks, ['неделю', 'недели', 'недель'])} назад`;
+                    }
+
+                    // Если больше месяца
+                    if (diffMonths < 12) {
+                        return `Был(а) ${diffMonths} ${this.declension(diffMonths, ['месяц', 'месяца', 'месяцев'])} назад`;
+                    }
+
+                    // Если больше года
+                    const years = Math.floor(diffDays / 365);
+                    return `Был(а) ${years} ${this.declension(years, ['год', 'года', 'лет'])} назад`;
+                },
+
+                declension(number, words) {
+                    const cases = [2, 0, 1, 1, 1, 2];
+                    const index = (number % 100 > 4 && number % 100 < 20) ? 2 : cases[Math.min(number % 10, 5)];
+                    return words[index];
+                },
+
+                formatLastActivity(lastActivity) {
+                    if (!lastActivity) {
+                        return 'Не в сети';
+                    }
+
+                    const now = new Date();
+                    const last = new Date(lastActivity);
+                    const diffMs = now - last;
+                    const diffMins = Math.floor(diffMs / (1000 * 60));
+                    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+                    if (diffMins < 1) {
+                        return 'Только что';
+                    }
+                    if (diffMins < 60) {
+                        return `${diffMins} мин. назад`;
+                    }
+                    if (diffHours < 24) {
+                        return `${diffHours} ч. назад`;
+                    }
+                    if (diffDays < 7) {
+                        return `${diffDays} дн. назад`;
+                    }
+                    if (diffDays < 30) {
+                        const weeks = Math.floor(diffDays / 7);
+                        return `${weeks} нед. назад`;
+                    }
+                    if (diffDays < 365) {
+                        const months = Math.floor(diffDays / 30);
+                        return `${months} мес. назад`;
+                    }
+                    const years = Math.floor(diffDays / 365);
+                    return `${years} г. назад`;
                 },
 
                 destroy() {

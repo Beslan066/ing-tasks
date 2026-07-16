@@ -73,8 +73,11 @@
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <span class="text-xs text-gray-400"
-                              x-text="colleague.is_online ? 'В сети' : 'Не в сети'"></span>
+                        <span class="text-xs"
+                              :class="colleague.is_online ? 'text-green-500' : 'text-gray-400'">
+                            <i class="fas fa-circle text-[6px] mr-1"></i>
+                            <span x-text="colleague.is_online ? 'В сети' : getLastActivityText(colleague.last_activity)"></span>
+                        </span>
                         <i class="fas fa-chevron-right text-gray-400 group-hover:text-green-500 transition-colors"></i>
                     </div>
                 </div>
