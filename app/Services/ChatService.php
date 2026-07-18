@@ -183,7 +183,7 @@ class ChatService
         }
     }
 
-    public function sendMessage(Chat $chat, User $user, string $content, string $type = 'text')
+    public function sendMessage(Chat $chat, User $user, string $content, string $type = 'text', $parentId = null)
     {
         DB::beginTransaction();
         try {
@@ -192,6 +192,7 @@ class ChatService
                 'user_id' => $user->id,
                 'content' => $content,
                 'type' => $type,
+                'parent_id' => $parentId,
             ]);
 
             $chat->update([
@@ -200,13 +201,13 @@ class ChatService
             ]);
 
             $chat->users()
-                ->where('user_id', '!=', $user->id)
                 ->get()
-                ->each(function ($participant) use ($message) {
+                ->each(function ($participant) use ($message, $user) {
                     $message->statuses()->create([
                         'user_id' => $participant->id,
                         'status' => 'delivered',
                         'delivered_at' => now(),
+                        'read_at' => null,
                     ]);
                 });
 
@@ -242,12 +243,25 @@ class ChatService
                 return false;
             }
 
+            // 1. Обновляем статус для текущего пользователя (получатель)
             \App\Models\MessageStatus::whereIn('message_id', $validMessageIds)
                 ->where('user_id', $user->id)
                 ->update([
                     'status' => 'read',
                     'read_at' => now(),
                 ]);
+
+            // 2. Обновляем статус для ОТПРАВИТЕЛЕЙ этих сообщений (чтобы у них загорелась синяя галочка)
+            $messages = Message::whereIn('id', $validMessageIds)->get();
+            foreach ($messages as $message) {
+                // Для каждого сообщения обновляем статус у отправителя
+                \App\Models\MessageStatus::where('message_id', $message->id)
+                    ->where('user_id', $message->user_id)
+                    ->update([
+                        'status' => 'read',
+                        'read_at' => now(),
+                    ]);
+            }
 
             $chat->users()->updateExistingPivot($user->id, [
                 'last_read_at' => now(),
@@ -343,7 +357,7 @@ class ChatService
             'type' => $chat->type,
             'description' => $chat->description,
             'created_by' => $chat->created_by,
-            'users' => $users->map(function ($u) {
+            'users' => $users->values()->map(function ($u) { // <-- ДОБАВИЛ values()
                 $avatarUrl = null;
                 if ($u->avatar && !empty($u->avatar)) {
                     if (Storage::exists($u->avatar)) {
@@ -354,7 +368,6 @@ class ChatService
                     $avatarUrl = $u->provider_avatar;
                 }
 
-                // ПРОВЕРЯЕМ ОНЛАЙН ЧЕРЕЗ last_activity_at
                 $isOnline = false;
                 if ($u->is_active && $u->last_activity_at) {
                     $isOnline = $u->last_activity_at->diffInMinutes(now()) < 5;
@@ -370,7 +383,7 @@ class ChatService
                     'last_activity' => $u->last_activity_at,
                     'role' => $u->pivot->role,
                 ];
-            }),
+            })->toArray(), // <-- ПРЕОБРАЗУЕМ В МАССИВ
             'last_message' => $chat->lastMessage ? [
                 'id' => $chat->lastMessage->id,
                 'content' => $chat->lastMessage->content,

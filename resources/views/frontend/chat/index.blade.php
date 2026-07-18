@@ -194,6 +194,111 @@
         .message-footer:hover .status-tooltip {
             opacity: 1;
         }
+
+        /* Статусы сообщений - красивые галочки как в WhatsApp/Telegram */
+        .message-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 1px;
+            font-size: 11px;
+        }
+
+        .message-status .fa-check {
+            transition: all 0.3s ease;
+        }
+
+        .message-status .fa-check.text-gray-300 {
+            color: #D1D5DB;
+            opacity: 0.6;
+        }
+
+        .message-status .fa-check.text-blue-400 {
+            color: #60A5FA;
+        }
+
+        .message-status .fa-check.text-blue-600 {
+            color: #2563EB;
+        }
+
+        /* Анимация для появления статуса */
+        .message-status .fa-check {
+            animation: checkFade 0.3s ease;
+        }
+
+        @keyframes checkFade {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Тултип для статусов */
+        .status-tooltip {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: #1F2937;
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .message-footer:hover .status-tooltip {
+            opacity: 1;
+        }
+
+        /* Анимация для галочки */
+        .message-status .fa-check {
+            transition: all 0.3s ease;
+        }
+
+        .message-status .fa-check.text-gray-400 {
+            color: #9CA3AF;
+        }
+
+        .message-status .fa-check.text-blue-500 {
+            color: #3B82F6;
+        }
+
+        @keyframes checkAppear {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .message-status .fa-check {
+            animation: checkAppear 0.2s ease;
+        }
+
+        /* Цитата ответа как в WhatsApp */
+        .border-l-3 {
+            border-left-width: 3px;
+        }
+
+        .reply-quote {
+            border-left: 3px solid #3B82F6;
+            padding-left: 10px;
+            margin-left: 4px;
+        }
+
+        /* Анимация для ответа */
+        .reply-quote-enter {
+            animation: replyFade 0.3s ease;
+        }
+
+        @keyframes replyFade {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Иконка ответа активная */
+        .reply-active {
+            color: #3B82F6;
+            transform: rotate(180deg);
+        }
     </style>
 @endpush
 
@@ -518,11 +623,30 @@
                              x-ref="messagesContainer"
                              @scroll="checkScroll()">
 
+                            <!-- Индикатор загрузки старых сообщений (вверху) -->
+                            <div x-show="loadingMoreMessages"
+                                 class="flex justify-center py-4">
+                                <div class="flex items-center gap-2 text-gray-500">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span class="text-sm">Загрузка старых сообщений...</span>
+                                </div>
+                            </div>
+
+                            <!-- Кнопка загрузки старых сообщений (вверху) -->
+                            <button x-show="hasMoreMessages && !loadingMoreMessages && messages.length > 0"
+                                    @click="loadMoreMessages()"
+                                    class="w-full text-center text-sm text-green-500 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 py-2 hover:bg-green-50 dark:hover:bg-blue-900/20 transition-colors rounded-lg">
+                                <i class="fas fa-chevron-up mr-2"></i>
+                                Показать более старые сообщения
+                            </button>
+
+                            <!-- Счетчик сообщений -->
                             <div class="text-xs text-gray-400 text-center py-1"
                                  x-show="!loadingMessages">
                                 Сообщений: <span x-text="messages ? messages.length : 0"></span>
                             </div>
 
+                            <!-- Сообщения -->
                             <template x-if="loadingMessages">
                                 <div class="flex justify-center py-4">
                                     <i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i>
@@ -539,46 +663,53 @@
 
                             <template x-for="(message, index) in messages" :key="message.id">
                                 <div>
-                                    <template x-if="message.parent_id">
+                                    <!-- Блок с ответом (цитата) -->
+                                    <template x-if="message.parent_id && message.parent">
                                         <div class="flex" :class="message.user_id === userId ? 'justify-end' : 'justify-start'">
-                                            <div class="max-w-[75%] mb-1">
-                                                <div class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1"
-                                                     :class="message.user_id === userId ? 'justify-end' : 'justify-start'">
-                                                    <i class="fas fa-reply text-gray-400 text-xs"></i>
-                                                    <span>Ответ <span x-text="message.user_id === userId ? 'на своё' : 'на сообщение от'"></span>
-                            <span class="font-medium" x-text="message.user_id !== userId ? getMessageAuthor(message.parent_id) : ''"></span>
-                        </span>
-                                                </div>
-                                                <div class="rounded-lg px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700/50 border-l-2 border-gray-300 dark:border-gray-600"
-                                                     :class="message.user_id === userId ? 'text-right' : 'text-left'">
-                                                    <p class="truncate text-gray-600 dark:text-gray-400 text-xs" x-text="getReplyContent(message.parent_id)"></p>
+                                            <div class="max-w-[75%] mb-0.5">
+                                                <div class="rounded-lg px-3 py-1.5 text-xs bg-gray-50 dark:bg-gray-700/50 border-l-3 border-blue-400 dark:border-blue-500"
+                                                     :class="message.user_id === userId ? 'mr-1' : 'ml-1'">
+                                                    <p class="font-semibold text-blue-500 dark:text-blue-400 text-[10px] truncate">
+                                                        <i class="fas fa-reply text-[8px] mr-1"></i>
+                                                        <span x-text="message.parent.user?.name"></span>
+                                                    </p>
+                                                    <p class="truncate text-gray-500 dark:text-gray-400 text-[11px]"
+                                                       x-text="message.parent.content || '📎 Вложение'"></p>
                                                 </div>
                                             </div>
                                         </div>
                                     </template>
 
+                                    <!-- Само сообщение -->
                                     <div class="flex message-item"
                                          :class="message.user_id === userId ? 'justify-end' : 'justify-start'">
                                         <div class="max-w-[75%]"
                                              :class="message.user_id === userId ? 'text-right' : 'text-left'">
 
+                                            <!-- System Message -->
                                             <template x-if="message.type === 'system'">
                                                 <div class="text-center text-xs text-gray-500 my-2">
-
+                            <span class="bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full"
+                                  x-text="message.content"></span>
                                                 </div>
                                             </template>
 
+                                            <!-- Regular Message -->
                                             <template x-if="message.type !== 'system'">
                                                 <div>
+                                                    <!-- Sender name for group chats -->
                                                     <p x-show="activeChat.type !== 'private' && message.user_id !== userId"
                                                        class="text-xs text-gray-500 mb-1 ml-2"
                                                        x-text="message.user?.name"></p>
 
-                                                    <div class="rounded-2xl px-4 py-2.5 break-words relative group shadow-sm"
+                                                    <!-- Message bubble -->
+                                                    <div class="rounded-2xl px-4 py-2.5 break-words relative group shadow-sm transition-all duration-300"
                                                          :class="message.user_id === userId ?
-                                'bg-green-500 text-white rounded-br-none' :
-                                'bg-gray-100 dark:bg-white/5 rounded-bl-none'">
+                                    'bg-green-500 text-white rounded-br-none' :
+                                    'bg-gray-100 dark:bg-white/5 rounded-bl-none'"
+                                                         :style="(replyTo?.id === message.id || message.parent_id) ? 'border: 2px solid #3B82F6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);' : ''">
 
+                                                        <!-- File message -->
                                                         <template x-if="message.type === 'file' || message.type === 'image'">
                                                             <div class="space-y-2">
                                                                 <template x-if="message.type === 'image'">
@@ -603,32 +734,40 @@
                                                             </div>
                                                         </template>
 
+                                                        <!-- Text message -->
                                                         <template x-if="message.type === 'text' || !message.type">
                                                             <p class="text-sm whitespace-pre-wrap break-words"
                                                                x-text="message.content"></p>
                                                         </template>
 
+                                                        <!-- Edited indicator -->
                                                         <span x-show="message.is_edited"
                                                               class="text-xs opacity-60 mt-1 block">
-                                (ред.)
-                            </span>
+                                    (ред.)
+                                </span>
                                                     </div>
 
-                                                    <div class="flex items-center gap-2 mt-1 text-xs text-gray-400 px-1">
+                                                    <!-- Message footer -->
+                                                    <div class="flex items-center gap-2 mt-1 text-xs text-gray-400 px-1 group">
                                                         <span x-text="formatTime(message.created_at)"></span>
 
                                                         <button @click="replyToMessage(message)"
                                                                 class="text-gray-400 hover:text-green-500 transition-colors p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                                :class="{'text-blue-500': replyTo?.id === message.id}"
                                                                 title="Ответить">
-                                                            <i class="fas fa-reply text-xs"></i>
+                                                            <i class="fas fa-reply text-xs"
+                                                               :class="{'rotate-180': replyTo?.id === message.id}"></i>
                                                         </button>
 
                                                         <template x-if="message.user_id === userId">
-                                                            <div class="flex items-center gap-0.5" title="Статус сообщения">
-                                                                <i class="fas fa-check text-xs"
-                                                                   :class="message.status === 'delivered' || message.status === 'read' ? 'text-blue-400' : 'text-gray-300'"></i>
-                                                                <i class="fas fa-check text-xs"
-                                                                   :class="message.status === 'read' ? 'text-blue-600' : 'text-gray-300'"></i>
+                                                            <div class="relative flex items-center gap-0.5 cursor-default">
+                                                                <i class="fas fa-check text-[13px] transition-all duration-300"
+                                                                   :class="message.status === 'read' ? 'text-green-500' : 'text-gray-400'">
+                                                                </i>
+                                                                <div class="absolute -top-7 right-0 bg-gray-800 text-white text-[10px] px-2 py-0.5 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                                                                     x-show="message.status === 'read'">
+                                                                    Прочитано <span x-text="formatTime(message.statuses?.read_at)"></span>
+                                                                </div>
                                                             </div>
                                                         </template>
                                                     </div>
@@ -639,6 +778,7 @@
                                 </div>
                             </template>
 
+                            <!-- Typing indicator -->
                             <div x-show="typingUsers.length > 0"
                                  class="flex items-center gap-2 text-gray-500 px-2">
                                 <div class="typing-indicator">
@@ -656,16 +796,22 @@
 
                         <div
                             class="sticky bottom-0 border-t border-gray-200 p-4 dark:border-gray-800 bg-white dark:bg-gray-900">
+                            <!-- Блок с ответом на сообщение -->
                             <div x-show="replyTo"
-                                 class="mb-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-green-500 flex items-center justify-between">
+                                 x-transition:enter="transition-all duration-300"
+                                 x-transition:enter-start="opacity-0 transform translate-y-2"
+                                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                                 class="mb-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500 flex items-center justify-between">
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                                        <i class="fas fa-reply mr-1"></i>
                                         Ответ на сообщение от <span x-text="replyTo.user?.name"></span>
                                     </p>
-                                    <p class="text-sm truncate" x-text="replyTo.content"></p>
+                                    <p class="text-sm truncate text-gray-600 dark:text-gray-300"
+                                       x-text="replyTo.content || '📎 Вложение'"></p>
                                 </div>
                                 <button @click="cancelReply()"
-                                        class="text-gray-400 hover:text-gray-600 dark:hover:text-white p-1">
+                                        class="text-gray-400 hover:text-gray-600 dark:hover:text-white p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -689,7 +835,7 @@
                                               @input="handleTyping"
                                               rows="1"
                                               placeholder="Написать сообщение..."
-                                              class="message-input w-full border-0 bg-transparent px-4 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-0 dark:text-white/90 resize-none max-h-32"
+                                              class="message-input w-full border-0 bg-transparent px-4 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-0 dark:text-white/90 resize-none max-h-32 outline-none"
                                               style="max-height: 120px; min-height: 42px;"
                                               :disabled="sending"></textarea>
 
@@ -865,7 +1011,6 @@
                 replyTo: null,
                 initialLoad: true,
 
-
                 chats: [],
                 messages: [],
                 colleagues: [],
@@ -965,7 +1110,6 @@
                         if (this.activeChat) {
                             this.pollNewMessages();
                         }
-                        // this.updateUnreadCounts();
                     }, 5000);
                 },
 
@@ -1011,7 +1155,6 @@
                         .then(data => {
                             if (data.success) {
                                 this.chats = data.chats || [];
-                                console.log('Chats loaded:', this.chats);
                             }
                         })
                         .catch(error => {
@@ -1093,6 +1236,16 @@
                     this.replyTo = null;
                 },
 
+                get messageStatus() {
+                    return function(message) {
+                        if (!message.statuses) return 'sent';
+                        const status = message.statuses.status;
+                        if (status === 'read') return 'read';
+                        if (status === 'delivered') return 'delivered';
+                        return 'sent';
+                    }
+                },
+
                 getMessageAuthor(messageId) {
                     const message = this.messages.find(m => m.id === messageId);
                     return message?.user?.name || 'Неизвестный';
@@ -1108,7 +1261,7 @@
                     this.loadingMessages = true;
                     this.messages = [];
 
-                    fetch(`/chat/chats/${chat.id}/messages?limit=50`, {
+                    fetch(`/chat/chats/${chat.id}/messages?limit=5`, {
                         headers: {
                             'Accept': 'application/json',
                             'X-Requested-With': 'XMLHttpRequest'
@@ -1121,23 +1274,18 @@
                                 if (data.messages && data.messages.data && Array.isArray(data.messages.data)) {
                                     messagesData = data.messages.data;
                                 }
-                                this.messages = [];
-                                messagesData.forEach(msg => {
-                                    this.messages.push(msg);
-                                });
+                                this.messages = messagesData;
                                 if (this.messages.length > 0) {
                                     this.oldestMessageId = this.messages[0]?.id;
-                                    this.hasMoreMessages = this.messages.length >= 50;
+                                    this.hasMoreMessages = this.messages.length >= 5; // <-- ИЗМЕНИ НА 5
+                                } else {
+                                    this.hasMoreMessages = false;
                                 }
-                            } else {
-                                this.messages = [];
-                            }
-                            setTimeout(() => {
                                 this.$nextTick(() => {
                                     this.scrollToBottom();
                                     this.markAsRead();
                                 });
-                            }, 100);
+                            }
                         })
                         .catch(error => {
                             console.error('Error loading messages:', error);
@@ -1149,12 +1297,12 @@
                 },
 
                 loadMoreMessages() {
-                    if (!this.activeChat || !this.oldestMessageId || this.loadingMessages) return;
+                    if (!this.activeChat || !this.oldestMessageId || this.loadingMessages || this.loadingMoreMessages) return;
 
-                    this.loadingMessages = true;
+                    this.loadingMoreMessages = true;
                     const oldestId = this.oldestMessageId;
 
-                    fetch(`/chat/chats/${this.activeChat.id}/messages?before=${oldestId}&limit=30`, {
+                    fetch(`/chat/chats/${this.activeChat.id}/messages?before=${oldestId}&limit=5`, { // <-- ИЗМЕНИ НА 5
                         headers: {
                             'Accept': 'application/json',
                             'X-Requested-With': 'XMLHttpRequest'
@@ -1164,28 +1312,30 @@
                         .then(data => {
                             if (data.success && data.messages?.data?.length > 0) {
                                 const olderMessages = data.messages.data;
+                                const container = this.$refs.messagesContainer;
+                                let oldScrollHeight = 0;
+                                if (container) {
+                                    oldScrollHeight = container.scrollHeight;
+                                }
                                 this.messages = [...olderMessages, ...this.messages];
                                 this.oldestMessageId = olderMessages[0]?.id;
-                                this.hasMoreMessages = olderMessages.length >= 30;
+                                this.hasMoreMessages = olderMessages.length >= 5; // <-- ИЗМЕНИ НА 5
                                 this.$nextTick(() => {
-                                    const container = this.$refs.messagesContainer;
-                                    if (container) {
-                                        const firstMessage = container.querySelector('.message-item:first-child');
-                                        if (firstMessage) {
-                                            const scrollOffset = firstMessage.offsetTop;
-                                            container.scrollTop = scrollOffset;
-                                        }
+                                    if (container && oldScrollHeight > 0) {
+                                        const newScrollHeight = container.scrollHeight;
+                                        const diff = newScrollHeight - oldScrollHeight;
+                                        container.scrollTop = diff + 10;
                                     }
+                                    this.loadingMoreMessages = false;
                                 });
                             } else {
                                 this.hasMoreMessages = false;
+                                this.loadingMoreMessages = false;
                             }
                         })
                         .catch(error => {
                             console.error('Error loading more messages:', error);
-                        })
-                        .finally(() => {
-                            this.loadingMessages = false;
+                            this.loadingMoreMessages = false;
                         });
                 },
 
@@ -1576,7 +1726,10 @@
                         .map(m => m.id)
                         .filter(id => id);
 
-                    if (unreadMessages.length === 0) return;
+                    if (unreadMessages.length === 0) {
+                        console.log('No unread messages');
+                        return;
+                    }
 
                     fetch(`/chat/chats/${this.activeChat.id}/mark-read`, {
                         method: 'POST',
@@ -1586,17 +1739,18 @@
                             'Accept': 'application/json',
                             'X-Requested-With': 'XMLHttpRequest'
                         },
-                        body: JSON.stringify({message_ids: unreadMessages})
+                        body: JSON.stringify({ message_ids: unreadMessages })
                     })
                         .then(res => res.json())
                         .then(data => {
+                            console.log('Mark read response:', data);
                             if (data.success) {
                                 this.messages.forEach(m => {
                                     if (unreadMessages.includes(m.id)) {
+                                        m.status = 'read';
                                         if (!m.statuses) m.statuses = {};
                                         m.statuses.status = 'read';
                                         m.statuses.read_at = new Date().toISOString();
-                                        m.status = 'read';
                                     }
                                 });
                             }
@@ -1635,14 +1789,20 @@
                     const container = this.$refs.messagesContainer;
                     if (!container) return;
 
-                    const isNearTop = container.scrollTop < 100;
+                    const isNearTop = container.scrollTop < 150;
 
+                    // АВТОМАТИЧЕСКАЯ ПОДГРУЗКА ПРИ СКРОЛЛЕ ВВЕРХ
                     if (isNearTop && this.hasMoreMessages && !this.loadingMoreMessages && !this.loadingMessages) {
+                        console.log('Loading more messages...');
                         this.loadMoreMessages();
                     }
 
                     const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
                     this.showScrollButton = !isNearBottom;
+
+                    if (isNearBottom && this.activeChat) {
+                        this.markAsRead();
+                    }
                 },
 
                 formatTime(timestamp) {
@@ -1700,37 +1860,30 @@
                     const diffWeeks = Math.floor(diffDays / 7);
                     const diffMonths = Math.floor(diffDays / 30);
 
-                    // Если меньше минуты
                     if (diffMins < 1) {
                         return 'Только что';
                     }
 
-                    // Если меньше часа
                     if (diffMins < 60) {
                         return `Был(а) ${diffMins} ${this.declension(diffMins, ['минуту', 'минуты', 'минут'])} назад`;
                     }
 
-                    // Если меньше суток
                     if (diffHours < 24) {
                         return `Был(а) ${diffHours} ${this.declension(diffHours, ['час', 'часа', 'часов'])} назад`;
                     }
 
-                    // Если меньше недели
                     if (diffDays < 7) {
                         return `Был(а) ${diffDays} ${this.declension(diffDays, ['день', 'дня', 'дней'])} назад`;
                     }
 
-                    // Если меньше месяца
                     if (diffDays < 30) {
                         return `Был(а) ${diffWeeks} ${this.declension(diffWeeks, ['неделю', 'недели', 'недель'])} назад`;
                     }
 
-                    // Если больше месяца
                     if (diffMonths < 12) {
                         return `Был(а) ${diffMonths} ${this.declension(diffMonths, ['месяц', 'месяца', 'месяцев'])} назад`;
                     }
 
-                    // Если больше года
                     const years = Math.floor(diffDays / 365);
                     return `Был(а) ${years} ${this.declension(years, ['год', 'года', 'лет'])} назад`;
                 },
@@ -1784,5 +1937,4 @@
 
         });
     </script>
-
 @endpush

@@ -21,3 +21,9 @@ Artisan::command('tasks:check-overdue', function () {
 
 // Проверка подписок каждый час
 Schedule::command('subscriptions:check')->hourly();
+
+// Добавь расписание для проверки непрочитанных сообщений
+Schedule::command('messages:check-unread')
+    ->everyFifteenMinutes()
+    ->withoutOverlapping()
+    ->appendOutputTo(storage_path('logs/unread-messages.log'));

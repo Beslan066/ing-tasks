@@ -127,7 +127,7 @@ class ChatApiController extends Controller
             if (!$chat->isUserInChat($user)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'У вас нет доступа к этому чату',
+                    'message' => 'У вас нет доступа к этому чату'
                 ], 403);
             }
 
@@ -193,7 +193,7 @@ class ChatApiController extends Controller
             if (!$chat->isUserInChat($user)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Вы не являетесь участником этого чата',
+                    'message' => 'Вы не являетесь участником этого чата'
                 ], 403);
             }
 
@@ -206,7 +206,8 @@ class ChatApiController extends Controller
                 $chat,
                 $user,
                 $request->content,
-                $request->type ?? 'text'
+                $request->type ?? 'text',
+                $request->parent_id
             );
 
             return response()->json([
@@ -626,6 +627,12 @@ class ChatApiController extends Controller
     {
         $status = $message->statuses()->where('user_id', $user->id)->first();
 
+        // ПОЛУЧАЕМ РОДИТЕЛЬСКОЕ СООБЩЕНИЕ
+        $parent = null;
+        if ($message->parent_id) {
+            $parent = Message::with('user')->find($message->parent_id);
+        }
+
         return [
             'id' => $message->id,
             'chat_id' => $message->chat_id,
@@ -635,9 +642,17 @@ class ChatApiController extends Controller
                 'id' => $message->user->id,
                 'name' => $message->user->name,
                 'avatar' => $message->user->avatar ? Storage::url($message->user->avatar) : null,
-                'avatar_color' => $message->user->getAvatarColor(), // <-- ЭТО ДОБАВИТЬ!
+                'avatar_color' => $message->user->getAvatarColor(),
                 'initials' => $message->user->getInitials(),
             ],
+            'parent' => $parent ? [
+                'id' => $parent->id,
+                'content' => $parent->content,
+                'user' => [
+                    'id' => $parent->user->id,
+                    'name' => $parent->user->name,
+                ],
+            ] : null,
             'content' => $message->content,
             'type' => $message->type,
             'file_url' => $message->file_path ? Storage::url($message->file_path) : null,
@@ -647,12 +662,12 @@ class ChatApiController extends Controller
             'is_edited' => $message->is_edited,
             'created_at' => $message->created_at,
             'updated_at' => $message->updated_at,
+            'status' => $status ? $status->status : 'sent',
             'statuses' => $status ? [
                 'status' => $status->status,
                 'delivered_at' => $status->delivered_at,
                 'read_at' => $status->read_at,
             ] : null,
-            'status' => $status ? $status->status : null,
         ];
     }
 }
