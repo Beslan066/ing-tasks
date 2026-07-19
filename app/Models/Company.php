@@ -51,6 +51,11 @@ class Company extends Model
         return $this->belongsTo(Tag::class, 'tag_id', 'id');
     }
 
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
+
     public function files(): HasMany
     {
         return $this->hasMany(File::class);

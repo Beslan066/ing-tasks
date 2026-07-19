@@ -467,4 +467,9 @@ class Task extends Model
     {
         return Subtask::getProgress($this->id);
     }
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class, 'event_id');
+    }
 }

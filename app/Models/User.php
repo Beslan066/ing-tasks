@@ -99,6 +99,18 @@ class User extends Authenticatable implements MustVerifyEmail
             ->withTimestamps();
     }
 
+    public function createdEvents()
+    {
+        return $this->hasMany(Event::class, 'creator_id');
+    }
+
+    public function participatedEvents()
+    {
+        return $this->belongsToMany(Event::class, 'event_participants')
+            ->withPivot('status', 'responded_at', 'comment')
+            ->withTimestamps();
+    }
+
 
     /**
      * Получить названия всех отделов пользователя в виде строки
@@ -1217,5 +1229,27 @@ class User extends Authenticatable implements MustVerifyEmail
             // Если колонка не существует, возвращаем первый отдел
             return $this->departments()->first();
         }
+    }
+
+
+    public function getUpcomingEventsAttribute()
+    {
+        return $this->participatedEvents()
+            ->where('start_date', '>=', now())
+            ->where('status', '!=', 'completed')
+            ->where('status', '!=', 'cancelled')
+            ->orderBy('start_date')
+            ->limit(10)
+            ->get();
+    }
+
+    public function getTodayEventsAttribute()
+    {
+        return $this->participatedEvents()
+            ->whereDate('start_date', now()->toDateString())
+            ->where('status', '!=', 'completed')
+            ->where('status', '!=', 'cancelled')
+            ->orderBy('start_date')
+            ->get();
     }
 }

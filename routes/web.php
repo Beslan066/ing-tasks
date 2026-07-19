@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ChatApiController;
 use App\Http\Controllers\Frontend\ChatController;
 use App\Http\Controllers\Frontend\CompanyController;
 use App\Http\Controllers\Frontend\EmailTrashController;
+use App\Http\Controllers\Frontend\EventController;
 use App\Http\Controllers\Frontend\FileStorageController;
 use App\Http\Controllers\Frontend\DepartmentEmailController;
 use App\Http\Controllers\Frontend\EmailTemplateController;
@@ -306,6 +307,15 @@ Route::middleware(['auth', 'verified', 'trackUserActivity', 'require.company'])-
         // Маршрут для удаления файлов
         Route::delete('/files/{file}', [App\Http\Controllers\Frontend\TaskController::class, 'deleteFile'])->name('files.delete');
         Route::post('/files/upload-ajax', [FileStorageController::class, 'uploadAjax'])->name('files.upload.ajax');
+    });
+
+    Route::prefix('events')->name('events.')->group(function () {
+        Route::get('/', [EventController::class, 'index'])->name('index');
+        Route::post('/', [EventController::class, 'store'])->name('store');
+        Route::put('/{event}', [EventController::class, 'update'])->name('update');
+        Route::delete('/{event}', [EventController::class, 'destroy'])->name('destroy');
+        Route::post('/{event}/respond', [EventController::class, 'respond'])->name('respond');
+        Route::get('/list', [EventController::class, 'getEvents'])->name('list');
     });
 });
 

@@ -66,6 +66,15 @@ class Department extends Model
     }
 
     /**
+     * События отдела
+     * @return HasMany - возвращает все события отдела
+     */
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
+
+    /**
      * Получить ВСЕХ пользователей отдела
      */
     public function getAllUsersAttribute()
