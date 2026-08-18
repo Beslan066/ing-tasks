@@ -20,6 +20,8 @@
             <ul class="text-sm text-gray-700 space-y-1 ml-6">
                 <li><i class="fas fa-check-circle text-green-500 mr-2"></i> 1 ТБ хранилища</li>
                 <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Файлы до 1 ГБ</li>
+                <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Мессенджер</li>
+                <li><i class="fas fa-check-circle text-green-500 mr-2"></i> СМС-оповещение о задачах для руководителей</li>
                 <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Приоритетная поддержка</li>
                 <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Расширенная аналитика</li>
             </ul>

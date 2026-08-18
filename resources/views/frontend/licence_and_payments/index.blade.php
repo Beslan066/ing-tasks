@@ -161,7 +161,7 @@
                                 @endforeach
                             @else
                                 <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">✓ Управление задачами</span>
-                                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">✓ Мессенджер</span>
+                                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">✓ Аналитика</span>
                                 <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">✓ Команды и проекты</span>
                                 <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">✓ Файловое хранилище ({{ $isPremium ? '1 ТБ' : '2 ГБ' }})</span>
                             @endif
@@ -268,19 +268,18 @@
                             <ul class="mt-4 space-y-2 text-gray-600 text-sm">
                                 <li>✓ До 5 пользователей</li>
                                 <li>✓ Файловое хранилище до 2 ГБ</li>
-                                <li>✓ Мессенджер</li>
-                                <li class="text-gray-400">✗ Расширенная аналитика</li>
+                                <li>✓ Сообщения к задачам</li>
+                                <li>✓ Расширенная аналитика</li>
+                                <li class="text-gray-400">✗ Мессенджер</li>
                                 <li class="text-gray-400">✗ Приоритетная поддержка</li>
-                                <li class="text-gray-400">✗ API доступ</li>
-                                <li class="text-gray-400">✗ Управление ролями</li>
-                                <li class="text-gray-400">✗ Интеграции</li>
+                                <li class="text-gray-400">✗ Ограниченный набор инструментов</li>
                             </ul>
                         </div>
                         <!-- Премиум тариф -->
                         <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 border border-[#16a34a]/30 relative">
                             <div class="absolute -top-3 left-4 bg-[#16a34a] text-white text-xs px-3 py-1 rounded-full">Рекомендуем</div>
                             <h4 class="text-xl font-bold text-gray-800">Премиум</h4>
-                            <p class="text-3xl font-bold text-gray-800 mt-3">2 490 ₽<span class="text-sm font-normal text-gray-500">/мес</span></p>
+                            <p class="text-3xl font-bold text-gray-800 mt-3">1 490 ₽<span class="text-sm font-normal text-gray-500">/мес</span></p>
                             <p class="text-gray-400 text-xs mt-1">+400 ₽ за доп. пользователя (свыше 15)</p>
                             <ul class="mt-4 space-y-2 text-gray-600 text-sm">
                                 <li>✓ До 15 пользователей (далее +400 ₽/мес)</li>
