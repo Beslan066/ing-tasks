@@ -2958,6 +2958,170 @@ setDefaultTab()
         }
     }
 
+    function openUpgradeModal() {
+        document.getElementById('upgradeModal').classList.remove('hidden');
+        document.getElementById('upgradeModal').classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        document.querySelector('input[name="premium_period"][value="month"]').checked = true;
+        updatePremiumPrice();
+    }
+
+    function closeUpgradeModal() {
+        document.getElementById('upgradeModal').classList.add('hidden');
+        document.getElementById('upgradeModal').classList.remove('flex');
+        document.body.style.overflow = 'auto';
+    }
+
+    function openAddUsersModal() {
+        document.getElementById('addUsersModal').classList.remove('hidden');
+        document.getElementById('addUsersModal').classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        document.getElementById('userCount').value = 1;
+        document.querySelector('input[name="user_period"][value="month"]').checked = true;
+        updateUserPrice();
+    }
+
+    function closeAddUsersModal() {
+        document.getElementById('addUsersModal').classList.add('hidden');
+        document.getElementById('addUsersModal').classList.remove('flex');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Расчет цены Премиум
+    function updatePremiumPrice() {
+        const period = document.querySelector('input[name="premium_period"]:checked').value;
+        let price = 2490;
+
+        if (period === '6months') {
+            price = 2490 * 6;
+            price = price - (price * 0.10);
+        } else if (period === 'year') {
+            price = 2490 * 12;
+            price = price - (price * 0.15);
+        }
+
+        document.getElementById('premiumBasePrice').innerText = (period === 'month' ? '2 490 ₽' : (period === '6months' ? '14 940 ₽' : '29 880 ₽'));
+        document.getElementById('premiumTotalPrice').innerText = Math.round(price).toLocaleString() + ' ₽';
+    }
+
+    // Расчет цены пользователей
+    function updateUserPrice() {
+        const count = parseInt(document.getElementById('userCount').value) || 1;
+        const period = document.querySelector('input[name="user_period"]:checked').value;
+        const pricePerUser = 400;
+        let subtotal = count * pricePerUser;
+        let discount = 0;
+        let total = subtotal;
+
+        document.getElementById('userCountDisplay').innerText = count;
+
+        if (period === '6months') {
+            subtotal = count * pricePerUser * 6;
+            discount = subtotal * 0.10;
+            total = subtotal - discount;
+            document.getElementById('userDiscountRow').style.display = 'flex';
+            document.getElementById('userDiscount').innerText = '-' + Math.round(discount).toLocaleString() + ' ₽';
+        } else if (period === 'year') {
+            subtotal = count * pricePerUser * 12;
+            discount = subtotal * 0.15;
+            total = subtotal - discount;
+            document.getElementById('userDiscountRow').style.display = 'flex';
+            document.getElementById('userDiscount').innerText = '-' + Math.round(discount).toLocaleString() + ' ₽';
+        } else {
+            document.getElementById('userDiscountRow').style.display = 'none';
+        }
+
+        document.getElementById('userSubtotal').innerText = Math.round(subtotal).toLocaleString() + ' ₽';
+        document.getElementById('userTotalPrice').innerText = Math.round(total).toLocaleString() + ' ₽';
+    }
+
+    // Обработка оплаты Премиум
+    async function processUpgrade() {
+        const period = document.querySelector('input[name="premium_period"]:checked').value;
+        const button = document.getElementById('premiumPayButton');
+        const loadingIndicator = document.getElementById('premiumLoadingIndicator');
+
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка...';
+        loadingIndicator.classList.remove('hidden');
+
+        try {
+            const response = await fetch('<?php echo e(route("licence.payment.premium")); ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ period: period })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success && data.payment_url) {
+                window.location.href = data.payment_url;
+            } else {
+                throw new Error(data.error || 'Ошибка при создании платежа');
+            }
+        } catch (error) {
+            console.error('Payment error:', error);
+            alert('Ошибка: ' + error.message);
+            button.disabled = false;
+            button.innerHTML = 'Оплатить';
+            loadingIndicator.classList.add('hidden');
+        }
+    }
+
+    // Обработка оплаты дополнительных пользователей
+    async function processAddUsers() {
+        const count = parseInt(document.getElementById('userCount').value) || 1;
+        const period = document.querySelector('input[name="user_period"]:checked').value;
+        const button = document.getElementById('usersPayButton');
+        const loadingIndicator = document.getElementById('usersLoadingIndicator');
+
+        if (count < 1) {
+            alert('Количество пользователей должно быть не менее 1');
+            return;
+        }
+
+        if (count > 100) {
+            alert('Максимальное количество дополнительных пользователей - 100');
+            return;
+        }
+
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка...';
+        loadingIndicator.classList.remove('hidden');
+
+        try {
+            const response = await fetch('<?php echo e(route("licence.payment.additional-users")); ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_count: count,
+                    period: period
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success && data.payment_url) {
+                window.location.href = data.payment_url;
+            } else {
+                throw new Error(data.error || 'Ошибка при создании платежа');
+            }
+        } catch (error) {
+            console.error('Payment error:', error);
+            alert('Ошибка: ' + error.message);
+            button.disabled = false;
+            button.innerHTML = 'Оплатить';
+            loadingIndicator.classList.add('hidden');
+        }
+    }
 </script>
 <script>
     function switchEditFileTab(tabName) {
