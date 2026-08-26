@@ -26,8 +26,8 @@ return [
     | Цены и тарифы
     |--------------------------------------------------------------------------
     */
-    'premium_monthly_price' => 2490,
-    'price_per_user' => 600,
+    'premium_monthly_price' => 1490,
+    'price_per_user' => 400,
 
     'discounts' => [
         '6months' => 10,
