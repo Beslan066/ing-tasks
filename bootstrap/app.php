@@ -34,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'trackUserSession' => \App\Http\Middleware\TrackUserSession::class,
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'subscription' => \App\Http\Middleware\CheckSubscription::class,
+            'chat.access' => \App\Http\Middleware\CheckChatAccess::class,
         ]);
 
         $middleware->web(append: [

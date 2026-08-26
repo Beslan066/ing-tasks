@@ -243,37 +243,15 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
 
 });
 
-Route::get('/test-mailable-fixed', function () {
-    try {
-        $testData = [
-            'name' => 'Тестовый Пользователь',
-            'email' => 'test@example.com',
-            'subject' => 'Тестовое обращение',
-            'message' => 'Проверка работы Mailable',
-            'attachment_original_name' => null,
-            'attachment_size' => null,
-            'user_ip' => '127.0.0.1',
-            'ticket_id' => 999
-        ];
-
-        $mailable = new \App\Mail\SupportTicketMail($testData);
-
-        Mail::to('taskmanager@xn--d1ababe5abjwjn9m.xn--p1ai')->send($mailable);
-
-        return '✅ Mailable успешно отправлен! Проверь почту.';
-    } catch (\Exception $e) {
-        return '❌ Ошибка: ' . $e->getMessage();
-    }
-});
 
 Route::middleware(['auth', 'verified', 'trackUserActivity', 'require.company'])->group(function () {
 
-    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::middleware(['auth', 'chat.access'])->group(function () {
+        Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    });
 
-    Route::get('/chat-departments', [App\Http\Controllers\Api\DepartmentController::class, 'index']);
-
-
-    Route::prefix('chat')->group(function () {
+// API маршруты тоже нужно защитить
+    Route::prefix('chat')->middleware(['auth', 'chat.access'])->group(function () {
         Route::get('/chats', [ChatApiController::class, 'getChats']);
         Route::get('/chats/unread-counts', [ChatApiController::class, 'getUnreadCounts']);
         Route::get('/colleagues', [ChatApiController::class, 'getColleagues']);
@@ -294,6 +272,9 @@ Route::middleware(['auth', 'verified', 'trackUserActivity', 'require.company'])-
             Route::delete('/', [ChatApiController::class, 'deleteChat']);
         });
     });
+
+// Отдельный маршрут для отделов без проверки чата
+    Route::get('/chat-departments', [App\Http\Controllers\Api\DepartmentController::class, 'index']);
 
 
     Route::prefix('files')->group(function () {

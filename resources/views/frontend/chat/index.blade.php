@@ -299,537 +299,636 @@
             color: #3B82F6;
             transform: rotate(180deg);
         }
+
+        /* Стили для модального окна премиум */
+        .premium-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .premium-modal {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 440px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: modalSlideUp 0.4s ease-out;
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .premium-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 40px rgba(245, 158, 11, 0.3);
+        }
+
+        .premium-icon-wrapper i {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .premium-features {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .premium-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            color: #e5e7eb;
+            font-size: 0.875rem;
+        }
+
+        .premium-feature i {
+            color: #10b981;
+            font-size: 1rem;
+        }
+
+        .premium-btn-primary {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .premium-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
+        }
+
+        .premium-btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center;
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .premium-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .premium-badge {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
     </style>
 @endpush
 
 @section('content')
-    <div class="chat-container overflow-hidden"
-         x-data="chatApp()"
-         x-init="init()"
-         x-cloak>
+    {{-- Основной контент чата (только если есть доступ) --}}
+    @if($canAccessChat)
+        <div class="chat-container overflow-hidden"
+             x-data="chatApp()"
+             x-init="init()"
+             x-cloak>
 
-        <div class="chat-overlay"
-             :class="{'open': sidebarOpen}"
-             @click="sidebarOpen = false"></div>
+            <div class="chat-overlay"
+                 :class="{'open': sidebarOpen}"
+                 @click="sidebarOpen = false"></div>
 
-        <div class="flex h-full flex-col gap-6 xl:flex-row xl:gap-5">
-            <div
-                class="chat-sidebar chat-sidebar-mobile flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white xl:flex xl:w-1/4 dark:border-gray-800 dark:bg-white/[0.03]"
-                :class="{'open': sidebarOpen, 'hidden xl:flex': activeChat, 'flex': !activeChat}">
+            <div class="flex h-full flex-col gap-6 xl:flex-row xl:gap-5">
+                <div
+                    class="chat-sidebar chat-sidebar-mobile flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white xl:flex xl:w-1/4 dark:border-gray-800 dark:bg-white/[0.03]"
+                    :class="{'open': sidebarOpen, 'hidden xl:flex': activeChat, 'flex': !activeChat}">
 
-                <div class="sticky px-4 pt-4 pb-4 sm:px-5 sm:pt-5 xl:pb-0">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h3 class="text-theme-xl font-semibold text-gray-800 sm:text-2xl dark:text-white/90">
-                                Чаты
-                                <span x-show="unreadTotal > 0"
-                                      class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-green-500 rounded-full">
+                    <div class="sticky px-4 pt-4 pb-4 sm:px-5 sm:pt-5 xl:pb-0">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <h3 class="text-theme-xl font-semibold text-gray-800 sm:text-2xl dark:text-white/90">
+                                    Чаты
+                                    <span x-show="unreadTotal > 0"
+                                          class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-green-500 rounded-full">
                                     <span x-text="unreadTotal"></span>
                                 </span>
-                            </h3>
-                        </div>
+                                </h3>
+                            </div>
 
-                        <div x-data="{openMenu: false}" class="relative">
-                            <button @click="openMenu = !openMenu"
-                                    class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <div x-show="openMenu"
-                                 @click.outside="openMenu = false"
-                                 x-cloak
-                                 class="absolute right-0 top-full z-40 w-56 space-y-1 rounded-2xl border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-800 dark:bg-gray-800">
-                                <button @click="showNewChatModal = true; openMenu = false"
-                                        class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
-                                    <i class="fas fa-plus w-5"></i>
-                                    Новый чат
+                            <div x-data="{openMenu: false}" class="relative">
+                                <button @click="openMenu = !openMenu"
+                                        class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+                                    <i class="fas fa-ellipsis-v"></i>
                                 </button>
-                                <button @click="showNewGroupModal = true; openMenu = false"
-                                        class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
-                                    <i class="fas fa-users w-5"></i>
-                                    Создать группу
-                                </button>
-
-                                @if(auth()->user()->isCompanyOwner())
-                                    <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
-                                    <button @click="createCompanyChat(); openMenu = false"
-                                            class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-                                            :disabled="hasCompanyChat"
-                                            :class="{'opacity-50 cursor-not-allowed': hasCompanyChat}">
-                                        <i class="fas fa-building w-5"></i>
-                                        <span
-                                            x-text="hasCompanyChat ? 'Общий чат уже создан' : 'Общий чат компании'"></span>
-                                    </button>
-                                @endif
-
-                                @if(auth()->user()->isLeader() || auth()->user()->isManagerRole())
-                                    <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
-                                    <button @click="showDepartmentChats = !showDepartmentChats"
+                                <div x-show="openMenu"
+                                     @click.outside="openMenu = false"
+                                     x-cloak
+                                     class="absolute right-0 top-full z-40 w-56 space-y-1 rounded-2xl border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-800 dark:bg-gray-800">
+                                    <button @click="showNewChatModal = true; openMenu = false"
                                             class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
-                                        <i class="fas fa-sitemap w-5"></i>
-                                        Чат отдела
-                                        <i class="fas fa-chevron-down ml-auto text-xs transition-transform"
-                                           :class="{'rotate-180': showDepartmentChats}"></i>
+                                        <i class="fas fa-plus w-5"></i>
+                                        Новый чат
                                     </button>
-                                    <div x-show="showDepartmentChats" x-cloak class="ml-4 space-y-1">
-                                        <template x-for="dept in departments" :key="dept.id">
-                                            <button @click="createDepartmentChat(dept.id)"
-                                                    class="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
-                                                <i class="fas fa-users text-xs w-4"></i>
-                                                <span x-text="dept.name"></span>
-                                            </button>
+                                    <button @click="showNewGroupModal = true; openMenu = false"
+                                            class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+                                        <i class="fas fa-users w-5"></i>
+                                        Создать группу
+                                    </button>
+
+                                    @if(auth()->user()->isCompanyOwner())
+                                        <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                                        <button @click="createCompanyChat(); openMenu = false"
+                                                class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                                                :disabled="hasCompanyChat"
+                                                :class="{'opacity-50 cursor-not-allowed': hasCompanyChat}">
+                                            <i class="fas fa-building w-5"></i>
+                                            <span
+                                                x-text="hasCompanyChat ? 'Общий чат уже создан' : 'Общий чат компании'"></span>
+                                        </button>
+                                    @endif
+
+                                    @if(auth()->user()->isLeader() || auth()->user()->isManagerRole())
+                                        <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                                        <button @click="showDepartmentChats = !showDepartmentChats"
+                                                class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+                                            <i class="fas fa-sitemap w-5"></i>
+                                            Чат отдела
+                                            <i class="fas fa-chevron-down ml-auto text-xs transition-transform"
+                                               :class="{'rotate-180': showDepartmentChats}"></i>
+                                        </button>
+                                        <div x-show="showDepartmentChats" x-cloak class="ml-4 space-y-1">
+                                            <template x-for="dept in departments" :key="dept.id">
+                                                <button @click="createDepartmentChat(dept.id)"
+                                                        class="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                                    <i class="fas fa-users text-xs w-4"></i>
+                                                    <span x-text="dept.name"></span>
+                                                </button>
+                                            </template>
+                                            <p x-show="departments.length === 0"
+                                               class="text-xs text-gray-400 px-3 py-1">
+                                                Нет доступных отделов
+                                            </p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="text"
+                                   x-model="searchQuery"
+                                   @input="filterChats()"
+                                   placeholder="Поиск чатов..."
+                                   class="w-full rounded-lg border-2 border-gray-300 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 outline-none placeholder:text-gray-400 focus:border-green-500 focus:ring-4 focus:ring-green-100 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+                        </div>
+                    </div>
+
+                    <div class="flex-1 overflow-auto px-4 pb-4 sm:px-5 custom-scrollbar">
+                        <template x-if="loading">
+                            <div class="flex justify-center py-8">
+                                <i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i>
+                            </div>
+                        </template>
+
+                        <template x-if="!loading && filteredChats.length === 0">
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-comments text-4xl mb-2 opacity-50"></i>
+                                <p>Нет чатов</p>
+                                <p class="text-sm mt-1">Начните новый чат или создайте группу</p>
+                            </div>
+                        </template>
+
+                        <template x-for="chat in filteredChats" :key="chat.id">
+                            <div @click="selectChat(chat)"
+                                 class="flex cursor-pointer items-center gap-3 rounded-lg p-3 mb-1 hover:bg-gray-100 dark:hover:bg-white/[0.03] transition-colors"
+                                 :class="{'bg-gray-100 dark:bg-white/[0.03]': activeChat?.id === chat.id}">
+
+                                <div class="relative flex-shrink-0">
+                                    <div class="h-12 w-12 rounded-full overflow-hidden bg-gray-200">
+                                        <template x-if="chat.type === 'private'">
+                                            <div class="h-full w-full">
+                                                <template x-if="chat.users && chat.users[0] && chat.users[0].avatar">
+                                                    <img :src="chat.users[0].avatar" class="h-full w-full object-cover">
+                                                </template>
+                                                <template x-if="!chat.users || !chat.users[0] || !chat.users[0].avatar">
+                                                    <div class="h-full w-full flex items-center justify-center text-lg font-medium text-white"
+                                                         :class="chat.users && chat.users[0] ? chat.users[0].avatar_color || 'bg-gray-500' : 'bg-gray-500'">
+                                                        <span x-text="chat.users && chat.users[0] ? chat.users[0].initials || '?' : '?'"></span>
+                                                    </div>
+                                                </template>
+                                            </div>
                                         </template>
-                                        <p x-show="departments.length === 0"
-                                           class="text-xs text-gray-400 px-3 py-1">
-                                            Нет доступных отделов
-                                        </p>
+
+                                        <template x-if="chat.type !== 'private'">
+                                            <div class="h-full w-full flex items-center justify-center text-white text-2xl"
+                                                 :style="'background: ' + (chat.type === 'company' ? 'linear-gradient(135deg, #3B82F6, #1D4ED8)' : 'linear-gradient(135deg, #10B981, #047857)')">
+                                                <i class="fas"
+                                                   :class="chat.type === 'company' ? 'fa-building' : (chat.type === 'department' ? 'fa-sitemap' : 'fa-users')">
+                                                </i>
+                                            </div>
+                                        </template>
                                     </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 relative">
-                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                        <input type="text"
-                               x-model="searchQuery"
-                               @input="filterChats()"
-                               placeholder="Поиск чатов..."
-                               class="w-full rounded-lg border-2 border-gray-300 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 outline-none placeholder:text-gray-400 focus:border-green-500 focus:ring-4 focus:ring-green-100 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
-                    </div>
-                </div>
-
-                <div class="flex-1 overflow-auto px-4 pb-4 sm:px-5 custom-scrollbar">
-                    <template x-if="loading">
-                        <div class="flex justify-center py-8">
-                            <i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i>
-                        </div>
-                    </template>
-
-                    <template x-if="!loading && filteredChats.length === 0">
-                        <div class="text-center py-8 text-gray-500">
-                            <i class="fas fa-comments text-4xl mb-2 opacity-50"></i>
-                            <p>Нет чатов</p>
-                            <p class="text-sm mt-1">Начните новый чат или создайте группу</p>
-                        </div>
-                    </template>
-
-                    <template x-for="chat in filteredChats" :key="chat.id">
-                        <div @click="selectChat(chat)"
-                             class="flex cursor-pointer items-center gap-3 rounded-lg p-3 mb-1 hover:bg-gray-100 dark:hover:bg-white/[0.03] transition-colors"
-                             :class="{'bg-gray-100 dark:bg-white/[0.03]': activeChat?.id === chat.id}">
-
-                            <div class="relative flex-shrink-0">
-                                <div class="h-12 w-12 rounded-full overflow-hidden bg-gray-200">
-                                    <template x-if="chat.type === 'private'">
-                                        <div class="h-full w-full">
-                                            <template x-if="chat.users && chat.users[0] && chat.users[0].avatar">
-                                                <img :src="chat.users[0].avatar" class="h-full w-full object-cover">
-                                            </template>
-                                            <template x-if="!chat.users || !chat.users[0] || !chat.users[0].avatar">
-                                                <div class="h-full w-full flex items-center justify-center text-lg font-medium text-white"
-                                                     :class="chat.users && chat.users[0] ? chat.users[0].avatar_color || 'bg-gray-500' : 'bg-gray-500'">
-                                                    <span x-text="chat.users && chat.users[0] ? chat.users[0].initials || '?' : '?'"></span>
-                                                </div>
-                                            </template>
-                                        </div>
-                                    </template>
-
-                                    <template x-if="chat.type !== 'private'">
-                                        <div class="h-full w-full flex items-center justify-center text-white text-2xl"
-                                             :style="'background: ' + (chat.type === 'company' ? 'linear-gradient(135deg, #3B82F6, #1D4ED8)' : 'linear-gradient(135deg, #10B981, #047857)')">
-                                            <i class="fas"
-                                               :class="chat.type === 'company' ? 'fa-building' : (chat.type === 'department' ? 'fa-sitemap' : 'fa-users')">
-                                            </i>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-start justify-between">
-                                    <h5 class="text-sm font-medium text-gray-800 truncate dark:text-white/90"
-                                        x-text="chat.display_name || chat.name || 'Чат'"></h5>
-                                    <span class="text-xs text-gray-400 flex-shrink-0 ml-2" x-text="formatTime(chat.updated_at)"></span>
                                 </div>
 
-                                <p class="text-xs text-gray-500 truncate dark:text-gray-400 mt-0.5">
-                                    <template x-if="chat.last_message">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-start justify-between">
+                                        <h5 class="text-sm font-medium text-gray-800 truncate dark:text-white/90"
+                                            x-text="chat.display_name || chat.name || 'Чат'"></h5>
+                                        <span class="text-xs text-gray-400 flex-shrink-0 ml-2" x-text="formatTime(chat.updated_at)"></span>
+                                    </div>
+
+                                    <p class="text-xs text-gray-500 truncate dark:text-gray-400 mt-0.5">
+                                        <template x-if="chat.last_message">
                                         <span>
                                             <span x-text="chat.last_message.user?.name + ': '"
                                                   x-show="chat.type !== 'private'"></span>
                                             <span x-text="chat.last_message.content || 'Файл'"></span>
                                         </span>
-                                    </template>
-                                    <template x-if="!chat.last_message">
-                                        <span>Нет сообщений</span>
-                                    </template>
-                                </p>
-
-                                <div class="flex items-center justify-between mt-1">
-    <span class="text-xs text-gray-400 truncate max-w-[150px]"
-          x-text="chat.users?.map(u => u.name).join(', ')"></span>
-
-                                    <div class="flex items-center gap-1 flex-shrink-0">
-                                        <!-- Статус онлайн для приватных чатов -->
-                                        <span x-show="chat.type === 'private' && chat.users && chat.users[0]">
-            <span x-show="chat.users[0].is_online" class="text-green-500 text-xs">
-                <i class="fas fa-circle text-[6px]"></i>
-            </span>
-            <span x-show="!chat.users[0].is_online" class="text-gray-400 text-xs">
-                <i class="fas fa-circle text-[6px]"></i>
-            </span>
-        </span>
-
-                                        <span x-show="chat.unread_count > 0"
-                                              class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-green-500 rounded-full"
-                                              x-text="chat.unread_count"></span>
-
-                                        <span x-show="chat.pivot?.is_muted" class="text-gray-400">
-            <i class="fas fa-volume-mute text-xs"></i>
-        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
-
-            <div
-                class="flex h-full flex-col overflow-hidden rounded-2xl border-none bg-white dark:border-gray-800 dark:bg-white/[0.03] xl:w-3/4 relative"
-                :class="{'hidden xl:flex': !activeChat, 'flex': activeChat}">
-
-
-                <template x-if="activeChat">
-                    <div class="flex flex-col h-full">
-                        <div
-                            class="sticky flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-800 bg-white dark:bg-gray-900 z-10">
-                            <div class="flex items-center gap-3">
-                                <button @click="closeChat()"
-                                        class="xl:hidden mr-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
-                                    <i class="fas fa-arrow-left text-gray-600"></i>
-                                </button>
-
-                                <div class="relative flex-shrink-0">
-                                    <template x-if="activeChat.type === 'private'">
-                                        <div class="h-10 w-10 rounded-full overflow-hidden bg-gray-200">
-                                            <template x-if="activeChat.users && activeChat.users[0] && activeChat.users[0].avatar">
-                                                <img :src="activeChat.users[0].avatar" class="h-full w-full object-cover">
-                                            </template>
-                                            <template x-if="!activeChat.users || !activeChat.users[0] || !activeChat.users[0].avatar">
-                                                <div class="h-full w-full flex items-center justify-center text-sm font-medium text-white"
-                                                     :class="activeChat.users && activeChat.users[0] ? activeChat.users[0].avatar_color || 'bg-gray-500' : 'bg-gray-500'">
-                                                    <span x-text="activeChat.users && activeChat.users[0] ? activeChat.users[0].initials || '?' : '?'"></span>
-                                                </div>
-                                            </template>
-                                        </div>
-                                    </template>
-
-                                    <template x-if="activeChat.type !== 'private'">
-                                        <div class="h-10 w-10 rounded-full flex items-center justify-center text-white"
-                                             :style="'background: ' + (activeChat.type === 'company' ? 'linear-gradient(135deg, #3B82F6, #1D4ED8)' : 'linear-gradient(135deg, #10B981, #047857)')">
-                                            <i class="fas text-lg"
-                                               :class="activeChat.type === 'company' ? 'fa-building' : (activeChat.type === 'department' ? 'fa-sitemap' : 'fa-users')">
-                                            </i>
-                                        </div>
-                                    </template>
-
-                                </div>
-
-                                <div>
-                                    <h5 class="text-sm font-medium text-gray-800 dark:text-white/90"
-                                        x-text="activeChat.display_name || activeChat.name || 'Чат'"></h5>
-                                    <p class="text-xs text-gray-500 mt-0.5">
-                                        <!-- Для ПРИВАТНЫХ чатов показываем статус онлайн/офлайн -->
-                                        <span x-show="activeChat.type === 'private' && activeChat.users && activeChat.users[0]">
-                                        <span x-show="activeChat.users[0].is_online" class="text-green-500">
-                                            <i class="fas fa-circle text-[8px] inline-block mr-1"></i> В сети
-                                        </span>
-                                        <span x-show="!activeChat.users[0].is_online"
-                                              x-text="getLastActivityText(activeChat.users[0].last_activity)">
-                                        </span>
-                                        </span>
-                                        <!-- Для ГРУППОВЫХ чатов показываем количество участников -->
-                                        <span x-show="activeChat.type !== 'private'">
-            <span x-text="activeChat.users?.length + ' участников'"></span>
-            <span class="ml-2 text-green-500"
-                  x-show="activeChat.users?.filter(u => u.is_online).length > 0">
-                <i class="fas fa-circle text-[6px] mr-1"></i>
-                <span x-text="activeChat.users?.filter(u => u.is_online).length"></span> в сети
-            </span>
-            <span x-show="activeChat.type === 'department'" class="ml-1 text-green-500">
-                <i class="fas fa-check-circle"></i> Отдел
-            </span>
-            <span x-show="activeChat.type === 'company'" class="ml-1 text-blue-500">
-                <i class="fas fa-check-circle"></i> Компания
-            </span>
-        </span>
+                                        </template>
+                                        <template x-if="!chat.last_message">
+                                            <span>Нет сообщений</span>
+                                        </template>
                                     </p>
-                                </div>
-                            </div>
 
-                            <div class="flex items-center gap-1">
-                                <button @click="toggleMute(activeChat)"
-                                        class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white/90 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                                        :class="{'text-green-500': activeChat.pivot?.is_muted}">
-                                    <i class="fas" :class="activeChat.pivot?.is_muted ? 'fa-volume-off' : 'fa-volume-up'"></i>
-                                </button>
+                                    <div class="flex items-center justify-between mt-1">
+                                    <span class="text-xs text-gray-400 truncate max-w-[150px]"
+                                          x-text="chat.users?.map(u => u.name).join(', ')"></span>
 
-                                <button @click="toggleChatInfo()"
-                                        class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white/90 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                                        :class="{'bg-gray-100 dark:bg-gray-800': showChatInfo}">
-                                    <i class="fas fa-info-circle"></i>
-                                </button>
+                                        <div class="flex items-center gap-1 flex-shrink-0">
+                                            <!-- Статус онлайн для приватных чатов -->
+                                            <span x-show="chat.type === 'private' && chat.users && chat.users[0]">
+                                            <span x-show="chat.users[0].is_online" class="text-green-500 text-xs">
+                                                <i class="fas fa-circle text-[6px]"></i>
+                                            </span>
+                                            <span x-show="!chat.users[0].is_online" class="text-gray-400 text-xs">
+                                                <i class="fas fa-circle text-[6px]"></i>
+                                            </span>
+                                        </span>
 
-                                <div x-data="{openMenu: false}" class="relative">
-                                    <button @click="openMenu = !openMenu"
-                                            class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white/90 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <div x-show="openMenu"
-                                         @click.outside="openMenu = false"
-                                         x-cloak
-                                         class="absolute right-0 top-full z-40 w-48 space-y-1 rounded-2xl border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-800 dark:bg-gray-800">
+                                            <span x-show="chat.unread_count > 0"
+                                                  class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-green-500 rounded-full"
+                                                  x-text="chat.unread_count"></span>
 
-                                        <template
-                                            x-if="activeChat.type !== 'private' && (activeChat.pivot?.role === 'admin' || isLeader || isCompanyOwner)">
-                                            <button @click="showAddUsersModal = true; openMenu = false"
-                                                    class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
-                                                <i class="fas fa-user-plus w-5"></i>
-                                                Добавить участников
-                                            </button>
-                                        </template>
-
-                                        <button @click="leaveChat(activeChat); openMenu = false"
-                                                class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
-                                            <i class="fas fa-sign-out-alt w-5"></i>
-                                            Покинуть чат
-                                        </button>
-
-                                        <template
-                                            x-if="(activeChat.pivot?.role === 'admin' || isLeader || isCompanyOwner)">
-                                            <button @click="deleteChat(activeChat); openMenu = false"
-                                                    class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
-                                                <i class="fas fa-trash w-5"></i>
-                                                Удалить чат
-                                            </button>
-                                        </template>
+                                            <span x-show="chat.pivot?.is_muted" class="text-gray-400">
+                                            <i class="fas fa-volume-mute text-xs"></i>
+                                        </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </template>
+                    </div>
+                </div>
 
-                        <div class="flex-1 overflow-auto p-5 space-y-3 custom-scrollbar"
-                             x-ref="messagesContainer"
-                             @scroll="checkScroll()">
+                <div
+                    class="flex h-full flex-col overflow-hidden rounded-2xl border-none bg-white dark:border-gray-800 dark:bg-white/[0.03] xl:w-3/4 relative"
+                    :class="{'hidden xl:flex': !activeChat, 'flex': activeChat}">
 
-                            <!-- Индикатор загрузки старых сообщений (вверху) -->
-                            <div x-show="loadingMoreMessages"
-                                 class="flex justify-center py-4">
-                                <div class="flex items-center gap-2 text-gray-500">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                    <span class="text-sm">Загрузка старых сообщений...</span>
+                    <template x-if="activeChat">
+                        <div class="flex flex-col h-full">
+                            <div
+                                class="sticky flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-800 bg-white dark:bg-gray-900 z-10">
+                                <div class="flex items-center gap-3">
+                                    <button @click="closeChat()"
+                                            class="xl:hidden mr-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
+                                        <i class="fas fa-arrow-left text-gray-600"></i>
+                                    </button>
+
+                                    <div class="relative flex-shrink-0">
+                                        <template x-if="activeChat.type === 'private'">
+                                            <div class="h-10 w-10 rounded-full overflow-hidden bg-gray-200">
+                                                <template x-if="activeChat.users && activeChat.users[0] && activeChat.users[0].avatar">
+                                                    <img :src="activeChat.users[0].avatar" class="h-full w-full object-cover">
+                                                </template>
+                                                <template x-if="!activeChat.users || !activeChat.users[0] || !activeChat.users[0].avatar">
+                                                    <div class="h-full w-full flex items-center justify-center text-sm font-medium text-white"
+                                                         :class="activeChat.users && activeChat.users[0] ? activeChat.users[0].avatar_color || 'bg-gray-500' : 'bg-gray-500'">
+                                                        <span x-text="activeChat.users && activeChat.users[0] ? activeChat.users[0].initials || '?' : '?'"></span>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
+
+                                        <template x-if="activeChat.type !== 'private'">
+                                            <div class="h-10 w-10 rounded-full flex items-center justify-center text-white"
+                                                 :style="'background: ' + (activeChat.type === 'company' ? 'linear-gradient(135deg, #3B82F6, #1D4ED8)' : 'linear-gradient(135deg, #10B981, #047857)')">
+                                                <i class="fas text-lg"
+                                                   :class="activeChat.type === 'company' ? 'fa-building' : (activeChat.type === 'department' ? 'fa-sitemap' : 'fa-users')">
+                                                </i>
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    <div>
+                                        <h5 class="text-sm font-medium text-gray-800 dark:text-white/90"
+                                            x-text="activeChat.display_name || activeChat.name || 'Чат'"></h5>
+                                        <p class="text-xs text-gray-500 mt-0.5">
+                                        <span x-show="activeChat.type === 'private' && activeChat.users && activeChat.users[0]">
+                                            <span x-show="activeChat.users[0].is_online" class="text-green-500">
+                                                <i class="fas fa-circle text-[8px] inline-block mr-1"></i> В сети
+                                            </span>
+                                            <span x-show="!activeChat.users[0].is_online"
+                                                  x-text="getLastActivityText(activeChat.users[0].last_activity)">
+                                            </span>
+                                        </span>
+                                            <span x-show="activeChat.type !== 'private'">
+                                            <span x-text="activeChat.users?.length + ' участников'"></span>
+                                            <span class="ml-2 text-green-500"
+                                                  x-show="activeChat.users?.filter(u => u.is_online).length > 0">
+                                                <i class="fas fa-circle text-[6px] mr-1"></i>
+                                                <span x-text="activeChat.users?.filter(u => u.is_online).length"></span> в сети
+                                            </span>
+                                            <span x-show="activeChat.type === 'department'" class="ml-1 text-green-500">
+                                                <i class="fas fa-check-circle"></i> Отдел
+                                            </span>
+                                            <span x-show="activeChat.type === 'company'" class="ml-1 text-blue-500">
+                                                <i class="fas fa-check-circle"></i> Компания
+                                            </span>
+                                        </span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-1">
+                                    <button @click="toggleMute(activeChat)"
+                                            class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white/90 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                            :class="{'text-green-500': activeChat.pivot?.is_muted}">
+                                        <i class="fas" :class="activeChat.pivot?.is_muted ? 'fa-volume-off' : 'fa-volume-up'"></i>
+                                    </button>
+
+                                    <button @click="toggleChatInfo()"
+                                            class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white/90 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                            :class="{'bg-gray-100 dark:bg-gray-800': showChatInfo}">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+
+                                    <div x-data="{openMenu: false}" class="relative">
+                                        <button @click="openMenu = !openMenu"
+                                                class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white/90 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <div x-show="openMenu"
+                                             @click.outside="openMenu = false"
+                                             x-cloak
+                                             class="absolute right-0 top-full z-40 w-48 space-y-1 rounded-2xl border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-800 dark:bg-gray-800">
+
+                                            <template
+                                                x-if="activeChat.type !== 'private' && (activeChat.pivot?.role === 'admin' || isLeader || isCompanyOwner)">
+                                                <button @click="showAddUsersModal = true; openMenu = false"
+                                                        class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+                                                    <i class="fas fa-user-plus w-5"></i>
+                                                    Добавить участников
+                                                </button>
+                                            </template>
+
+                                            <button @click="leaveChat(activeChat); openMenu = false"
+                                                    class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
+                                                <i class="fas fa-sign-out-alt w-5"></i>
+                                                Покинуть чат
+                                            </button>
+
+                                            <template
+                                                x-if="(activeChat.pivot?.role === 'admin' || isLeader || isCompanyOwner)">
+                                                <button @click="deleteChat(activeChat); openMenu = false"
+                                                        class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
+                                                    <i class="fas fa-trash w-5"></i>
+                                                    Удалить чат
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Кнопка загрузки старых сообщений (вверху) -->
-                            <button x-show="hasMoreMessages && !loadingMoreMessages && messages.length > 0"
-                                    @click="loadMoreMessages()"
-                                    class="w-full text-center text-sm text-green-500 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 py-2 hover:bg-green-50 dark:hover:bg-blue-900/20 transition-colors rounded-lg">
-                                <i class="fas fa-chevron-up mr-2"></i>
-                                Показать более старые сообщения
-                            </button>
+                            <div class="flex-1 overflow-auto p-5 space-y-3 custom-scrollbar"
+                                 x-ref="messagesContainer"
+                                 @scroll="checkScroll()">
 
-                            <!-- Счетчик сообщений -->
-                            <div class="text-xs text-gray-400 text-center py-1"
-                                 x-show="!loadingMessages">
-                                Сообщений: <span x-text="messages ? messages.length : 0"></span>
-                            </div>
-
-                            <!-- Сообщения -->
-                            <template x-if="loadingMessages">
-                                <div class="flex justify-center py-4">
-                                    <i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i>
+                                <div x-show="loadingMoreMessages"
+                                     class="flex justify-center py-4">
+                                    <div class="flex items-center gap-2 text-gray-500">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <span class="text-sm">Загрузка старых сообщений...</span>
+                                    </div>
                                 </div>
-                            </template>
 
-                            <template x-if="!loadingMessages && (!messages || messages.length === 0)">
-                                <div class="flex flex-col items-center justify-center h-full text-gray-400">
-                                    <i class="fas fa-comment text-4xl mb-3 opacity-30"></i>
-                                    <p class="text-sm">Нет сообщений</p>
-                                    <p class="text-xs mt-1">Начните общение!</p>
+                                <button x-show="hasMoreMessages && !loadingMoreMessages && messages.length > 0"
+                                        @click="loadMoreMessages()"
+                                        class="w-full text-center text-sm text-green-500 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 py-2 hover:bg-green-50 dark:hover:bg-blue-900/20 transition-colors rounded-lg">
+                                    <i class="fas fa-chevron-up mr-2"></i>
+                                    Показать более старые сообщения
+                                </button>
+
+                                <div class="text-xs text-gray-400 text-center py-1"
+                                     x-show="!loadingMessages">
+                                    Сообщений: <span x-text="messages ? messages.length : 0"></span>
                                 </div>
-                            </template>
 
-                            <template x-for="(message, index) in messages" :key="message.id">
-                                <div>
-                                    <!-- Блок с ответом (цитата) -->
-                                    <template x-if="message.parent_id && message.parent">
-                                        <div class="flex" :class="message.user_id === userId ? 'justify-end' : 'justify-start'">
-                                            <div class="max-w-[75%] mb-0.5">
-                                                <div class="rounded-lg px-3 py-1.5 text-xs bg-gray-50 dark:bg-gray-700/50 border-l-3 border-blue-400 dark:border-blue-500"
-                                                     :class="message.user_id === userId ? 'mr-1' : 'ml-1'">
-                                                    <p class="font-semibold text-blue-500 dark:text-blue-400 text-[10px] truncate">
-                                                        <i class="fas fa-reply text-[8px] mr-1"></i>
-                                                        <span x-text="message.parent.user?.name"></span>
-                                                    </p>
-                                                    <p class="truncate text-gray-500 dark:text-gray-400 text-[11px]"
-                                                       x-text="message.parent.content || '📎 Вложение'"></p>
+                                <template x-if="loadingMessages">
+                                    <div class="flex justify-center py-4">
+                                        <i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i>
+                                    </div>
+                                </template>
+
+                                <template x-if="!loadingMessages && (!messages || messages.length === 0)">
+                                    <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                                        <i class="fas fa-comment text-4xl mb-3 opacity-30"></i>
+                                        <p class="text-sm">Нет сообщений</p>
+                                        <p class="text-xs mt-1">Начните общение!</p>
+                                    </div>
+                                </template>
+
+                                <template x-for="(message, index) in messages" :key="message.id">
+                                    <div>
+                                        <template x-if="message.parent_id && message.parent">
+                                            <div class="flex" :class="message.user_id === userId ? 'justify-end' : 'justify-start'">
+                                                <div class="max-w-[75%] mb-0.5">
+                                                    <div class="rounded-lg px-3 py-1.5 text-xs bg-gray-50 dark:bg-gray-700/50 border-l-3 border-blue-400 dark:border-blue-500"
+                                                         :class="message.user_id === userId ? 'mr-1' : 'ml-1'">
+                                                        <p class="font-semibold text-blue-500 dark:text-blue-400 text-[10px] truncate">
+                                                            <i class="fas fa-reply text-[8px] mr-1"></i>
+                                                            <span x-text="message.parent.user?.name"></span>
+                                                        </p>
+                                                        <p class="truncate text-gray-500 dark:text-gray-400 text-[11px]"
+                                                           x-text="message.parent.content || '📎 Вложение'"></p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </template>
+                                        </template>
 
-                                    <!-- Само сообщение -->
-                                    <div class="flex message-item"
-                                         :class="message.user_id === userId ? 'justify-end' : 'justify-start'">
-                                        <div class="max-w-[75%]"
-                                             :class="message.user_id === userId ? 'text-right' : 'text-left'">
+                                        <div class="flex message-item"
+                                             :class="message.user_id === userId ? 'justify-end' : 'justify-start'">
+                                            <div class="max-w-[75%]"
+                                                 :class="message.user_id === userId ? 'text-right' : 'text-left'">
 
-                                            <!-- System Message -->
-                                            <template x-if="message.type === 'system'">
-                                                <div class="text-center text-xs text-gray-500 my-2">
-                            <span class="bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full"
-                                  x-text="message.content"></span>
-                                                </div>
-                                            </template>
+                                                <template x-if="message.type === 'system'">
+                                                    <div class="text-center text-xs text-gray-500 my-2">
+                                                    <span class="bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full"
+                                                          x-text="message.content"></span>
+                                                    </div>
+                                                </template>
 
-                                            <!-- Regular Message -->
-                                            <template x-if="message.type !== 'system'">
-                                                <div>
-                                                    <!-- Sender name for group chats -->
-                                                    <p x-show="activeChat.type !== 'private' && message.user_id !== userId"
-                                                       class="text-xs text-gray-500 mb-1 ml-2"
-                                                       x-text="message.user?.name"></p>
+                                                <template x-if="message.type !== 'system'">
+                                                    <div>
+                                                        <p x-show="activeChat.type !== 'private' && message.user_id !== userId"
+                                                           class="text-xs text-gray-500 mb-1 ml-2"
+                                                           x-text="message.user?.name"></p>
 
-                                                    <!-- Message bubble -->
-                                                    <div class="rounded-2xl px-4 py-2.5 break-words relative group shadow-sm transition-all duration-300"
-                                                         :class="message.user_id === userId ?
-                                    'bg-green-500 text-white rounded-br-none' :
-                                    'bg-gray-100 dark:bg-white/5 rounded-bl-none'"
-                                                         :style="(replyTo?.id === message.id || message.parent_id) ? 'border: 2px solid #3B82F6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);' : ''">
+                                                        <div class="rounded-2xl px-4 py-2.5 break-words relative group shadow-sm transition-all duration-300"
+                                                             :class="message.user_id === userId ?
+                                                            'bg-green-500 text-white rounded-br-none' :
+                                                            'bg-gray-100 dark:bg-white/5 rounded-bl-none'"
+                                                             :style="(replyTo?.id === message.id || message.parent_id) ? 'border: 2px solid #3B82F6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);' : ''">
 
-                                                        <!-- File message -->
-                                                        <template x-if="message.type === 'file' || message.type === 'image'">
-                                                            <div class="space-y-2">
-                                                                <template x-if="message.type === 'image'">
-                                                                    <img :src="message.file_url"
-                                                                         :alt="message.file_name"
-                                                                         class="message-image w-full max-w-sm cursor-pointer rounded-lg"
-                                                                         @click="openImageViewer(message)">
-                                                                </template>
+                                                            <template x-if="message.type === 'file' || message.type === 'image'">
+                                                                <div class="space-y-2">
+                                                                    <template x-if="message.type === 'image'">
+                                                                        <img :src="message.file_url"
+                                                                             :alt="message.file_name"
+                                                                             class="message-image w-full max-w-sm cursor-pointer rounded-lg"
+                                                                             @click="openImageViewer(message)">
+                                                                    </template>
 
-                                                                <div class="file-attachment flex items-center gap-3"
-                                                                     @click="downloadFile(message)">
-                                                                    <i :class="'fas ' + (message.file_icon || 'fa-file') + ' text-2xl'"></i>
-                                                                    <div class="flex-1 min-w-0">
-                                                                        <p class="text-sm font-medium truncate"
-                                                                           :class="message.user_id === userId ? 'text-white' : 'text-gray-700'"
-                                                                           x-text="message.file_name || 'Файл'"></p>
-                                                                        <p class="text-xs opacity-75"
-                                                                           x-text="message.formatted_file_size || ''"></p>
+                                                                    <div class="file-attachment flex items-center gap-3"
+                                                                         @click="downloadFile(message)">
+                                                                        <i :class="'fas ' + (message.file_icon || 'fa-file') + ' text-2xl'"></i>
+                                                                        <div class="flex-1 min-w-0">
+                                                                            <p class="text-sm font-medium truncate"
+                                                                               :class="message.user_id === userId ? 'text-white' : 'text-gray-700'"
+                                                                               x-text="message.file_name || 'Файл'"></p>
+                                                                            <p class="text-xs opacity-75"
+                                                                               x-text="message.formatted_file_size || ''"></p>
+                                                                        </div>
+                                                                        <i class="fas fa-download"></i>
                                                                     </div>
-                                                                    <i class="fas fa-download"></i>
                                                                 </div>
-                                                            </div>
-                                                        </template>
+                                                            </template>
 
-                                                        <!-- Text message -->
-                                                        <template x-if="message.type === 'text' || !message.type">
-                                                            <p class="text-sm whitespace-pre-wrap break-words"
-                                                               x-text="message.content"></p>
-                                                        </template>
+                                                            <template x-if="message.type === 'text' || !message.type">
+                                                                <p class="text-sm whitespace-pre-wrap break-words"
+                                                                   x-text="message.content"></p>
+                                                            </template>
 
-                                                        <!-- Edited indicator -->
-                                                        <span x-show="message.is_edited"
-                                                              class="text-xs opacity-60 mt-1 block">
-                                    (ред.)
-                                </span>
-                                                    </div>
+                                                            <span x-show="message.is_edited"
+                                                                  class="text-xs opacity-60 mt-1 block">
+                                                            (ред.)
+                                                        </span>
+                                                        </div>
 
-                                                    <!-- Message footer -->
-                                                    <div class="flex items-center gap-2 mt-1 text-xs text-gray-400 px-1 group">
-                                                        <span x-text="formatTime(message.created_at)"></span>
+                                                        <div class="flex items-center gap-2 mt-1 text-xs text-gray-400 px-1 group">
+                                                            <span x-text="formatTime(message.created_at)"></span>
 
-                                                        <button @click="replyToMessage(message)"
-                                                                class="text-gray-400 hover:text-green-500 transition-colors p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-                                                                :class="{'text-blue-500': replyTo?.id === message.id}"
-                                                                title="Ответить">
-                                                            <i class="fas fa-reply text-xs"
-                                                               :class="{'rotate-180': replyTo?.id === message.id}"></i>
-                                                        </button>
+                                                            <button @click="replyToMessage(message)"
+                                                                    class="text-gray-400 hover:text-green-500 transition-colors p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                                    :class="{'text-blue-500': replyTo?.id === message.id}"
+                                                                    title="Ответить">
+                                                                <i class="fas fa-reply text-xs"
+                                                                   :class="{'rotate-180': replyTo?.id === message.id}"></i>
+                                                            </button>
 
-                                                        <template x-if="message.user_id === userId">
-                                                            <div class="relative flex items-center gap-0.5 cursor-default">
-                                                                <i class="fas fa-check text-[13px] transition-all duration-300"
-                                                                   :class="message.status === 'read' ? 'text-green-500' : 'text-gray-400'">
-                                                                </i>
-                                                                <div class="absolute -top-7 right-0 bg-gray-800 text-white text-[10px] px-2 py-0.5 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-                                                                     x-show="message.status === 'read'">
-                                                                    Прочитано <span x-text="formatTime(message.statuses?.read_at)"></span>
+                                                            <template x-if="message.user_id === userId">
+                                                                <div class="relative flex items-center gap-0.5 cursor-default">
+                                                                    <i class="fas fa-check text-[13px] transition-all duration-300"
+                                                                       :class="message.status === 'read' ? 'text-green-500' : 'text-gray-400'">
+                                                                    </i>
+                                                                    <div class="absolute -top-7 right-0 bg-gray-800 text-white text-[10px] px-2 py-0.5 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                                                                         x-show="message.status === 'read'">
+                                                                        Прочитано <span x-text="formatTime(message.statuses?.read_at)"></span>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        </template>
+                                                            </template>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </template>
+                                                </template>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </template>
+                                </template>
 
-                            <!-- Typing indicator -->
-                            <div x-show="typingUsers.length > 0"
-                                 class="flex items-center gap-2 text-gray-500 px-2">
-                                <div class="typing-indicator">
-                                    <span></span><span></span><span></span>
+                                <div x-show="typingUsers.length > 0"
+                                     class="flex items-center gap-2 text-gray-500 px-2">
+                                    <div class="typing-indicator">
+                                        <span></span><span></span><span></span>
+                                    </div>
+                                    <span class="text-xs" x-text="getTypingText()"></span>
                                 </div>
-                                <span class="text-xs" x-text="getTypingText()"></span>
                             </div>
-                        </div>
 
-                        <button x-show="showScrollButton"
-                                @click="scrollToBottom()"
-                                class="absolute bottom-24 right-8 bg-green-500 text-white rounded-full p-3 shadow-lg hover:bg-green-600 transition z-10 animate-bounce">
-                            <i class="fas fa-arrow-down"></i>
-                        </button>
+                            <button x-show="showScrollButton"
+                                    @click="scrollToBottom()"
+                                    class="absolute bottom-24 right-8 bg-green-500 text-white rounded-full p-3 shadow-lg hover:bg-green-600 transition z-10 animate-bounce">
+                                <i class="fas fa-arrow-down"></i>
+                            </button>
 
-                        <div
-                            class="sticky bottom-0 border-t border-gray-200 p-4 dark:border-gray-800 bg-white dark:bg-gray-900">
-                            <!-- Блок с ответом на сообщение -->
-                            <div x-show="replyTo"
-                                 x-transition:enter="transition-all duration-300"
-                                 x-transition:enter-start="opacity-0 transform translate-y-2"
-                                 x-transition:enter-end="opacity-100 transform translate-y-0"
-                                 class="mb-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500 flex items-center justify-between">
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                                        <i class="fas fa-reply mr-1"></i>
-                                        Ответ на сообщение от <span x-text="replyTo.user?.name"></span>
-                                    </p>
-                                    <p class="text-sm truncate text-gray-600 dark:text-gray-300"
-                                       x-text="replyTo.content || '📎 Вложение'"></p>
+                            <div
+                                class="sticky bottom-0 border-t border-gray-200 p-4 dark:border-gray-800 bg-white dark:bg-gray-900">
+                                <div x-show="replyTo"
+                                     x-transition:enter="transition-all duration-300"
+                                     x-transition:enter-start="opacity-0 transform translate-y-2"
+                                     x-transition:enter-end="opacity-100 transform translate-y-0"
+                                     class="mb-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500 flex items-center justify-between">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                                            <i class="fas fa-reply mr-1"></i>
+                                            Ответ на сообщение от <span x-text="replyTo.user?.name"></span>
+                                        </p>
+                                        <p class="text-sm truncate text-gray-600 dark:text-gray-300"
+                                           x-text="replyTo.content || '📎 Вложение'"></p>
+                                    </div>
+                                    <button @click="cancelReply()"
+                                            class="text-gray-400 hover:text-gray-600 dark:hover:text-white p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
-                                <button @click="cancelReply()"
-                                        class="text-gray-400 hover:text-gray-600 dark:hover:text-white p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                            <form @submit.prevent="sendMessage" class="flex items-end gap-2">
-                                <button type="button"
-                                        @click="triggerFileUpload"
-                                        class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white/90 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                                        :disabled="sending">
-                                    <i class="fas fa-paperclip"></i>
-                                </button>
+                                <form @submit.prevent="sendMessage" class="flex items-end gap-2">
+                                    <button type="button"
+                                            @click="triggerFileUpload"
+                                            class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white/90 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                            :disabled="sending">
+                                        <i class="fas fa-paperclip"></i>
+                                    </button>
 
-                                <input type="file"
-                                       x-ref="fileInput"
-                                       @change="uploadFile"
-                                       class="hidden"
-                                       accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar">
+                                    <input type="file"
+                                           x-ref="fileInput"
+                                           @change="uploadFile"
+                                           class="hidden"
+                                           accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar">
 
-                                <div class="relative flex-1">
+                                    <div class="relative flex-1">
                                     <textarea x-model="newMessage"
                                               @keydown.enter.prevent="handleEnterKey"
                                               @input="handleTyping"
@@ -839,148 +938,167 @@
                                               style="max-height: 120px; min-height: 42px;"
                                               :disabled="sending"></textarea>
 
-                                    <div x-show="selectedFile"
-                                         class="absolute left-4 bottom-full mb-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-2 flex items-center gap-2 text-sm">
-                                        <i class="fas fa-file text-gray-500"></i>
-                                        <span x-text="selectedFile ? selectedFile.name : ''"></span>
-                                        <button @click="selectedFile = null" class="text-red-500 hover:text-red-700">
-                                            <i class="fas fa-times"></i>
-                                        </button>
+                                        <div x-show="selectedFile"
+                                             class="absolute left-4 bottom-full mb-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-2 flex items-center gap-2 text-sm">
+                                            <i class="fas fa-file text-gray-500"></i>
+                                            <span x-text="selectedFile ? selectedFile.name : ''"></span>
+                                            <button @click="selectedFile = null" class="text-red-500 hover:text-red-700">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <button type="submit"
-                                        :disabled="(!newMessage.trim() && !selectedFile) || sending"
-                                        class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500 text-white hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                                    <i class="fas fa-paper-plane"></i>
-                                </button>
-                            </form>
-                        </div>
-
-                        <div x-show="showChatInfo"
-                             x-cloak
-                             class="absolute right-0 top-0 bottom-0 w-80 bg-white border-l border-gray-200 dark:bg-gray-800 dark:border-gray-700 p-4 overflow-auto shadow-xl z-20"
-                             x-transition:enter="transition transform duration-300"
-                             x-transition:enter-start="translate-x-full"
-                             x-transition:enter-end="translate-x-0"
-                             x-transition:leave="transition transform duration-300"
-                             x-transition:leave-start="translate-x-0"
-                             x-transition:leave-end="translate-x-full">
-
-                            <div class="flex items-center justify-between mb-4">
-                                <h4 class="font-semibold">Информация о чате</h4>
-                                <button @click="showChatInfo = false"
-                                        class="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-100 rounded-full transition-colors">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                                    <button type="submit"
+                                            :disabled="(!newMessage.trim() && !selectedFile) || sending"
+                                            class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500 text-white hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </form>
                             </div>
 
-                            <div class="space-y-4">
-                                <div class="text-center">
-                                    <div class="w-20 h-20 mx-auto rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
-                                        <template x-if="activeChat.type === 'private' && activeChat.users && activeChat.users[0]">
-                                            <template x-if="activeChat.users[0].avatar">
-                                                <img :src="activeChat.users[0].avatar" class="h-full w-full object-cover">
+                            <div x-show="showChatInfo"
+                                 x-cloak
+                                 class="absolute right-0 top-0 bottom-0 w-80 bg-white border-l border-gray-200 dark:bg-gray-800 dark:border-gray-700 p-4 overflow-auto shadow-xl z-20"
+                                 x-transition:enter="transition transform duration-300"
+                                 x-transition:enter-start="translate-x-full"
+                                 x-transition:enter-end="translate-x-0"
+                                 x-transition:leave="transition transform duration-300"
+                                 x-transition:leave-start="translate-x-0"
+                                 x-transition:leave-end="translate-x-full">
+
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="font-semibold">Информация о чате</h4>
+                                    <button @click="showChatInfo = false"
+                                            class="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-100 rounded-full transition-colors">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <div class="text-center">
+                                        <div class="w-20 h-20 mx-auto rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                                            <template x-if="activeChat.type === 'private' && activeChat.users && activeChat.users[0]">
+                                                <template x-if="activeChat.users[0].avatar">
+                                                    <img :src="activeChat.users[0].avatar" class="h-full w-full object-cover">
+                                                </template>
+                                                <template x-if="!activeChat.users[0].avatar">
+                                                    <div class="h-full w-full flex items-center justify-center text-2xl font-medium text-white bg-blue-500">
+                                                        <span x-text="activeChat.users[0].initials"></span>
+                                                    </div>
+                                                </template>
                                             </template>
-                                            <template x-if="!activeChat.users[0].avatar">
-                                                <div class="h-full w-full flex items-center justify-center text-2xl font-medium text-white bg-blue-500">
-                                                    <span x-text="activeChat.users[0].initials"></span>
+                                            <template x-if="activeChat.type !== 'private'">
+                                                <div
+                                                    class="h-full w-full flex items-center justify-center bg-gradient-to-br from-green-400 to-green-600 text-white">
+                                                    <i class="fas text-3xl"
+                                                       :class="activeChat.type === 'company' ? 'fa-building' : 'fa-users'"></i>
                                                 </div>
                                             </template>
-                                        </template>
-                                        <template x-if="activeChat.type !== 'private'">
-                                            <div
-                                                class="h-full w-full flex items-center justify-center bg-gradient-to-br from-green-400 to-green-600 text-white">
-                                                <i class="fas text-3xl"
-                                                   :class="activeChat.type === 'company' ? 'fa-building' : 'fa-users'"></i>
-                                            </div>
-                                        </template>
+                                        </div>
+                                        <h5 class="mt-2 font-medium" x-text="activeChat.display_name || activeChat.name"></h5>
+                                        <p class="text-sm text-gray-500" x-show="activeChat.description" x-text="activeChat.description"></p>
+                                        <p class="text-xs text-gray-400 mt-1">
+                                            <span x-show="activeChat.type === 'private'">Личный чат</span>
+                                            <span x-show="activeChat.type === 'group'">Групповой чат</span>
+                                            <span x-show="activeChat.type === 'department'">Чат отдела</span>
+                                            <span x-show="activeChat.type === 'company'">Общий чат компании</span>
+                                        </p>
                                     </div>
-                                    <h5 class="mt-2 font-medium" x-text="activeChat.display_name || activeChat.name"></h5>
-                                    <p class="text-sm text-gray-500" x-show="activeChat.description" x-text="activeChat.description"></p>
-                                    <p class="text-xs text-gray-400 mt-1">
-                                        <span x-show="activeChat.type === 'private'">Личный чат</span>
-                                        <span x-show="activeChat.type === 'group'">Групповой чат</span>
-                                        <span x-show="activeChat.type === 'department'">Чат отдела</span>
-                                        <span x-show="activeChat.type === 'company'">Общий чат компании</span>
-                                    </p>
-                                </div>
 
-                                <div class="grid grid-cols-3 gap-2 text-center">
-                                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
-                                        <p class="text-lg font-semibold" x-text="activeChat.users?.length || 0"></p>
-                                        <p class="text-xs text-gray-500">Участников</p>
+                                    <div class="grid grid-cols-3 gap-2 text-center">
+                                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
+                                            <p class="text-lg font-semibold" x-text="activeChat.users?.length || 0"></p>
+                                            <p class="text-xs text-gray-500">Участников</p>
+                                        </div>
+                                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
+                                            <p class="text-lg font-semibold"
+                                               x-text="activeChat.users?.filter(u => u.is_online).length || 0"></p>
+                                            <p class="text-xs text-gray-500">В сети</p>
+                                        </div>
+                                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
+                                            <p class="text-lg font-semibold" x-text="messages ? messages.length : 0"></p>
+                                            <p class="text-xs text-gray-500">Сообщений</p>
+                                        </div>
                                     </div>
-                                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
-                                        <p class="text-lg font-semibold"
-                                           x-text="activeChat.users?.filter(u => u.is_online).length || 0"></p>
-                                        <p class="text-xs text-gray-500">В сети</p>
-                                    </div>
-                                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
-                                        <p class="text-lg font-semibold" x-text="messages ? messages.length : 0"></p>
-                                        <p class="text-xs text-gray-500">Сообщений</p>
-                                    </div>
-                                </div>
 
-                                <div>
-                                    <h5 class="font-medium mb-2">Участники</h5>
-                                    <div class="space-y-2 max-h-96 overflow-auto custom-scrollbar">
-                                        <template x-for="user in activeChat.users" :key="user.id">
-                                            <div
-                                                class="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                                                <div class="flex items-center gap-2">
-                                                    <div class="relative flex-shrink-0">
-                                                        <div class="w-8 h-8 rounded-full overflow-hidden bg-gray-200">
-                                                            <template x-if="user.avatar">
-                                                                <img :src="user.avatar" class="h-full w-full object-cover">
-                                                            </template>
-                                                            <template x-if="!user.avatar">
-                                                                <div class="h-full w-full flex items-center justify-center text-xs font-medium text-white"
-                                                                     :class="user.avatar_color || 'bg-gray-500'">
-                                                                    <span x-text="user.initials"></span>
-                                                                </div>
-                                                            </template>
+                                    <div>
+                                        <h5 class="font-medium mb-2">Участники</h5>
+                                        <div class="space-y-2 max-h-96 overflow-auto custom-scrollbar">
+                                            <template x-for="user in activeChat.users" :key="user.id">
+                                                <div
+                                                    class="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                                                    <div class="flex items-center gap-2">
+                                                        <div class="relative flex-shrink-0">
+                                                            <div class="w-8 h-8 rounded-full overflow-hidden bg-gray-200">
+                                                                <template x-if="user.avatar">
+                                                                    <img :src="user.avatar" class="h-full w-full object-cover">
+                                                                </template>
+                                                                <template x-if="!user.avatar">
+                                                                    <div class="h-full w-full flex items-center justify-center text-xs font-medium text-white"
+                                                                         :class="user.avatar_color || 'bg-gray-500'">
+                                                                        <span x-text="user.initials"></span>
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+                                                            <span class="online-indicator w-2.5 h-2.5"
+                                                                  :class="user.is_online ? 'online' : 'offline'"></span>
                                                         </div>
-                                                        <span class="online-indicator w-2.5 h-2.5"
-                                                              :class="user.is_online ? 'online' : 'offline'"></span>
+                                                        <div>
+                                                            <p class="text-sm font-medium" x-text="user.name"></p>
+                                                            <p class="text-xs text-gray-500" x-text="user.role || 'Сотрудник'"></p>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <p class="text-sm font-medium" x-text="user.name"></p>
-                                                        <p class="text-xs text-gray-500" x-text="user.role || 'Сотрудник'"></p>
-                                                    </div>
-                                                </div>
 
-                                                <div class="flex items-center gap-1">
+                                                    <div class="flex items-center gap-1">
                                                     <span x-show="user.id === activeChat.created_by"
                                                           class="text-xs text-yellow-500" title="Создатель">
                                                         <i class="fas fa-crown"></i>
                                                     </span>
-                                                    <span x-show="user.pivot?.role === 'admin'"
-                                                          class="text-xs text-blue-500" title="Админ">
+                                                        <span x-show="user.pivot?.role === 'admin'"
+                                                              class="text-xs text-blue-500" title="Админ">
                                                         <i class="fas fa-shield-alt"></i>
                                                     </span>
-                                                </div>
+                                                    </div>
 
-                                                <template
-                                                    x-if="activeChat.type !== 'private' && (activeChat.pivot?.role === 'admin' || isLeader || isCompanyOwner) && user.id !== userId">
-                                                    <button @click="removeUserFromChat(user.id)"
-                                                            class="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded-full transition-colors">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </template>
-                                            </div>
-                                        </template>
+                                                    <template
+                                                        x-if="activeChat.type !== 'private' && (activeChat.pivot?.role === 'admin' || isLeader || isCompanyOwner) && user.id !== userId">
+                                                        <button @click="removeUserFromChat(user.id)"
+                                                                class="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded-full transition-colors">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </template>
+                    </template>
+                </div>
+            </div>
+
+            @include('partials.chat.modals')
+        </div>
+    @else
+        {{-- Заглушка если нет доступа --}}
+        <div class="chat-container overflow-hidden rounded-2xl bg-white dark:bg-white/[0.03] flex items-center justify-center">
+            <div class="text-center p-8">
+                <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-yellow-500/10 flex items-center justify-center">
+                    <i class="fas fa-crown text-4xl text-yellow-500"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+                    Премиум функция
+                </h3>
+                <p class="text-gray-500 dark:text-gray-400 max-w-sm">
+                    Мессенджер доступен только на Премиум тарифе.
+                    <a href="{{ route('licence.index') }}" class="text-yellow-500 hover:text-yellow-600 font-medium">
+                        Обновите подписку
+                    </a>
+                </p>
             </div>
         </div>
-
-        @include('partials.chat.modals')
-    </div>
+    @endif
 @endsection
 
 @push('scripts')
@@ -1277,7 +1395,7 @@
                                 this.messages = messagesData;
                                 if (this.messages.length > 0) {
                                     this.oldestMessageId = this.messages[0]?.id;
-                                    this.hasMoreMessages = this.messages.length >= 5; // <-- ИЗМЕНИ НА 5
+                                    this.hasMoreMessages = this.messages.length >= 5;
                                 } else {
                                     this.hasMoreMessages = false;
                                 }
@@ -1302,7 +1420,7 @@
                     this.loadingMoreMessages = true;
                     const oldestId = this.oldestMessageId;
 
-                    fetch(`/chat/chats/${this.activeChat.id}/messages?before=${oldestId}&limit=5`, { // <-- ИЗМЕНИ НА 5
+                    fetch(`/chat/chats/${this.activeChat.id}/messages?before=${oldestId}&limit=5`, {
                         headers: {
                             'Accept': 'application/json',
                             'X-Requested-With': 'XMLHttpRequest'
@@ -1319,7 +1437,7 @@
                                 }
                                 this.messages = [...olderMessages, ...this.messages];
                                 this.oldestMessageId = olderMessages[0]?.id;
-                                this.hasMoreMessages = olderMessages.length >= 5; // <-- ИЗМЕНИ НА 5
+                                this.hasMoreMessages = olderMessages.length >= 5;
                                 this.$nextTick(() => {
                                     if (container && oldScrollHeight > 0) {
                                         const newScrollHeight = container.scrollHeight;
@@ -1791,7 +1909,6 @@
 
                     const isNearTop = container.scrollTop < 150;
 
-                    // АВТОМАТИЧЕСКАЯ ПОДГРУЗКА ПРИ СКРОЛЛЕ ВВЕРХ
                     if (isNearTop && this.hasMoreMessages && !this.loadingMoreMessages && !this.loadingMessages) {
                         console.log('Loading more messages...');
                         this.loadMoreMessages();
