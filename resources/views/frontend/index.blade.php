@@ -127,16 +127,15 @@
                 <!-- Блок фишек-функций -->
                 <div class="feature-chips">
 
-                    <!-- Фишка 1 - Мессенджер -->
+                    <!-- Фишка 4 - Задачи и проекты -->
                     <div class="feature-chips__item">
                         <div class="feature-chips__button" data-chip>
-                            <svg class="feature-chips__icon feature-chips__icon--red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                                <path d="M8 10h.01"/>
-                                <path d="M12 10h.01"/>
-                                <path d="M16 10h.01"/>
+                            <svg class="feature-chips__icon feature-chips__icon--gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
                             </svg>
-                            <span class="feature-chips__label">Мессенджер</span>
+                            <span class="feature-chips__label">Задачи и проекты</span>
                         </div>
                     </div>
 
@@ -153,6 +152,19 @@
                         </div>
                     </div>
 
+                    <!-- Фишка 1 - Мессенджер -->
+                    <div class="feature-chips__item">
+                        <div class="feature-chips__button" data-chip>
+                            <svg class="feature-chips__icon feature-chips__icon--red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                <path d="M8 10h.01"/>
+                                <path d="M12 10h.01"/>
+                                <path d="M16 10h.01"/>
+                            </svg>
+                            <span class="feature-chips__label">Мессенджер</span>
+                        </div>
+                    </div>
+
                     <!-- Фишка 3 - CRM -->
                     <div class="feature-chips__item">
                         <div class="feature-chips__button" data-chip>
@@ -160,21 +172,10 @@
                                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                 <polyline points="22 4 12 14.01 9 11.01"/>
                             </svg>
-                            <span class="feature-chips__label">CRM</span>
+                            <span class="feature-chips__label">Аналитика</span>
                         </div>
                     </div>
 
-                    <!-- Фишка 4 - Задачи и проекты -->
-                    <div class="feature-chips__item">
-                        <div class="feature-chips__button" data-chip>
-                            <svg class="feature-chips__icon feature-chips__icon--gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                                <line x1="8" y1="21" x2="16" y2="21"/>
-                                <line x1="12" y1="17" x2="12" y2="21"/>
-                            </svg>
-                            <span class="feature-chips__label">Задачи и проекты</span>
-                        </div>
-                    </div>
 
                     <div class="feature-chips__item">
                         <div class="feature-chips__button" data-chip>
@@ -185,7 +186,7 @@
                                 <polyline points="21 15 16 10 5 21" />
                             </svg>
                             <div class="feature-chips__label-group">
-                                <span class="feature-chips__label">Фотобанк</span>
+                                <span class="feature-chips__label">Инструменты</span>
                                 <!-- <span class="feature-chips__badge">Копилот</span> -->
                             </div>
                         </div>
@@ -259,27 +260,8 @@
                             Создавайте <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">команды</span> и назначайте
                             <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">задачи</span>
                         </h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ultricies lacus non fermentum
-                            ultrices. Fusce consectetur le.</p>
-
-                        <div class="ia qb ee qe">
-                            <div class="tc yb af hf nf pl sl qb ee ge">
-                                <p class="ej dm aj ti">01</p>
-                            </div>
-                            <div class="uc/4">
-                                <h5 class="ej dm ti ya">Lorem ipsum dolor.</h5>
-                                <p>Ut ultricies lacus non fermentum ultrices.</p>
-                            </div>
-                        </div>
-                        <div class="ia qb ee qe">
-                            <div class="tc yb af hf nf pl sl qb ee ge">
-                                <p class="ej dm aj ti">02</p>
-                            </div>
-                            <div class="uc/4">
-                                <h5 class="ej dm ti ya">Fusce consectetur le.</h5>
-                                <p>consectetur adipiscing elit fermentum ultricies.</p>
-                            </div>
-                        </div>
+                        <p>Создавайте команды для любых масштабов: от личного планирования до корпоративного управления.
+                            Создавайте отделы, добавляйте участников и ставьте задачи, чтобы всё было под контролем.</p>
                     </div>
                 </div>
             </div>
@@ -296,14 +278,8 @@
                             Отслеживайте активность и
                             <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">продуктивность</span>
                         </h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ultricies lacus non fermentum
-                            ultrices. Fusce consectetur le.</p>
+                        <p>Отслеживайте прогресс и эффективность — для себя или всей команды. Знайте, кто чем занят и всё ли идёт по плану.</p>
 
-                        <a href="#" class="qb ee je ej dm ia">
-                            Узнайте больше
-                            <img class="nl" src="images/icon-arrow-light.svg" alt="Arrow" />
-                            <img class="ub ml" src="images/icon-arrow-dark.svg" alt="Arrow" />
-                        </a>
                     </div>
                     <div class="animate_right ub sm vm/2">
                         <img src="images/about-light-02.png" alt="About" class="nl" />
@@ -326,30 +302,12 @@
                         <a href="#" class="xf fj si sb xe gh hh wa sa">New</a> start tracking visitors
                     </h4>
                     <h2 class="h cj ej dm ri jr xa">
-                        Оставайтесь на связи команды или<span class="pb h ik jk kk pk nk tk im before:-ud-z-1"></span>
-                        <span class="pb h ik jk kk pk nk tk im before:-ud-z-1">организации</span>
+                        Оставайтесь на связи
                     </h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ultricies lacus non fermentum
-                        ultrices. Fusce consectetur le.</p>
+                    <p>Пишите сообщения коллегам и комментируйте задачи — вся коммуникация в одном месте.
+                        Корпоративный мессенджер держит вас на связи, а уведомления не дадут упустить важное.</p>
 
-                    <div class="ia qb ee qe">
-                        <div class="tc yb af hf nf pl sl qb ee ge">
-                            <p class="ej dm aj ti">01</p>
-                        </div>
-                        <div class="uc/4">
-                            <h5 class="ej dm ti ya">Lorem ipsum dolor.</h5>
-                            <p>Ut ultricies lacus non fermentum ultrices.</p>
-                        </div>
-                    </div>
-                    <div class="ia qb ee qe">
-                        <div class="tc yb af hf nf pl sl qb ee ge">
-                            <p class="ej dm aj ti">02</p>
-                        </div>
-                        <div class="uc/4">
-                            <h5 class="ej dm ti ya">Fusce consectetur le.</h5>
-                            <p>consectetur adipiscing elit fermentum ultricies.</p>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -461,7 +419,7 @@
 
                 <div class="animate_top ba mi ym/5 ho/3 zp/2 ab yn _g on">
                     <h2 class="cj ej dm ri nr sa">О нас</h2>
-                    <p class="jo/12 ba">МенеджерПлюс — это быстроразвивающийся отечественный продукт, разработанный на
+                    <p class="jo/12 ba">МенеджерПлюс — это быстроразвивающийся продукт, разработанный на
                         основе передовых технологий.
                         Платформа предоставляет все необходимые инструменты для комфортной и продуктивной работы.
                         Мы уделяем большое внимание конфиденциальности и безопасности ваших данных.</p>
@@ -509,14 +467,13 @@
                             0₽<span class="wi gj fm">/месяц</span>
                         </h3>
                         <h4 class="ej dm bj xi cb">Базовый</h4>
-                        <p>Lorem ipsum dolor sit amet, consec adipisicing elit.</p>
-
                         <div class="lf nf pl hb ci di">
                             <ul>
-                                <li class="ej fm sa vk">До 3 бесплатных пользователей</li>
-                                <li class="ej fm sa vk">Unlimited Photos and Videos</li>
-                                <li class="ej fm sa vk opacity-40">Exclusive Support</li>
-                                <li class="ej fm sa vk kj">Custom Branding Strategy</li>
+                                <li class="ej fm sa vk">До 5 бесплатных пользователей</li>
+                                <li class="ej fm sa vk">До 2ГБ хранилище</li>
+                                <li class="ej fm sa vk">Аналитика и трекинг пользователей</li>
+                                <li class="ej fm sa vk kj">Обычная поддержка</li>
+                                <li class="ej fm sa vk kj">Ограниченный набор инструментов</li>
                             </ul>
                         </div>
 
@@ -538,16 +495,16 @@
                         </div>
 
                         <h3 class="ej dm cj ri nr ea">
-                            350₽ <span class="wi gj fm">/месяц</span>
+                            1490₽ <span class="wi gj fm">/месяц</span>
                         </h3>
                         <h4 class="ej dm bj xi cb">Оптимальный</h4>
-                        <p>Lorem ipsum dolor sit amet, consec adipisicing elit.</p>
 
                         <div class="lf nf pl hb ci di">
                             <ul>
-                                <li class="ej fm sa vk">До 2ГБ хранилище</li>
+                                <li class="ej fm sa vk">До 15 пользователей (далее 400р за пользователя)</li>
+                                <li class="ej fm sa vk">До 1ТБ хранилище</li>
                                 <li class="ej fm sa vk">Мессенджер</li>
-                                <li class="ej fm sa vk">Видеоконференции</li>
+                                <li class="ej fm sa vk">Приоритетная поддержка 24/7</li>
                                 <li class="ej fm sa vk">Полный набор инструментов </li>
                             </ul>
                         </div>

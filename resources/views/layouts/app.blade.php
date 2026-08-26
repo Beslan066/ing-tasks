@@ -3000,7 +3000,7 @@ setDefaultTab()
             price = price - (price * 0.15);
         }
 
-        document.getElementById('premiumBasePrice').innerText = (period === 'month' ? '2 490 ₽' : (period === '6months' ? '14 940 ₽' : '29 880 ₽'));
+        document.getElementById('premiumBasePrice').innerText = (period === 'month' ? '1 490 ₽' : (period === '6months' ? '8 940 ₽' : '17 880 ₽'));
         document.getElementById('premiumTotalPrice').innerText = Math.round(price).toLocaleString() + ' ₽';
     }
 

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Category;
 use App\Models\Department;
 use App\Models\Role;
+use App\Models\StorageUsage;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -72,7 +73,7 @@ class ViewServiceProvider extends ServiceProvider
     private function getUserViewData($user)
     {
         // Предзагружаем данные
-        $user->load(['company', 'role', 'departments']); // ← ДОБАВИЛ departments
+        $user->load(['company', 'role', 'departments']);
 
         // ====== КОМПАНИИ ======
         $ownedCompanies = $this->getUserCompanies($user);
@@ -95,12 +96,15 @@ class ViewServiceProvider extends ServiceProvider
         // Получаем общее количество онлайн пользователей
         $onlineUsersCount = $this->getOnlineUsersCount($user);
 
+        // ====== ДАННЫЕ ХРАНИЛИЩА ======
+        $storageData = $this->getStorageData($user);
+
         return [
             'departments' => $departments,
             'categories' => $categories,
             'ownedCompanies' => $ownedCompanies,
             'assignableUsers' => $assignableUsers,
-            'team' => $this->prepareTeamData($team), // Обрабатываем данные команды
+            'team' => $this->prepareTeamData($team),
             'unread_emails_count' => $unreadEmailsCount,
             'has_email_access' => $user->hasPermission('access_email'),
             'onlineUsers' => $onlineUsers,
@@ -109,6 +113,86 @@ class ViewServiceProvider extends ServiceProvider
             'isLeader' => $user->isLeader(),
             'isManagerRole' => $user->isManagerRole(),
             'currentUser' => $user,
+            // Добавляем данные хранилища
+            'storageUsage' => $storageData['storageUsage'],
+            'usedStorageFormatted' => $storageData['usedStorageFormatted'],
+            'totalStorageFormatted' => $storageData['totalStorageFormatted'],
+            'usagePercentage' => $storageData['usagePercentage'],
+            'licenseIcon' => $storageData['licenseIcon'],
+            'licenseColor' => $storageData['licenseColor'],
+            'licenseText' => $storageData['licenseText'],
+        ];
+    }
+
+// Добавьте новый метод для получения данных хранилища
+    private function getStorageData($user)
+    {
+        $company = $user->company;
+
+        if (!$company) {
+            return [
+                'storageUsage' => null,
+                'usedStorageFormatted' => '0 B',
+                'totalStorageFormatted' => '0 B',
+                'usagePercentage' => 0,
+                'licenseIcon' => 'fa-circle',
+                'licenseColor' => 'text-gray-400',
+                'licenseText' => 'Нет компании',
+            ];
+        }
+
+        // Получаем или создаем запись о хранилище для компании
+        $storageUsage = StorageUsage::firstOrCreate(
+            ['company_id' => $company->id],
+            [
+                'total_storage_limit' => $company->getStorageLimit(),
+                'used_storage' => 0,
+                'file_count' => 0,
+                'license_type' => $company->license_type ?? 'basic',
+            ]
+        );
+
+        // Обновляем лимит если изменился тип лицензии
+        $currentLimit = $company->getStorageLimit();
+        if ($storageUsage->total_storage_limit != $currentLimit) {
+            $storageUsage->total_storage_limit = $currentLimit;
+            $storageUsage->license_type = $company->license_type ?? 'basic';
+            $storageUsage->save();
+        }
+
+        // Получаем реальное использование хранилища
+        $storageStats = $company->getStorageStats() ?? ['used' => 0];
+        $storageUsage->used_storage = $storageStats['used'] ?? 0;
+        $storageUsage->save();
+
+        // Определяем иконку и цвет для типа подписки
+        $licenseType = $company->license_type ?? 'basic';
+        $licenseData = [
+            'basic' => [
+                'icon' => 'fa-circle',
+                'color' => 'text-gray-400',
+                'text' => 'Базовый (2 ГБ)'
+            ],
+            'optimal' => [
+                'icon' => 'fa-circle',
+                'color' => 'text-blue-500',
+                'text' => 'Оптимальный (50 ГБ)'
+            ],
+            'premium' => [
+                'icon' => 'fa-crown',
+                'color' => 'text-yellow-500',
+                'text' => 'Премиум (1 ТБ)'
+            ]
+        ];
+
+        return [
+            'storageUsage' => $storageUsage,
+            'usedStorageFormatted' => $storageUsage->getFormattedUsedStorage(),
+            'totalStorageFormatted' => $storageUsage->getFormattedTotalStorage(),
+            'usagePercentage' => $storageUsage->getUsagePercentage(),
+            'licenseIcon' => $licenseData[$licenseType]['icon'],
+            'licenseColor' => $licenseData[$licenseType]['color'],
+            'licenseText' => $licenseData[$licenseType]['text'],
         ];
     }
 

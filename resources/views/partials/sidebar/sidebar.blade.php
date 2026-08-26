@@ -198,11 +198,12 @@
                 @endif
             </div>
 
-            
+
         </div>
 
         <!-- Нижняя часть -->
         <div class="mt-auto space-y-4 pt-4 border-t border-white/10">
+            <!-- Файловое хранилище -->
             <!-- Файловое хранилище -->
             <div class="storage bg-transparent/10 p-4 rounded-xl border border-white/5">
                 <div class="storage__top_wrapper flex items-center justify-between mb-2">
@@ -210,16 +211,16 @@
                         <i class="fas fa-hard-drive text-primary-500"></i>
                         <h6 class="storage__title font-medium text-white text-sm">Хранилище</h6>
                         <!-- Иконка типа подписки -->
-                        <i class="fas {{ $licenseIcon }} {{ $licenseColor }} text-xs" title="{{ $licenseText }}"></i>
+                        <i class="fas {{ $licenseIcon ?? 'fa-circle' }} {{ $licenseColor ?? 'text-gray-400' }} text-xs" title="{{ $licenseText ?? 'Базовый (2 ГБ)' }}"></i>
                     </div>
-                    <span class="text-xs text-sidebar-text">{{ $usagePercentage }}%</span>
+                    <span class="text-xs text-sidebar-text">{{ $usagePercentage ?? 0 }}%</span>
                 </div>
 
                 <!-- Прогресс бар -->
                 <div class="storage__progress-bar w-full bg-white/10 rounded-full h-1.5 mb-2 overflow-hidden">
                     <div class="progress-bar h-full rounded-full transition-all duration-300"
-                         style="width: {{ min($usagePercentage, 100) }}%;
-                                background: {{ $usagePercentage > 90 ? '#ef4444' : ($usagePercentage > 70 ? '#f59e0b' : '#22c55e') }}">
+                         style="width: {{ min($usagePercentage ?? 0, 100) }}%;
+                    background: {{ ($usagePercentage ?? 0) > 90 ? '#ef4444' : (($usagePercentage ?? 0) > 70 ? '#f59e0b' : '#22c55e') }}">
                     </div>
                 </div>
 
@@ -227,22 +228,22 @@
                 <div class="storage__info text-xs text-sidebar-text space-y-1">
                     <div class="flex justify-between">
                         <span>Использовано:</span>
-                        <span class="text-white">{{ $usedStorageFormatted }}</span>
+                        <span class="text-white">{{ $usedStorageFormatted ?? '0 B' }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span>Всего:</span>
-                        <span class="text-white">{{ $totalStorageFormatted }}</span>
+                        <span class="text-white">{{ $totalStorageFormatted ?? '0 B' }}</span>
                     </div>
 
                     <!-- Предупреждение о переполнении -->
-                    @if($storageUsage && $storageUsage->isStorageLimitExceeded())
+                    @if(isset($storageUsage) && $storageUsage && $storageUsage->isStorageLimitExceeded())
                         <div class="mt-2 pt-1 border-t border-red-500/30">
                             <p class="text-red-400 text-xs flex items-center gap-1">
                                 <i class="fas fa-exclamation-triangle"></i>
                                 <span>Лимит хранилища превышен!</span>
                             </p>
                         </div>
-                    @elseif($usagePercentage > 80)
+                    @elseif(isset($usagePercentage) && $usagePercentage > 80)
                         <div class="mt-2 pt-1 border-t border-yellow-500/30">
                             <p class="text-yellow-400 text-xs flex items-center gap-1">
                                 <i class="fas fa-clock"></i>

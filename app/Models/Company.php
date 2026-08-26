@@ -17,7 +17,7 @@ class Company extends Model
         'verified',
         'phone',
         'user_id',
-        'license_type', // Добавляем это поле
+        'license_type',
     ];
 
     protected $casts = [
@@ -101,9 +101,10 @@ class Company extends Model
     public function getStorageLimit(): int
     {
         return match($this->license_type) {
-            'basic' => 1073741824,      // 1GB
-            'premium' => 1073741824000,  // 1000GB (1TB)
-            default => 1073741824
+            'basic' => 2147483648,      // 2GB (исправлено с 1GB)
+            'optimal' => 53687091200,   // 50GB (добавлен optimal)
+            'premium' => 1073741824000, // 1000GB (1TB)
+            default => 2147483648       // 2GB по умолчанию
         };
     }
 
@@ -114,7 +115,8 @@ class Company extends Model
     {
         return match($this->license_type) {
             'basic' => 104857600,      // 100MB
-            'premium' => 1073741824,    // 1GB
+            'optimal' => 524288000,    // 500MB (добавлен optimal)
+            'premium' => 1073741824,   // 1GB
             default => 104857600
         };
     }

@@ -243,7 +243,7 @@
                         <div class="backdrop-blur-md bg-black/30 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 border border-[#16a34a]/50 relative">
                             <div class="absolute -top-3 left-4 bg-[#16a34a] text-white text-xs px-3 py-1 rounded-full">Рекомендуем</div>
                             <h4 class="text-xl font-bold text-white">Премиум</h4>
-                            <p class="text-3xl font-bold text-white mt-3">2 490 ₽<span class="text-sm font-normal text-white/60">/мес</span></p>
+                            <p class="text-3xl font-bold text-white mt-3">1 490 ₽<span class="text-sm font-normal text-white/60">/мес</span></p>
                             <p class="text-white/50 text-xs mt-1">+400 ₽ за доп. пользователя (свыше 15)</p>
                             <ul class="mt-4 space-y-2 text-white/80 text-sm">
                                 <li>✓ До 15 пользователей (далее +400 ₽/мес)</li>
@@ -317,7 +317,7 @@
                                 <input type="radio" name="premium_period" value="month" class="hidden peer" onchange="updatePremiumPrice()" checked>
                                 <div class="border rounded-lg p-3 text-center peer-checked:border-[#16a34a] peer-checked:bg-green-50 dark:peer-checked:bg-green-900/20 transition">
                                     <span class="font-medium">1 месяц</span>
-                                    <span class="block text-sm text-gray-500">2 490 ₽</span>
+                                    <span class="block text-sm text-gray-500">1 490 ₽</span>
                                 </div>
                             </label>
                             <label class="flex-1 cursor-pointer">
@@ -347,11 +347,11 @@
                     <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-4">
                         <div class="flex justify-between text-sm mb-2">
                             <span>Премиум подписка</span>
-                            <span id="premiumBasePrice">2 490 ₽</span>
+                            <span id="premiumBasePrice">1 490 ₽</span>
                         </div>
                         <div class="flex justify-between text-sm font-bold text-[#16a34a]">
                             <span>Итого</span>
-                            <span id="premiumTotalPrice">2 490 ₽</span>
+                            <span id="premiumTotalPrice">1 490 ₽</span>
                         </div>
                     </div>
 
@@ -479,7 +479,7 @@
                 price = price - (price * 0.15);
             }
 
-            document.getElementById('premiumBasePrice').innerText = (period === 'month' ? '2 490 ₽' : (period === '6months' ? '14 940 ₽' : '29 880 ₽'));
+            document.getElementById('premiumBasePrice').innerText = (period === 'month' ? '1 490 ₽' : (period === '6months' ? '8 940 ₽' : '17 880 ₽'));
             document.getElementById('premiumTotalPrice').innerText = Math.round(price).toLocaleString() + ' ₽';
         }
         @endif
