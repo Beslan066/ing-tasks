@@ -469,13 +469,13 @@
         // Расчет цены Премиум
         function updatePremiumPrice() {
             const period = document.querySelector('input[name="premium_period"]:checked').value;
-            let price = 2490;
+            let price = 1490;
 
             if (period === '6months') {
-                price = 2490 * 6;
+                price = 1490 * 6;
                 price = price - (price * 0.10);
             } else if (period === 'year') {
-                price = 2490 * 12;
+                price = 1490 * 12;
                 price = price - (price * 0.15);
             }
 
