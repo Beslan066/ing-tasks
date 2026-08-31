@@ -8,17 +8,10 @@
         <div class="max-w-md w-full space-y-6 relative z-10">
             <!-- Header -->
             <div class="text-center">
-                <div class="flex justify-center mb-4">
-                    <div class="h-16 w-16 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-xl transform rotate-3">
-                        <svg class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-                        </svg>
-                    </div>
-                </div>
                 <h2 class="text-4xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-                    Создать аккаунт
+                    Менеджер<span class="bg-gradient-to-r bg-clip-text text-transparent" style="color: linear-gradient(135deg, #10b981, #059669);">Плюс</span>
                 </h2>
-                <p class="mt-2 text-sm text-gray-600">Присоединяйтесь к МенеджерПлюс</p>
+                <p class="mt-2 text-sm text-gray-600">Создайте аккаунт</p>
             </div>
 
             <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="space-y-5">
@@ -159,7 +152,7 @@
 
                 <!-- Submit Button -->
                 <button type="submit"
-                        class="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-semibold rounded-lg text-white bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 transform hover:scale-[1.02]">
+                        class="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-semibold rounded-lg text-white bg-gradient-to-r  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 transform hover:scale-[1.02]" style="background: linear-gradient(135deg, #10b981, #059669);">
                     <span class="absolute left-0 inset-y-0 flex items-center pl-3">
                         <svg class="h-5 w-5 text-green-300 group-hover:text-green-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
@@ -190,14 +183,7 @@
             </div>
 
             <!-- Social Registration Buttons -->
-            <div class="grid grid-cols-2 gap-3">
-                <a href="{{ route('auth.vkontakte.redirect') }}"
-                   class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
-                    <svg class="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M15.07 2H8.93C3.33 2 2 3.33 2 8.93V15.07C2 20.67 3.33 22 8.93 22H15.07C20.67 22 22 20.67 22 15.07V8.93C22 3.33 20.67 2 15.07 2M18.15 16.27H16.69C16.14 16.27 15.97 15.82 15 14.83C14.12 14 13.74 13.88 13.53 13.88C13.24 13.88 13.15 13.96 13.15 14.38V15.69C13.15 16.04 13.04 16.26 12.11 16.26C10.57 16.26 8.86 15.32 7.66 13.59C5.85 11.05 5.36 9.13 5.36 8.75C5.36 8.54 5.43 8.34 5.85 8.34H7.32C7.69 8.34 7.83 8.5 7.97 8.9C8.69 10.96 10.38 13.09 11.53 13.09C11.86 13.09 11.97 12.96 11.97 12.5V10.1C11.97 9.12 12.1 9 12.5 9H12.51C12.81 9 12.92 9.08 12.92 9.38V12.48C12.92 12.8 13.04 12.91 13.38 12.91C13.76 12.91 14.1 12.75 14.45 12.41C15.36 11.38 16 9.57 16 9.57C16.11 9.28 16.28 9.14 16.61 9.14H18.08C18.37 9.14 18.45 9.34 18.37 9.65C18.19 10.16 17.37 11.61 16.43 13.06C15.85 13.85 15.52 14.22 15.38 14.46C15.17 14.8 15.28 15.01 15.58 15.39C16.09 15.98 16.87 16.74 17.19 17.08C17.39 17.29 17.54 17.69 17.46 17.94C17.36 18.18 17.21 18.27 16.9 18.27H18.15Z"/>
-                    </svg>
-                    <span class="ml-2">ВКонтакте</span>
-                </a>
+            <div class="grid grid-cols-1 gap-3">
 
                 <a href="{{ route('auth.yandex.redirect') }}"
                    class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">

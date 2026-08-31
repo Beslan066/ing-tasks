@@ -322,7 +322,7 @@ class Company extends Model
     public function getMaxUsersAttribute(): int
     {
         if ($this->license_type !== 'premium') {
-            return 5;
+            return 3;
         }
 
         $subscription = $this->subscription;

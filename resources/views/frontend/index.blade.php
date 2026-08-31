@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>МенеджерПлюс — современная система управления командами</title>
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Менеджер+" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="description" content="Современное проектное управление. Agile-доски, корпоративный чат, всё в онлайн и мобильных приложениях." />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -224,7 +230,7 @@
         <div class="flex items-center justify-between h-16">
             <a href="#" class="flex items-center gap-3 group">
                 <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm" style="background: linear-gradient(135deg, #10b981, #059669);">
-                    МП
+                    <img src="{{asset('img/logo.svg')}}" alt="">
                 </div>
                 <span class="text-xl font-bold text-gray-800 tracking-tight">Менеджер<span style="background: linear-gradient(135deg, #10b981, #059669); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Плюс</span></span>
             </a>
@@ -237,8 +243,8 @@
             </nav>
 
             <div class="flex items-center gap-3">
-                <a href="#" class="hidden sm:inline-block text-sm font-medium text-gray-600 hover:text-[#10b981] transition px-4 py-2 rounded-lg">Войти</a>
-                <a href="#" class="btn-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-[#10b981]/25">
+                <a href="{{route('login')}}" class="hidden sm:inline-block text-sm font-medium text-gray-600 hover:text-[#10b981] transition px-4 py-2 rounded-lg">Войти</a>
+                <a href="{{route('register')}}" class="btn-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-[#10b981]/25">
                     Начать
                 </a>
             </div>
@@ -551,7 +557,7 @@
                         <span class="text-gray-400 ml-2">/месяц</span>
                     </div>
                     <ul class="mt-6 space-y-3 text-sm">
-                        <li class="flex items-center gap-3 text-gray-600"><i data-lucide="check" class="w-4 h-4 text-[#10b981]"></i> До 5 пользователей</li>
+                        <li class="flex items-center gap-3 text-gray-600"><i data-lucide="check" class="w-4 h-4 text-[#10b981]"></i> До 3 пользователей</li>
                         <li class="flex items-center gap-3 text-gray-600"><i data-lucide="check" class="w-4 h-4 text-[#10b981]"></i> До 2 ГБ хранилище</li>
                         <li class="flex items-center gap-3 text-gray-600"><i data-lucide="check" class="w-4 h-4 text-[#10b981]"></i> Аналитика и трекинг</li>
                         <li class="flex items-center gap-3 text-gray-400"><i data-lucide="x" class="w-4 h-4 text-gray-300"></i> Приоритетная поддержка</li>
@@ -690,9 +696,9 @@
                 <div class="absolute -bottom-20 -left-20 w-64 h-64 rounded-full blur-3xl opacity-20" style="background: #10b981;"></div>
                 <div class="relative z-10">
                     <h2 class="text-3xl sm:text-4xl font-bold">Начните уже сегодня</h2>
-                    <p class="mt-4 text-white/80 max-w-lg mx-auto text-lg">Повысьте вашу продуктивность. Вам доступна бесплатная версия до 5 пользователей.</p>
+                    <p class="mt-4 text-white/80 max-w-lg mx-auto text-lg">Повысьте вашу продуктивность. Вам доступна бесплатная версия до 3 пользователей.</p>
                     <div class="mt-8 flex flex-wrap justify-center gap-4">
-                        <a href="#" class="bg-white text-[#10b981] px-8 py-3.5 rounded-xl font-semibold hover:shadow-xl transition shadow-lg flex items-center gap-2">
+                        <a href="{{route('register')}}" class="bg-white text-[#10b981] px-8 py-3.5 rounded-xl font-semibold hover:shadow-xl transition shadow-lg flex items-center gap-2">
                             <i data-lucide="user-plus" class="w-5 h-5"></i>
                             Зарегистрироваться
                         </a>

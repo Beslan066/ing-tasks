@@ -43,7 +43,7 @@
                                 <p class="text-white/50 text-xs mt-2">Действует до: {{ $premiumUntil ?? '—' }}</p>
                             @else
                                 <span class="inline-block bg-gray-500/20 text-gray-300 px-3 py-1 rounded-full text-sm">Бесплатный</span>
-                                <p class="text-white/50 text-xs mt-2">До 5 пользователей</p>
+                                <p class="text-white/50 text-xs mt-2">До 3 пользователей</p>
                             @endif
                         </div>
                     </div>
@@ -52,7 +52,7 @@
                     <div class="mt-5">
                         <div class="flex justify-between text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white/70' : 'text-gray-600' }} mb-1">
                             <span>Использовано пользователей</span>
-                            <span>{{ $usedUsers ?? 0 }} / {{ $maxUsers ?? 5 }}</span>
+                            <span>{{ $usedUsers ?? 0 }} / {{ $maxUsers ?? 3 }}</span>
                         </div>
                         <div class="w-full {{ $backgroundEnabled && $backgroundImage ? 'bg-white/20' : 'bg-gray-200' }} rounded-full h-2">
                             @php
@@ -127,10 +127,10 @@
                     <div class="mt-5">
                         <div class="flex justify-between text-sm text-gray-600 mb-1">
                             <span>Использовано пользователей</span>
-                            <span>{{ $usedUsers ?? 0 }} / {{ $maxUsers ?? 5 }}</span>
+                            <span>{{ $usedUsers ?? 0 }} / {{ $maxUsers ?? 3 }}</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-[#16a34a] h-2 rounded-full" style="width: {{ ($usedUsers ?? 0) / ($maxUsers ?? 5) * 100 }}%"></div>
+                            <div class="bg-[#16a34a] h-2 rounded-full" style="width: {{ ($usedUsers ?? 0) / ($maxUsers ?? 3) * 100 }}%"></div>
                         </div>
                     </div>
 
@@ -209,11 +209,11 @@
                     <div class="mt-5 space-y-3">
                         @if(!$isPremium)
                             <button onclick="openUpgradeModal()" class="w-full bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-2 px-4 rounded-lg transition">
-                                🚀 Обновить до Премиум
+                                Обновить до Премиум
                             </button>
                         @endif
                         <button onclick="openAddUsersModal()" class="w-full {{ $isPremium ? 'bg-[#16a34a] hover:bg-[#15803d]' : 'bg-gray-100 hover:bg-gray-200 text-gray-800' }} font-medium py-2 px-4 rounded-lg transition border border-gray-200">
-                            👥 Добавить пользователей
+                            Добавить пользователей
                         </button>
                     </div>
                 </div>
@@ -231,7 +231,7 @@
                             <h4 class="text-xl font-bold text-white">Базовый</h4>
                             <p class="text-3xl font-bold text-white mt-3">0 ₽<span class="text-sm font-normal text-white/60">/мес</span></p>
                             <ul class="mt-4 space-y-2 text-white/80 text-sm">
-                                <li>✓ До 5 пользователей</li>
+                                <li>✓ До 3 пользователей</li>
                                 <li>✓ Файловое хранилище до 2 ГБ</li>
                                 <li>✓ Мессенджер</li>
                                 <li>✓ Расширенная аналитика</li>
@@ -266,7 +266,7 @@
                             <h4 class="text-xl font-bold text-gray-800">Базовый</h4>
                             <p class="text-3xl font-bold text-gray-800 mt-3">0 ₽<span class="text-sm font-normal text-gray-500">/мес</span></p>
                             <ul class="mt-4 space-y-2 text-gray-600 text-sm">
-                                <li>✓ До 5 пользователей</li>
+                                <li>✓ До 3 пользователей</li>
                                 <li>✓ Файловое хранилище до 2 ГБ</li>
                                 <li>✓ Сообщения к задачам</li>
                                 <li>✓ Расширенная аналитика</li>
