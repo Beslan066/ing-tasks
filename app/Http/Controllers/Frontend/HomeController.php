@@ -202,13 +202,20 @@ class HomeController extends Controller
             }
 
             // Создаем объект, совместимый с шаблоном (для пагинации используем коллекцию)
+            // $tasks = new \Illuminate\Pagination\LengthAwarePaginator(
+            //     $allTasks,
+            //     $allTasks->count(),
+            //     $allTasks->count(),
+            //     1,
+            //     ['path' => $request->url(), 'query' => $request->query()]
+            // );
             $tasks = new \Illuminate\Pagination\LengthAwarePaginator(
-                $allTasks,
-                $allTasks->count(),
-                $allTasks->count(),
-                1,
-                ['path' => $request->url(), 'query' => $request->query()]
-            );
+    $allTasks,
+    $allTasks->count(),
+    500,
+    1,
+    ['path' => $request->url(), 'query' => $request->query()]
+);
         } else {
             // Для списка - используем пагинацию (20 задач на страницу)
             $tasks = $baseQuery->paginate(20);
