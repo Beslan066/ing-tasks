@@ -319,7 +319,9 @@
             </div>
         @endif
 
-        @include('partials.main.statistic-card')
+        <div id="statisticCardContainer" class="{{ $viewMode === 'kanban' ? 'hidden' : '' }}">
+    @include('partials.main.statistic-card')
+</div>
 
             <!-- Режим отображения: Список -->
             <div id="listViewContainer" class="{{ $viewMode === 'list' ? '' : 'hidden' }}">
@@ -1682,28 +1684,31 @@
 
         // ==================== ПЕРЕКЛЮЧЕНИЕ РЕЖИМОВ ====================
         function setViewMode(mode) {
-            const listContainer = document.getElementById('listViewContainer');
-            const kanbanContainer = document.getElementById('kanbanViewContainer');
-            const listBtn = document.getElementById('viewModeListBtn');
-            const kanbanBtn = document.getElementById('viewModeKanbanBtn');
-            const filterForm = document.getElementById('filterForm');
-            const filterFormList = document.getElementById('filterFormList');
+              const listContainer = document.getElementById('listViewContainer');
+              const kanbanContainer = document.getElementById('kanbanViewContainer');
+              const statisticCard = document.getElementById('statisticCardContainer');
+              const listBtn = document.getElementById('viewModeListBtn');
+              const kanbanBtn = document.getElementById('viewModeKanbanBtn');
+              const filterForm = document.getElementById('filterForm');
+              const filterFormList = document.getElementById('filterFormList');
 
-            if (mode === 'list') {
-                listContainer.classList.remove('hidden');
-                kanbanContainer.classList.add('hidden');
-                listBtn.classList.add('bg-green-600', 'text-white');
-                listBtn.classList.remove('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
-                kanbanBtn.classList.remove('bg-green-600', 'text-white');
-                kanbanBtn.classList.add('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
-            } else {
-                listContainer.classList.add('hidden');
-                kanbanContainer.classList.remove('hidden');
-                kanbanBtn.classList.add('bg-green-600', 'text-white');
-                kanbanBtn.classList.remove('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
-                listBtn.classList.remove('bg-green-600', 'text-white');
-                listBtn.classList.add('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
-            }
+                if (mode === 'list') {
+                    listContainer.classList.remove('hidden');
+                    kanbanContainer.classList.add('hidden');
+                    statisticCard.classList.remove('hidden');
+                    listBtn.classList.add('bg-green-600', 'text-white');
+                    listBtn.classList.remove('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
+                    kanbanBtn.classList.remove('bg-green-600', 'text-white');
+                    kanbanBtn.classList.add('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
+                } else {
+                    listContainer.classList.add('hidden');
+                    kanbanContainer.classList.remove('hidden');
+                    statisticCard.classList.add('hidden');
+                    kanbanBtn.classList.add('bg-green-600', 'text-white');
+                    kanbanBtn.classList.remove('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
+                    listBtn.classList.remove('bg-green-600', 'text-white');
+                    listBtn.classList.add('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
+                }
 
             // Используем правильный URL /set-view-mode
             fetch('/set-view-mode', {
