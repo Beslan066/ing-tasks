@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\UserOnlineSession;
-use App\Models\UserSession; // ВАЖНО: добавить этот импорт
+use App\Models\UserSession;
 use App\Traits\DeviceInfoTrait;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;

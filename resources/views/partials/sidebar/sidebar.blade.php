@@ -45,10 +45,10 @@
             <div class="flex items-center space-x-3 group">
                 <div id="logo-icon"
                      class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
-                    <i class="fas fa-tasks text-white text-lg"></i>
+                    <img src="{{asset('img/logo.svg')}}">
                 </div>
                 <div class="logotype__text">
-                    <h1 class="text-xl font-bold text-white">Менеджер<span class="text-primary-500">Плюс</span></h1>
+                    <h1 class="text-xl font-bold text-white">Менеджер<span style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Плюс</span></h1>
                     <p class="text-xs text-sidebar-text mt-1 text-nowrap whitespace-nowrap">Управление задачами</p>
                 </div>
             </div>

@@ -517,9 +517,8 @@ media-src https://meet.jit.si https:;
             <!-- Логотип -->
             <div>
                 <a href="{{route('welcome')}}" class="flex items-center space-x-3 group">
-                    <div
-                        class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
-                        <i class="fas fa-tasks text-white text-lg"></i>
+                    <div>
+                        <img src="{{asset('img/logo.svg')}}">
                     </div>
                     <div>
                         @if($backgroundEnabled && $backgroundImage)

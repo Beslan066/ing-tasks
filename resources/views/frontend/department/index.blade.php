@@ -29,7 +29,7 @@
                     <h2 class="text-3xl font-bold text-white max-[500px]:text-[26px]">Мои отделы</h2>
                     <p class="text-white text-sm max-[500px]:text-[13px]">Управляйте отделами, задачами и почтовой системой</p>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a] max-[500px]:text-[26px]">Мои отделы</h2>
+                    <h2 class="text-3xl font-bold max-[500px]:text-[26px]" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Мои отделы</h2>
                     <p class="text-gray-700 text-sm max-[500px]:text-[13px]">Управляйте отделами, задачами и почтовой системой</p>
                 @endif
             </div>
@@ -51,7 +51,7 @@
                 @endif
                 @if(auth()->user()->isLeader())
                         <button onclick="openDepartmentModal()"
-                                class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base">
+                                class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                             <i class="fas fa-plus"></i>
                             <span>Новый отдел</span>
                         </button>

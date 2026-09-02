@@ -29,7 +29,7 @@
                     <h2 class="text-3xl font-bold text-white  max-[500px]:text-[26px]">Команда</h2>
                     <p class="text-white text-sm  max-[500px]:text-[13px]">Участники вашей организации</p>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a]  max-[500px]:text-[26px]">Команда</h2>
+                    <h2 class="text-3xl font-bold max-[500px]:text-[26px]" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Команда</h2>
                     <p class="text-gray-700 text-sm  max-[500px]:text-[13px]">Участники вашей организации</p>
                 @endif
             </div>
@@ -52,7 +52,8 @@
                 @endif
                 @if(auth()->user()->isLeader())
                     <button
-                        class="flex-1 md:flex-none bg-primary-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-secondary transition text-sm md:text-base"
+                        class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-secondary transition text-sm md:text-base"
+                        style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;"
                         id="inviteUserBtn">
                         <i class="fas fa-user-plus"></i>
                         <span>Пригласить</span>
@@ -141,7 +142,7 @@
                     <div
                         class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto px-2 mb-2">
                         <button id="applyFilters"
-                                class="bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                                class=" text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                             <i class="fas fa-check"></i>
                             <span>Применить</span>
                         </button>
@@ -151,7 +152,7 @@
                             <span>Сбросить</span>
                         </button>
                         <button id="toggleAdvancedFilters"
-                                class="bg-purple-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-purple-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                                class="bg-gray-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-purple-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
                             <i class="fas fa-cog"></i>
                             <span>Расширенные</span>
                             <i class="fas fa-chevron-down text-xs ml-1" id="advancedArrow"></i>
@@ -241,7 +242,7 @@
                 <div class="flex flex-col px-2 pb-2 sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
                     <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
                         <button id="applyFilters"
-                                class="bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                                class=" text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                             <i class="fas fa-check"></i>
                             <span>Применить</span>
                         </button>
@@ -251,7 +252,7 @@
                             <span>Сбросить</span>
                         </button>
                         <button id="toggleAdvancedFilters"
-                                class="bg-purple-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-purple-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                                class="bg-gray-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-purple-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
                             <i class="fas fa-cog"></i>
                             <span>Расширенные</span>
                             <i class="fas fa-chevron-down text-xs ml-1" id="advancedArrow"></i>
@@ -275,7 +276,7 @@
                     </div>
                     <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                         <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'excel'])) }}"
-                           class="flex-1 sm:flex-none bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                           class="flex-1 sm:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg transition flex items-center justify-center space-x-2 text-sm md:text-base" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                             <i class="fas fa-file-excel"></i>
                             <span>Excel</span>
                         </a>
@@ -615,7 +616,7 @@
                     </div>
                     <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                         <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'excel'])) }}"
-                           class="flex-1 sm:flex-none bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                           class="flex-1 sm:flex-none  text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                             <i class="fas fa-file-excel"></i>
                             <span>Excel</span>
                         </a>

@@ -29,14 +29,14 @@
                 <h2 class="text-3xl font-bold text-white max-[500px]:text-[26px]">Мои задачи</h2>
                 <p class="text-white text-sm max-[500px]:text-[13px]">Ваши личные задачи не видны на странице Команда</p>
             @else
-                <h2 class="text-3xl font-bold text-[#16a34a] max-[500px]:text-[26px]">Мои задачи</h2>
+                <h2 class="text-3xl font-bold max-[500px]:text-[26px]" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Мои задачи</h2>
                 <p class="text-gray-700 text-sm max-[500px]:text-[13px]">Ваши личные задачи не видны на странице Команда</p>
             @endif
         </div>
 
         <div class="flex space-x-4 w-full md:w-auto">
             <button onclick="openPersonalTaskModal()"
-                    class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base max-[500px]:basis-1/2">
+                    class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 transition text-sm md:text-base max-[500px]:basis-1/2" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                 <i class="fas fa-plus"></i>
                 <span>Добавить</span>
             </button>

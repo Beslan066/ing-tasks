@@ -31,7 +31,7 @@
                     <h2 class="text-3xl font-bold text-white">Все задачи</h2>
                     <p class="text-white text-sm">Архив всех ваших задач</p>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a]">Все задачи</h2>
+                    <h2 class="text-3xl font-bold">Все задачи</h2>
                     <p class="text-gray-700 text-sm">Архив всех ваших задач</p>
                 @endif
             </div>
