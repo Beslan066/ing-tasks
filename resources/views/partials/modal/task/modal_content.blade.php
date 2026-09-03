@@ -350,7 +350,7 @@
             <div class="mt-2 flex justify-end">
                 @if(auth()->user()->canViewAllCompanyTasks() || $task->author_id === auth()->id())
                     <button onclick="openCreateSubtaskModal({{ $task->id }})"
-                            class="text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg transition flex items-center mr-2  ">
+                            class="text-sm text-white px-3 py-1.5 rounded-lg transition flex items-center mr-2" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                         <i class="fas fa-plus mr-1"></i> Добавить подзадачу
                     </button>
                 @endif
