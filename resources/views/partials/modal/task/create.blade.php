@@ -272,7 +272,7 @@
                         class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
                     Отмена
                 </button>
-                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 max-[500px]:w-full max-[500px]:justify-center">
+                <button type="submit" class="px-6 py-3 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 max-[500px]:w-full max-[500px]:justify-center" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                     <i class="fas fa-plus mr-2"></i>Создать задачу
                 </button>
             </div>

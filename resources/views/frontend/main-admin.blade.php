@@ -52,14 +52,14 @@
                             <button onclick="setViewMode('list')"
                                     id="viewModeListBtn"
                                     class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
-                                {{ $viewMode === 'list' ? 'bg-green-600 text-white' : 'bg-white text-gray-700' }}">
+                                {{ $viewMode === 'list' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700' }}">
                                 <i class="fas fa-list"></i>
                                 <span>Список</span>
                             </button>
                             <button onclick="setViewMode('kanban')"
                                     id="viewModeKanbanBtn"
                                     class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
-                                {{ $viewMode === 'kanban' ? 'bg-green-600 text-white' : 'bg-white text-gray-700 ' }}">
+                                {{ $viewMode === 'kanban' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700 ' }}">
                                 <i class="fas fa-columns"></i>
                                 <span>Канбан</span>
                             </button>
@@ -1661,7 +1661,7 @@
             <p class="text-gray-600 mb-4">Укажите фактическое время работы над задачей:</p>
             <input type="number" id="actualHours" step="0.5" min="0" placeholder="Часы" class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4">
             <div class="flex space-x-3">
-                <button onclick="submitForReview()" class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">Отправить на проверку</button>
+                <button onclick="submitForReview()" class="flex-1 text-white py-2 rounded-lg" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">Отправить на проверку</button>
                 <button onclick="closeTimeModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Отмена</button>
             </div>
         </div>
