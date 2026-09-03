@@ -192,7 +192,7 @@
 
                         @endif
                         <button onclick="openAddUsersModal()" class="w-full {{ $isPremium ? 'bg-[#16a34a] hover:bg-[#15803d]' : 'bg-white/10 hover:bg-white/20' }} text-white font-medium py-2 px-4 rounded-lg transition border border-white/30">
-                            👥 Добавить пользователей
+                            Добавить пользователей
                         </button>
                     </div>
                 </div>
@@ -215,7 +215,7 @@
                                 Обновить до Премиум
                             </button>
                         @endif
-                        <button onclick="openAddUsersModal()" class="w-full {{ $isPremium ? 'bg-[#16a34a] hover:bg-[#15803d]' : 'bg-gray-100 hover:bg-gray-200 text-gray-800' }} font-medium py-2 px-4 rounded-lg transition border border-gray-200">
+                        <button onclick="openAddUsersModal()" class="w-full {{ $isPremium ? 'bg-[#16a34a] hover:bg-[#15803d]' : 'bg-gray-100 hover:bg-gray-200 text-gray-800' }} font-medium py-2 px-4 rounded-lg transition border border-gray-200 text-white">
                             Добавить пользователей
                         </button>
                     </div>

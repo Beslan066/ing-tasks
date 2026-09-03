@@ -30,7 +30,6 @@
 
     $licenseText = match($licenseType) {
         'premium' => 'Премиум',
-        'optimal' => 'Оптимальный',
         default => 'Базовый'
     };
 @endphp
