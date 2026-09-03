@@ -100,13 +100,12 @@
                     </button>
                 @endif
 
-                <button id="newTaskBtn"
-                        class="flex-1 md:flex-none text-white px-3
-                        py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 transition text-sm md:text-base"
-                        onclick="openTaskModal()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
+               <button id="newTaskBtn" onclick="openTaskModal()"
+                        class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                     <i class="fas fa-plus"></i>
                     <span>Новая задача</span>
                 </button>
+
             </div>
         </div>
 
@@ -205,8 +204,8 @@
 
                             <!-- Кнопки фильтра -->
                             <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                                <button type="button" onclick="updateViewModeBeforeSubmit()"
-                                        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base">
+                              <button type="button" onclick="updateViewModeBeforeSubmit()"
+                                        class="text-white px-4 py-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm md:text-base transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                                     Применить фильтры
                                 </button>
                                 <button type="button" onclick="resetWithCurrentMode()"
@@ -304,8 +303,8 @@
 
                             <!-- Кнопки фильтра -->
                             <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                                <button type="button" onclick="updateViewModeBeforeSubmit()"
-                                 class="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition duration-200 text-sm md:text-base">
+                                  <button type="button" onclick="updateViewModeBeforeSubmit()"
+                                        class="text-white px-4 py-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm md:text-base transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                                     Применить фильтры
                                 </button>
                                 <button type="button" onclick="resetWithCurrentMode()"

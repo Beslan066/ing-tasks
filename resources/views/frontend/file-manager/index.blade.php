@@ -76,14 +76,14 @@
                                                    {{ $backgroundEnabled && $backgroundImage ? 'text-white bg-transparent/20  border-none border-[1px]' : 'text-gray-800 dark:text-white/90 border-gray-500' }}">
                                     </div>
                                     <button onclick="openUploadModal()"
-                                            class="flex w-full items-center justify-center gap-2 rounded-lg bg-green-500 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-green-600 sm:w-auto">
+                                            class="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 px-4 py-3 text-sm font-medium text-white sm:w-auto transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                                         <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                             xmlns="http://www.w3.org/2000/svg">
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <path fill-rule="evenodd" clip-rule="evenodd"
-                                                  d="M9.2502 4.99951C9.2502 4.5853 9.58599 4.24951 10.0002 4.24951C10.4144 4.24951 10.7502 4.5853 10.7502 4.99951V9.24971H15.0006C15.4148 9.24971 15.7506 9.5855 15.7506 9.99971C15.7506 10.4139 15.4148 10.7497 15.0006 10.7497H10.7502V15.0001C10.7502 15.4143 10.4144 15.7501 10.0002 15.7501C9.58599 15.7501 9.2502 15.4143 9.2502 15.0001V10.7497H5C4.58579 10.7497 4.25 10.4139 4.25 9.99971C4.25 9.5855 4.58579 9.24971 5 9.24971H9.2502V4.99951Z"
-                                                  fill=""></path>
+                                                d="M9.2502 4.99951C9.2502 4.5853 9.58599 4.24951 10.0002 4.24951C10.4144 4.24951 10.7502 4.5853 10.7502 4.99951V9.24971H15.0006C15.4148 9.24971 15.7506 9.5855 15.7506 9.99971C15.7506 10.4139 15.4148 10.7497 15.0006 10.7497H10.7502V15.0001C10.7502 15.4143 10.4144 15.7501 10.0002 15.7501C9.58599 15.7501 9.2502 15.4143 9.2502 15.0001V10.7497H5C4.58579 10.7497 4.25 10.4139 4.25 9.99971C4.25 9.5855 4.58579 9.24971 5 9.24971H9.2502V4.99951Z"
+                                                fill=""></path>
                                         </svg>
-                                        Загрузить файл
+                                        <span>Загрузить файл</span>
                                     </button>
                                 </div>
                             </div>
@@ -645,15 +645,15 @@
                                     </div>
 
                                     <!-- Upload Button with Modal -->
-                                    <button onclick="openUploadModal()"
-                                            class="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:from-emerald-600 hover:to-emerald-700 sm:w-auto">
+                                      <button onclick="openUploadModal()"
+                                            class="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 px-4 py-3 text-sm font-medium text-white sm:w-auto transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                                         <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                             xmlns="http://www.w3.org/2000/svg">
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <path fill-rule="evenodd" clip-rule="evenodd"
-                                                  d="M9.2502 4.99951C9.2502 4.5853 9.58599 4.24951 10.0002 4.24951C10.4144 4.24951 10.7502 4.5853 10.7502 4.99951V9.24971H15.0006C15.4148 9.24971 15.7506 9.5855 15.7506 9.99971C15.7506 10.4139 15.4148 10.7497 15.0006 10.7497H10.7502V15.0001C10.7502 15.4143 10.4144 15.7501 10.0002 15.7501C9.58599 15.7501 9.2502 15.4143 9.2502 15.0001V10.7497H5C4.58579 10.7497 4.25 10.4139 4.25 9.99971C4.25 9.5855 4.58579 9.24971 5 9.24971H9.2502V4.99951Z"
-                                                  fill=""></path>
+                                                d="M9.2502 4.99951C9.2502 4.5853 9.58599 4.24951 10.0002 4.24951C10.4144 4.24951 10.7502 4.5853 10.7502 4.99951V9.24971H15.0006C15.4148 9.24971 15.7506 9.5855 15.7506 9.99971C15.7506 10.4139 15.4148 10.7497 15.0006 10.7497H10.7502V15.0001C10.7502 15.4143 10.4144 15.7501 10.0002 15.7501C9.58599 15.7501 9.2502 15.4143 9.2502 15.0001V10.7497H5C4.58579 10.7497 4.25 10.4139 4.25 9.99971C4.25 9.5855 4.58579 9.24971 5 9.24971H9.2502V4.99951Z"
+                                                fill=""></path>
                                         </svg>
-                                        Загрузить файл
+                                        <span>Загрузить файл</span>
                                     </button>
                                 </div>
                             </div>
@@ -1005,14 +1005,14 @@
                                             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 cursor-pointer">
                                             Выберите файл
                                         </label>
-                                        <input type="file" name="file" id="fileInput"
-                                               class="block w-full text-sm text-gray-500
-                                                file:mr-4 file:py-2 file:px-4
-                                                file:rounded-full file:border-0
-                                                file:text-sm file:font-semibold
-                                                file:bg-green-500 file:text-white
-                                                hover:file:bg-green-600 cursor-pointer"
-                                               required>
+                                     <input type="file" name="file" id="fileInput"
+                                            class="block w-full text-sm text-gray-500 cursor-pointer
+                                                    file:mr-4 file:py-2 file:px-4
+                                                    file:rounded-full file:border-0
+                                                    file:text-sm file:font-semibold file:text-white
+                                                    file:bg-gradient-to-br file:from-emerald-500 file:to-emerald-600
+                                                    hover:file:from-emerald-600 hover:file:to-emerald-700"
+                                            required>
                                         @php
                                             $maxFileSizeBytes = match($company->license_type) {
                                                 'basic' => 104857600,
@@ -1049,8 +1049,8 @@
                     </div>
                 </div>
                 <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="submit" form="uploadForm"
-                            class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-green-500 border border-transparent rounded-md shadow-sm hover:bg-green-600 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm">
+                   <button type="submit" form="uploadForm"
+                            class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white border border-transparent rounded-md bg-gradient-to-br from-emerald-500 to-emerald-600 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-emerald-500 sm:ml-3 sm:w-auto sm:text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                         Загрузить
                     </button>
                     <button type="button" onclick="closeUploadModal()"

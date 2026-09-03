@@ -305,10 +305,12 @@
                         class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
                     Отмена
                 </button>
-                <button type="submit"
-                        class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                    <i class="fas fa-save mr-2"></i>Сохранить изменения
+               <button type="submit"
+                        class="px-6 py-3 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-xl font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none flex items-center justify-center">
+                    <i class="fas fa-save mr-2"></i>
+                    <span>Сохранить изменения</span>
                 </button>
+
             </div>
         </form>
     </div>

@@ -29,7 +29,7 @@
                     <h2 class="text-3xl font-bold text-white max-[500px]:text-[26px]">Фотобанк</h2>
                     <p class="text-white text-sm max-[500px]:text-[13px]">Инструменты для продуктивной работы</p>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a] max-[500px]:text-[26px]">Фотобанк</h2>
+                    <h2 class="text-3xl font-bold  max-[500px]:text-[26px]" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Фотобанк</h2>
                     <p class="text-gray-700 text-sm max-[500px]:text-[13px]">Инструменты для продуктивной работы</p>
                 @endif
             </div>
@@ -49,7 +49,7 @@
                 </button>
 
                 <button @click="showUploadModal = true"
-                        class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
+                        class="flex items-center gap-2 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] hover:-translate-y-0.5 transition-all duration-300">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -214,7 +214,7 @@
         <div class="flex items-center justify-center py-4 flex-wrap gap-2 mb-8">
             <button @click="setCategoryFilter('')"
                     :class="{'bg-green-600 text-white': !filters.category, 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300': filters.category}"
-                    class="px-4 py-2 rounded-lg font-medium transition-colors border-none dark:border-gray-600">
+                    class="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] hover:-translate-y-0.5 transition-all duration-300">
                 Все категории
             </button>
             <template x-for="category in categoriesData" :key="category.id">
@@ -291,7 +291,7 @@
                             </p>
                         @endif
                         <button @click="hasActiveFilters ? clearFilters() : (showUploadModal = true)"
-                                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                                class="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] hover:-translate-y-0.5 transition-all duration-300">
                             <span x-text="hasActiveFilters ? 'Сбросить фильтры' : 'Добавить фото'"></span>
                         </button>
                     </div>

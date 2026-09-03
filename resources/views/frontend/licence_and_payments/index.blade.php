@@ -185,9 +185,11 @@
                     </div>
                     <div class="mt-5 space-y-3">
                         @if(!$isPremium)
-                            <button onclick="openUpgradeModal()" class="w-full text-white font-medium py-2 px-4 rounded-lg transition" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
-                                🚀 Обновить до Премиум
-                            </button>
+                               <button onclick="openUpgradeModal()"
+                                        class="w-full text-white font-medium py-2 px-4 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+                                    Обновить до Премиум
+                                </button>
+
                         @endif
                         <button onclick="openAddUsersModal()" class="w-full {{ $isPremium ? 'bg-[#16a34a] hover:bg-[#15803d]' : 'bg-white/10 hover:bg-white/20' }} text-white font-medium py-2 px-4 rounded-lg transition border border-white/30">
                             👥 Добавить пользователей
@@ -208,7 +210,8 @@
                     </div>
                     <div class="mt-5 space-y-3">
                         @if(!$isPremium)
-                            <button onclick="openUpgradeModal()" class="w-full text-white font-medium py-2 px-4 rounded-lg transition" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
+                           <button onclick="openUpgradeModal()"
+                                    class="w-full text-white font-medium py-2 px-4 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                                 Обновить до Премиум
                             </button>
                         @endif
@@ -253,7 +256,8 @@
                                 <li>✓ Полный набор инструментов</li>
                                 <li>✓ СМС-оповещения для руководителей о статусе задач</li>
                             </ul>
-                            <button onclick="openUpgradeModal()" class="mt-5 w-full text-white font-medium py-2 rounded-lg transition" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
+                            <button onclick="openUpgradeModal()"
+                                    class="mt-5 w-full text-white font-medium py-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                                 Выбрать Премиум
                             </button>
                         </div>
@@ -289,7 +293,8 @@
                                 <li>✓ Полный набор инструментов</li>
                                 <li>✓ СМС-оповещения для руководителей о статусе задач</li>
                             </ul>
-                            <button onclick="openUpgradeModal()" class="mt-5 w-full text-white font-medium py-2 rounded-lg transition" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
+                           <button onclick="openUpgradeModal()"
+                                    class="mt-5 w-full text-white font-medium py-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                                 Выбрать Премиум
                             </button>
                         </div>
