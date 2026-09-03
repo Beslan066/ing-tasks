@@ -52,14 +52,14 @@
                             <button onclick="setViewMode('list')"
                                     id="viewModeListBtn"
                                     class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
-                                {{ $viewMode === 'list' ? 'bg-green-600 text-white' : 'bg-white text-gray-700' }}">
+                                {{ $viewMode === 'list' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700' }}">
                                 <i class="fas fa-list"></i>
                                 <span>Список</span>
                             </button>
                             <button onclick="setViewMode('kanban')"
                                     id="viewModeKanbanBtn"
                                     class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
-                                {{ $viewMode === 'kanban' ? 'bg-green-600 text-white' : 'bg-white text-gray-700 ' }}">
+                                {{ $viewMode === 'kanban' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700 ' }}">
                                 <i class="fas fa-columns"></i>
                                 <span>Канбан</span>
                             </button>
@@ -69,14 +69,14 @@
                             <button onclick="setViewMode('list')"
                                     id="viewModeListBtn"
                                     class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
-                                {{ $viewMode === 'list' ? 'bg-green-600 text-white' : 'bg-white text-gray-700' }}">
+                                {{ $viewMode === 'list' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700' }}">
                                 <i class="fas fa-list"></i>
                                 <span>Список</span>
                             </button>
                             <button onclick="setViewMode('kanban')"
                                     id="viewModeKanbanBtn"
                                     class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
-                                {{ $viewMode === 'kanban' ? 'bg-green-600 text-white' : 'bg-white text-gray-700 ' }}">
+                                {{ $viewMode === 'kanban' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700 ' }}">
                                 <i class="fas fa-columns"></i>
                                 <span>Канбан</span>
                             </button>
@@ -100,13 +100,12 @@
                     </button>
                 @endif
 
-                <button id="newTaskBtn"
-                        class="flex-1 md:flex-none text-white px-3
-                        py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 transition text-sm md:text-base"
-                        onclick="openTaskModal()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
+               <button id="newTaskBtn" onclick="openTaskModal()"
+                        class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                     <i class="fas fa-plus"></i>
                     <span>Новая задача</span>
                 </button>
+
             </div>
         </div>
 
@@ -205,8 +204,8 @@
 
                             <!-- Кнопки фильтра -->
                             <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                                <button type="button" onclick="updateViewModeBeforeSubmit()"
-                                        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base">
+                              <button type="button" onclick="updateViewModeBeforeSubmit()"
+                                        class="text-white px-4 py-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm md:text-base transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                                     Применить фильтры
                                 </button>
                                 <button type="button" onclick="resetWithCurrentMode()"
@@ -304,8 +303,8 @@
 
                             <!-- Кнопки фильтра -->
                             <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                                <button type="button" onclick="updateViewModeBeforeSubmit()"
-                                        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base">
+                                  <button type="button" onclick="updateViewModeBeforeSubmit()"
+                                        class="text-white px-4 py-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm md:text-base transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                                     Применить фильтры
                                 </button>
                                 <button type="button" onclick="resetWithCurrentMode()"
@@ -1661,7 +1660,7 @@
             <p class="text-gray-600 mb-4">Укажите фактическое время работы над задачей:</p>
             <input type="number" id="actualHours" step="0.5" min="0" placeholder="Часы" class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4">
             <div class="flex space-x-3">
-                <button onclick="submitForReview()" class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">Отправить на проверку</button>
+                <button onclick="submitForReview()" class="flex-1 text-white py-2 rounded-lg" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">Отправить на проверку</button>
                 <button onclick="closeTimeModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Отмена</button>
             </div>
         </div>
@@ -1696,17 +1695,18 @@
                     listContainer.classList.remove('hidden');
                     kanbanContainer.classList.add('hidden');
                     statisticCard.classList.remove('hidden');
-                    listBtn.classList.add('bg-green-600', 'text-white');
+
+                    listBtn.classList.add('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
                     listBtn.classList.remove('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
-                    kanbanBtn.classList.remove('bg-green-600', 'text-white');
+                    kanbanBtn.classList.remove('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
                     kanbanBtn.classList.add('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
                 } else {
                     listContainer.classList.add('hidden');
                     kanbanContainer.classList.remove('hidden');
                     statisticCard.classList.add('hidden');
-                    kanbanBtn.classList.add('bg-green-600', 'text-white');
+                    kanbanBtn.classList.add('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
                     kanbanBtn.classList.remove('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
-                    listBtn.classList.remove('bg-green-600', 'text-white');
+                    listBtn.classList.remove('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
                     listBtn.classList.add('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
                 }
 

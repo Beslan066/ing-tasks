@@ -56,7 +56,7 @@ class HomeController extends Controller
             'new' => Task::with(['author', 'department', 'category', 'files'])
                 ->withCount('files')
                 ->where('user_id', $user->id)
-                ->where(function($query) {
+                ->where(function ($query) {
                     $query->where('status', 'назначена')
                         ->orWhere('status', 'просрочена');
                 })
@@ -159,17 +159,17 @@ class HomeController extends Controller
             // Менеджер видит только задачи своих отделов и где он автор
             $departmentIds = $user->departments()->pluck('departments.id')->toArray();
             $baseQuery = Task::with(['author', 'user', 'department', 'category', 'subtasks']) // Добавил 'subtasks'
-            ->withCount('rejections')
+                ->withCount('rejections')
                 ->where('is_personal', '!=', true)
                 ->where('company_id', $user->company_id)
-                ->where(function($query) use ($user, $departmentIds) {
+                ->where(function ($query) use ($user, $departmentIds) {
                     $query->whereIn('department_id', $departmentIds)
                         ->orWhere('author_id', $user->id);
                 });
         } else {
             // Руководитель видит все задачи компании
             $baseQuery = Task::with(['author', 'user', 'department', 'category', 'subtasks']) // Добавил 'subtasks'
-            ->withCount('rejections')
+                ->withCount('rejections')
                 ->where('is_personal', '!=', true)
                 ->where('company_id', $user->company_id);
         }
@@ -210,12 +210,12 @@ class HomeController extends Controller
             //     ['path' => $request->url(), 'query' => $request->query()]
             // );
             $tasks = new \Illuminate\Pagination\LengthAwarePaginator(
-    $allTasks,
-    $allTasks->count(),
-    500,
-    1,
-    ['path' => $request->url(), 'query' => $request->query()]
-);
+                $allTasks,
+                $allTasks->count(),
+                500,
+                1,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
         } else {
             // Для списка - используем пагинацию (20 задач на страницу)
             $tasks = $baseQuery->paginate(20);
@@ -262,7 +262,7 @@ class HomeController extends Controller
         $filterData = [
             'users' => User::where('company_id', $user->company_id)->get(),
             'departments' => Department::where('company_id', $user->company_id)->get(),
-            'categories' => Category::whereHas('tasks', function($query) use ($user) {
+            'categories' => Category::whereHas('tasks', function ($query) use ($user) {
                 $query->where('company_id', $user->company_id);
             })->get(),
             'statuses' => Task::getStatuses(),
@@ -289,7 +289,7 @@ class HomeController extends Controller
         // Поиск
         if ($request->has('search') && $request->search) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%");
             });
@@ -365,7 +365,7 @@ class HomeController extends Controller
                     ->withCount('rejections')
                     ->where('is_personal', '!=', true)
                     ->where('company_id', $user->company_id)
-                    ->where(function($q) use ($user, $departmentIds) {
+                    ->where(function ($q) use ($user, $departmentIds) {
                         $q->whereIn('department_id', $departmentIds)
                             ->orWhere('author_id', $user->id);
                     });
@@ -380,7 +380,7 @@ class HomeController extends Controller
             // Применяем фильтры
             if ($request->has('search') && $request->search) {
                 $search = $request->search;
-                $query->where(function($q) use ($search) {
+                $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
                         ->orWhere('description', 'like', "%{$search}%");
                 });
@@ -439,7 +439,6 @@ class HomeController extends Controller
                 'success' => true,
                 'tasks' => $kanbanTasks
             ]);
-
         } catch (\Exception $e) {
             \Log::error('Error loading kanban tasks: ' . $e->getMessage());
             return response()->json([
@@ -467,7 +466,6 @@ class HomeController extends Controller
                 'message' => 'Режим просмотра сохранен',
                 'view_mode' => $request->view_mode
             ]);
-
         } catch (\Exception $e) {
             \Log::error('Error saving view mode: ' . $e->getMessage());
 
@@ -643,6 +641,4 @@ class HomeController extends Controller
 
         return view('frontend.tasks.all-team-task', compact('user', 'allTasks', 'stats'));
     }
-
-
 }

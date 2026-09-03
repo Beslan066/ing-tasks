@@ -228,13 +228,13 @@
         <div class="mt-auto">
            <div class="py-1 grid grid-cols-6 gap-1 max-[1250px]:grid-cols-4">
 
-                 @if($task->status === 'назначена') <button onclick="startTask({{ $task->id }})" class="bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base col-span-3 max-[1250px]:col-span-2 max-[900px]:col-span-4">
+                 @if($task->status === 'назначена') <button onclick="startTask({{ $task->id }})" class="px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base col-span-3 max-[1250px]:col-span-2 max-[900px]:col-span-4" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                     <i class="fas fa-play mr-2 text-white"></i> Начать
                 </button>
-                 @elseif($task->status === 'в работе') <button onclick="sendForReview({{ $task->id }})" class="bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base col-span-3 max-[1250px]:col-span-2 max-[900px]:col-span-4">
+                 @elseif($task->status === 'в работе') <button onclick="sendForReview({{ $task->id }})" class="px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base col-span-3 max-[1250px]:col-span-2 max-[900px]:col-span-4"  style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                     <i class="fas fa-play mr-2 text-white"></i> Отправить на проверку
                 </button>
-                @else <button onclick="startTask({{ $task->id }})" class="bg-green-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base col-span-3 max-[1250px]:col-span-2 max-[900px]:col-span-4">
+                @else <button onclick="startTask({{ $task->id }})" class="px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base col-span-3 max-[1250px]:col-span-2 max-[900px]:col-span-4" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                     <i class="fas fa-play mr-2 text-white"></i> Завершить
                 </button>
                 @endif
@@ -350,7 +350,7 @@
             <div class="mt-2 flex justify-end">
                 @if(auth()->user()->canViewAllCompanyTasks() || $task->author_id === auth()->id())
                     <button onclick="openCreateSubtaskModal({{ $task->id }})"
-                            class="text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg transition flex items-center mr-2  ">
+                            class="text-sm text-white px-3 py-1.5 rounded-lg transition flex items-center mr-2" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                         <i class="fas fa-plus mr-1"></i> Добавить подзадачу
                     </button>
                 @endif

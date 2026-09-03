@@ -29,7 +29,7 @@
                     <h2 class="text-3xl font-bold text-white  max-[500px]:text-[26px]">Инструменты</h2>
                     <p class="text-white text-sm  max-[500px]:text-[13px]">Инструменты для продуктивной работы</p>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a]  max-[500px]:text-[26px]">Инструменты</h2>
+                    <h2 class="text-3xl font-bold  max-[500px]:text-[26px]" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Инструменты</h2>
                     <p class="text-gray-700 text-sm  max-[500px]:text-[13px]">Инструменты для продуктивной работы</p>
                 @endif
             </div>

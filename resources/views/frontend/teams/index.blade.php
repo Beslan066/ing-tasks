@@ -1937,7 +1937,7 @@
                             </button>
                             <button onclick="saveUserRole(${user.id})"
                                     id="saveRoleBtn"
-                                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-600 transition font-medium flex items-center space-x-2">
+                                    class="px-4 py-2 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition duration-200 font-medium flex items-center space-x-2">
                                 <span>Сохранить</span>
                             </button>
                         </div>

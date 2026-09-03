@@ -84,7 +84,7 @@
 
                 <div class="flex gap-4 pt-4">
                     <button type="submit" :disabled="uploadLoading"
-                            class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                            class="flex-1 disabled:bg-green-400 text-white px-6 py-3 rounded-lg font-medium transition-colors" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                         <span x-show="!uploadLoading">Загрузить фотографию</span>
                         <span x-show="uploadLoading">Загрузка...</span>
                     </button>

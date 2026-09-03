@@ -150,8 +150,9 @@
 
                     <div class="flex items-end gap-2">
                         <button onclick="applyFilters()"
-                            class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition">
-                            <i class="fas fa-search mr-2"></i>Применить
+                                class="text-white py-2 px-6 rounded-lg flex items-center justify-center bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+                            <i class="fas fa-search mr-2"></i>
+                            <span>Применить</span>
                         </button>
                         <button onclick="resetFilters()"
                             class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">
@@ -207,10 +208,11 @@
                     </div>
 
                     <div class="flex items-end gap-2">
-                        <button onclick="applyFilters()"
-                              class="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700 transition">
-                            <i class="fas fa-search mr-2"></i>Применить
-                        </button>
+                      <button onclick="applyFilters()"
+        class="text-white py-2 px-6 rounded-lg flex items-center justify-center bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+    <i class="fas fa-search mr-2"></i>
+    <span>Применить</span>
+</button>
                         <button onclick="resetFilters()"
                             class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">
                             <i class="fas fa-undo mr-2"></i>Сбросить
