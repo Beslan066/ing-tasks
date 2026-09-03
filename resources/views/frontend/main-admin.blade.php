@@ -69,14 +69,14 @@
                             <button onclick="setViewMode('list')"
                                     id="viewModeListBtn"
                                     class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
-                                {{ $viewMode === 'list' ? 'bg-green-600 text-white' : 'bg-white text-gray-700' }}">
+                                {{ $viewMode === 'list' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700' }}">
                                 <i class="fas fa-list"></i>
                                 <span>Список</span>
                             </button>
                             <button onclick="setViewMode('kanban')"
                                     id="viewModeKanbanBtn"
                                     class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
-                                {{ $viewMode === 'kanban' ? 'bg-green-600 text-white' : 'bg-white text-gray-700 ' }}">
+                                {{ $viewMode === 'kanban' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700 ' }}">
                                 <i class="fas fa-columns"></i>
                                 <span>Канбан</span>
                             </button>
@@ -305,7 +305,7 @@
                             <!-- Кнопки фильтра -->
                             <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
                                 <button type="button" onclick="updateViewModeBeforeSubmit()"
-                                        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base">
+                                 class="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition duration-200 text-sm md:text-base">
                                     Применить фильтры
                                 </button>
                                 <button type="button" onclick="resetWithCurrentMode()"
@@ -1696,17 +1696,18 @@
                     listContainer.classList.remove('hidden');
                     kanbanContainer.classList.add('hidden');
                     statisticCard.classList.remove('hidden');
-                    listBtn.classList.add('bg-green-600', 'text-white');
+
+                    listBtn.classList.add('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
                     listBtn.classList.remove('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
-                    kanbanBtn.classList.remove('bg-green-600', 'text-white');
+                    kanbanBtn.classList.remove('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
                     kanbanBtn.classList.add('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
                 } else {
                     listContainer.classList.add('hidden');
                     kanbanContainer.classList.remove('hidden');
                     statisticCard.classList.add('hidden');
-                    kanbanBtn.classList.add('bg-green-600', 'text-white');
+                    kanbanBtn.classList.add('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
                     kanbanBtn.classList.remove('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
-                    listBtn.classList.remove('bg-green-600', 'text-white');
+                    listBtn.classList.remove('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
                     listBtn.classList.add('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
                 }
 

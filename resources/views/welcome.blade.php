@@ -200,7 +200,7 @@
 
                     <div class="p-4 bg-gray-50 rounded-b-lg">
                         <button onclick="applyFiltersAndClose()"
-                                class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition text-sm font-medium">
+                                class="w-full text-white py-2 rounded-lg hover:bg-green-700 transition text-sm font-medium" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                             Применить фильтры
                         </button>
                     </div>
@@ -303,7 +303,7 @@
 
                             <div class="flex space-x-3 pt-2">
                                 <button onclick="createQuickTask()"
-                                        class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2.5 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 text-sm font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                                        class="flex-1 text-white px-4 py-2.5 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 text-sm font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center space-x-2" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                                     <i class="fas fa-check-circle"></i>
                                     <span>Создать</span>
                                 </button>

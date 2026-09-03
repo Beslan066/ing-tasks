@@ -185,7 +185,7 @@
                     </div>
                     <div class="mt-5 space-y-3">
                         @if(!$isPremium)
-                            <button onclick="openUpgradeModal()" class="w-full bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-2 px-4 rounded-lg transition">
+                            <button onclick="openUpgradeModal()" class="w-full text-white font-medium py-2 px-4 rounded-lg transition" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                                 🚀 Обновить до Премиум
                             </button>
                         @endif
@@ -208,7 +208,7 @@
                     </div>
                     <div class="mt-5 space-y-3">
                         @if(!$isPremium)
-                            <button onclick="openUpgradeModal()" class="w-full bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-2 px-4 rounded-lg transition">
+                            <button onclick="openUpgradeModal()" class="w-full text-white font-medium py-2 px-4 rounded-lg transition" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                                 Обновить до Премиум
                             </button>
                         @endif
@@ -253,7 +253,7 @@
                                 <li>✓ Полный набор инструментов</li>
                                 <li>✓ СМС-оповещения для руководителей о статусе задач</li>
                             </ul>
-                            <button onclick="openUpgradeModal()" class="mt-5 w-full bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-2 rounded-lg transition">
+                            <button onclick="openUpgradeModal()" class="mt-5 w-full text-white font-medium py-2 rounded-lg transition" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                                 Выбрать Премиум
                             </button>
                         </div>
@@ -289,7 +289,7 @@
                                 <li>✓ Полный набор инструментов</li>
                                 <li>✓ СМС-оповещения для руководителей о статусе задач</li>
                             </ul>
-                            <button onclick="openUpgradeModal()" class="mt-5 w-full bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-2 rounded-lg transition">
+                            <button onclick="openUpgradeModal()" class="mt-5 w-full text-white font-medium py-2 rounded-lg transition" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                                 Выбрать Премиум
                             </button>
                         </div>

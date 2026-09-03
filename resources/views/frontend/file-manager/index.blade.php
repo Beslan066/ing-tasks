@@ -646,7 +646,7 @@
 
                                     <!-- Upload Button with Modal -->
                                     <button onclick="openUploadModal()"
-                                            class="flex w-full items-center justify-center gap-2 rounded-lg bg-green-500 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-green-600 sm:w-auto">
+                                            class="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:from-emerald-600 hover:to-emerald-700 sm:w-auto">
                                         <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                                              xmlns="http://www.w3.org/2000/svg">
                                             <path fill-rule="evenodd" clip-rule="evenodd"

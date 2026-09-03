@@ -42,7 +42,7 @@
                 <button type="button" onclick="closeEditDepartmentModal()"
                         class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Отмена
                 </button>
-                <button type="submit" class="px-4 py-2 bg-primary bg-green-500 text-white rounded-lg hover:bg-secondary">Обновить</button>
+                <button type="submit" class="px-4 py-2 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition duration-200">Обновить</button>
             </div>
         </form>
     </div>

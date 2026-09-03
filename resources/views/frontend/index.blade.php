@@ -287,12 +287,15 @@
                 </div>
                 <div class="relative">
                     <div class="rounded-2xl p-3 bg-white border border-gray-200/80 shadow-xl shadow-gray-200/50">
-                        <div class="image-placeholder" style="min-height: 360px;">
-                            <div class="placeholder-content">
+                        <!-- <div class="image-placeholder" style="min-height: 360px;"> -->
+                            <!-- <div class="placeholder-content">
                                 <i data-lucide="layout-dashboard"></i>
                                 <span>Скриншот вашей доски проектов</span>
-                            </div>
-                        </div>
+                            </div> -->
+                            <video class="w-full h-full object-cover rounded-xl" height="auto" playsinline loop autoplay muted>
+                            <source src="/FIRSTVIDEO2.1.mp4" type="video/mp4">
+                            </video>
+                        <!-- </div> -->
                     </div>
                     <div class="absolute -top-4 -right-4 w-24 h-24 rounded-full blur-3xl opacity-30 -z-10" style="background: #10b981;"></div>
                     <div class="absolute -bottom-8 -left-8 w-32 h-32 rounded-full blur-3xl opacity-20 -z-10" style="background: #10b981;"></div>
