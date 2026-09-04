@@ -29,7 +29,7 @@
                 @if($backgroundEnabled && $backgroundImage)
                     <h2 class="text-3xl font-bold text-white max-[500px]:text-[26px]">Новости и поддержка</h2>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a] max-[500px]:text-[26px]">Новости и поддержка</h2>
+                    <h2 class="text-3xl font-bold max-[500px]:text-[26px]"  style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Новости и поддержка</h2>
                 @endif
             </div>
         </div>
@@ -135,14 +135,14 @@
                             <textarea name="message" id="message" rows="3" required
                                       class="w-full px-2 py-1.5 text-sm bg-white/10 border border-white/30 rounded-md text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#16a34a]"></textarea>
                         </div>
-                        <div>
+                      <div>
                             <label for="attachment" class="block text-white/90 text-xs font-medium mb-1">Файл</label>
                             <input type="file" name="attachment" id="attachment"
-                                   class="w-full text-xs text-white/70 file:mr-2 file:py-1   file:px-3 file:rounded-md file:border-0 file:text-sm file:bg-[#16a34a] file:text-white hover:file:bg-[#15803d] cursor-pointer">
+                                class="w-full text-xs text-white/70 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:bg-gradient-to-br file:from-emerald-500 file:to-emerald-600 file:text-white cursor-pointer file:transition-all file:duration-300 hover:file:shadow-[0_4px_15px_rgba(16,185,129,0.35)] active:file:translate-y-0 active:file:shadow-none">
                             <p class="text-white/50 text-[10px] mt-1">Max 10MB (jpg, png, pdf, zip, doc)</p>
                         </div>
                         <button type="submit"
-                                class=" bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-1.5 px-4 rounded-md text-sm transition duration-200">
+                                class="text-white font-medium py-1.5 px-4 rounded-md text-sm bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                             Отправить
                         </button>
                     </form>
@@ -191,16 +191,16 @@
                                       class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#16a34a]"></textarea>
                         </div>
                         <div>
-                            <label for="attachment" class="block text-gray-700 text-xs font-medium mb-1">Файл</label>
+                            <label for="attachment" class="block text-white/90 text-xs font-medium mb-1">Файл</label>
                             <input type="file" name="attachment" id="attachment"
-                                   class="w-full text-xs text-gray-600 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:bg-[#16a34a] file:text-white hover:file:bg-[#15803d] cursor-pointer">
-                            <p class="text-gray-400 text-[10px] mt-1">Max 10MB (jpg, png, pdf, zip, doc)</p>
+                                class="w-full text-xs text-white/70 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:bg-gradient-to-br file:from-emerald-500 file:to-emerald-600 file:text-white cursor-pointer file:transition-all file:duration-300 hover:file:shadow-[0_4px_15px_rgba(16,185,129,0.35)] active:file:translate-y-0 active:file:shadow-none">
+                            <p class="text-white/50 text-[10px] mt-1">Max 10MB (jpg, png, pdf, zip, doc)</p>
                         </div>
                         <div>
                             <button type="submit"
-                                    class="bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-1.5 px-4 rounded-lg text-sm transition">
-                                Отправить
-                            </button>
+                                class="text-white font-medium py-1.5 px-4 rounded-md text-sm bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+                            Отправить
+                        </button>
                         </div>
                     </form>
                 </div>

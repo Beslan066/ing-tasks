@@ -15,7 +15,7 @@
                     <h2 class="text-3xl font-bold text-white max-[500px]:text-[26px]">Лицензия и оплата</h2>
                     <p class="text-white/70 mt-1 max-[500px]:text-[13px]">Управление подпиской и пользователями</p>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a] max-[500px]:text-[26px]">Лицензия и оплата</h2>
+                    <h2 class="text-3xl font-bold max-[500px]:text-[26px]" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Лицензия и оплата</h2>
                     <p class="text-gray-500 mt-1 max-[500px]:text-[13px]">Управление подпиской и пользователями</p>
                 @endif
             </div>
@@ -54,17 +54,18 @@
                             <span>Использовано пользователей</span>
                             <span>{{ $usedUsers ?? 0 }} / {{ $maxUsers ?? 3 }}</span>
                         </div>
-                        <div class="w-full {{ $backgroundEnabled && $backgroundImage ? 'bg-white/20' : 'bg-gray-200' }} rounded-full h-2">
+                       <div class="w-full {{ $backgroundEnabled && $backgroundImage ? 'bg-white/20' : 'bg-gray-200' }} rounded-full h-2">
                             @php
                                 $userPercentage = $maxUsers > 0 ? ($usedUsers / $maxUsers) * 100 : 0;
                             @endphp
-                            <div class="bg-[#16a34a] h-2 rounded-full" style="width: {{ min($userPercentage, 100) }}%"></div>
+                            <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 h-2 rounded-full transition-all duration-500"
+                                style="width: {{ min($userPercentage, 100) }}%"></div>
                         </div>
                     </div>
 
                     <!-- Прогресс хранилища -->
-                    <div class="mt-4">
-                        <div class="flex justify-between text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white/70' : 'text-gray-600' }} mb-1">
+                     <div class="mt-4">
+                        <div class="flex justify-between text-sm text-white/70 mb-1">
                             <span>Использовано хранилища</span>
                             <span>
                                 @if($isPremium)
@@ -78,7 +79,8 @@
                             @php
                                 $storagePercentage = $maxStorageGB > 0 ? ($usedStorageGB / $maxStorageGB) * 100 : 0;
                             @endphp
-                            <div class="bg-[#16a34a] h-2 rounded-full" style="width: {{ min($storagePercentage, 100) }}%"></div>
+                            <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 h-2 rounded-full transition-all duration-500"
+                                style="width: {{ min($storagePercentage, 100) }}%"></div>
                         </div>
                     </div>
 
@@ -129,8 +131,12 @@
                             <span>Использовано пользователей</span>
                             <span>{{ $usedUsers ?? 0 }} / {{ $maxUsers ?? 3 }}</span>
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-[#16a34a] h-2 rounded-full" style="width: {{ ($usedUsers ?? 0) / ($maxUsers ?? 3) * 100 }}%"></div>
+                        <div class="w-full {{ $backgroundEnabled && $backgroundImage ? 'bg-white/20' : 'bg-gray-200' }} rounded-full h-2">
+                            @php
+                                $userPercentage = $maxUsers > 0 ? ($usedUsers / $maxUsers) * 100 : 0;
+                            @endphp
+                            <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 h-2 rounded-full transition-all duration-500"
+                                style="width: {{ min($userPercentage, 100) }}%"></div>
                         </div>
                     </div>
 
@@ -146,8 +152,12 @@
                                 @endif
                             </span>
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-[#16a34a] h-2 rounded-full" style="width: {{ ($usedStorageGB ?? 0) / ($maxStorageGB ?? 2) * 100 }}%"></div>
+                        <div class="w-full {{ $backgroundEnabled && $backgroundImage ? 'bg-white/20' : 'bg-gray-200' }} rounded-full h-2">
+                            @php
+                                $storagePercentage = $maxStorageGB > 0 ? ($usedStorageGB / $maxStorageGB) * 100 : 0;
+                            @endphp
+                            <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 h-2 rounded-full transition-all duration-500"
+                                style="width: {{ min($storagePercentage, 100) }}%"></div>
                         </div>
                     </div>
 
@@ -244,7 +254,7 @@
                         </div>
                         <!-- Премиум тариф -->
                         <div class="backdrop-blur-md bg-black/30 rounded-lg shadow-sm md:shadow-md p-4 md:p-6 border border-[#16a34a]/50 relative">
-                            <div class="absolute -top-3 left-4 bg-[#16a34a] text-white text-xs px-3 py-1 rounded-full">Рекомендуем</div>
+                            <div class="absolute -top-3 left-4 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white text-xs px-3 py-1 rounded-full shadow-md">Рекомендуем</div>
                             <h4 class="text-xl font-bold text-white">Премиум</h4>
                             <p class="text-3xl font-bold text-white mt-3">1 490 ₽<span class="text-sm font-normal text-white/60">/мес</span></p>
                             <p class="text-white/50 text-xs mt-1">+400 ₽ за доп. пользователя (свыше 15)</p>
@@ -281,7 +291,7 @@
                         </div>
                         <!-- Премиум тариф -->
                         <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6 border border-[#16a34a]/30 relative">
-                            <div class="absolute -top-3 left-4 bg-[#16a34a] text-white text-xs px-3 py-1 rounded-full">Рекомендуем</div>
+                            <div class="absolute -top-3 left-4 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white text-xs px-3 py-1 rounded-full shadow-md">Рекомендуем</div>
                             <h4 class="text-xl font-bold text-gray-800">Премиум</h4>
                             <p class="text-3xl font-bold text-gray-800 mt-3">1 490 ₽<span class="text-sm font-normal text-gray-500">/мес</span></p>
                             <p class="text-gray-400 text-xs mt-1">+400 ₽ за доп. пользователя (свыше 15)</p>

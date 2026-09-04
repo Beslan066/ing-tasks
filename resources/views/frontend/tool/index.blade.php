@@ -161,7 +161,7 @@
                 <div class="border rounded-lg p-4">
                     <h3 class="font-semibold text-gray-800 mb-3">Создать новую комнату</h3>
                     <button onclick="createNewRoom()"
-                        class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                            class="w-full text-white px-4 py-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                         + Создать комнату
                     </button>
                 </div>

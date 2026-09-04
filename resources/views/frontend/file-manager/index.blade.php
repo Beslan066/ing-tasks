@@ -31,7 +31,7 @@
                     @if($backgroundEnabled && $backgroundImage)
                         <h2 class="text-3xl font-bold text-white  max-[500px]:text-[26px]">Хранилище</h2>
                     @else
-                        <h2 class="text-3xl font-bold text-[#16a34a]  max-[500px]:text-[26px]">Хранилище</h2>
+                        <h2 class="text-3xl font-bold max-[500px]:text-[26px]" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Хранилище</h2>
                     @endif
                 </div>
 
