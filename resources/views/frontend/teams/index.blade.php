@@ -9,27 +9,31 @@
         <!-- Заголовок и кнопка -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
             <nav class="hidden max-[500px]:block">
-                            <ol class="flex items-center gap-1.5">
-                                <li>
-                                    <a class="inline-flex items-center gap-1.5 text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-500 dark:text-gray-400' }}"
-                                       href="{{ route('welcome') }}">
-                                        Главная
-                                        <svg class="stroke-current" width="17" height="16" viewBox="0 0 17 16" fill="none"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366" stroke="" stroke-width="1.2"
-                                                  stroke-linecap="round" stroke-linejoin="round"></path>
-                                        </svg>
-                                    </a>
-                                </li>
-                                <li class="text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-800 dark:text-white/90' }}" x-text="pageName">Команда</li>
-                            </ol>
-                        </nav>
-        <div class="max-[500px]:hidden">
+                <ol class="flex items-center gap-1.5">
+                    <li>
+                        <a class="inline-flex items-center gap-1.5 text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-500 dark:text-gray-400' }}"
+                           href="{{ route('welcome') }}">
+                            Главная
+                            <svg class="stroke-current" width="17" height="16" viewBox="0 0 17 16" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366" stroke="" stroke-width="1.2"
+                                      stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </a>
+                    </li>
+                    <li class="text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-800 dark:text-white/90' }}"
+                        x-text="pageName">Команда
+                    </li>
+                </ol>
+            </nav>
+            <div class="max-[500px]:hidden">
                 @if($backgroundEnabled && $backgroundImage)
                     <h2 class="text-3xl font-bold text-white  max-[500px]:text-[26px]">Команда</h2>
                     <p class="text-white text-sm  max-[500px]:text-[13px]">Участники вашей организации</p>
                 @else
-                    <h2 class="text-3xl font-bold max-[500px]:text-[26px]" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Команда</h2>
+                    <h2 class="text-3xl font-bold max-[500px]:text-[26px]"
+                        style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                        Команда</h2>
                     <p class="text-gray-700 text-sm  max-[500px]:text-[13px]">Участники вашей организации</p>
                 @endif
             </div>
@@ -142,7 +146,8 @@
                     <div
                         class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto px-2 mb-2">
                         <button id="applyFilters"
-                                class=" text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
+                                class=" text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base"
+                                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                             <i class="fas fa-check"></i>
                             <span>Применить</span>
                         </button>
@@ -242,7 +247,8 @@
                 <div class="flex flex-col px-2 pb-2 sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
                     <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
                         <button id="applyFilters"
-                                class=" text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
+                                class=" text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base"
+                                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                             <i class="fas fa-check"></i>
                             <span>Применить</span>
                         </button>
@@ -276,7 +282,8 @@
                     </div>
                     <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                         <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'excel'])) }}"
-                           class="flex-1 sm:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg transition flex items-center justify-center space-x-2 text-sm md:text-base" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
+                           class="flex-1 sm:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg transition flex items-center justify-center space-x-2 text-sm md:text-base"
+                           style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                             <i class="fas fa-file-excel"></i>
                             <span>Excel</span>
                         </a>
@@ -369,7 +376,8 @@
                                             <td class="px-3 py-4">
                                                 <div class="flex items-center space-x-3 border-1 border-gray-800">
                                                     @if($user->avatar)
-                                                        <img src="{{ asset('storage/' . $user->avatar) }}"
+                                                        <img src="{{asset('storage/' . auth()->user()->avatar)}}"
+                                                             alt="{{auth()->user()->name}}"
                                                              alt="{{ $user->name }}"
                                                              class="w-8 h-8 rounded-full object-cover"
                                                              style="width:40px; height: 40px;">
@@ -441,9 +449,10 @@
                                                             data-user-id="{{ $user->id }}" title="Изменить роль">
                                                             <i class="fas fa-user-cog"></i>
                                                         </button>
-                                                        <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
-                                                                data-user-id="{{ $user->id }}"
-                                                                data-user-name="{{ $user->name }}" title="Удалить">
+                                                        <button
+                                                            class="delete-user-btn text-red-600 hover:text-red-800 p-1"
+                                                            data-user-id="{{ $user->id }}"
+                                                            data-user-name="{{ $user->name }}" title="Удалить">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </div>
@@ -489,7 +498,8 @@
                             <div class="flex justify-between items-start mb-3">
                                 <div class="flex items-center space-x-3">
                                     @if($user->avatar)
-                                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}"
+                                        <img src="{{asset('storage/' . auth()->user()->avatar)}}"
+                                             alt="{{auth()->user()->name}}" alt="{{ $user->name }}"
                                              class="w-10 h-10 rounded-full">
                                     @else
                                         <div
@@ -616,7 +626,8 @@
                     </div>
                     <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                         <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'excel'])) }}"
-                           class="flex-1 sm:flex-none  text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
+                           class="flex-1 sm:flex-none  text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base"
+                           style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
                             <i class="fas fa-file-excel"></i>
                             <span>Excel</span>
                         </a>
@@ -709,8 +720,8 @@
                                             <td class="px-3 py-4">
                                                 <div class="flex items-center space-x-3">
                                                     @if($user->avatar)
-                                                        <img src="{{ $user->getAvatarUrlAttribute() }}"
-                                                             alt="{{ $user->name }}"
+                                                        <img src="{{asset('storage/' . auth()->user()->avatar)}}"
+                                                             alt="{{auth()->user()->name}}"
                                                              class="w-8 h-8 rounded-full object-cover"
                                                              style="width:40px; height: 40px;">
                                                     @else
@@ -782,9 +793,10 @@
                                                             data-user-id="{{ $user->id }}" title="Изменить роль">
                                                             <i class="fas fa-user-cog"></i>
                                                         </button>
-                                                        <button class="delete-user-btn text-red-600 hover:text-red-800 p-1"
-                                                                data-user-id="{{ $user->id }}"
-                                                                data-user-name="{{ $user->name }}" title="Удалить">
+                                                        <button
+                                                            class="delete-user-btn text-red-600 hover:text-red-800 p-1"
+                                                            data-user-id="{{ $user->id }}"
+                                                            data-user-name="{{ $user->name }}" title="Удалить">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </div>
@@ -830,7 +842,8 @@
                             <div class="flex justify-between items-start mb-3">
                                 <div class="flex items-center space-x-3">
                                     @if($user->avatar)
-                                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}"
+                                        <img src="{{asset('storage/' . auth()->user()->avatar)}}"
+                                             alt="{{auth()->user()->name}}"
                                              class="w-10 h-10 rounded-full">
                                     @else
                                         <div
@@ -1030,7 +1043,7 @@
             // ОБРАБОТЧИК ДЛЯ КНОПКИ ИЗМЕНЕНИЯ РОЛИ - ПЕРВЫЙ
             // ============================================
             document.querySelectorAll('.change-role-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
+                btn.addEventListener('click', function (e) {
                     e.stopPropagation();
                     e.preventDefault();
                     const userId = this.dataset.userId;
@@ -1046,7 +1059,7 @@
             // ============================================
             // Обработчик для кнопки просмотра
             document.querySelectorAll('.view-user-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
+                btn.addEventListener('click', function (e) {
                     e.stopPropagation();
                     const userId = this.dataset.userId;
                     console.log('View user clicked:', userId);
@@ -1058,7 +1071,7 @@
 
             // Обработчик для клика по строке
             document.querySelectorAll('.user-row').forEach(row => {
-                row.addEventListener('click', function(e) {
+                row.addEventListener('click', function (e) {
                     // Проверяем, не кликнули ли по кнопке или ссылке
                     if (e.target.closest('button') || e.target.closest('a')) {
                         return;
@@ -1125,7 +1138,7 @@
             // УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ
             // ============================================
             document.querySelectorAll('.delete-user-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
+                btn.addEventListener('click', function (e) {
                     e.stopPropagation();
                     const userId = this.dataset.userId;
                     const userName = this.dataset.userName;
@@ -1143,11 +1156,11 @@
             closeDeleteModal?.addEventListener('click', closeDeleteModalFunc);
             cancelDeleteBtn?.addEventListener('click', closeDeleteModalFunc);
 
-            confirmDeleteBtn?.addEventListener('click', function() {
+            confirmDeleteBtn?.addEventListener('click', function () {
                 if (!currentDeleteUserId) return;
                 fetch(`/team/${currentDeleteUserId}`, {
                     method: 'DELETE',
-                    headers: { 'X-CSRF-TOKEN': getCsrfToken(), 'Accept': 'application/json' }
+                    headers: {'X-CSRF-TOKEN': getCsrfToken(), 'Accept': 'application/json'}
                 })
                     .then(res => res.json())
                     .then(data => {
@@ -1167,10 +1180,11 @@
 
             closeModal?.addEventListener('click', () => {
                 modal.classList.add('hidden')
-             document.body.classList.remove('overflow-y-hidden')});
+                document.body.classList.remove('overflow-y-hidden')
+            });
             modal?.addEventListener('click', (e) => {
                 if (e.target === modal) modal.classList.add('hidden');
-                 document.body.classList.remove('overflow-y-hidden')
+                document.body.classList.remove('overflow-y-hidden')
             });
 
             // ============================================
@@ -1217,7 +1231,7 @@
         <div class="lg:col-span-1">
             <div class="bg-gray-50 rounded-lg p-6">
                 <div class="text-center mb-6">
-                    ${user.avatar_url ? `<img src="${user.avatar_url}" alt="${user.name}" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">` :
+                    ${user.avatar ? `<img src="/storage/${user.avatar}" alt="${user.name}" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">` :
                     `<div class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4" style="background-color: #16a34a"><span class="text-white text-2xl font-bold">${user.name.charAt(0)}</span></div>`}
                     <h4 class="text-xl font-bold text-gray-900">${escapeHtml(user.name)}</h4>
                     <p class="text-gray-600">${escapeHtml(user.email)}</p>
@@ -1226,26 +1240,26 @@
                             ${user.role ? user.role.name : 'Роль не назначена'}
                         </span>
                         @if(auth()->user()->isLeader())
-                            <button onclick="openRoleEditModal(${user.id})"
+                <button onclick="openRoleEditModal(${user.id})"
                                             class="inline-block px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200 transition flex items-center gap-1">
                             <i class="fas fa-edit text-xs"></i>
                             <span>Изменить</span>
                             </button>
                         @endif
-                    </div>
                 </div>
-                <div class="space-y-4">
-                    <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <label class="text-sm font-medium text-gray-600">Отделы:</label>
-                            @if(auth()->user()->isLeader())
-                                <button id="editDepartmentsBtn" class="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1">
-                                    <i class="fas fa-edit text-xs"></i> <span>Редактировать</span>
-                                </button>
-                            @endif
-                        </div>
-                        <div id="departmentsList" class="flex flex-wrap gap-2">
-                            ${user.departments && user.departments.length > 0 ?
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-sm font-medium text-gray-600">Отделы:</label>
+@if(auth()->user()->isLeader())
+                <button id="editDepartmentsBtn" class="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1">
+                    <i class="fas fa-edit text-xs"></i> <span>Редактировать</span>
+                </button>
+@endif
+                </div>
+                <div id="departmentsList" class="flex flex-wrap gap-2">
+${user.departments && user.departments.length > 0 ?
                     user.departments.map(dept => `<span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">${escapeHtml(dept.name)}</span>`).join('') :
                     '<span class="text-gray-400 text-sm">Не назначен</span>'}
                         </div>
@@ -1336,7 +1350,7 @@
 
                 // Обработчики вкладок
                 modalContent.querySelectorAll('.tab-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
+                    btn.addEventListener('click', function () {
                         const tab = this.dataset.tab;
 
                         modalContent.querySelectorAll('.tab-btn').forEach(b => {
@@ -1461,7 +1475,7 @@
                 const customPeriodBtn = document.getElementById('customPeriodBtn');
 
                 modalContent.querySelectorAll('.visit-period-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
+                    btn.addEventListener('click', function () {
                         const period = this.dataset.period;
 
                         modalContent.querySelectorAll('.visit-period-btn').forEach(b => {
@@ -1482,7 +1496,7 @@
 
                 const applyCustomRange = document.getElementById('applyCustomRange');
                 if (applyCustomRange) {
-                    applyCustomRange.addEventListener('click', function() {
+                    applyCustomRange.addEventListener('click', function () {
                         const startDate = document.getElementById('startDate').value;
                         const endDate = document.getElementById('endDate').value;
                         if (startDate && endDate) {
@@ -1495,7 +1509,7 @@
 
                 // Обработчики кнопок периода задач
                 modalContent.querySelectorAll('.period-filter-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
+                    btn.addEventListener('click', function () {
                         modalContent.querySelectorAll('.period-filter-btn').forEach(b => {
                             b.classList.remove('bg-green-600', 'text-white');
                             b.classList.add('bg-gray-200', 'text-gray-700');
@@ -1534,8 +1548,8 @@
                         const selectedIds = Array.from(departmentsSelect.selectedOptions).map(opt => opt.value);
                         fetch(`/team/user/${user.id}/departments`, {
                             method: 'PUT',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': getCsrfToken() },
-                            body: JSON.stringify({ department_ids: selectedIds })
+                            headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': getCsrfToken()},
+                            body: JSON.stringify({department_ids: selectedIds})
                         }).then(res => res.json()).then(data => {
                             if (data.success) {
                                 showNotification('success', 'Отделы обновлены');
@@ -1655,7 +1669,7 @@
             resetFiltersBtn?.addEventListener('click', resetFilters);
 
             let searchTimeoutFilter;
-            document.getElementById('searchInput')?.addEventListener('input', function() {
+            document.getElementById('searchInput')?.addEventListener('input', function () {
                 clearTimeout(searchTimeoutFilter);
                 searchTimeoutFilter = setTimeout(applyFilters, 800);
             });
@@ -1901,7 +1915,7 @@
                         <div class="border-t border-gray-200 pt-4 mb-4">
                             <div class="flex items-center gap-3 mb-4">
                                 ${user.avatar_url ?
-                            `<img src="${user.avatar_url}" alt="${user.name}" class="w-10 h-10 rounded-full object-cover">` :
+                            `<img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}" class="w-10 h-10 rounded-full object-cover">` :
                             `<div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
                                         <span class="text-gray-600 font-bold">${user.name.charAt(0)}</span>
                                      </div>`
