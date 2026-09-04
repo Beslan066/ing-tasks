@@ -220,18 +220,27 @@
 
             @if($departments->count() === 0)
                 <div class="col-span-2">
-                    <div class="bg-white rounded-xl shadow p-12 text-center">
-                        <div class="w-24 h-24 mx-auto mb-6 text-gray-300">
-                            <i class="fas fa-building text-6xl"></i>
+                    @if($backgroundEnabled && $backgroundImage)
+                        <div class="backdrop-blur-md bg-transparent/20 rounded-xl shadow p-12 text-center">
+                            <h3 class="text-xl font-semibold text-white mb-3">Нет отделов</h3>
+                            <p class="text-white mb-6">Создайте свой первый отдел для управления задачами и почтой</p>
+                            <button onclick="openDepartmentModal()"
+                                    class="text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center space-x-2 " style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
+                                <i class="fas fa-plus"></i>
+                                <span>Создать отдел</span>
+                            </button>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-700 mb-3">Нет отделов</h3>
-                        <p class="text-gray-500 mb-6">Создайте свой первый отдел для управления задачами и почтой</p>
-                        <button onclick="openDepartmentModal()"
-                                class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors inline-flex items-center space-x-2">
-                            <i class="fas fa-plus"></i>
-                            <span>Создать отдел</span>
-                        </button>
-                    </div>
+                    @else
+                        <div class="bg-white rounded-xl shadow p-12 text-center">
+                            <h3 class="text-xl font-semibold text-gray-700 mb-3">Нет отделов</h3>
+                            <p class="text-gray-500 mb-6">Создайте свой первый отдел для управления задачами и почтой</p>
+                            <button onclick="openDepartmentModal()"
+                                    class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors inline-flex items-center space-x-2">
+                                <i class="fas fa-plus"></i>
+                                <span>Создать отдел</span>
+                            </button>
+                        </div>
+                    @endif
                 </div>
             @endif
         </div>
