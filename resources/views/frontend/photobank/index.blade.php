@@ -213,18 +213,25 @@
         <!-- Быстрые категории -->
         <div class="flex items-center justify-center py-4 flex-wrap gap-2 mb-8">
             <button @click="setCategoryFilter('')"
-                    :class="{'bg-green-600 text-white': !filters.category, 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300': filters.category}"
-                    class="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] hover:-translate-y-0.5 transition-all duration-300">
+                    :class="{
+                        'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-transparent hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-none': !filters.category,
+                        'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700': filters.category
+                    }"
+                    class="px-4 py-2 rounded-lg font-medium transition-all duration-300 border">
                 Все категории
             </button>
-            <template x-for="category in categoriesData" :key="category.id">
-                <button @click="setCategoryFilter(category.id)"
-                        :class="{'bg-green-600 text-white': filters.category == category.id, 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300': filters.category != category.id}"
-                        class="px-4 py-2 rounded-lg font-medium transition-colors border border-gray-300 dark:border-gray-600"
-                        x-text="category.name">
-                </button>
-            </template>
-        </div>
+
+                <template x-for="category in categoriesData" :key="category.id">
+                    <button @click="setCategoryFilter(category.id)"
+                            :class="{
+                                'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-transparent hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-none': filters.category == category.id,
+                                'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700': filters.category != category.id
+                            }"
+                            class="px-4 py-2 rounded-lg font-medium transition-all duration-300 border"
+                            x-text="category.name">
+                    </button>
+                </template>
+            </div>
 
         <!-- Галерея фотографий -->
         <div class="relative bg-transparent/20 backdrop-blur-md rounded-lg p-4">
