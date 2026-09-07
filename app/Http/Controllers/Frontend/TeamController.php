@@ -238,8 +238,8 @@ class TeamController extends Controller
 
             DB::beginTransaction();
 
-            // Логируем удаление пользователя из команды
-            ActivityLogger::userRemoved($userToRemove, $authUser);
+            // Добавляем компанию как третий параметр
+            ActivityLogger::userRemoved($userToRemove, $authUser, $authUser->company);
 
             try {
                 // 1. ОТПРАВКА ПИСЬМА

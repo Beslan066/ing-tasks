@@ -384,4 +384,24 @@ class ActivityLogger
             ]
         ]);
     }
+
+    public static function userRemoved(User $user, User $removedBy, Company $company): Activity
+    {
+        return Activity::create([
+            'user_id' => $removedBy->id,
+            'company_id' => $company->id,
+            'subject_type' => User::class,
+            'subject_id' => $user->id,
+            'action' => 'user_removed',
+            'description' => "{$removedBy->name} удалил пользователя {$user->name} из компании «{$company->name}»",
+            'properties' => [
+                'removed_user_id' => $user->id,
+                'removed_user_name' => $user->name,
+                'removed_by_id' => $removedBy->id,
+                'removed_by_name' => $removedBy->name,
+                'company_id' => $company->id,
+                'company_name' => $company->name
+            ]
+        ]);
+    }
 }
