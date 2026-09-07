@@ -370,8 +370,9 @@
                         </div>
                     </div>
 
-                    <button onclick="processUpgrade()" id="premiumPayButton" class="w-full bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-2 rounded-lg transition">
-                        Оплатить
+                    <button onclick="processUpgrade()" id="premiumPayButton"
+                        class="w-full text-white font-medium py-2 rounded-lg flex items-center justify-center space-x-2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+                        <span>Оплатить</span>
                     </button>
                 </div>
             </div>
