@@ -324,7 +324,8 @@
                 <div class="text-sm text-gray-600">Файловое хранилище</div>
                 <div class="flex space-x-3">
                     <button type="button" onclick="closeCreateFileManager()" class="px-5 py-2.5 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50">Отмена</button>
-                    <button type="button" onclick="confirmCreateFileSelection()" class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700">
+                    <button type="button" onclick="confirmCreateFileSelection()"
+                            class="px-5 py-2.5 text-white rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                         <i class="fas fa-check mr-2"></i>Выбрать (<span id="createConfirmCount">0</span>)
                     </button>
                 </div>
