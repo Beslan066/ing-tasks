@@ -58,10 +58,30 @@
                 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="email-container" style="max-width: 600px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);">
 
                     <tr>
-                        <td class="header-padding" style="background-color: #dc2626; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 32px 40px; text-align: left;">
+                        <!-- <td class="header-padding" style="background-color: #10b981; background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 32px 40px; text-align: left;">
                             <h2 style="margin: 0; color: #ffffff; font-size: 20px; font-weight: 600; letter-spacing: -0.5px;">
                                 Ваш доступ к компании был отозван
                             </h2>
+                        </td> -->
+                         <td class="header-padding" style="background-color: #10b981; background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 32px 40px; text-align: left;">
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td style="width: 56px; vertical-align: middle;" valign="middle">
+                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td style="width: 48px; height: 48px; border-radius: 12px; background-color: #ffffff; background-color: rgba(255,255,255,0.18); text-align: center; vertical-align: middle;" width="48" height="48" valign="middle" align="center">
+                                                    <img src="{{ asset('img/logo.svg') }}" width="28" height="28" alt="Логотип" style="display: block; margin: 0 auto; border: 0;">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td style="padding-left: 16px; vertical-align: middle;" valign="middle">
+                                        <h2 style="margin: 0; color: #ffffff; font-size: 20px; font-weight: 600; letter-spacing: -0.5px;">
+                                            Ваш доступ к компании был отозван
+                                        </h2>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
 
@@ -114,7 +134,7 @@
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td align="center">
-                                        <a href="{{ config('app.url') }}" class="site-button" style="background-color: #0f172a; color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 8px; display: inline-block;">
+                                         <a href="{{ config('app.url') }}" class="site-button" style="background-color: #10b981; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 8px; display: inline-block;">
                                             Перейти на сайт
                                         </a>
                                     </td>

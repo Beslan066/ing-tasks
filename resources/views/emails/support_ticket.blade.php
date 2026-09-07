@@ -91,9 +91,24 @@
 
                     <tr>
                         <td class="header-padding" style="background-color: #10b981; background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 32px 40px; text-align: left;">
-                            <h2 style="margin: 0; color: #ffffff; font-size: 20px; font-weight: 600; letter-spacing: -0.5px;">
-                                Новое обращение в поддержку
-                            </h2>
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td style="width: 56px; vertical-align: middle;" valign="middle">
+                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td style="width: 48px; height: 48px; border-radius: 12px; background-color: #ffffff; background-color: rgba(255,255,255,0.18); text-align: center; vertical-align: middle;" width="48" height="48" valign="middle" align="center">
+                                                    <img src="{{ asset('img/logo.svg') }}" width="28" height="28" alt="Логотип" style="display: block; margin: 0 auto; border: 0;">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td style="padding-left: 16px; vertical-align: middle;" valign="middle">
+                                        <h2 style="margin: 0; color: #ffffff; font-size: 20px; font-weight: 600; letter-spacing: -0.5px;">
+                                            Новое обращение в поддержку
+                                        </h2>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
 
