@@ -41,7 +41,7 @@ class SupportController extends Controller
         // Валидация
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',  // ВАЖНО: проверяем что это email
+            'email' => 'required|email|max:255',
             'subject' => 'required|string|max:255|min:3',
             'message' => 'required|string|min:10|max:5000',
             'attachment' => 'nullable|file|max:10240'
@@ -91,7 +91,7 @@ class SupportController extends Controller
         try {
             $adminEmail = config('mail.support_email', 'support@xn--d1ababe5abjwjn9m.xn--p1ai');
 
-            // ВАЖНО: В to() передаём email, а не тему!
+            //В to() передаём email, а не тему!
             Mail::to($adminEmail)->send(new SupportTicketMail($ticketData, $attachmentPath));
 
             \Log::info('Письмо отправлено на: ' . $adminEmail);

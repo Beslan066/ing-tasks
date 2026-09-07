@@ -8,7 +8,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'default' => env('MAIL_MAILER', 'smtp'),  // Поменял с 'log' на 'smtp'
+    'default' => env('MAIL_MAILER', 'smtp'),
 
     /*
     |--------------------------------------------------------------------------
@@ -23,10 +23,10 @@ return [
             'scheme' => env('MAIL_SCHEME'),
             'url' => env('MAIL_URL'),
             'host' => env('MAIL_HOST', '127.0.0.1'),
-            'port' => env('MAIL_PORT', 587),  // Поменял с 2525 на 587
+            'port' => env('MAIL_PORT', 587),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
-            'timeout' => 30,  // Добавил таймаут
+            'timeout' => 30,
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
             'auth_mode' => 'login',  // ДОБАВИЛ для REG.RU
             'verify_peer' => false,   // ДОБАВИЛ для REG.RU
@@ -86,7 +86,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', '@менеджерплюс.рф'),
+        'address' => env('MAIL_FROM_ADDRESS', 'support@менеджерплюс.рф'),
         'name' => env('MAIL_FROM_NAME', 'Менеджер Плюс'),
     ],
 
