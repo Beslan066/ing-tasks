@@ -49,7 +49,9 @@
                         <input type="text" x-model="newCategory.name" placeholder="Новая категория"
                                class="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:text-white">
                         <button type="button" @click="createCategory"
-                                class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg">Создать</button>
+                                class="px-4 py-2 text-white rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+                            Создать
+                        </button>
                     </div>
                     <span x-show="uploadErrors.category_id" x-text="uploadErrors.category_id" class="text-red-500 text-sm"></span>
                 </div>
