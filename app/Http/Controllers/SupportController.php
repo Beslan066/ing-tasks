@@ -89,7 +89,7 @@ class SupportController extends Controller
 
         // Отправка письма
         try {
-            $adminEmail = config('mail.support_email', 'taskmanager@xn--d1ababe5abjwjn9m.xn--p1ai');
+            $adminEmail = config('mail.support_email', 'support@xn--d1ababe5abjwjn9m.xn--p1ai');
 
             // ВАЖНО: В to() передаём email, а не тему!
             Mail::to($adminEmail)->send(new SupportTicketMail($ticketData, $attachmentPath));

@@ -86,7 +86,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'taskmanager@менеджерплюс.рф'),
+        'address' => env('MAIL_FROM_ADDRESS', '@менеджерплюс.рф'),
         'name' => env('MAIL_FROM_NAME', 'Менеджер Плюс'),
     ],
 
@@ -96,6 +96,6 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'support_email' => env('MAIL_SUPPORT_EMAIL', 'taskmanager@менеджерплюс.рф'),
+    'support_email' => env('MAIL_SUPPORT_EMAIL', 'support@менеджерплюс.рф'),
 
 ];
