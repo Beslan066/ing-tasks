@@ -55,10 +55,9 @@
                     </button>
                 @endif
                 @if(auth()->user()->isLeader())
-                    <button
-                        class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-secondary transition text-sm md:text-base"
-                        style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;"
-                        id="inviteUserBtn">
+                   <button
+                        id="inviteUserBtn"
+                        class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                         <i class="fas fa-user-plus"></i>
                         <span>Пригласить</span>
                     </button>
@@ -145,9 +144,9 @@
                 <div class="flex flex-col px-2 pb-2 sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
                     <div
                         class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto px-2 mb-2">
-                        <button id="applyFilters"
-                                class=" text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base"
-                                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
+                       <button
+                            id="applyFilters"
+                            class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                             <i class="fas fa-check"></i>
                             <span>Применить</span>
                         </button>
@@ -246,9 +245,9 @@
 
                 <div class="flex flex-col px-2 pb-2 sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
                     <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
-                        <button id="applyFilters"
-                                class=" text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base"
-                                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
+                        <button
+                            id="applyFilters"
+                            class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                             <i class="fas fa-check"></i>
                             <span>Применить</span>
                         </button>
@@ -282,19 +281,18 @@
                     </div>
                     <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                         <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'excel'])) }}"
-                           class="flex-1 sm:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg transition flex items-center justify-center space-x-2 text-sm md:text-base"
-                           style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
-                            <i class="fas fa-file-excel"></i>
-                            <span>Excel</span>
-                        </a>
+                            class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+                                <i class="fas fa-file-excel"></i>
+                                <span>Excel</span>
+                            </a>
                         <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'pdf'])) }}"
-                           class="flex-1 sm:flex-none bg-red-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-red-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                            <i class="fas fa-file-pdf"></i>
-                            <span>PDF</span>
-                        </a>
+                            class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-red-500 to-red-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(239,68,68,0.35)] active:translate-y-0 active:shadow-none">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>PDF</span>
+                            </a>
                         <a href="{{ route('team.print-table', request()->query()) }}"
-                           target="_blank"
-                           class="flex-1 sm:flex-none bg-blue-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                        target="_blank"
+                        class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-blue-500 to-blue-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(59,130,246,0.35)] active:translate-y-0 active:shadow-none">
                             <i class="fas fa-print"></i>
                             <span>Печать</span>
                         </a>
@@ -626,19 +624,18 @@
                     </div>
                     <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                         <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'excel'])) }}"
-                           class="flex-1 sm:flex-none  text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base"
-                           style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
-                            <i class="fas fa-file-excel"></i>
-                            <span>Excel</span>
-                        </a>
+                            class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+                                <i class="fas fa-file-excel"></i>
+                                <span>Excel</span>
+                            </a>
                         <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'pdf'])) }}"
-                           class="flex-1 sm:flex-none bg-red-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-red-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                            <i class="fas fa-file-pdf"></i>
-                            <span>PDF</span>
-                        </a>
+                            class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-red-500 to-red-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(239,68,68,0.35)] active:translate-y-0 active:shadow-none">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>PDF</span>
+                            </a>
                         <a href="{{ route('team.print-table', request()->query()) }}"
-                           target="_blank"
-                           class="flex-1 sm:flex-none bg-blue-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                        target="_blank"
+                        class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-blue-500 to-blue-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(59,130,246,0.35)] active:translate-y-0 active:shadow-none">
                             <i class="fas fa-print"></i>
                             <span>Печать</span>
                         </a>
@@ -1266,7 +1263,7 @@ ${user.departments && user.departments.length > 0 ?
                         <div id="departmentsEditForm" class="hidden mt-3">
                             <select id="departmentsSelect" multiple class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" size="5"></select>
                             <div class="flex gap-2 mt-2">
-                                <button id="saveDepartmentsBtn" class="bg-green-600 text-white px-3 py-1 rounded text-sm">Сохранить</button>
+                                <button id="saveDepartmentsBtn" class="text-white px-3 py-1 rounded flex items-center justify-center space-x-1.5 text-sm bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none"><span>Сохранить</span></button>
                                 <button id="cancelDepartmentsBtn" class="bg-gray-500 text-white px-3 py-1 rounded text-sm">Отмена</button>
                             </div>
                         </div>
@@ -1294,7 +1291,7 @@ ${user.departments && user.departments.length > 0 ?
                 <div class="mb-6">
                     <h4 class="text-lg font-semibold mb-4">Статистика выполнения задач</h4>
                     <div class="flex space-x-2 mb-4 max-[420px]:flex-wrap max-[420px]:space-x-0 max-[420px]:gap-2">
-                        <button class="period-filter-btn px-3 py-1 bg-green-600 text-white text-white rounded text-sm" data-period="week">Неделя</button>
+                        <button class="period-filter-btn px-3 py-1 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded text-sm" data-period="week">Неделя</button>
                         <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
                         <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="year">Год</button>
                         <button class="period-filter-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="all">Все время</button>
@@ -1312,9 +1309,9 @@ ${user.departments && user.departments.length > 0 ?
                     </div>
                 </div>
                 <div class="flex space-x-2 mb-6 max-[365px]:grid max-[365px]:grid-cols-2 max-[365px]:space-x-0 max-[365px]:gap-2">
-                    <a href="/team/user/${user.id}/export?type=excel&period=all" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center space-x-2"><i class="fas fa-file-excel"></i><span>Excel</span></a>
-                    <a href="/team/user/${user.id}/export?type=pdf&period=all" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center space-x-2"><i class="fas fa-file-pdf"></i><span>PDF</span></a>
-                    <a href="/team/user/${user.id}/print" target="_blank" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center space-x-2"><i class="fas fa-print"></i><span>Печать</span></a>
+                   <a href="{{ route('team.export-table', array_merge(request()->query(), ['format' => 'excel'])) }}" class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none"><i class="fas fa-file-excel"></i><span>Excel</span></a>
+                    <a href="/team/user/${user.id}/export?type=pdf&period=all"class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-red-500 to-red-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(239,68,68,0.35)] active:translate-y-0 active:shadow-none"><i class="fas fa-file-pdf"></i><span>PDF</span></a>
+                   <a href="/team/user/${user.id}/print" target="_blank"class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-blue-500 to-blue-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(59,130,246,0.35)] active:translate-y-0 active:shadow-none"><i class="fas fa-print"></i><span>Печать</span></a>
                 </div>
                 <div><h4 class="text-lg font-semibold mb-4">Задачи</h4><div id="userTasksList"><div class="flex justify-center items-center py-4"><div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div><span class="ml-2 text-gray-600">Загрузка задач...</span></div></div></div>
             </div>
@@ -1323,7 +1320,7 @@ ${user.departments && user.departments.length > 0 ?
             <div id="tab-visits" class="tab-content hidden">
                 <div class="mb-4">
                     <div class="flex flex-wrap gap-2 mb-4">
-                        <button class="visit-period-btn px-3 py-1 bg-green-600 text-white rounded text-sm" data-period="today">Сегодня</button>
+                        <button class="visit-period-btn px-3 py-1 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded text-sm" data-period="today">Сегодня</button>
                         <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="yesterday">Вчера</button>
                         <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="week">Неделя</button>
                         <button class="visit-period-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm" data-period="month">Месяц</button>
@@ -1335,7 +1332,7 @@ ${user.departments && user.departments.length > 0 ?
                     <div id="customDateRange" class="hidden mb-4 flex gap-2">
                         <input type="date" id="startDate" class="px-3 py-1 border rounded text-sm">
                         <input type="date" id="endDate" class="px-3 py-1 border rounded text-sm">
-                        <button id="applyCustomRange" class="px-3 py-1 bg-green-600 text-white rounded text-sm">Применить</button>
+                        <button id="applyCustomRange" class="px-3 py-1 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded text-sm bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">Применить</button>
                     </div>
                 </div>
                 <div id="visitStatsContent">
@@ -1479,11 +1476,11 @@ ${user.departments && user.departments.length > 0 ?
                         const period = this.dataset.period;
 
                         modalContent.querySelectorAll('.visit-period-btn').forEach(b => {
-                            b.classList.remove('bg-green-600', 'text-white');
+                            b.classList.remove('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
                             b.classList.add('bg-gray-200', 'text-gray-700');
                         });
                         this.classList.remove('bg-gray-200', 'text-gray-700');
-                        this.classList.add('bg-green-600', 'text-white');
+                        this.classList.add('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
 
                         if (period === 'custom') {
                             customDateRange.classList.remove('hidden');
@@ -1511,11 +1508,11 @@ ${user.departments && user.departments.length > 0 ?
                 modalContent.querySelectorAll('.period-filter-btn').forEach(btn => {
                     btn.addEventListener('click', function () {
                         modalContent.querySelectorAll('.period-filter-btn').forEach(b => {
-                            b.classList.remove('bg-green-600', 'text-white');
+                            b.classList.remove('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
                             b.classList.add('bg-gray-200', 'text-gray-700');
                         });
                         this.classList.remove('bg-gray-200', 'text-gray-700');
-                        this.classList.add('bg-green-600', 'text-white');
+                        this.classList.add('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
                         loadUserTasks(user.id, this.dataset.period);
                     });
                 });

@@ -115,7 +115,10 @@ media-src https://meet.jit.si https:;
 
         .main-container.has-background {
             background-size: cover;
+            background-attachment: fixed;
             background-position: center;
+            background-repeat: no-repeat;
+
         }
 
         .main-container.has-background .chat-button {

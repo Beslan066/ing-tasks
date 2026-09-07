@@ -56,9 +56,9 @@
                             class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition font-medium text-sm md:text-base">
                         Отмена
                     </button>
-                    <button type="submit" id="submitInvite"
-                            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
-                            disabled>
+                   <button type="submit" id="submitInvite"
+                        class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base font-medium max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:enabled:-translate-y-0.5 hover:enabled:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:enabled:translate-y-0 active:enabled:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
                         <i class="fas fa-paper-plane"></i>
                         <span>Отправить приглашения</span>
                     </button>
@@ -66,4 +66,4 @@
             </form>
         </div>
     </div>
-</div>`
+</div>
