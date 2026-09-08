@@ -65,7 +65,8 @@
                     Отмена
                 </button>
                 <button type="submit"
-                        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">Добавить
+                        class="px-4 py-2 text-white rounded-lg transition-all duration-300 bg-gradient-to-br from-emerald-500 to-emerald-600 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+                    Добавить
                 </button>
             </div>
         </form>

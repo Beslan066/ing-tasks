@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="x-apple-disable-message-reformatting">
-    <title>Приглашение в компанию</title>
-   <style>
+    <title>Сброс пароля</title>
+    <style>
         body, .body-root {
             margin: 0 !important;
             padding: 0 !important;
@@ -13,6 +13,10 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
             -webkit-font-smoothing: antialiased !important;
             width: 100% !important;
+        }
+
+        table {
+            border-collapse: collapse;
         }
 
         img {
@@ -26,7 +30,7 @@
             .email-container {
                 width: 100% !important;
                 max-width: 100% !important;
-                border-radius: 0 !important;
+                border-radius: 6px !important;
                 border-left: none !important;
                 border-right: none !important;
             }
@@ -42,7 +46,7 @@
             .footer-padding {
                 padding: 20px 20px !important;
             }
-            .invite-button {
+            .reset-button {
                 display: block !important;
                 width: 100% !important;
                 box-sizing: border-box !important;
@@ -64,7 +68,7 @@
                                     <td style="width: 56px; vertical-align: middle;" valign="middle">
                                         <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                             <tr>
-                                                <td style="width: 48px; height: 48px; border-radius: 12px; background-color: #ffffff; background-color: rgba(255,255,255,0.18); text-align: center; vertical-align: middle;" width="48" height="48" valign="middle" align="center">
+                                                <td style="width: 48px; height: 48px; border-radius: 12px; background-color: rgba(255,255,255,0.18); text-align: center; vertical-align: middle;" width="48" height="48" valign="middle" align="center">
                                                     <img src="{{ asset('img/logo.svg') }}" width="28" height="28" alt="Логотип" style="display: block; margin: 0 auto; border: 0;">
                                                 </td>
                                             </tr>
@@ -72,7 +76,7 @@
                                     </td>
                                     <td style="padding-left: 16px; vertical-align: middle;" valign="middle">
                                         <h2 style="margin: 0; color: #ffffff; font-size: 20px; font-weight: 600; letter-spacing: -0.5px;">
-                                            Приглашение в компанию
+                                            Сброс пароля
                                         </h2>
                                     </td>
                                 </tr>
@@ -81,21 +85,21 @@
                     </tr>
 
                     <tr>
-                        <td class="container-padding" style="padding: 40px;">
+                        <td class="container-padding" style="padding: 40px; text-align: center;">
 
-                            <p style="margin: 0 0 16px 0; color: #334155; font-size: 15px; line-height: 1.6;">
-                                Здравствуйте!
+                            <p style="margin: 0 0 8px 0; color: #0f172a; font-size: 17px; font-weight: 600;">
+                                Здравствуйте, {{ $user->name }}!
                             </p>
 
-                            <p style="margin: 0 0 24px 0; color: #334155; font-size: 15px; line-height: 1.6;">
-                                <strong style="color: #0f172a;">{{ $inviterName }}</strong> приглашает вас присоединиться к компании <strong style="color: #0f172a;">{{ $companyName }}</strong>.
+                            <p style="margin: 0 0 28px 0; color: #334155; font-size: 15px; line-height: 1.6;">
+                                Мы получили запрос на сброс пароля для вашей учётной записи. Нажмите кнопку ниже, чтобы задать новый пароль. Если вы не запрашивали сброс — просто проигнорируйте это письмо.
                             </p>
 
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 24px;">
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto 20px auto;">
                                 <tr>
-                                    <td align="center">
-                                        <a href="{{ $invitationUrl }}" class="invite-button" style="background-color: #10b981; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 8px; display: inline-block;">
-                                            Принять приглашение
+                                    <td style="border-radius: 8px; background-color: #10b981; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);">
+                                        <a href="{{ $url }}" class="reset-button" style="display: inline-block; padding: 14px 32px; font-size: 15px; font-weight: 600; color: #ffffff !important; text-decoration: none; border-radius: 8px;">
+                                            Сбросить пароль
                                         </a>
                                     </td>
                                 </tr>
@@ -103,21 +107,19 @@
 
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 24px;">
                                 <tr>
-                                    <td style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 14px 16px; color: #92400e; font-size: 14px;">
-                                        Ссылка действительна до: <strong>{{ $expiresAt }}</strong>
+                                    <td style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; color: #92400e; font-size: 13px; text-align: left;">
+                                        Ссылка действительна в течение {{ $count ?? 60 }} минут.
                                     </td>
                                 </tr>
                             </table>
 
-                            <p style="margin: 0 0 24px 0; color: #64748b; font-size: 13px; line-height: 1.6;">
-                                Если вы не ожидали этого приглашения, просто проигнорируйте это письмо — никаких действий предпринимать не нужно.
-                            </p>
-
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-top: 1px solid #edf2f7; padding-top: 16px;">
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 8px;">
                                 <tr>
-                                    <td style="color: #94a3b8; font-size: 12px; line-height: 1.6; word-break: break-all;">
-                                        Если кнопка не работает, скопируйте и вставьте эту ссылку в браузер:<br>
-                                        <a href="{{ $invitationUrl }}" style="color: #059669; text-decoration: underline;">{{ $invitationUrl }}</a>
+                                    <td style="padding-bottom: 6px; font-size: 12px; font-weight: 700; color: #059669; text-transform: uppercase; letter-spacing: 0.5px; text-align: left;">Ссылка для сброса</td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; color: #334155; font-size: 13px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; word-break: break-all; text-align: left;">
+                                        <a href="{{ $url }}" style="color: #059669; text-decoration: none;">{{ $url }}</a>
                                     </td>
                                 </tr>
                             </table>
@@ -127,8 +129,11 @@
 
                     <tr>
                         <td class="footer-padding" style="background-color: #f8fafc; padding: 24px 40px; text-align: center; border-top: 1px solid #edf2f7;">
+                            <p style="margin: 0 0 6px 0; font-size: 12px; color: #94a3b8; line-height: 1.5;">
+                                Если вы не запрашивали сброс пароля, никаких действий предпринимать не нужно.
+                            </p>
                             <p style="margin: 0; font-size: 12px; color: #94a3b8; line-height: 1.5;">
-                                С уважением, {{ config('app.name') }}
+                                &copy; {{ date('Y') }} Ваша Компания. Все права защищены.
                             </p>
                         </td>
                     </tr>

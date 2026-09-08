@@ -441,9 +441,14 @@
                     </div>
                 </div>
 
-                <button onclick="processAddUsers()" id="usersPayButton" class="w-full bg-[#16a34a] hover:bg-[#15803d] text-white font-medium py-2 rounded-lg transition">
+                <button onclick="processAddUsers()" id="usersPayButton" class="w-full bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none text-white font-medium py-2 rounded-lg">
                     Оплатить
                 </button>
+                  <!-- <button onclick="openPersonalTaskModal()"
+        class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+    <i class="fas fa-plus"></i>
+    <span>Добавить</span>
+</button> -->
             </div>
         </div>
     </div>

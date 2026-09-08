@@ -662,10 +662,9 @@
                             class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition">
                         Отмена
                     </button>
-                    <button type="submit"
-                            class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                        <i class="fas fa-save mr-2"></i>Сохранить изменения
-                    </button>
+                    <button type="submit" class="px-3 py-2 md:px-4 md:py-2 rounded-lg  transition flex items-center justify-center space-x-2 text-sm md:text-base col-span-3 max-[1250px]:col-span-2 max-[900px]:col-span-4 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+                    <i class="fas fa-save mr-2"></i>Сохранить изменения
+                </button>
                 </div>
             </form>
         </div>

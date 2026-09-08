@@ -233,7 +233,7 @@
                     <i class="fas fa-play"></i>
                     <span>Начать</span>
                 </button>
-                 @elseif($task->status === 'в работе') <button onclick="sendForReview({{ $task->id }})" class="px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 text-sm md:text-base col-span-3 max-[1250px]:col-span-2 max-[900px]:col-span-4"  style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
+                 @elseif($task->status === 'в работе') <button onclick="sendForReview({{ $task->id }})" class="px-3 py-2 md:px-4 md:py-2 rounded-lg  transition flex items-center justify-center space-x-2 text-sm md:text-base col-span-3 max-[1250px]:col-span-2 max-[900px]:col-span-4 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                     <i class="fas fa-play mr-2 text-white"></i> Отправить на проверку
                 </button>
                 @else <button onclick="startTask({{ $task->id }})"
