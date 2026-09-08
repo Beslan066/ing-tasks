@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Storage;
 
+use App\Notifications\CustomVerifyEmail;
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
@@ -40,6 +42,12 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     const ROLE_SUPERVISOR = "Руководитель";
+
+    // Метод для отправки уведомления о подтверждении email
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new CustomVerifyEmail);
+    }
 
     protected function casts(): array
     {
