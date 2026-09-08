@@ -14,16 +14,13 @@ class CustomVerifyEmail extends Notification
 
     public function __construct() {}
 
-    // Указываем, что отправляем именно по почте (mail)
     public function via($notifiable)
     {
         return ['mail'];
     }
 
-    // Здесь мы формируем само письмо
     public function toMail($notifiable)
     {
-        // Генерируем стандартную защищенную ссылку Laravel для верификации
         $verificationUrl = URL::temporarySignedRoute(
             'verification.verify',
             Carbon::now()->addMinutes(config('auth.verification.expire', 60)),
@@ -33,7 +30,6 @@ class CustomVerifyEmail extends Notification
             ]
         );
 
-        // Указываем наш собственный Blade-шаблон для письма
         return (new MailMessage)
             ->subject('Подтвердите ваш Email адрес')
             ->view('emails.verify', [
