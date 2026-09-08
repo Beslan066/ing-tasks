@@ -216,13 +216,13 @@
                 <div class="relative flex-1 max-w-xs">
                     <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-white text-sm"></i>
                     <input type="text" id="taskSearchInput" placeholder="Поиск по названию..."
-                           class="w-full pl-9 pr-3 py-2 border-none rounded-lg text-sm text-white focus:outline-none bg-transparent/20 placeholder:text-white">
+                        class="w-full pl-9 pr-3 py-2 border-none rounded-lg text-sm text-white bg-transparent/20 placeholder:text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:shadow-[0_0_15px_rgba(16,185,129,0.5)]">
                 </div>
             @else
                 <div class="relative flex-1 max-w-xs">
                     <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
                     <input type="text" id="taskSearchInput" placeholder="Поиск по названию..."
-                           class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm transition-all duration-300 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:shadow-[0_0_15px_rgba(16,185,129,0.3)]">
                 </div>
             @endif
         </div>
@@ -868,26 +868,26 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="md:col-span-2 space-y-2">
                         <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
-                            <i class="fas fa-tag text-green-500 mr-2 text-xs"></i>Название задачи *
+                            <i class="fas fa-tag text-emerald-500 mr-2 text-xs"></i>Название задачи *
                         </label>
                         <input type="text" name="name" id="editTaskName" required
-                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100">
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 focus:shadow-[0_0_15px_rgba(16,185,129,0.25)] transition-all duration-300">
                     </div>
 
                     <div class="md:col-span-2 space-y-2">
                         <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
-                            <i class="fas fa-align-left text-green-500 mr-2 text-xs"></i>Описание
+                            <i class="fas fa-align-left text-emerald-500 mr-2 text-xs"></i>Описание
                         </label>
                         <textarea name="description" id="editTaskDescription" rows="4"
-                                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100"></textarea>
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 focus:shadow-[0_0_15px_rgba(16,185,129,0.25)] transition-all duration-300"></textarea>
                     </div>
 
                     <div class="space-y-2">
                         <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
-                            <i class="fas fa-building text-green-500 mr-2 text-xs"></i>Отдел *
+                            <i class="fas fa-building text-emerald-500 mr-2 text-xs"></i>Отдел *
                         </label>
                         <select name="department_id" id="editTaskDepartment" required
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:outline-none focus:border-green-400">
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 focus:shadow-[0_0_15px_rgba(16,185,129,0.25)] transition-all duration-300">
                             <option value="">Выберите отдел</option>
                             @foreach($departments ?? [] as $department)
                                 <option value="{{ $department->id }}">{{ $department->name }}</option>
