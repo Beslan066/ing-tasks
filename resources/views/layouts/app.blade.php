@@ -1128,6 +1128,7 @@ media-src https://meet.jit.si https:;
     }
 
     function closeFileManager() {
+        console.log('app.blade.php: closeFileManager called');
         const modal = document.getElementById('fileManagerModal');
         if (modal) modal.classList.add('hidden');
         document.body.classList.remove('overflow-hidden');
@@ -3362,8 +3363,8 @@ setDefaultTab()
     });
 
     // Эффект встряски для инпутов
-    const style = document.createElement('style');
-    style.textContent = `
+    const style1 = document.createElement('style');
+    style1.textContent = `
     @keyframes shake {
         0%, 100% { transform: translateX(0); }
         25% { transform: translateX(-5px); }
@@ -3373,7 +3374,7 @@ setDefaultTab()
         animation: shake 0.3s ease-in-out;
     }
 `;
-    document.head.appendChild(style);
+    document.head.appendChild(style1);
 
      // Конец быстрого добавления
 

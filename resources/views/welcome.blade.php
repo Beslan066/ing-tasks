@@ -1408,27 +1408,28 @@
                 const fileIcon = getFileIcon(file.extension);
                 const fileType = getFileTypeClass(file.extension);
                 html += `
-                    <div class="file-card bg-white border ${isSelected ? 'border-green-500 shadow-md' : 'border-gray-200'} rounded-lg p-3 cursor-pointer" onclick="toggleTaskFileSelection(${file.id})">
-                        <div class="flex justify-end mb-2">
-                            <div class="w-5 h-5 rounded border ${isSelected ? 'bg-green-500 border-green-500' : 'border-gray-300'} flex items-center justify-center">
-                                ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
-                                <span class="text-2xl">${fileIcon}</span>
-                            </div>
-                            <p class="text-sm font-medium truncate">${escapeHtml(file.name)}</p>
-                            <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                            <p class="text-xs text-gray-400 mt-1">${formatDate(file.created_at)}</p>
-                        </div>
-                        <div class="flex justify-center space-x-2 mt-2 pt-2 border-t border-gray-100">
-                            <button type="button" onclick="event.stopPropagation(); downloadTaskFile(${file.id})"
-                                    class="text-gray-400 hover:text-green-600 p-1" title="Скачать">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                    </div>`;
+                      <div class="file-card bg-white border-2 ${isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200'} rounded-lg p-3 transition-all duration-200 hover:shadow-md cursor-pointer"
+                 onclick="toggleEditFileSelection(${file.id})">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="w-5 h-5 rounded ${isSelected ? 'bg-green-500' : 'border-2 border-gray-300'} flex items-center justify-center">
+                        ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                    </div>
+                    <button type="button"
+                            onclick="event.stopPropagation(); downloadEditFile(${file.id})"
+                            class="text-gray-400 hover:text-green-600 p-1 transition-colors"
+                            title="Скачать">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <img src="/storage/${file.path}" alt="${escapeHtml(file.name)}" class="w-full h-full object-cover">
+                    </div>
+                    <p class="text-sm font-medium text-gray-800 truncate" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</p>
+                    <p class="text-xs text-gray-500 mt-1">${formatFileSize(file.size)}</p>
+                    <p class="text-xs text-gray-400">${formatDate(file.created_at)}</p>
+                </div>
+            </div>`;
             });
             html += '</div>';
             contentDiv.innerHTML = html;
@@ -1462,6 +1463,7 @@
         }
 
         function closeTaskStorageManager() {
+            console.log('welcome.blade.php: Закрытие модального окна хранилища файлов');
             const modal = document.getElementById('fileManagerModal');
             if (modal) {
                 modal.classList.add('hidden');
