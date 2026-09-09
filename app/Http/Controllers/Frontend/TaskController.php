@@ -1168,7 +1168,7 @@ class TaskController extends Controller
         $user = Auth::user();
 
         $files = File::where('company_id', $user->company_id)
-            ->select('id', 'name', 'size', 'extension', 'created_at')
+            ->select('id', 'name', 'size', 'extension', 'path', 'created_at')
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function($file) {
@@ -1179,6 +1179,7 @@ class TaskController extends Controller
                     'extension' => $file->extension,
                     'created_at' => $file->created_at->toDateTimeString(),
                     'formatted_size' => $this->formatFileSize($file->size),
+                    'path'=> $file->path,
                 ];
             });
 

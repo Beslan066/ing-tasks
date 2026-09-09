@@ -2069,7 +2069,6 @@
         function renderEditFileManagerFiles(files) {
             const contentDiv = document.getElementById('fileManagerContent');
             if (!contentDiv) return;
-
             if (!files || files.length === 0) {
                 contentDiv.innerHTML = `<div class="col-span-full text-center py-12">
             <i class="fas fa-folder-open text-3xl text-gray-300 mb-2"></i>
@@ -2100,7 +2099,7 @@
                 </div>
                 <div class="text-center">
                     <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
-                        <span class="text-2xl">${fileIcon}</span>
+                        <img src="/storage/${file.path}" alt="${escapeHtml(file.name)}" class="w-full h-full object-cover">
                     </div>
                     <p class="text-sm font-medium text-gray-800 truncate" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</p>
                     <p class="text-xs text-gray-500 mt-1">${formatFileSize(file.size)}</p>
@@ -2236,13 +2235,6 @@
             window.open(`/file-storage/download/${fileId}`, '_blank');
         }
 
-        function closeFileManager() {
-            const modal = document.getElementById('fileManagerModal');
-            if (modal) {
-                modal.classList.add('hidden');
-                document.body.classList.remove('overflow-hidden');
-            }
-        }
 
         // ==================== ФУНКЦИИ ДЛЯ ЗАГРУЗКИ НОВЫХ ФАЙЛОВ ====================
         document.getElementById('editUploadNewFilesInput')?.addEventListener('change', function (e) {
@@ -2526,7 +2518,8 @@
             window.open(`/file-storage/download/${fileId}`, '_blank');
         }
 
-        function closeTaskStorageManager() {
+        function closeFileManager() {
+            console.log('main-admin closeFileManager');
             const modal = document.getElementById('fileManagerModal');
             if (modal) {
                 modal.classList.add('hidden');
