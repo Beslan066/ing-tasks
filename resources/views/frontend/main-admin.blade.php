@@ -1628,10 +1628,10 @@
                                 class="px-5 py-2.5 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-medium transition-all duration-200">
                             Отмена
                         </button>
-                         <button type="button" id="confirmFileSelectionBtn" onclick="confirmEditFileSelectionForEdit()"
-                            class="px-5 py-2.5 text-white rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
-                        <i class="fas fa-check mr-2"></i>Выбрать (<span id="confirmCount">0</span>)
-                    </button>
+                        <button type="button" id="confirmFileSelectionBtn" onclick="confirmEditFileSelectionForEdit()"
+                                class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-check mr-2"></i>Выбрать (<span id="confirmCount">0</span>)
+                        </button>
                     </div>
                 </div>
             </div>
@@ -2743,159 +2743,6 @@
             const modal = document.getElementById('taskViewModal');
             if (e.target === modal) closeTaskViewModal();
         });
-
-        // ==================== ФУНКЦИИ ДЛЯ КОММЕНТАРИЕВ ====================
-        function submitComment(taskId) {
-            const commentText = document.getElementById('commentInput')?.value.trim();
-            if (!commentText) { showNotification('Напишите комментарий', 'warning'); return; }
-
-            fetch(`/tasks/${taskId}/comments`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ comment: commentText })
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('commentInput').value = '';
-                        openTaskViewModal(taskId);
-                        showNotification('Комментарий добавлен', 'success');
-                    } else {
-                        showNotification(data.message || 'Ошибка', 'error');
-                    }
-                })
-                .catch(() => showNotification('Ошибка', 'error'));
-        }
-
-        function submitReply(commentId) {
-            const replyText = document.getElementById(`replyText_${commentId}`)?.value.trim();
-            const taskId = window.currentTaskId || window.taskId;
-
-            if (!replyText) {
-                if (typeof showNotification === 'function') showNotification('Напишите ответ', 'warning');
-                return;
-            }
-            if (!taskId) {
-                if (typeof showNotification === 'function') showNotification('Ошибка: ID задачи не определен', 'error');
-                return;
-            }
-
-            fetch(`/tasks/${taskId}/comments`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ comment: replyText, parent_id: commentId })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const replyTextarea = document.getElementById(`replyText_${commentId}`);
-                        if (replyTextarea) replyTextarea.value = '';
-                        cancelReply(commentId);
-                        if (typeof openTaskViewModal === 'function') openTaskViewModal(taskId);
-                        if (typeof showNotification === 'function') showNotification('Ответ добавлен', 'success');
-                    } else {
-                        if (typeof showNotification === 'function') showNotification(data.message || 'Ошибка при добавлении ответа', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    if (typeof showNotification === 'function') showNotification('Ошибка при добавлении ответа', 'error');
-                });
-        }
-
-        function deleteComment(commentId) {
-            if (!confirm('Вы уверены, что хотите удалить этот комментарий?')) return;
-            const taskId = window.currentTaskId || window.taskId;
-
-            fetch(`/tasks/${taskId}/comments/${commentId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        if (typeof openTaskViewModal === 'function') openTaskViewModal(taskId);
-                        if (typeof showNotification === 'function') showNotification('Комментарий удален', 'success');
-                    } else {
-                        if (typeof showNotification === 'function') showNotification(data.message || 'Ошибка при удалении', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    if (typeof showNotification === 'function') showNotification('Ошибка при удалении комментария', 'error');
-                });
-        }
-
-        function editComment(commentId) {
-            const commentDiv = document.querySelector(`.comment-text[data-comment-text="${commentId}"]`);
-            if (!commentDiv) return;
-            const currentText = commentDiv.textContent;
-            commentDiv.innerHTML = `<textarea id="editText_${commentId}" class="w-full border rounded-lg p-2" rows="3">${escapeHtml(currentText)}</textarea>
-        <div class="flex justify-end mt-2 space-x-2">
-            <button onclick="cancelEdit(${commentId})" class="px-3 py-1 bg-gray-300 rounded">Отмена</button>
-            <button onclick="saveEdit(${commentId})" class="px-3 py-1 bg-blue-500 text-white rounded">Сохранить</button>
-        </div>`;
-        }
-
-        function saveEdit(commentId) {
-            const newText = document.getElementById(`editText_${commentId}`)?.value.trim();
-            const taskId = window.currentTaskId || window.taskId;
-
-            if (!newText) {
-                if (typeof showNotification === 'function') showNotification('Комментарий не может быть пустым', 'warning');
-                return;
-            }
-
-            fetch(`/tasks/${taskId}/comments/${commentId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ comment: newText })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        if (typeof openTaskViewModal === 'function') openTaskViewModal(taskId);
-                        if (typeof showNotification === 'function') showNotification('Комментарий обновлен', 'success');
-                    } else {
-                        if (typeof showNotification === 'function') showNotification(data.message || 'Ошибка при обновлении', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    if (typeof showNotification === 'function') showNotification('Ошибка при обновлении комментария', 'error');
-                });
-        }
-
-        function showReplyForm(commentId) {
-            const form = document.getElementById(`replyForm_${commentId}`);
-            if (form) form.classList.remove('hidden');
-        }
-
-        function cancelReply(commentId) {
-            const form = document.getElementById(`replyForm_${commentId}`);
-            if (form) form.classList.add('hidden');
-            const textarea = document.getElementById(`replyText_${commentId}`);
-            if (textarea) textarea.value = '';
-        }
-
-        function cancelEdit(commentId) {
-            openTaskViewModal(window.currentTaskId);
-        }
 
         // ==================== ФУНКЦИИ ДЛЯ СТАРТА ЗАДАЧИ, ОТПРАВКИ НА ПРОВЕРКУ, ОДОБРЕНИЯ, ОТКАЗА ====================
         async function startTask(taskId) {

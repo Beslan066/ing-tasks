@@ -515,10 +515,10 @@
         }
 
         function switchCreateFileTab(tabName) {
-console.log('ttavv')
-    document.querySelectorAll('#taskModal .tab-button').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === tabName);
-    });
+            console.log('ttavv')
+        document.querySelectorAll('#taskModal .tab-button').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tab === tabName);
+        });
 
     document.querySelectorAll('#taskModal .tab-content').forEach(content => {
         const isCurrent = content.id === `${tabName}TabContent`;
