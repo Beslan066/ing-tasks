@@ -487,11 +487,13 @@ media-src https://meet.jit.si https:;
 }
 /* стили для анимации открытия фильтров конец*/
         .chat-background {
-            background-image: url({{asset('images/chat1.svg')}}), url({{asset('images/chat-2.png')}});
             background-position: right top, center center;
             background-repeat: repeat, no-repeat;
             background-size: auto, cover;
-            background-color: rgb(159, 207, 255);
+        }
+
+        .replies-container div:first-child {
+            background-color: gray;
         }
     </style>
 </head>
