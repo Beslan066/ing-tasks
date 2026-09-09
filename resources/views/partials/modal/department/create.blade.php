@@ -66,8 +66,12 @@
                             class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
                         Отмена
                     </button>
-                    <button type="submit"
+                    <!-- <button type="submit"
                             class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                        Создать
+                    </button> -->
+                    <button type="button"
+                            class="flex-1 md:flex-none text-white px-6 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                         Создать
                     </button>
                 </div>
