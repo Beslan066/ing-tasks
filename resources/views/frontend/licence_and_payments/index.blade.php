@@ -201,9 +201,13 @@
                                 </button>
 
                         @endif
-                        <button onclick="openAddUsersModal()" class="w-full {{ $isPremium ? 'bg-[#16a34a] hover:bg-[#15803d]' : 'bg-white/10 hover:bg-white/20' }} text-white font-medium py-2 px-4 rounded-lg transition border border-white/30">
+                        <button onclick="openAddUsersModal()"
+                                    class="w-full text-white font-medium py-2 px-4 rounded-lg {{ $isPremium ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)]' : 'bg-gray-100 hover:bg-gray-200 text-gray-800' }} transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none">
+                                Добавить пользователей
+                            </button>
+                        <!-- <button onclick="openAddUsersModal()" class="w-full {{ $isPremium ? 'bg-[#16a34a] hover:bg-[#15803d]' : 'bg-white/10 hover:bg-white/20' }} text-white font-medium py-2 px-4 rounded-lg transition border border-white/30">
                             Добавить пользователей
-                        </button>
+                        </button> -->
                     </div>
                 </div>
             @else
@@ -225,9 +229,13 @@
                                 Обновить до Премиум
                             </button>
                         @endif
-                        <button onclick="openAddUsersModal()" class="w-full {{ $isPremium ? 'bg-[#16a34a] hover:bg-[#15803d]' : 'bg-gray-100 hover:bg-gray-200 text-gray-800' }} font-medium py-2 px-4 rounded-lg transition border border-gray-200 text-white">
+                        <!-- <button onclick="openAddUsersModal()" class="w-full {{ $isPremium ? 'bg-[#16a34a] hover:bg-[#15803d]' : 'bg-gray-100 hover:bg-gray-200 text-gray-800' }} font-medium py-2 px-4 rounded-lg transition border border-gray-200 text-white">
                             Добавить пользователей
-                        </button>
+                        </button> -->
+                        <button onclick="openAddUsersModal()"
+                                    class="w-full text-white font-medium py-2 px-4 rounded-lg {{ $isPremium ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)]' : 'bg-gray-100 hover:bg-gray-200 text-gray-800' }} transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none">
+                                Добавить пользователей
+                            </button>
                     </div>
                 </div>
             @endif
