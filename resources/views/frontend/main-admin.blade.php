@@ -2533,7 +2533,7 @@
 
             if (isEditModalVisible) {
                 if (editTempSelectedFiles.length === 0) {
-                    alert('Пожалуйста, выберите хотя бы один файл');
+                    showNotification('Пожалуйста, выберите хотя бы один файл', 'warning');
                     return;
                 }
                 editSelectedFiles = [...editTempSelectedFiles];
@@ -2777,7 +2777,7 @@
         async function submitForReview() {
             const actualHours = document.getElementById('actualHours')?.value;
             if (!actualHours || actualHours <= 0) {
-                alert('Пожалуйста, укажите корректное время работы');
+                showNotification('Пожалуйста, укажите корректное время работы', 'warning');
                 return;
             }
 
@@ -2861,7 +2861,7 @@
         async function submitRejection() {
             const reason = document.getElementById('rejectReason')?.value.trim();
             if (!reason) {
-                alert('Пожалуйста, укажите причину отказа');
+                showNotification('Пожалуйста, укажите причину отказа', 'warning');
                 return;
             }
 

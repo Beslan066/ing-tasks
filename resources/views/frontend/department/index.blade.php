@@ -442,12 +442,12 @@
                         if (data.success) {
                             location.reload();
                         } else {
-                            alert('Ошибка при удалении: ' + data.message);
+                            showNotification('Ошибка при удалении: ' + data.message,'error');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Произошла ошибка при удалении');
+                        showNotification('Произошла ошибка при удалении');
                     });
             }
         }
@@ -492,7 +492,6 @@
         //             alert('Произошла ошибка при создании отдела');
         //         });
         // });
-
         // v create dep
         function submitDepartment(button) {
             const form = document.getElementById('departmentForm');
@@ -523,12 +522,12 @@
                     form.reset();
                     location.reload();
                 } else {
-                    alert(data.message);
+                    showNotification(data.message,'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Ошибка при отправке данных');
+                showNotification('Ошибка при отправке данных','error');
             })
             .finally(() => {
                 button.disabled = false;

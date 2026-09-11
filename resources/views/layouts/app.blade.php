@@ -855,14 +855,12 @@ media-src https://meet.jit.si https:;
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                // alert('Личная задача успешно создана!');
                                 showNotification('Личная задача успешно создана', 'success');
                                 closeTaskModal();
                                 setTimeout(() => {
                                     location.reload();
                                 }, 600);
                             } else {
-                                // alert(data.message || 'Ошибка при создании задачи');
                                 showNotification(data.message || 'Ошибка при создании задачи', 'error');
                             }
                         })
@@ -3070,7 +3068,7 @@ setDefaultTab()
             }
         } catch (error) {
             console.error('Payment error:', error);
-            alert('Ошибка: ' + error.message);
+            showNotification('Ошибка: ' + error.message,'error');
             button.disabled = false;
             button.innerHTML = 'Оплатить';
             loadingIndicator.classList.add('hidden');
@@ -3085,12 +3083,12 @@ setDefaultTab()
         const loadingIndicator = document.getElementById('usersLoadingIndicator');
 
         if (count < 1) {
-            alert('Количество пользователей должно быть не менее 1');
+            showNotification('Количество пользователей должно быть не менее 1','warning');
             return;
         }
 
         if (count > 100) {
-            alert('Максимальное количество дополнительных пользователей - 100');
+            showNotification('Максимальное количество дополнительных пользователей - 100','warning');
             return;
         }
 
@@ -3121,7 +3119,7 @@ setDefaultTab()
             }
         } catch (error) {
             console.error('Payment error:', error);
-            alert('Ошибка: ' + error.message);
+            showNotification('Ошибка: ' + error.message,'error');
             button.disabled = false;
             button.innerHTML = 'Оплатить';
             loadingIndicator.classList.add('hidden');
