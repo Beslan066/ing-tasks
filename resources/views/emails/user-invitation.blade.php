@@ -65,7 +65,7 @@
                                         <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                             <tr>
                                                 <td style="width: 48px; height: 48px; border-radius: 12px; background-color: #ffffff; background-color: rgba(255,255,255,0.18); text-align: center; vertical-align: middle;" width="48" height="48" valign="middle" align="center">
-                                                    <img src="{{ asset('img/logo.svg') }}" width="28" height="28" alt="Логотип" style="display: block; margin: 0 auto; border: 0;">
+                                                    <img src="{{ asset('img/logo.png') }}" width="28" height="28" alt="Логотип" style="display: block; margin: 0 auto; border: 0;">
                                                 </td>
                                             </tr>
                                         </table>

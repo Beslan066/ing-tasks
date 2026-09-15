@@ -1145,15 +1145,15 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alert('Задача переведена в работу!');
+                    showNotification('Задача переведена в работу!', 'success');
                     closeTaskViewModal();
                     location.reload();
                 } else {
-                    alert(data.message || 'Ошибка при обновлении статуса');
+                    showNotification(data.message || 'Ошибка при обновлении статуса', 'error');
                 }
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('Ошибка при обновлении статуса');
+                showNotification('Ошибка при обновлении статуса', 'error');
             }
         }
 
@@ -1167,7 +1167,7 @@
             const actualHours = document.getElementById('actualHours').value;
 
             if (!actualHours || actualHours <= 0) {
-                alert('Пожалуйста, укажите корректное время работы');
+                showNotification('Пожалуйста, укажите корректное время работы', 'warning');
                 return;
             }
 
@@ -1187,15 +1187,15 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alert('Задача отправлена на проверку!');
+                    showNotification('Задача отправлена на проверку!','success');
                     closeTimeModal();
                     location.reload();
                 } else {
-                    alert(data.message || 'Ошибка при отправке на проверку');
+                    showNotification(data.message || 'Ошибка при отправке на проверку','error');
                 }
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('Ошибка при отправке на проверку');
+                showNotification('Ошибка при отправке на проверку','error');
             }
         }
 
@@ -1209,7 +1209,7 @@
             const reason = document.getElementById('rejectReason').value.trim();
 
             if (!reason) {
-                alert('Пожалуйста, укажите причину отказа');
+                showNotification('Пожалуйста, укажите причину отказа','warning');
                 return;
             }
 
@@ -1226,15 +1226,15 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alert('Вы отказались от задачи');
+                    showNotification('Вы отказались от задачи','info');
                     closeRejectModal();
                     location.reload();
                 } else {
-                    alert(data.message || 'Ошибка при отказе от задачи');
+                    showNotification(data.message || 'Ошибка при отказе от задачи','error');
                 }
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('Ошибка при отказе от задачи');
+                showNotification('Ошибка при отказе от задачи','error');
             }
         }
 
@@ -1289,7 +1289,7 @@
                     const isLeader = {{ auth()->user()->isLeader() ? 'true' : 'false' }};
 
                     if (task.author_id !== currentUserId && !isLeader) {
-                        alert('Вы не можете редактировать эту задачу. Редактировать может только автор задачи или руководитель.');
+                        showNotification('Вы не можете редактировать эту задачу. Редактировать может только автор задачи или руководитель.','error');
                         return;
                     }
 
@@ -1315,11 +1315,11 @@
 
                     document.getElementById('editTaskModal').classList.remove('hidden');
                 } else {
-                    alert(data.message || 'Ошибка при загрузке задачи');
+                    showNotification(data.message || 'Ошибка при загрузке задачи','error');
                 }
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('Ошибка при загрузке данных задачи');
+                showNotification('Ошибка при загрузке данных задачи','error');
             }
         }
 
@@ -1615,15 +1615,15 @@
                 console.log('Ответ сервера:', data);
 
                 if (data.success) {
-                    alert('Задача успешно обновлена!');
+                    showNotification('Задача успешно обновлена!', 'success');
                     closeEditModal();
                     location.reload();
                 } else {
-                    alert(data.message || 'Ошибка при обновлении задачи');
+                     showNotification(data.message || 'Ошибка при обновлении задачи', 'error');
                 }
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('Ошибка при обновлении задачи: ' + error.message);
+                showNotification('Ошибка при обновлении задачи: ' + error.message, 'error');
             } finally {
                 if (submitBtn) {
                     submitBtn.innerHTML = originalText;
