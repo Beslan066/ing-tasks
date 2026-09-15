@@ -23,20 +23,39 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        // Роут перенаправления
         $taskUrl = route('welcome');
 
+        [$priorityLabel, $priorityColor, $priorityBg, $priorityBorder] = $this->priorityStyle($this->task->priority);
 
         return (new MailMessage)
             ->subject('Вам назначена новая задача: ' . $this->task->name)
-            ->greeting('Здравствуйте, ' . $notifiable->name . '!')
-            ->line('Вам была назначена новая задача.')
-            ->line('**Задача:** ' . $this->task->name)
-            ->line('**Приоритет:** ' . $this->task->priority)
-            ->line('**Дедлайн:** ' . ($this->task->deadline ? $this->task->deadline->format('d.m.Y H:i') : 'Не установлен'))
-            ->line('**Статус:** ' . $this->task->status)
-            ->action('Перейти к задаче', $taskUrl)
-            ->line('С уважением, команда МенеджерПлюс!');
+            ->view('emails.task-assigned', [
+                'userName' => $notifiable->name,
+                'taskName' => $this->task->name,
+                'statusLabel' => $this->task->status,
+                'deadline' => $this->task->deadline
+                    ? $this->task->deadline->format('d.m.Y H:i')
+                    : 'Не установлен',
+                'taskUrl' => $taskUrl,
+                'priorityLabel' => $priorityLabel,
+                'priorityColor' => $priorityColor,
+                'priorityBg' => $priorityBg,
+                'priorityBorder' => $priorityBorder,
+            ]);
+    }
+
+    /**
+     * Цветовая схема бейджа приоритета.
+     * Верните [подпись, цвет текста, фон, рамка].
+     */
+    protected function priorityStyle(string $priority): array
+    {
+        return match ($priority) {
+            'high', 'Высокий' => ['Высокий', '#b91c1c', '#fef2f2', '#fecaca'],
+            'medium', 'Средний' => ['Средний', '#92400e', '#fffbeb', '#fde68a'],
+            'low', 'Низкий' => ['Низкий', '#166534', '#f0fdf4', '#bbf7d0'],
+            default => [$priority, '#334155', '#f8fafc', '#e2e8f0'],
+        };
     }
 
     public function toArray(object $notifiable): array
