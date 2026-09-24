@@ -39,6 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(append: [
             'trackUserActivity',
+            \App\Http\Middleware\SitePasswordProtect::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

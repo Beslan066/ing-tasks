@@ -46,5 +46,5 @@ return [
         'client_secret' => env('YANDEX_CLIENT_SECRET'),
         'redirect' => env('YANDEX_REDIRECT_URI'),
     ],
-
+    'site_password' => env('SITE_PASSWORD'),
 ];
