@@ -19,19 +19,22 @@ class CompanyController extends Controller
         return view('frontend.company.create');
     }
 
-    public function store(StoreRequest $request) {
+    public function store(StoreRequest $request) 
+{
+    $data = $request->validated();
 
-        $data = $request->validated();
+    $company = Company::firstOrCreate($data);
+    $company->save();
 
-        $company = Company::firstOrCreate($data);
+    // Присваиваем текущему пользователю роль "Руководитель" (id 3)
+    $user = Auth::user();
+    $user->update([
+        'role_id' => 3,
+        'company_id' => $company->id,
+    ]);
 
-        $company->save();
-
-
-        return to_route('tasks.admin');
-
-
-    }
+    return to_route('tasks.admin');
+}
 
     /**
      * Обновление лицензии компании (улучшение до премиум)
