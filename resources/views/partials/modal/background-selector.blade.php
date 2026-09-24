@@ -32,10 +32,20 @@
                 <div class="grid grid-cols-3 gap-4 max-[500px]:grid-cols-2 max-[500px]:max-h-[470px] max-[500px]:overflow-y-auto" id="backgroundsGrid">
                     @php
                         $fones = [];
-                        if (is_dir(public_path('images/fones'))) {
-                            $files = glob(public_path('images/fones/*.{jpg,jpeg,png,gif,webp}'), GLOB_BRACE);
-                            foreach($files as $file) {
-                                $fones[] = asset('images/fones/' . basename($file));
+                        $directory = public_path('images/fones');
+                        
+                        if (Illuminate\Support\Facades\File::isDirectory($directory)) {
+                            // Получаем все файлы из папки
+                            $files = Illuminate\Support\Facades\File::files($directory);
+                            
+                            // Разрешенные расширения
+                            $extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                            
+                            foreach ($files as $file) {
+                                // Проверяем расширение файла (приводим к нижнему регистру на всякий случай)
+                                if (in_array(strtolower($file->getExtension()), $extensions)) {
+                                    $fones[] = asset('images/fones/' . $file->getFilename());
+                                }
                             }
                         }
                     @endphp
