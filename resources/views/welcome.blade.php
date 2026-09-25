@@ -40,19 +40,6 @@
     <i class="fas fa-plus"></i>
     <span>Добавить</span>
 </button>
-             <div class="hidden max-[450px]:block max-[500px]:basis-1/2">
-             @if($backgroundEnabled && $backgroundImage)
-                    <a href="{{route('allTasks')}}" class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm max-[500px]:text-center max-[500px]:justify-center">
-                        <span>Все задачи</span>
-
-                    </a>
-                @else
-                    <a href="{{route('allTasks')}}" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm max-[500px]:text-center max-[500px]:justify-center">
-                        <span>Все задачи</span>
-
-                    </a>
-                @endif
-                </div>
         </div>
     </div>
 
@@ -60,21 +47,6 @@
     <div class="mb-4 max-[500px]:mb-1 relative">
         <div class="flex items-center gap-2 flex-wrap">
 <!-- class="max-[450px]:fixed max-[450px]:bottom-3 max-[450px]:left-3" -->
-            <div class="max-[450px]:hidden">
-                @if($backgroundEnabled && $backgroundImage)
-                    <a href="{{route('allTasks')}}" class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
-                        <span>Все задачи</span>
-                        <span id="activeFiltersCount"
-                              class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
-                    </a>
-                @else
-                    <a href="{{route('allTasks')}}" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
-                        <span>Все задачи</span>
-                        <span id="activeFiltersCount"
-                              class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
-                    </a>
-                @endif
-            </div>
             <!-- Кнопка фильтров -->
             <div class="relative">
 

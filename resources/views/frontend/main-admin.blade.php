@@ -332,13 +332,7 @@
                             </div>
 
                             <div class="w-full sm:w-auto">
-                                <div>
-                                    <a href="{{route('allTasks')}}" class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
-                                        <span>Все задачи</span>
-                                        <span id="activeFiltersCount"
-                                              class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
-                                    </a>
-                                </div>
+
                                 <select id="sortSelect"
                                         class="w-full sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
                                     <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
@@ -1076,13 +1070,6 @@
                             Всего задач: {{ $tasks->total() }}
                         </div>
                         <div class="w-full sm:w-auto flex items-center">
-                            <div class="mr-2 max-[500px]:basis-1/2">
-                                <a href="{{route('allTasks')}}" class="bg-transparent/20 border-none text-white px-3 py-2 rounded-lg flex items-center space-x-2 transition text-md max-[500px]:basis-1/2">
-                                    <span>Все задачи</span>
-                                    <span id="activeFiltersCount"
-                                          class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
-                                </a>
-                            </div>
                             <select id="sortSelectKanban"
                                     class="w-full sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20 max-[500px]:basis-1/2">
                                 <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
@@ -1253,13 +1240,6 @@
                         </div>
 
                         <div class="w-full sm:w-auto flex items-center">
-                            <div class="mr-2 max-[500px]:basis-1/2">
-                                <a href="{{route('allTasks')}}" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
-                                    <span>Все задачи</span>
-                                    <span id="activeFiltersCount"
-                                          class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
-                                </a>
-                            </div>
                             <select id="sortSelectKanban"
                                     class="w-full sm:w-48 border-none rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base  max-[500px]:basis-1/2">
                                 <option value="created_at_desc">Новые сначала</option>
@@ -1272,7 +1252,7 @@
                     </div>
 
                     <!-- Канбан доска -->
-<div class="swx-v overflow-hidden w-full">
+                <div class="swx-v overflow-hidden w-full">
                     <div class="swx-v-wrapper flex lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-[500px]:gap-0">
                         @foreach($statusKeys as $statusKey)
                             <div class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"

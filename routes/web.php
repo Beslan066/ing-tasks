@@ -108,7 +108,6 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
     Route::get('/team/tasks/kanban-data', [App\Http\Controllers\Frontend\HomeController::class, 'getKanbanTasksAjax'])->name('tasks.kanban-data');
 
 
-
     Route::get('/all-tasks', [App\Http\Controllers\Frontend\HomeController::class, 'allTasks'])->middleware('require.company')->name('allTasks');
     Route::get('/team/all-tasks', [App\Http\Controllers\Frontend\HomeController::class, 'allTeamTasks'])->middleware('require.company')->name('allTeamTasks');
     Route::get('/tools', [\App\Http\Controllers\Frontend\ToolController::class, 'index'])->middleware('require.company')->name('tools.index');

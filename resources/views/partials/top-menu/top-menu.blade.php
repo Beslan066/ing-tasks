@@ -15,7 +15,7 @@
         <nav class="top-menu__navigation">
             <ul>
                 <li>
-                    <a href="#" class="top-menu__link text-white">
+                    <a href="{{route('allTeamTasks')}}" class="top-menu__link text-white">
                         <span class="font-medium">
                             Задачи
                         </span>
