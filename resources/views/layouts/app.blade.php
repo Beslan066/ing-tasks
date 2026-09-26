@@ -589,6 +589,10 @@ media-src https://meet.jit.si https:;
 @include('partials.modal.category.delete')
 
 @include('partials.modal.background-selector')
+
+
+<!-- Модальное окно просмотра изображений -->
+ @include('partials.modal.image-view.image-preview-modal')
 <script>
     let workStartTime = null;
     let workTotalSeconds = 0;
