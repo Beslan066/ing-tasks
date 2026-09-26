@@ -834,7 +834,13 @@
 
                                 @foreach($files as $file)
                                     <div
-                                        class="grid grid-cols-11 border-t border-gray-100 px-6 py-[18px] dark:border-gray-800 max-[500px]:grid-cols-2">
+                                        class="grid grid-cols-11 border-t border-gray-100 px-6 py-[18px] dark:border-gray-800 max-[500px]:grid-cols-2 cursor-pointer"
+                                        @if(str_contains($file->mime_type, 'image'))
+                                            data-preview="true"
+                                            data-image-url="{{ Storage::url($file->path) }}"
+                                            data-image-name="{{ $file->name }}"
+                                        @endif
+                                        >
                                         <div class="col-span-3 flex items-center max-[500px]:col-span-1">
                                             <div
                                                 class="flex w-full items-center gap-2 text-sm text-gray-700 dark:text-gray-400 max-[500px]:justify-start">
