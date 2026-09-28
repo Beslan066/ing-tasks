@@ -626,7 +626,7 @@
                         Да! Мы предоставляем возможность оплаты счетов после составления договора. Свяжитесь с нашими специалистами, они составят необходимые документы.
                         <div class="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
                             <span class="text-sm font-medium text-gray-600">Email для связи:</span>
-                            <a href="mailto:mail@managerplus.ru" class="text-[#10b981] font-semibold hover:underline ml-2">mail@managerplus.ru</a>
+                            <a href="mailto:mail@managerplus.ru" class="text-[#10b981] font-semibold hover:underline ml-2">info@менеджерплюс.рф</a>
                         </div>
                     </div>
                 </div>
@@ -750,15 +750,15 @@
                 <div class="space-y-6">
                     <div class="bg-white rounded-2xl p-8 border border-gray-100">
                         <h3 class="text-lg font-bold text-gray-800">Наш адрес</h3>
-                        <p class="text-gray-500 mt-2">290 Maryam Springs 260, Courbevoie, Paris, France</p>
+                        <p class="text-gray-500 mt-2">386101, Республика Ингушетия, г. Назрань, тер. Центральный округ, пр. И. Базоркина, д. 60.</p>
                     </div>
                     <div class="bg-white rounded-2xl p-8 border border-gray-100">
                         <h3 class="text-lg font-bold text-gray-800">Email</h3>
-                        <a href="mailto:mail@managerplus.ru" class="text-[#10b981] font-semibold hover:underline mt-2 block">mail@managerplus.ru</a>
+                        <a href="mailto:mail@managerplus.ru" class="text-[#10b981] font-semibold hover:underline mt-2 block">info@менеджерплюс.рф</a>
                     </div>
                     <div class="bg-white rounded-2xl p-8 border border-gray-100">
                         <h3 class="text-lg font-bold text-gray-800">Телефон</h3>
-                        <a href="tel:+7009423346343" class="text-[#10b981] font-semibold hover:underline mt-2 block">+7 009 423 346 343</a>
+                        <a href="tel:+7009423346343" class="text-[#10b981] font-semibold hover:underline mt-2 block">+7 906 791 31 31</a>
                     </div>
                 </div>
             </div>
