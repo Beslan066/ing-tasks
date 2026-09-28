@@ -1170,6 +1170,13 @@
         let taskEditSelectedFiles = [];
         let taskEditAllFiles = [];
 
+        let editSelectedFiles = [];
+        let editAllFiles = [];
+        let editTempSelectedFiles = [];
+        let currentDeleteTaskId = null;
+        let currentReturnTaskId = null;
+
+
         // Переменные для фильтров
         let currentTaskId = null;
         let activeFilters = {
@@ -1407,6 +1414,558 @@
             contentDiv.innerHTML = html;
             updateTaskSelectedCount();
         }
+function toggleEditFileSelection(fileId) {
+            const file = editAllFiles.find(f => f.id === fileId);
+            if (!file) return;
+
+            const index = editTempSelectedFiles.findIndex(f => f.id === fileId);
+            if (index === -1) {
+                editTempSelectedFiles.push(file);
+            } else {
+                editTempSelectedFiles.splice(index, 1);
+            }
+
+            const fileCards = document.querySelectorAll('#fileManagerContent .file-card');
+            fileCards.forEach(card => {
+                const onclickAttr = card.getAttribute('onclick');
+                if (onclickAttr && onclickAttr.includes(fileId.toString())) {
+                    const isSelected = editTempSelectedFiles.some(f => f.id === fileId);
+                    if (isSelected) {
+                        card.classList.add('border-green-500', 'bg-green-50');
+                        card.classList.remove('border-gray-200');
+                        const checkDiv = card.querySelector('.w-5.h-5');
+                        if (checkDiv) {
+                            checkDiv.classList.add('bg-green-500');
+                            checkDiv.classList.remove('border-2', 'border-gray-300');
+                            checkDiv.innerHTML = '<i class="fas fa-check text-white text-xs"></i>';
+                        }
+                    } else {
+                        card.classList.remove('border-green-500', 'bg-green-50');
+                        card.classList.add('border-gray-200');
+                        const checkDiv = card.querySelector('.w-5.h-5');
+                        if (checkDiv) {
+                            checkDiv.classList.remove('bg-green-500');
+                            checkDiv.classList.add('border-2', 'border-gray-300');
+                            checkDiv.innerHTML = '';
+                        }
+                    }
+                }
+            });
+
+            updateEditFileManagerUI();
+        }
+        function toggleTaskFileSelection(fileId) {
+            let file = taskAllFiles.find(f => f.id === fileId);
+            if (!file) return;
+
+            const index = taskSelectedFiles.findIndex(f => f.id === fileId);
+            if (index === -1) {
+                taskSelectedFiles.push(file);
+            } else {
+                taskSelectedFiles.splice(index, 1);
+            }
+
+            renderTaskFiles(taskAllFiles);
+            updateTaskSelectedCount();
+        }
+
+        function updateTaskSelectedCount() {
+            const selectedCountSpan = document.getElementById('selectedCount');
+            const confirmCountSpan = document.getElementById('confirmCount');
+            if (selectedCountSpan) selectedCountSpan.textContent = taskSelectedFiles.length;
+            if (confirmCountSpan) confirmCountSpan.textContent = taskSelectedFiles.length;
+        }
+
+        async function downloadTaskFile(fileId) {
+            window.open(`/file-storage/download/${fileId}`, '_blank');
+        }
+
+        function closeTaskStorageManager() {
+            console.log('welcome.blade.php: Закрытие модального окна хранилища файлов');
+            const modal = document.getElementById('fileManagerModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        // ==================== ФУНКЦИИ ДЛЯ РЕДАКТИРОВАНИЯ ====================
+        let currentEditTaskId = null;
+
+        async function openEditModal(taskId) {
+            console.log('openEditTaskModal2')
+            currentEditTaskId = taskId;
+            taskEditSelectedFiles = [];
+
+            try {
+                const response = await fetch(`/tasks/${taskId}/get`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const task = data.task;
+
+                    const currentUserId = {{ auth()->id() }};
+                    const isLeader = {{ auth()->user()->isLeader() ? 'true' : 'false' }};
+
+                    if (task.author_id !== currentUserId && !isLeader) {
+                        showNotification('Вы не можете редактировать эту задачу. Редактировать может только автор задачи или руководитель.',"error");
+                        return;
+                    }
+
+                    document.getElementById('editTaskId').value = task.id;
+                    document.getElementById('editTaskName').value = task.name;
+                    document.getElementById('editTaskDescription').value = task.description || '';
+                    document.getElementById('editTaskDepartment').value = task.department_id || '';
+                    document.getElementById('editTaskCategory').value = task.category_id || '';
+                    document.getElementById('editTaskUser').value = task.user_id || '';
+                    document.getElementById('editTaskPriority').value = task.priority || 'средний';
+                    document.getElementById('editTaskStatus').value = task.status;
+                    document.getElementById('editTaskDeadline').value = task.deadline ? task.deadline.slice(0, 16) : '';
+                    document.getElementById('editTaskEstimatedHours').value = task.estimated_hours || '';
+                    document.getElementById('editTaskActualHours').value = task.actual_hours || '';
+
+                    if (task.files && task.files.length > 0) {
+                        taskEditSelectedFiles = task.files;
+                        console.log('Загружены файлы задачи:', taskEditSelectedFiles.map(f => f.id));
+                        updateTaskEditSelectedFilesDisplay();
+                    } else {
+                        updateTaskEditSelectedFilesDisplay();
+                    }
+
+                    document.getElementById('editTaskModal').classList.remove('hidden');
+                    document.body.classList.add('overflow-y-hidden')
+                } else {
+                    showNotification('Ошибка при загрузке задачи','error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                 showNotification('Ошибка при загрузке задачи','error');
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editTaskModal').classList.add('hidden');
+            document.getElementById('editTaskForm').reset();
+            currentEditTaskId = null;
+            taskEditSelectedFiles = [];
+            document.getElementById('editUploadNewFilesInput').value = '';
+            document.getElementById('editUploadFilesList').classList.add('hidden');
+            document.body.classList.remove('overflow-y-hidden')
+        }
+
+        function updateTaskEditSelectedFilesDisplay() {
+            const container = document.getElementById('editSelectedFilesContainer');
+            const fileCounter = document.getElementById('editFileCounter');
+            const fileCount = document.getElementById('editFileCount');
+
+            if (!container) return;
+
+            if (taskEditSelectedFiles.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
+                    <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
+                    <p class="text-sm text-gray-500">Файлы не выбраны</p>
+                    <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
+                </div>`;
+                if (fileCounter) fileCounter.classList.add('hidden');
+            } else {
+                let html = '';
+                taskEditSelectedFiles.forEach(file => {
+                    const fileIcon = getFileIcon(file.extension);
+                    const fileType = getFileTypeClass(file.extension);
+                    html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <div class="flex items-center space-x-3 flex-1">
+                            <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
+                                <span class="text-lg">${fileIcon}</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-800">${escapeHtml(file.name)}</p>
+                                <span class="text-xs text-gray-500">${formatFileSize(file.size)}</span>
+                            </div>
+                        </div>
+                        <button onclick="removeTaskEditSelectedFile(${file.id})" class="text-red-500 hover:text-red-700 p-1">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>`;
+                });
+                container.innerHTML = html;
+                if (fileCount) fileCount.textContent = taskEditSelectedFiles.length;
+                if (fileCounter) fileCounter.classList.remove('hidden');
+            }
+        }
+
+        function removeTaskEditSelectedFile(fileId) {
+            taskEditSelectedFiles = taskEditSelectedFiles.filter(f => f.id !== fileId);
+            updateTaskEditSelectedFilesDisplay();
+        }
+
+        function clearTaskEditSelectedFiles() {
+            if (taskEditSelectedFiles.length === 0) return;
+            if (confirm(`Удалить все выбранные файлы (${taskEditSelectedFiles.length})?`)) {
+                taskEditSelectedFiles = [];
+                updateTaskEditSelectedFilesDisplay();
+            }
+        }
+
+
+        async function openTaskEditFileManager() {
+            const modal = document.getElementById('fileManagerModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+                await loadTaskEditFiles();
+            }
+        }
+
+        async function loadTaskEditFiles() {
+            const contentDiv = document.getElementById('fileManagerContent');
+            if (!contentDiv) return;
+            contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Загрузка...</div>`;
+
+            try {
+                const response = await fetch('/tasks/file-storage/get-files', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    }
+                });
+                if (!response.ok) throw new Error('Ошибка');
+                taskEditAllFiles = await response.json();
+                console.log('Загружены все файлы из хранилища:', taskEditAllFiles.length);
+                console.log('Текущие выбранные файлы (taskEditSelectedFiles):', taskEditSelectedFiles.map(f => f.id));
+                renderTaskEditFiles(taskEditAllFiles);
+
+                const searchInput = document.getElementById('fileManagerSearch');
+                if (searchInput) {
+                    searchInput.removeEventListener('input', handleTaskEditFileSearch);
+                    searchInput.addEventListener('input', handleTaskEditFileSearch);
+                }
+            } catch (error) {
+                contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">Ошибка загрузки</div>`;
+            }
+        }
+
+        function handleTaskEditFileSearch(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            if (!taskEditAllFiles) return;
+            const filtered = taskEditAllFiles.filter(file => file.name.toLowerCase().includes(searchTerm));
+            renderTaskEditFiles(filtered);
+        }
+
+        function renderTaskEditFiles(files) {
+            const contentDiv = document.getElementById('fileManagerContent');
+            if (!contentDiv) return;
+            if (!files || files.length === 0) {
+                contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Нет файлов</div>`;
+                return;
+            }
+
+            let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
+            files.forEach(file => {
+                const isSelected = taskEditSelectedFiles.some(f => f.id === file.id);
+                const fileIcon = getFileIcon(file.extension);
+                const fileType = getFileTypeClass(file.extension);
+                html += `
+                    <div class="file-card bg-white border ${isSelected ? 'border-green-500 shadow-md' : 'border-gray-200'} rounded-lg p-3">
+                        <div class="flex justify-end mb-2">
+                            <input type="checkbox"
+                                   value="${file.id}"
+                                   class="task-edit-file-checkbox w-5 h-5 rounded border-gray-300 cursor-pointer"
+                                   ${isSelected ? 'checked' : ''}>
+                        </div>
+                        <div class="text-center cursor-pointer" onclick="toggleTaskEditFileSelection(${file.id})">
+                            <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
+                                <span class="text-2xl">${fileIcon}</span>
+                            </div>
+                            <p class="text-sm font-medium truncate">${escapeHtml(file.name)}</p>
+                            <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                            <p class="text-xs text-gray-400 mt-1">${formatDate(file.created_at)}</p>
+                        </div>
+                        <div class="flex justify-center space-x-2 mt-2 pt-2 border-t border-gray-100">
+                            <button type="button" onclick="event.stopPropagation(); downloadTaskFile(${file.id})"
+                                    class="text-gray-400 hover:text-green-600 p-1" title="Скачать">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>`;
+            });
+            html += '</div>';
+            contentDiv.innerHTML = html;
+
+            document.querySelectorAll('#fileManagerContent .task-edit-file-checkbox').forEach(checkbox => {
+                checkbox.removeEventListener('change', handleTaskEditCheckboxChange);
+                checkbox.addEventListener('change', handleTaskEditCheckboxChange);
+            });
+
+            updateTaskEditSelectedCount();
+        }
+
+        function handleTaskEditCheckboxChange(e) {
+            e.stopPropagation();
+            const fileId = parseInt(this.value);
+            const file = taskEditAllFiles.find(f => f.id === fileId);
+            if (file) {
+                if (this.checked) {
+                    if (!taskEditSelectedFiles.some(f => f.id === fileId)) {
+                        taskEditSelectedFiles.push(file);
+                    }
+                } else {
+                    taskEditSelectedFiles = taskEditSelectedFiles.filter(f => f.id !== fileId);
+                }
+                const card = this.closest('.file-card');
+                if (card) {
+                    if (this.checked) {
+                        card.classList.add('border-green-500', 'shadow-md');
+                        card.classList.remove('border-gray-200');
+                    } else {
+                        card.classList.remove('border-green-500', 'shadow-md');
+                        card.classList.add('border-gray-200');
+                    }
+                }
+                updateTaskEditSelectedCount();
+                console.log('taskEditSelectedFiles после изменения:', taskEditSelectedFiles.map(f => f.id));
+            }
+        }
+
+        function toggleTaskEditFileSelection(fileId) {
+            let file = taskEditAllFiles.find(f => f.id === fileId);
+            if (!file) return;
+
+            const index = taskEditSelectedFiles.findIndex(f => f.id === fileId);
+            if (index === -1) {
+                taskEditSelectedFiles.push(file);
+            } else {
+                taskEditSelectedFiles.splice(index, 1);
+            }
+
+            const checkbox = document.querySelector(`#fileManagerContent .task-edit-file-checkbox[value="${fileId}"]`);
+            if (checkbox) {
+                checkbox.checked = index === -1;
+                const card = checkbox.closest('.file-card');
+                if (card) {
+                    if (checkbox.checked) {
+                        card.classList.add('border-green-500', 'shadow-md');
+                        card.classList.remove('border-gray-200');
+                    } else {
+                        card.classList.remove('border-green-500', 'shadow-md');
+                        card.classList.add('border-gray-200');
+                    }
+                }
+            }
+
+            updateTaskEditSelectedCount();
+            console.log('taskEditSelectedFiles после toggle:', taskEditSelectedFiles.map(f => f.id));
+        }
+
+        function updateTaskEditSelectedCount() {
+            const selectedCountSpan = document.getElementById('selectedCount');
+            const confirmCountSpan = document.getElementById('confirmCount');
+            const confirmBtn = document.getElementById('confirmFileSelectionBtn');
+
+            const count = taskEditSelectedFiles.length;
+
+            if (selectedCountSpan) selectedCountSpan.textContent = count;
+            if (confirmCountSpan) confirmCountSpan.textContent = count;
+
+            if (confirmBtn) {
+                if (count === 0) {
+                    confirmBtn.disabled = true;
+                    confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    confirmBtn.disabled = false;
+                    confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+
+        // ==================== ОСНОВНАЯ ФУНКЦИЯ ПОДТВЕРЖДЕНИЯ ====================
+        window.confirmFileSelection = function() {
+            const isEditModalVisible = document.getElementById('editTaskModal') && !document.getElementById('editTaskModal').classList.contains('hidden');
+            const isCreateModalVisible = document.getElementById('taskModal') && !document.getElementById('taskModal').classList.contains('hidden');
+
+            if (isEditModalVisible) {
+                if (taskEditSelectedFiles.length === 0) {
+                    showNotification('Пожалуйста, выберите хотя бы один файл',"info");
+                    return;
+                }
+                console.log('Подтверждение выбора. Файлы для сохранения:', taskEditSelectedFiles.map(f => f.id));
+                updateTaskEditSelectedFilesDisplay();
+                closeTaskStorageManager();
+            } else if (isCreateModalVisible) {
+                if (taskSelectedFiles.length === 0) {
+                    showNotification('Пожалуйста, выберите хотя бы один файл',"info");
+                    return;
+                }
+                const selectedFilesInput = document.getElementById('selectedFiles');
+                if (selectedFilesInput) {
+                    selectedFilesInput.value = JSON.stringify(taskSelectedFiles);
+                }
+                updateTaskSelectedFilesDisplay();
+                switchFileTab('storage');
+                closeTaskStorageManager();
+            }
+        };
+
+        // ==================== ОБРАБОТКА ФОРМЫ РЕДАКТИРОВАНИЯ ====================
+        document.getElementById('editTaskForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const taskId = document.getElementById('editTaskId').value;
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn?.innerHTML;
+
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Сохранение...';
+                submitBtn.disabled = true;
+            }
+
+            try {
+                const formData = new FormData(this);
+                formData.append('_method', 'POST');
+
+                const selectedFileIds = taskEditSelectedFiles.map(f => f.id);
+                console.log('Отправляемые ID файлов на сервер:', selectedFileIds);
+
+                formData.append('selected_files', JSON.stringify(selectedFileIds));
+
+                const newFilesInput = document.getElementById('editUploadNewFilesInput');
+                if (newFilesInput && newFilesInput.files.length > 0) {
+                    for (let i = 0; i < newFilesInput.files.length; i++) {
+                        formData.append('new_files[]', newFilesInput.files[i]);
+                    }
+                    console.log('Новых файлов для загрузки:', newFilesInput.files.length);
+                }
+
+                const response = await fetch(`/tasks/${taskId}/update`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                console.log('Ответ сервера:', data);
+
+                if (data.success) {
+                    showNotification('Задача успешно обновлена!',"success");
+                    closeEditModal();
+                    location.reload();
+                } else {
+                    showNotification(data.message || 'Ошибка при обновлении задачи',"error");
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                 showNotification('Ошибка при обновлении задачи: ' + error.message,"error");
+            } finally {
+                if (submitBtn) {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+        });
+
+        // ==================== ОБРАБОТКА ФОРМЫ СОЗДАНИЯ ЗАДАЧИ ====================
+        (function() {
+            const taskForm = document.getElementById('taskForm');
+
+            if (taskForm) {
+                taskForm.addEventListener('submit', function(e) {
+                    const isPersonalModal = document.getElementById('taskModal').classList.contains('hidden') === false &&
+                        document.querySelector('#taskModal h3')?.textContent === 'Новая личная задача';
+
+                    if (isPersonalModal) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(this);
+                        const submitBtn = this.querySelector('button[type="submit"]');
+                        const originalText = submitBtn?.innerHTML;
+
+                        if (submitBtn) {
+                            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Создание...';
+                            submitBtn.disabled = true;
+                        }
+
+                        // Добавляем is_personal = true
+                        formData.append('is_personal', '1');
+
+                        // Убеждаемся что department_id есть (если у пользователя есть отдел)
+                        @if(isset($user) && $user->department_id)
+                        if (!formData.has('department_id') || !formData.get('department_id')) {
+                            formData.append('department_id', '{{ $user->department_id }}');
+                        }
+                        @endif
+
+                        fetch('/tasks/personal/store', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            },
+                            body: formData
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    showNotification("Личная задача успешно создана!", "success");
+                                    closeTaskModal();
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 1000);
+                                } else {
+                                    showNotification(data.message || 'Ошибка при создании задачи', "error");
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Ошибка:', error);
+                                showNotification("Ошибка при создании задачи", "error");
+                            })
+                            .finally(() => {
+                                if (submitBtn) {
+                                    submitBtn.innerHTML = originalText;
+                                    submitBtn.disabled = false;
+                                }
+                            });
+                    }
+                });
+            }
+        })();
+
+        // ==================== ФУНКЦИИ ФИЛЬТРАЦИИ ====================
+      function toggleFiltersDropdown() {
+    const dropdown = document.getElementById('filtersDropdown');
+    const chevron = document.getElementById('filtersChevron');
+
+    if (!dropdown || !chevron) return;
+    const isHidden = dropdown.classList.contains('hidden');
+
+    if (isHidden) {
+        dropdown.classList.remove('hidden');
+        dropdown.classList.remove('fade-out-x');
+        dropdown.classList.add('fade-in-x');
+        chevron.style.transform = 'rotate(180deg)';
+    } else {
+        dropdown.classList.remove('fade-in-x');
+        dropdown.classList.add('fade-out-x');
+
+        chevron.style.transform = 'rotate(0deg)';
+
+        setTimeout(() => {
+            if (dropdown.classList.contains('fade-out-x')) {
+                dropdown.classList.add('hidden');
+            }
+        }, 200);
+    }
+}
 
         function toggleFilterSection(sectionId) {
             const section = document.getElementById(sectionId);
@@ -2038,6 +2597,7 @@ document.body.classList.remove('overflow-y-hidden');
         //     // Меняем URL обратно на /team/tasks без перезагрузки
         //     window.history.pushState({}, '', '/home');
         // }
+
         // Обрабатываем кнопку "Назад" в браузере
         window.addEventListener('popstate', function(event) {
             const modal = document.getElementById('taskViewModal');
