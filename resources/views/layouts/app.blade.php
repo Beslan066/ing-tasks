@@ -3292,7 +3292,11 @@ setDefaultTab()
 
                 // Добавляем новую задачу в колонку без перезагрузки страницы
                 if (data.task) {
-                    addTaskToColumn(data.task);
+                    // этой фукнции нет
+                    // addTaskToColumn(data.task);
+                     setTimeout(() => {
+                        location.reload();
+                    }, 1000);
                 } else {
                     // Если нет данных задачи в ответе, просто перезагружаем
                     setTimeout(() => {
