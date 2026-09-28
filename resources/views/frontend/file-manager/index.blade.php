@@ -388,14 +388,35 @@
                                 </div>
 
                                 @foreach($files as $file)
+                                 @php
+                                    $mime = $file->mime_type;
+                                    $ext  = strtolower($file->extension);
+
+                                    $isImage = str_contains($mime, 'image');
+                                    $isText  = str_starts_with($mime, 'text/')
+                                        || in_array($ext, ['txt', 'md', 'log', 'csv', 'json', 'xml', 'yml', 'yaml']);
+                                    $isPdf   = $mime === 'application/pdf' || $ext === 'pdf';
+                                    $isVideo = in_array($ext, ['mp4', 'webm', 'ogg']) && str_starts_with($mime, 'video/');
+                                    $isAudio = str_starts_with($mime, 'audio/');
+
+                                    $previewType = match (true) {
+                                        $isImage => 'image',
+                                        $isText  => 'text',
+                                        $isPdf   => 'pdf',
+                                        default  => null,
+                                    };
+
+                                    $previewUrl = Storage::url($file->path);
+                                @endphp
                                     @if($backgroundEnabled && $backgroundImage)
                                         <div
-                                            class="grid grid-cols-11 bg-transparent/20 border-none px-6 py-[18px] text-white max-[500px]:grid-cols-2 cursor-pointer"
-                                        @if(str_contains($file->mime_type, 'image'))
-                                            data-preview="true"
-                                            data-image-url="{{ Storage::url($file->path) }}"
-                                            data-image-name="{{ $file->name }}"
-                                        @endif
+                                            class="grid grid-cols-11 bg-transparent/20 border-none px-6 py-[18px] text-white max-[500px]:grid-cols-2 {{ $previewType ? 'cursor-pointer' : '' }}"
+                                            @if($previewType)
+                                                data-preview="true"
+                                                data-preview-type="{{ $previewType }}"
+                                                data-preview-url="{{ Storage::url($file->path) }}"
+                                                data-preview-name="{{ $file->name }}"
+                                            @endif
                                         >                                            <div class="col-span-3 flex items-center max-[500px]:col-span-1">
                                                 <div class="flex w-full items-center gap-2 text-sm max-[500px]:justify-start">
                                                     <div>
@@ -498,7 +519,15 @@
                                             </div>
                                         </div>
                                     @else
-                                        <div class="grid grid-cols-11 bg-transparent/20 border-none px-6 py-[18px]">
+                                        <div
+                                            class="grid grid-cols-11 bg-transparent/20 border-none px-6 py-[18px] {{ $previewType ? 'cursor-pointer' : '' }}"
+                                            @if($previewType)
+                                                data-preview="true"
+                                                data-preview-type="{{ $previewType }}"
+                                                data-preview-url="{{ Storage::url($file->path) }}"
+                                                data-preview-name="{{ $file->name }}"
+                                            @endif
+                                        >
                                             <div class="col-span-3 flex items-center">
                                                 <div class="flex w-full items-center gap-2 text-sm text-gray-700">
                                                     <div>
@@ -838,13 +867,36 @@
                                 </div>
 
                                 @foreach($files as $file)
+                                 @php
+                                    $mime = $file->mime_type;
+                                    $ext  = strtolower($file->extension);
+
+                                    $isImage = str_contains($mime, 'image');
+                                    $isText  = str_starts_with($mime, 'text/')
+                                        || in_array($ext, ['txt', 'md', 'log', 'csv', 'json', 'xml', 'yml', 'yaml']);
+                                    $isPdf   = $mime === 'application/pdf' || $ext === 'pdf';
+                                    $isVideo = in_array($ext, ['mp4', 'webm', 'ogg']) && str_starts_with($mime, 'video/');
+                                    $isAudio = str_starts_with($mime, 'audio/');
+
+                                    $previewType = match (true) {
+                                        $isImage => 'image',
+                                        $isText  => 'text',
+                                        $isPdf   => 'pdf',
+                                        $isVideo => 'video',
+                                        $isAudio => 'audio',
+                                        default  => null,
+                                    };
+
+                                    $previewUrl = Storage::url($file->path);
+                                @endphp
                                     <div
-                                        class="grid grid-cols-11 border-t border-gray-100 px-6 py-[18px] dark:border-gray-800 max-[500px]:grid-cols-2 cursor-pointer"
-                                        @if(str_contains($file->mime_type, 'image'))
-                                            data-preview="true"
-                                            data-image-url="{{ Storage::url($file->path) }}"
-                                            data-image-name="{{ $file->name }}"
-                                        @endif
+                                        class="grid grid-cols-11 border-t border-gray-100 px-6 py-[18px] dark:border-gray-800 max-[500px]:grid-cols-2 {{ $previewType ? 'cursor-pointer' : '' }}"
+                                            @if($previewType)
+                                                data-preview="true"
+                                                data-preview-type="{{ $previewType }}"
+                                                data-preview-url="{{ Storage::url($file->path) }}"
+                                                data-preview-name="{{ $file->name }}"
+                                            @endif
                                         >
                                         <div class="col-span-3 flex items-center max-[500px]:col-span-1">
                                             <div

@@ -199,29 +199,26 @@
                                     $fileSize = $file->size ?? $file->file_size ?? 0;
                                     $formattedSize = $fileSize ? round($fileSize / 1024, 1) . ' KB' : '~ KB';
                                 @endphp
-                                @php
+                               @php
                                 $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                                $isText  = in_array($extension, ['txt', 'md', 'log', 'csv', 'json', 'xml', 'yml', 'yaml', 'ini', 'sql']);
+                                $previewType = $isImage ? 'image' : ($isText ? 'text' : null);
                             @endphp
 
-                            <i class="fas {{ $icon }} text-gray-400 group-hover:text-blue-500 transition"></i>
-
-                            @if($isImage)
+                            @if($previewType)
                                 <span
                                     data-preview="true"
-                                    data-image-url="{{ $fileUrl }}"
-                                    data-image-name="{{ addslashes($fileName) }}"
+                                    data-preview-type="{{ $previewType }}"
+                                    data-preview-url="{{ $fileUrl }}"
+                                    data-preview-name="{{ $fileName }}"
                                     class="text-blue-500 hover:underline text-sm truncate cursor-pointer"
-                                    title="{{ $fileName }}"
-                                >
+                                    title="{{ $fileName }}">
                                     {{ $fileName }}
                                 </span>
                             @else
-                                <a href="{{ $fileUrl }}"
-                                target="_blank"
+                                <a href="{{ $fileUrl }}" target="_blank"
                                 class="text-blue-500 hover:underline text-sm truncate"
-                                title="{{ $fileName }}">
-                                    {{ $fileName }}
-                                </a>
+                                title="{{ $fileName }}">{{ $fileName }}</a>
                             @endif
                             </div>
                             <span class="text-xs text-gray-400 flex-shrink-0 ml-2">

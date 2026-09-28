@@ -592,7 +592,7 @@ media-src https://meet.jit.si https:;
 
 
 <!-- Модальное окно просмотра изображений -->
- @include('partials.modal.image-view.image-preview-modal')
+ @include('partials.modal.file-view.file-view-modal')
 <script>
     let workStartTime = null;
     let workTotalSeconds = 0;
