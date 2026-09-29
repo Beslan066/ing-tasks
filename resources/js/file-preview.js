@@ -1,10 +1,10 @@
-export function initImagePreview() {
-    const modal = document.getElementById('image-preview-modal');
+export function initFilePreview() {
+    const modal = document.getElementById('file-preview-modal');
     if (!modal) return;
 
-    const img = document.getElementById('image-preview-img');
-    const nameEl = document.getElementById('image-preview-name');
-    const closeBtn = document.getElementById('image-preview-close');
+    const img = document.getElementById('file-preview-img');
+    const nameEl = document.getElementById('file-preview-name');
+    const closeBtn = document.getElementById('file-preview-close');
 
     const open = (url, name) => {
         img.src = url;

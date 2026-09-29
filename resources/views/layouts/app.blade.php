@@ -592,7 +592,7 @@ media-src https://meet.jit.si https:;
 
 
 <!-- Модальное окно просмотра изображений -->
- @include('partials.modal.image-view.image-preview-modal')
+ @include('partials.modal.file-view.file-preview-modal')
 <script>
     let workStartTime = null;
     let workTotalSeconds = 0;
@@ -2188,36 +2188,6 @@ media-src https://meet.jit.si https:;
         }
     }
 
-    function showSuccessNotification(message, taskName) {
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-20 right-4 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-xl shadow-2xl z-50 transform transition-all duration-300 translate-x-full';
-        notification.innerHTML = `
-        <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                <i class="fas fa-check-circle text-xl"></i>
-            </div>
-            <div>
-                <p class="font-semibold">${message}</p>
-                <p class="text-sm text-white/80">"${escapeHtml(taskName.substring(0, 50))}${taskName.length > 50 ? '...' : ''}"</p>
-            </div>
-        </div>
-    `;
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.classList.remove('translate-x-full');
-            notification.classList.add('translate-x-0');
-        }, 100);
-
-        setTimeout(() => {
-            notification.classList.remove('translate-x-0');
-            notification.classList.add('translate-x-full');
-            setTimeout(() => {
-                if (notification.parentNode) notification.parentNode.removeChild(notification);
-            }, 300);
-        }, 3000);
-    }
-
     // Добавляем поддержку Enter и Escape
     document.addEventListener('DOMContentLoaded', function () {
         const quickTaskName = document.getElementById('quickTaskName');
@@ -3313,35 +3283,6 @@ setDefaultTab()
         }
     }
 
-    function showSuccessNotification(message, taskName) {
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-20 right-4 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-xl shadow-2xl z-50 transform transition-all duration-300 translate-x-full';
-        notification.innerHTML = `
-        <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                <i class="fas fa-check-circle text-xl"></i>
-            </div>
-            <div>
-                <p class="font-semibold">${message}</p>
-                <p class="text-sm text-white/80">"${escapeHtml(taskName.substring(0, 50))}${taskName.length > 50 ? '...' : ''}"</p>
-            </div>
-        </div>
-    `;
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.classList.remove('translate-x-full');
-            notification.classList.add('translate-x-0');
-        }, 100);
-
-        setTimeout(() => {
-            notification.classList.remove('translate-x-0');
-            notification.classList.add('translate-x-full');
-            setTimeout(() => {
-                if (notification.parentNode) notification.parentNode.removeChild(notification);
-            }, 300);
-        }, 3000);
-    }
 
     // Добавляем поддержку Enter и Escape
     document.addEventListener('DOMContentLoaded', function () {
