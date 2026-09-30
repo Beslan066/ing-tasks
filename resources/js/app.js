@@ -8,5 +8,6 @@ window.addTaskToCol=addTaskToColumn;
 Alpine.start();
 document.addEventListener('DOMContentLoaded', () => {
     initFilePreview();
+
     console.log('initFilePreview')
 });
