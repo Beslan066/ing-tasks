@@ -2,9 +2,9 @@ import './bootstrap';
 
 import Alpine from 'alpinejs';
 import { initFilePreview } from './file-preview';
-
+import {addTaskToColumn} from './functions/add-task-to-column'
 window.Alpine = Alpine;
-
+window.addTaskToCol=addTaskToColumn;
 Alpine.start();
 document.addEventListener('DOMContentLoaded', () => {
     initFilePreview();

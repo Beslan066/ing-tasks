@@ -3213,7 +3213,7 @@ setDefaultTab()
 
     async function createQuickTask() {
         const taskName = document.getElementById('quickTaskName').value.trim();
-
+        const newTasksCol = document.querySelector('.task-container[data-status="new"]')
         if (!taskName) {
             const input = document.getElementById('quickTaskName');
             input.classList.add('shake');
@@ -3245,6 +3245,7 @@ setDefaultTab()
             formData.append('is_personal', '1');
             formData.append('_token', '{{ csrf_token() }}');
 
+            // !VSECURE
             @if(auth()->check())
             formData.append('user_id', '{{ auth()->id() }}');
             formData.append('author_id', '{{ auth()->id() }}');
@@ -3266,13 +3267,9 @@ setDefaultTab()
                 hideQuickAddForm();
 
                 // Добавляем новую задачу в колонку без перезагрузки страницы
-                if (data.task) {
-                    // !такой функции нету, ошибка при создании быстрой задачи показывалась потому что фукнции не сушествует
-                    // TODO: чуть позже нужно добавить фукнцию добавления задачи в колонку и отправку запроса к бд без обновления страницы
-                    // addTaskToColumn(data.task);
-                     setTimeout(() => {
-                        location.reload();
-                    }, 1000);
+                if (data.task&&newTasksCol) {
+                    window.addTaskToCol(newTasksCol,data.task,false)
+                    // console.log('debug:',data.task)
                 } else {
                     // Если нет данных задачи в ответе, просто перезагружаем
                     setTimeout(() => {
