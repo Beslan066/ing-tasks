@@ -265,9 +265,6 @@
 
 <!-- sidebar styles & scripts -->
 @once
-    @push('styles')
-        @vite('resources/css/components/sidebar.css')
-    @endpush
 
     @push('scripts')
         @vite('resources/js/components/sidebar.js')
