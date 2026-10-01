@@ -1,7 +1,7 @@
 
 export function addTaskToColumn(columnContainer,task,canManage) {
     if(!columnContainer&&!task) return;
-    const taskCard = document.createElement('div')
+    const taskCard = document.createElement('div');
     taskCard.className=`task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between ${task.status==="просрочена"?"border-l-4 border-red-500":""}`
     taskCard.setAttribute('draggable', 'true');
     taskCard.dataset.task = task.id;

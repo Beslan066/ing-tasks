@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{csrf_token()}}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
+    @stack('styles')
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -3136,33 +3136,6 @@ setDefaultTab()
 }
 </script>
 
-<script>
-    const burgerBtn = document.getElementById('burger-btn');
-    const sidebarMenu = document.getElementById('sidebar-menu');
-    const overlay = document.getElementById('sidebar-overlay');
-
-    function closeSidebar() {
-        sidebarMenu.classList.remove('active');
-        burgerBtn.classList.remove('active');
-        overlay.classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
-    }
-
-    burgerBtn.addEventListener('click', function () {
-        sidebarMenu.classList.toggle('active');
-        burgerBtn.classList.toggle('active');
-
-        if (sidebarMenu.classList.contains('active')) {
-            document.body.classList.add('overflow-hidden');
-            overlay.classList.remove('hidden');
-        } else {
-            document.body.classList.remove('overflow-hidden');
-            overlay.classList.add('hidden');
-        }
-    });
-
-    overlay.addEventListener('click', closeSidebar);
-</script>
 <script>
      // ==================== БЫСТРОЕ ДОБАВЛЕНИЕ ЗАДАЧИ (НОВЫЙ СТИЛЬ) ====================
     function showQuickAddForm() {
