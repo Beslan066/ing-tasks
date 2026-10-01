@@ -27,6 +27,7 @@
                 </ol>
             </nav>
             <div class="max-[500px]:hidden">
+                <button onclick="showNotification('Тестовое уведомление', 'success')">notify test</button>
                 @if($backgroundEnabled && $backgroundImage)
                     <h2 class="text-3xl font-bold text-white  max-[500px]:text-[26px]">Команда</h2>
                     <p class="text-white text-sm  max-[500px]:text-[13px]">Участники вашей организации</p>
@@ -983,26 +984,6 @@
             return 'text-red-600';
         }
 
-        function showNotification(type, message) {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-transform duration-300 ${
-                type === 'success' ? 'bg-green-500 text-white' :
-                    type === 'error' ? 'bg-red-500 text-white' :
-                        type === 'warning' ? 'bg-yellow-500 text-white' :
-                            'bg-blue-500 text-white'
-            }`;
-            notification.innerHTML = `<div class="flex items-center space-x-2">
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
-                <span>${escapeHtml(message)}</span>
-            </div>`;
-            document.body.appendChild(notification);
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    if (document.body.contains(notification)) document.body.removeChild(notification);
-                }, 300);
-            }, 5000);
-        }
 
         function getCsrfToken() {
             const metaTag = document.querySelector('meta[name="csrf-token"]');
@@ -1162,15 +1143,15 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.success) {
-                            showNotification('success', 'Пользователь удален');
+                            showNotification('Пользователь удален','success');
                             setTimeout(() => location.reload(), 1500);
                         } else {
-                            showNotification('error', data.error || 'Ошибка при удалении');
+                            showNotification(data.error || 'Ошибка при удалении','error');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        showNotification('error', 'Ошибка при удалении пользователя');
+                        showNotification('Ошибка при удалении пользователя','error');
                     })
                     .finally(() => closeDeleteModalFunc());
             });
@@ -1499,7 +1480,7 @@ ${user.departments && user.departments.length > 0 ?
                         if (startDate && endDate) {
                             loadVisitStats(user.id, 'custom', startDate, endDate);
                         } else {
-                            showNotification('error', 'Выберите обе даты');
+                            showNotification('Выберите обе даты','error');
                         }
                     });
                 }
@@ -1549,10 +1530,10 @@ ${user.departments && user.departments.length > 0 ?
                             body: JSON.stringify({department_ids: selectedIds})
                         }).then(res => res.json()).then(data => {
                             if (data.success) {
-                                showNotification('success', 'Отделы обновлены');
+                                showNotification('Отделы обновлены','success');
                                 loadUserDetails(user.id);
                             } else {
-                                showNotification('error', data.error || 'Ошибка при обновлении');
+                                showNotification(data.error || 'Ошибка при обновлении','error');
                             }
                         });
                     });
@@ -1815,7 +1796,7 @@ ${user.departments && user.departments.length > 0 ?
             inviteForm.addEventListener('submit', function (e) {
                 e.preventDefault();
                 if (selectedUsersData.size === 0) {
-                    showNotification('error', 'Выберите хотя бы одного пользователя');
+                    showNotification('Выберите хотя бы одного пользователя','error');
                     return;
                 }
                 const formData = new FormData();
@@ -1836,19 +1817,19 @@ ${user.departments && user.departments.length > 0 ?
                     body: formData
                 }).then(response => response.json()).then(data => {
                     if (data.success) {
-                        showNotification('success', data.message || 'Приглашения отправлены!');
-                        if (data.warning) showNotification('warning', data.warning);
-                        if (data.info) showNotification('info', data.info);
+                        showNotification(data.message || 'Приглашения отправлены!','success');
+                        if (data.warning) showNotification(data.warning,'warning');
+                        if (data.info) showNotification(data.info,'info');
                         setTimeout(() => {
                             inviteModal.classList.add('hidden');
                             resetForm();
                         }, 1000);
                     } else {
-                        showNotification('error', data.error || 'Произошла ошибка при отправке приглашений');
+                        showNotification(data.error || 'Произошла ошибка при отправке приглашений','error');
                     }
                 }).catch(error => {
                     console.error('Error:', error);
-                    showNotification('error', 'Произошла ошибка при отправке приглашений');
+                    showNotification('Произошла ошибка при отправке приглашений','error');
                 }).finally(() => {
                     submitInvite.innerHTML = originalText;
                     submitInvite.disabled = selectedUsersData.size === 0;
@@ -1877,7 +1858,7 @@ ${user.departments && user.departments.length > 0 ?
             }
 
             // Показываем индикатор загрузки
-            showNotification('info', 'Загрузка данных...');
+            showNotification('Загрузка данных...','info');
 
             fetch(`/team/user/${userId}`)
                 .then(res => res.json())
@@ -1988,16 +1969,16 @@ ${user.departments && user.departments.length > 0 ?
                             })
                             .catch(error => {
                                 console.error('Error loading roles:', error);
-                                showNotification('error', 'Ошибка при загрузке списка ролей');
+                                showNotification('Ошибка при загрузке списка ролей','error');
                             });
 
                     } else {
-                        showNotification('error', data.error || 'Ошибка при загрузке данных пользователя');
+                        showNotification('Ошибка при загрузке данных пользователя','error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showNotification('error', 'Ошибка при загрузке данных пользователя');
+                    showNotification('Ошибка при загрузке данных пользователя','error');
                 });
         }
 
@@ -2019,7 +2000,7 @@ ${user.departments && user.departments.length > 0 ?
         function saveUserRole(userId) {
             const select = document.getElementById('roleSelect');
             if (!select) {
-                showNotification('error', 'Ошибка: форма не найдена');
+                showNotification('Ошибка: форма не найдена','error');
                 return;
             }
 
@@ -2047,7 +2028,7 @@ ${user.departments && user.departments.length > 0 ?
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        showNotification('success', data.message || 'Роль успешно обновлена');
+                        showNotification('Роль успешно обновлена','success');
                         closeRoleEditModal();
 
                         // Обновляем данные в модальном окне пользователя, если оно открыто
@@ -2068,12 +2049,12 @@ ${user.departments && user.departments.length > 0 ?
                             }, 1500);
                         }
                     } else {
-                        showNotification('error', data.error || 'Ошибка при обновлении роли');
+                        showNotification(data.error || 'Ошибка при обновлении роли','error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showNotification('error', 'Ошибка при обновлении роли');
+                    showNotification('Ошибка при обновлении роли','error');
                 })
                 .finally(() => {
                     if (saveBtn) {

@@ -1129,7 +1129,7 @@
                 e.preventDefault();
 
                 if (selectedUsersData.size === 0) {
-                    showNotification('error', 'Выберите хотя бы одного пользователя');
+                    showNotification('Выберите хотя бы одного пользователя','error');
                     return;
                 }
 
@@ -1178,13 +1178,13 @@
                         console.log('Response data:', data);
 
                         if (data.success) {
-                            showNotification('success', data.message || 'Приглашения отправлены!');
+                            showNotification(data.message || 'Приглашения отправлены!', 'success');
 
                             if (data.warning) {
-                                showNotification('warning', data.warning);
+                                showNotification(data.warning, 'warning');
                             }
                             if (data.info) {
-                                showNotification('info', data.info);
+                                showNotification(data.info, 'info');
                             }
 
                             setTimeout(() => {
@@ -1192,7 +1192,7 @@
                                 resetForm();
                             }, 1000);
                         } else {
-                            showNotification('error', data.error || 'Произошла ошибка при отправке приглашений');
+                            showNotification(data.error || 'Произошла ошибка при отправке приглашений', 'error');
                         }
                     })
                     .catch(error => {
@@ -1201,11 +1201,11 @@
                         try {
                             const errorData = JSON.parse(error.message.split(':')[1]);
                             if (errorData.message) {
-                                showNotification('error', errorData.message);
+                                showNotification(errorData.message, 'error');
                                 return;
                             }
                         } catch(e) {
-                            showNotification('error', 'Произошла ошибка при отправке приглашений');
+                            showNotification('Произошла ошибка при отправке приглашений', 'error');
                         }
                     })
                     .finally(() => {
@@ -1261,39 +1261,6 @@
 
             console.warn('CSRF token not found');
             return '';
-        }
-
-        // Функция для показа уведомлений
-        function showNotification(type, message) {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-transform duration-300 ${
-                type === 'success' ? 'bg-green-500 text-white' :
-                    type === 'error' ? 'bg-red-500 text-white' :
-                        type === 'warning' ? 'bg-yellow-500 text-white' :
-                            'bg-blue-500 text-white'
-            }`;
-            notification.innerHTML = `
-                <div class="flex items-center space-x-2">
-                    <i class="fas fa-${
-                type === 'success' ? 'check-circle' :
-                    type === 'error' ? 'exclamation-circle' :
-                        type === 'warning' ? 'exclamation-triangle' :
-                            'info-circle'
-            }"></i>
-                    <span>${escapeHtml(message)}</span>
-                </div>
-            `;
-
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            }, 5000);
         }
     </script>
 
