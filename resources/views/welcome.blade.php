@@ -1483,9 +1483,9 @@
                                 if (data.success) {
                                     showNotification("Личная задача успешно создана!", "success");
                                     closeTaskModal();
-                                    setTimeout(() => {
-                                        location.reload();
-                                    }, 1000);
+                                    // setTimeout(() => {
+                                    //     location.reload();
+                                    // }, 1000);
                                 } else {
                                     showNotification(data.message || 'Ошибка при создании задачи', "error");
                                 }

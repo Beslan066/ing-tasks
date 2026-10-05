@@ -608,6 +608,8 @@ class TaskController extends Controller
             'deadline' => 'nullable|date',
             'estimated_hours' => 'nullable|numeric|min:0',
             'actual_hours' => 'nullable|numeric|min:0',
+            'new_files' => 'nullable|array|max:10',
+            'new_files.*' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,png,jpg,jpeg,gif,zip',
         ]);
 
         if ($validator->fails()) {
@@ -665,20 +667,52 @@ class TaskController extends Controller
             $task->update($updateData);
 
             $selectedFileIds = [];
+            $selectedFilesInput = $request->input('selected_files');
 
-            if ($request->has('selected_files')) {
-                $selectedFilesInput = $request->input('selected_files');
-                if (is_string($selectedFilesInput)) {
-                    $decoded = json_decode($selectedFilesInput, true);
-                    if (is_array($decoded)) {
-                        $selectedFileIds = $decoded;
-                    }
-                } elseif (is_array($selectedFilesInput)) {
-                    $selectedFileIds = $selectedFilesInput;
+            if (is_string($selectedFilesInput)) {
+                $decoded = json_decode($selectedFilesInput, true);
+                if (is_array($decoded)) {
+                    $selectedFileIds = $decoded;
                 }
+            } elseif (is_array($selectedFilesInput)) {
+                $selectedFileIds = $selectedFilesInput;
             }
 
-            $selectedFileIds = array_unique(array_filter($selectedFileIds));
+            $selectedFileIds = array_values(array_unique(array_map('intval', array_filter($selectedFileIds))));
+
+                            // Оставляем только файлы своей компании: id приходят от клиента и их можно подделать
+                $selectedFileIds = File::whereIn('id', $selectedFileIds)
+                    ->where('company_id', $user->company_id)
+                    ->pluck('id')
+                    ->all();
+
+                // Новые файлы: сохраняем и добавляем их id в общий список ДО sync
+                if ($request->hasFile('new_files')) {
+                    foreach ($request->file('new_files') as $file) {
+                        $path = $file->store("tasks/{$task->id}", 'public');
+
+                        $fileRecord = File::create([
+                            'name' => $file->getClientOriginalName(),
+                            'file_path' => $path,
+                            'path' => $path,
+                            'file_size' => $file->getSize(),
+                            'size' => $file->getSize(),
+                            'mime_type' => $file->getMimeType(),
+                            'extension' => $file->getClientOriginalExtension(),
+                            'uploaded_by' => $user->id,
+                            'company_id' => $user->company_id,
+                            'department_id' => $task->department_id,
+                            'disk' => 'public',
+                            'folder' => 'tasks',
+                            'is_public' => false,
+                        ]);
+
+                        $selectedFileIds[] = $fileRecord->id;
+                    }
+                }
+
+                // sync([]) сам отвяжет всё, if/else с detach() больше не нужен
+                $task->files()->sync($selectedFileIds);
 
             if (!empty($selectedFileIds)) {
                 $task->files()->sync($selectedFileIds);

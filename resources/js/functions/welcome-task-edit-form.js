@@ -21,15 +21,17 @@
         try {
             const formData = new FormData(form);
             formData.set('_method', 'POST');
+
             const state = window.taskEditState || { selected: [] };
             const selectedFileIds = state.selected.map(f => Number(f.id));
             console.log('Отправляемые ID файлов на сервер:', selectedFileIds);
-            formData.append('selected_files', JSON.stringify(selectedFileIds));
+            formData.set('selected_files', JSON.stringify(selectedFileIds));
 
+            formData.delete('new_files[]');
             const newFilesInput = document.getElementById('editUploadNewFilesInput');
-            if (newFilesInput && newFilesInput.files.length > 0 && !newFilesInput.name) {
-                for (let i = 0; i < newFilesInput.files.length; i++) {
-                    formData.append('new_files[]', newFilesInput.files[i]);
+            if (newFilesInput && newFilesInput.files.length > 0) {
+                for (const file of newFilesInput.files) {
+                    formData.append('new_files[]', file);
                 }
                 console.log('Новых файлов для загрузки:', newFilesInput.files.length);
             }
@@ -56,7 +58,7 @@
             if (response.ok && data.success) {
                 showNotification('Задача успешно обновлена!', 'success');
                 closeEditModal();
-                location.reload();
+                // location.reload();
             } else {
                 const firstError = data.errors ? Object.values(data.errors)[0][0] : null;
                 showNotification(firstError || data.message || 'Ошибка при обновлении задачи', 'error');
