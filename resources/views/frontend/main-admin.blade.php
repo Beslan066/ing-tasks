@@ -2432,6 +2432,7 @@
         }
 
         function renderTaskFiles(files) {
+            console.log('renderTaskFiles mainadmin')
             const contentDiv = document.getElementById('fileManagerContent');
             if (!contentDiv) return;
 

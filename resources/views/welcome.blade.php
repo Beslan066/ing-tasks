@@ -884,8 +884,6 @@
         //  ПЕРЕМЕННЫЕ
         let taskSelectedFiles = [];
         let taskAllFiles = [];
-        // let taskEditSelectedFiles = [];
-        let taskEditAllFiles = [];
 
         // Переменные для фильтров
         let currentTaskId = null;
@@ -1083,6 +1081,7 @@
         }
 
         function renderTaskFiles(files) {
+            console.log('renderTaskFiles welcom')
             const contentDiv = document.getElementById('fileManagerContent');
             if (!contentDiv) return;
 
@@ -1126,6 +1125,7 @@
         }
 
         function toggleTaskFileSelection(fileId) {
+            console.log('toggleTaskFileSelectionwelcome')
             let file = taskAllFiles.find(f => f.id === fileId);
             if (!file) return;
 
