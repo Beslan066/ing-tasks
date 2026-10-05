@@ -2155,6 +2155,7 @@
         }
 
         window.confirmEditFileSelectionForEdit = function () {
+            console.log('confirmFromMainAdmin')
             editSelectedFiles = [...editTempSelectedFiles];
             updateEditSelectedFilesDisplay();
 
