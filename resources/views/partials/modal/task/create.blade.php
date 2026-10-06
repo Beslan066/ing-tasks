@@ -215,7 +215,7 @@
                                     class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 max-[500px]:text-[12px] max-[500px]:px-2">
                                 <i class="fas fa-folder-open mr-2"></i>Открыть хранилище
                             </button>
-                            <button type="button" onclick="clearSelectedFiles()"
+                            <button type="button" onclick="clearCreateSelectedFiles()"
                                     class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-red-50 hover:border-red-300 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 max-[500px]:text-[12px] max-[500px]:px-2">
                                 <i class="fas fa-times mr-2"></i>Очистить
                             </button>
@@ -288,106 +288,6 @@
     <script>
                 if (!window.__testInitialized) {
     window.__testInitialized = true;
-        // Переменные для создания задачи
-        let createSelectedFiles = [];
-        let createAllFiles = [];
-
-        // Функция выбора/снятия файла для создания задачи
-        window.toggleFileSelectionForCreate = function(fileId) {
-            console.log('toggleFileSelectionForCreate вызвана, fileId:', fileId);
-
-            let file = createAllFiles.find(f => f.id === fileId);
-            if (!file) {
-                file = window.createAllFiles?.find(f => f.id === fileId);
-            }
-            if (!file) {
-                console.log('Файл не найден');
-                return;
-            }
-
-            const index = createSelectedFiles.findIndex(f => f.id === fileId);
-            if (index === -1) {
-                createSelectedFiles.push(file);
-                console.log('Файл добавлен, теперь всего:', createSelectedFiles.length);
-            } else {
-                createSelectedFiles.splice(index, 1);
-                console.log('Файл удален, осталось:', createSelectedFiles.length);
-            }
-
-            // Обновляем отображение
-            renderCreateFiles(createAllFiles);
-            updateCreateSelectedCount();
-        };
-
-        function updateCreateSelectedCount() {
-            const selectedCountSpan = document.getElementById('createSelectedCount');
-            const confirmCountSpan = document.getElementById('createConfirmCount');
-            if (selectedCountSpan) selectedCountSpan.textContent = createSelectedFiles.length;
-            if (confirmCountSpan) confirmCountSpan.textContent = createSelectedFiles.length;
-        }
-
-        function renderCreateFiles(files) {
-            const contentDiv = document.getElementById('createFileManagerContent');
-            if (!contentDiv) return;
-
-            if (!files || files.length === 0) {
-                contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Нет файлов</div>`;
-                return;
-            }
-
-            let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
-            files.forEach(file => {
-                const isSelected = createSelectedFiles.some(f => f.id === file.id);
-                const fileIcon = getFileIcon(file.extension);
-                const fileType = getFileTypeClass(file.extension);
-                 html += `
-                      <div class="file-card bg-white border-2 ${isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200'} rounded-lg p-3 transition-all duration-200 hover:shadow-md cursor-pointer"
-                 onclick="toggleEditFileSelection(${file.id})">
-                <div class="flex justify-between items-start mb-2">
-                    <div class="w-5 h-5 rounded ${isSelected ? 'bg-green-500' : 'border-2 border-gray-300'} flex items-center justify-center">
-                        ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
-                    </div>
-                    <button type="button"
-                            onclick="event.stopPropagation(); downloadEditFile(${file.id})"
-                            class="text-gray-400 hover:text-green-600 p-1 transition-colors"
-                            title="Скачать">
-                        <i class="fas fa-download"></i>
-                    </button>
-                </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
-                        <img src="/storage/${file.path}" alt="${escapeHtml(file.name)}" class="w-full h-full object-cover">
-                    </div>
-                    <p class="text-sm font-medium text-gray-800 truncate" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</p>
-                    <p class="text-xs text-gray-500 mt-1">${formatFileSize(file.size)}</p>
-                    <p class="text-xs text-gray-400">${formatDate(file.created_at)}</p>
-                </div>
-            </div>`;
-            });
-            html += '</div>';
-            contentDiv.innerHTML = html;
-            updateCreateSelectedCount();
-        }
-
-        async function loadCreateFiles() {
-            const contentDiv = document.getElementById('createFileManagerContent');
-            if (!contentDiv) return;
-            contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Загрузка...</div>`;
-
-            try {
-                const response = await fetch('/tasks/file-storage/get-files', {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                    }
-                });
-                if (!response.ok) throw new Error('Ошибка');
-                createAllFiles = await response.json();
-                renderCreateFiles(createAllFiles);
-            } catch (error) {
-                contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">Ошибка загрузки</div>`;
-            }
-        }
 
         async function openCreateFileManager() {
             const modal = document.getElementById('createFileManagerModal');
@@ -406,62 +306,6 @@
             }
         }
 
-        function confirmCreateFileSelection() {
-            console.log('=== confirmCreateFileSelection вызвана ===');
-            console.log('createSelectedFiles.length:', createSelectedFiles.length);
-
-            if (createSelectedFiles.length === 0) {
-                alert('Пожалуйста, выберите хотя бы один файл');
-                return;
-            }
-
-            const selectedFilesInput = document.getElementById('selectedFiles');
-            if (selectedFilesInput) {
-                selectedFilesInput.value = JSON.stringify(createSelectedFiles);
-            }
-
-            updateCreateSelectedFilesDisplay();
-            switchCreateFileTab('storage');
-            closeCreateFileManager();
-        }
-
-        function updateCreateSelectedFilesDisplay() {
-            const container = document.getElementById('selectedFilesContainer');
-            const fileCounter = document.getElementById('fileCounter');
-            const fileCount = document.getElementById('fileCount');
-
-            if (!container) return;
-
-            if (createSelectedFiles.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg"><i class="fas fa-folder-open text-3xl text-gray-300 mb-3"></i><p class="text-sm text-gray-500">Файлы не выбраны</p><p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p></div>`;
-                if (fileCounter) fileCounter.classList.add('hidden');
-            } else {
-                let html = '';
-                createSelectedFiles.forEach(file => {
-                    const fileIcon = getFileIcon(file.extension);
-                    const fileType = getFileTypeClass(file.extension);
-                    html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"><div class="flex items-center space-x-3"><div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center"><span class="text-lg">${fileIcon}</span></div><div><p class="text-sm font-medium text-gray-800">${escapeHtml(file.name)}</p><p class="text-xs text-gray-500">${formatFileSize(file.size)}</p></div></div><button onclick="removeCreateSelectedFile(${file.id})" class="text-red-500 hover:text-red-700 p-1"><i class="fas fa-times"></i></button></div>`;
-                });
-                container.innerHTML = html;
-                if (fileCount) fileCount.textContent = createSelectedFiles.length;
-                if (fileCounter) fileCounter.classList.remove('hidden');
-            }
-        }
-
-        function removeCreateSelectedFile(fileId) {
-            createSelectedFiles = createSelectedFiles.filter(f => f.id !== fileId);
-            updateCreateSelectedFilesDisplay();
-            updateCreateSelectedCount();
-        }
-
-        function clearCreateSelectedFiles() {
-            if (createSelectedFiles.length === 0) return;
-            if (confirm(`Удалить все выбранные файлы (${createSelectedFiles.length})?`)) {
-                createSelectedFiles = [];
-                updateCreateSelectedFilesDisplay();
-                updateCreateSelectedCount();
-            }
-        }
 
         function switchCreateFileTab(tabName) {
             console.log('ttavv')
@@ -483,15 +327,8 @@
 
         // Переопределяем функции для создания
         window.openFileManager = openCreateFileManager;
-        window.confirmStorageFileSelection = confirmCreateFileSelection;
-        window.clearSelectedFiles = clearCreateSelectedFiles;
         window.switchFileTab = switchCreateFileTab;
         window.closeFileManager = closeCreateFileManager;
-        window.updateSelectedFilesDisplay = updateCreateSelectedFilesDisplay;
-        window.updateSelectedCount = updateCreateSelectedCount;
-        window.renderFiles = renderCreateFiles;
-        window.allFiles = createAllFiles;
-        window.selectedFiles = createSelectedFiles;
 }
     </script>
 @endpush

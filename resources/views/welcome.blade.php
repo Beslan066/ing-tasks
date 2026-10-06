@@ -1069,7 +1069,7 @@
                 }
             } catch (error) {
                 console.error('Ошибка загрузки файлов:', error);
-                contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">Ошибка загрузки</div>`;
+                contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">Ошибка загрузки1</div>`;
             }
         }
 
@@ -1319,7 +1319,7 @@
                     searchInput.addEventListener('input', handleTaskEditFileSearch);
                 }
             } catch (error) {
-                contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">Ошибка загрузки</div>`;
+                contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">Ошибка загрузки2</div>`;
             }
         }
 
@@ -1437,73 +1437,6 @@
             }
         };
 
-
-        // ==================== ОБРАБОТКА ФОРМЫ СОЗДАНИЯ ЗАДАЧИ ====================
-        (function() {
-            const taskForm = document.getElementById('taskForm');
-
-            if (taskForm) {
-                taskForm.addEventListener('submit', function(e) {
-                    const isPersonalModal = document.getElementById('taskModal').classList.contains('hidden') === false &&
-                        document.querySelector('#taskModal h3')?.textContent === 'Новая личная задача';
-
-                    if (isPersonalModal) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        const formData = new FormData(this);
-                        const submitBtn = this.querySelector('button[type="submit"]');
-                        const originalText = submitBtn?.innerHTML;
-
-                        if (submitBtn) {
-                            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Создание...';
-                            submitBtn.disabled = true;
-                        }
-
-                        // Добавляем is_personal = true
-                        formData.append('is_personal', '1');
-
-                        // Убеждаемся что department_id есть (если у пользователя есть отдел)
-                        @if(isset($user) && $user->department_id)
-                        if (!formData.has('department_id') || !formData.get('department_id')) {
-                            formData.append('department_id', '{{ $user->department_id }}');
-                        }
-                        @endif
-
-                        fetch('/tasks/personal/store', {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json'
-                            },
-                            body: formData
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    showNotification("Личная задача успешно создана!", "success");
-                                    closeTaskModal();
-                                    // setTimeout(() => {
-                                    //     location.reload();
-                                    // }, 1000);
-                                } else {
-                                    showNotification(data.message || 'Ошибка при создании задачи', "error");
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Ошибка:', error);
-                                showNotification("Ошибка при создании задачи", "error");
-                            })
-                            .finally(() => {
-                                if (submitBtn) {
-                                    submitBtn.innerHTML = originalText;
-                                    submitBtn.disabled = false;
-                                }
-                            });
-                    }
-                });
-            }
-        })();
 
         // ==================== ФУНКЦИИ ФИЛЬТРАЦИИ ====================
       function toggleFiltersDropdown() {
@@ -1717,136 +1650,6 @@
             });
         }
 
-        // ==================== DRAG AND DROP ====================
-        function initDragAndDrop() {
-            const taskCards = document.querySelectorAll('.task-card');
-            const columns = document.querySelectorAll('.board-column');
-
-            taskCards.forEach(card => {
-                card.setAttribute('draggable', 'true');
-                card.removeEventListener('dragstart', dragStart);
-                card.removeEventListener('dragend', dragEnd);
-                card.addEventListener('dragstart', dragStart);
-                card.addEventListener('dragend', dragEnd);
-            });
-
-            columns.forEach(column => {
-                column.removeEventListener('dragover', dragOver);
-                column.removeEventListener('dragleave', dragLeave);
-                column.removeEventListener('drop', drop);
-                column.addEventListener('dragover', dragOver);
-                column.addEventListener('dragleave', dragLeave);
-                column.addEventListener('drop', drop);
-            });
-        }
-
-        let draggedItem = null;
-let swiperSlideTimeout = null;
-
-// В самой функции dragStart добавьте строку для принудительного создания "призрака"
-function dragStart(e) {
-    draggedItem = this;
-    e.dataTransfer.setData('text/plain', this.dataset.task);
-    this.style.opacity = '0.5';
- if (window.mySwiper) {
-        window.mySwiper.detachEvents(); // полностью отключает реакцию на палец для Swiper
-    }
-
-    // Фикс для iOS/Android: помогаем полифилу понять, какой именно элемент мы тащим
-    if (e.dataTransfer.setDragImage) {
-        e.dataTransfer.setDragImage(this, 0, 0);
-    }
-}
-        function dragEnd(e) {
-            if (draggedItem) {
-                draggedItem.style.opacity = '';
-                draggedItem = null;
-            }
-              if (window.mySwiper) {
-        window.mySwiper.attachEvents();
-    }
-        }
-
-
-function dragOver(e) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-
-    const column = this.closest('.board-column');
-    if (column) {
-        column.classList.add('drag-over-active');
-
-        if (window.mySwiper && typeof window.mySwiper.slideTo === 'function') {
-
-
-            const allColumns = Array.from(document.querySelectorAll('.board-column'));
-            const columnIndex = allColumns.indexOf(column);
-
-            if (columnIndex !== -1 && window.mySwiper.activeIndex !== columnIndex && !swiperSlideTimeout) {
-
-                swiperSlideTimeout = setTimeout(() => {
-                    window.mySwiper.slideTo(columnIndex, 300); // 300 — скорость анимации в мс
-                    swiperSlideTimeout = null;
-                }, 400);
-            }
-        }
-    }
-}
-
-function dragLeave(e) {
-    const column = this.closest('.board-column');
-    if (column) {
-        column.classList.remove('drag-over-active');
-    }
-
-    if (swiperSlideTimeout) {
-        clearTimeout(swiperSlideTimeout);
-        swiperSlideTimeout = null;
-    }
-}
-
-function drop(e) {
-            e.preventDefault();
-
-            if (swiperSlideTimeout) {
-        clearTimeout(swiperSlideTimeout);
-        swiperSlideTimeout = null;
-
-             if (window.mySwiper) {
-        window.mySwiper.attachEvents();
-    }
-    }
-
-            const column = this.closest('.board-column');
-            if (column) {
-                column.classList.remove('drag-over-active');
-            }
-
-            if (!draggedItem) return;
-
-            const newStatus = column.dataset.status;
-            const taskId = draggedItem.dataset.task;
-            const currentColumn = draggedItem.closest('.board-column');
-            const currentStatus = currentColumn ? currentColumn.getAttribute('data-status') : null;
-
-            if (currentStatus === newStatus) {
-                draggedItem.style.opacity = '1';
-                draggedItem = null;
-                return;
-            }
-
-            let statusMap = {
-                'new': 'назначена',
-                'in-progress': 'в работе',
-                'review': 'на проверке',
-                'done': 'выполнена'
-            };
-
-            const newStatusValue = statusMap[newStatus];
-            if (!newStatusValue) return;
-
-            updateTaskStatus(taskId, newStatusValue);
-        }
 
         async function updateTaskStatus(taskId, newStatus) {
             try {
@@ -1862,6 +1665,7 @@ function drop(e) {
                 if (data.success) {
                     // location.reload();
                     console.log('changed task status ')
+                    showNotification('Статус задачи обновлен','success');
                 } else {
                     showNotification(data.message || 'Ошибка при перемещении задачи','error');
                 }

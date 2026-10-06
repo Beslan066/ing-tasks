@@ -2891,6 +2891,7 @@
         let swiperSlideTimeout = null;
 
         function dragStart(e) {
+            console.log('dnd start main');
             draggedItem = this;
             e.dataTransfer.setData('text/plain', this.dataset.task);
             this.style.opacity = '0.5';
@@ -2903,6 +2904,7 @@
         }
 
         function dragEnd(e) {
+            console.log('dnd end main');
             if (draggedItem) {
                 draggedItem.style.opacity = '';
                 draggedItem = null;
@@ -2913,6 +2915,7 @@
         }
 
         function dragOver(e) {
+            console.log('dnd over main');
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
 
@@ -2934,6 +2937,7 @@
         }
 
         function dragLeave(e) {
+            console.log('dnd leave main');
             const column = this.closest('.board-column');
             if (column) {
                 column.classList.remove('drag-over-active');
@@ -2945,6 +2949,7 @@
         }
 
         function drop(e) {
+            console.log('dnd drop main');
             e.preventDefault();
 
             if (swiperSlideTimeout) {

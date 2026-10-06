@@ -2,7 +2,7 @@
     <div class="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
         <div class="flex justify-between items-center p-6 border-b border-gray-200 bg-white">
             <div>
-                <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Файловdddое хранилище</h3>
+                <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Файловое хранилище FileCreate</h3>
                 <p class="text-sm text-gray-500 mt-1">Выберите файлы для прикрепления к задаче</p>
             </div>
             <div class="flex items-center space-x-3">
@@ -50,50 +50,3 @@
         </div>
     </div>
 </div>
-@push('scripts')
-<script>
-    function renderTaskFiles(files) {
-        console.log('task-files-create-modal.blade.php renderTaskFiles')
-            const contentDiv = document.getElementById('fileManagerContent');
-            if (!contentDiv) return;
-
-            if (!files || files.length === 0) {
-                contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Нет файлов</div>`;
-                return;
-            }
-
-            let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
-            files.forEach(file => {
-                const isSelected = taskSelectedFiles.some(f => f.id === file.id);
-                const fileIcon = getFileIcon(file.extension);
-                const fileType = getFileTypeClass(file.extension);
-                html += `
-                      <div class="file-card bg-white border-2 ${isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200'} rounded-lg p-3 transition-all duration-200 hover:shadow-md cursor-pointer"
-                 onclick="toggleEditFileSelection(${file.id})">
-                <div class="flex justify-between items-start mb-2">
-                    <div class="w-5 h-5 rounded ${isSelected ? 'bg-green-500' : 'border-2 border-gray-300'} flex items-center justify-center">
-                        ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
-                    </div>
-                    <button type="button"
-                            onclick="event.stopPropagation(); downloadEditFile(${file.id})"
-                            class="text-gray-400 hover:text-green-600 p-1 transition-colors"
-                            title="Скачать">
-                        <i class="fas fa-download"></i>
-                    </button>
-                </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
-                        <img src="/storage/${file.path}" alt="${escapeHtml(file.name)}" class="w-full h-full object-cover">
-                    </div>
-                    <p class="text-sm font-medium text-gray-800 truncate" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</p>
-                    <p class="text-xs text-gray-500 mt-1">${formatFileSize(file.size)}</p>
-                    <p class="text-xs text-gray-400">${formatDate(file.created_at)}</p>
-                </div>
-            </div>`;
-            });
-            html += '</div>';
-            contentDiv.innerHTML = html;
-            updateTaskSelectedCount();
-        }
-</script>
-@endpush

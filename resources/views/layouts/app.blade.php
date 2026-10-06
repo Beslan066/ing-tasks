@@ -816,87 +816,87 @@ media-src https://meet.jit.si https:;
     window.selectedFiles = [];
     window.allFiles = [];
 
-    (function () {
-        // Функция для проверки - открыта ли модалка личной задачи
-        function isPersonalTaskModal() {
-            const modal = document.getElementById('taskModal');
-            const h3 = modal ? modal.querySelector('h3') : null;
-            return modal && !modal.classList.contains('hidden') && h3 && h3.textContent === 'Новая личная задача';
-        }
+    // (function () {
+    //     // Функция для проверки - открыта ли модалка личной задачи
+    //     function isPersonalTaskModal() {
+    //         const modal = document.getElementById('taskModal');
+    //         const h3 = modal ? modal.querySelector('h3') : null;
+    //         return modal && !modal.classList.contains('hidden') && h3 && h3.textContent === 'Новая личная задача';
+    //     }
 
-        // Сохраняем ссылку на оригинальный обработчик
-        let originalSubmitHandler = null;
+    //     // Сохраняем ссылку на оригинальный обработчик
+    //     let originalSubmitHandler = null;
 
-        // Ждем загрузки DOM
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('taskForm');
-            if (!form) return;
+    //     // Ждем загрузки DOM
+    //     document.addEventListener('DOMContentLoaded', function () {
+    //         const form = document.getElementById('taskForm');
+    //         if (!form) return;
 
-            // Получаем все обработчики submit (если есть)
-            const oldSubmit = form.submit;
+    //         // Получаем все обработчики submit (если есть)
+    //         const oldSubmit = form.submit;
 
-            // Переопределяем submit
-            form.submit = function () {
-                if (isPersonalTaskModal()) {
-                    // Для личных задач - отправляем через AJAX
-                    const formData = new FormData(this);
-                    const submitBtn = this.querySelector('button[type="submit"]');
-                    const originalText = submitBtn?.innerHTML;
+    //         // Переопределяем submit
+    //         form.submit = function () {
+    //             if (isPersonalTaskModal()) {
+    //                 // Для личных задач - отправляем через AJAX
+    //                 const formData = new FormData(this);
+    //                 const submitBtn = this.querySelector('button[type="submit"]');
+    //                 const originalText = submitBtn?.innerHTML;
 
-                    if (submitBtn) {
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Создание...';
-                        submitBtn.disabled = true;
-                    }
+    //                 if (submitBtn) {
+    //                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Создание...';
+    //                     submitBtn.disabled = true;
+    //                 }
 
-                    fetch('/tasks/personal/store', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-                            'Accept': 'application/json'
-                        },
-                        body: formData
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                showNotification('Личная задача успешно создана', 'success');
-                                closeTaskModal();
-                                setTimeout(() => {
-                                    location.reload();
-                                }, 600);
-                            } else {
-                                showNotification(data.message || 'Ошибка при создании задачи', 'error');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Ошибка:', error);
-                            showNotification('Ошибка при создании задачи', 'error');
-                        })
-                        .finally(() => {
-                            if (submitBtn) {
-                                submitBtn.innerHTML = originalText;
-                                submitBtn.disabled = false;
-                            }
-                        });
-                    return false;
-                }
-                // Для обычных задач - вызываем оригинальный submit
-                return oldSubmit ? oldSubmit.call(this) : HTMLFormElement.prototype.submit.call(this);
-            };
+    //                 fetch('/tasks/personal/store', {
+    //                     method: 'POST',
+    //                     headers: {
+    //                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+    //                         'Accept': 'application/json'
+    //                     },
+    //                     body: formData
+    //                 })
+    //                     .then(response => response.json())
+    //                     .then(data => {
+    //                         if (data.success) {
+    //                             showNotification('Личная задача успешно создана1', 'success');
+    //                             closeTaskModal();
+    //                             // setTimeout(() => {
+    //                             //     location.reload();
+    //                             // }, 600);
+    //                         } else {
+    //                             showNotification(data.message || 'Ошибка при создании задачи', 'error');
+    //                         }
+    //                     })
+    //                     .catch(error => {
+    //                         console.error('Ошибка:', error);
+    //                         showNotification('Ошибка при создании задачи', 'error');
+    //                     })
+    //                     .finally(() => {
+    //                         if (submitBtn) {
+    //                             submitBtn.innerHTML = originalText;
+    //                             submitBtn.disabled = false;
+    //                         }
+    //                     });
+    //                 return false;
+    //             }
+    //             // Для обычных задач - вызываем оригинальный submit
+    //             return oldSubmit ? oldSubmit.call(this) : HTMLFormElement.prototype.submit.call(this);
+    //         };
 
-            // Добавляем свой обработчик на submit
-            form.addEventListener('submit', function (e) {
-                if (isPersonalTaskModal()) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    e.stopImmediatePropagation();
-                    // Вызываем наш переопределенный submit
-                    form.submit();
-                    return false;
-                }
-            }, true); // true - чтобы выполнился первым
-        });
-    })();
+    //         // Добавляем свой обработчик на submit
+    //         form.addEventListener('submit', function (e) {
+    //             if (isPersonalTaskModal()) {
+    //                 e.preventDefault();
+    //                 e.stopPropagation();
+    //                 e.stopImmediatePropagation();
+    //                 // Вызываем наш переопределенный submit
+    //                 form.submit();
+    //                 return false;
+    //             }
+    //         }, true); // true - чтобы выполнился первым
+    //     });
+    // })();
 
     // Добавим интерактивности для сайдбара
     document.addEventListener('DOMContentLoaded', function () {
