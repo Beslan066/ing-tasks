@@ -1,4 +1,3 @@
-console.log('Init sidebar')
 const burgerBtn = document.getElementById('burger-btn');
 const sidebarMenu = document.getElementById('sidebar-menu');
 const overlay = document.getElementById('sidebar-overlay');

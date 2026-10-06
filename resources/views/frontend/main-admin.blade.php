@@ -2155,6 +2155,7 @@
         }
 
         window.confirmEditFileSelectionForEdit = function () {
+            console.log('confirmFromMainAdmin')
             editSelectedFiles = [...editTempSelectedFiles];
             updateEditSelectedFilesDisplay();
 
@@ -2431,6 +2432,7 @@
         }
 
         function renderTaskFiles(files) {
+            console.log('renderTaskFiles mainadmin')
             const contentDiv = document.getElementById('fileManagerContent');
             if (!contentDiv) return;
 
@@ -2889,6 +2891,7 @@
         let swiperSlideTimeout = null;
 
         function dragStart(e) {
+            console.log('dnd start main');
             draggedItem = this;
             e.dataTransfer.setData('text/plain', this.dataset.task);
             this.style.opacity = '0.5';
@@ -2901,6 +2904,7 @@
         }
 
         function dragEnd(e) {
+            console.log('dnd end main');
             if (draggedItem) {
                 draggedItem.style.opacity = '';
                 draggedItem = null;
@@ -2911,6 +2915,7 @@
         }
 
         function dragOver(e) {
+            console.log('dnd over main');
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
 
@@ -2932,6 +2937,7 @@
         }
 
         function dragLeave(e) {
+            console.log('dnd leave main');
             const column = this.closest('.board-column');
             if (column) {
                 column.classList.remove('drag-over-active');
@@ -2943,6 +2949,7 @@
         }
 
         function drop(e) {
+            console.log('dnd drop main');
             e.preventDefault();
 
             if (swiperSlideTimeout) {
@@ -3180,6 +3187,7 @@ console.log('test1')
 console.log('test2')
 </script>
     @push('scripts')
+    @vite('resources/js/pages/main-admin.page.js')
         <script>
             function copyTaskLink() {
                 const taskId = window.currentTaskId;

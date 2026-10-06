@@ -1402,6 +1402,7 @@
             }
         }
         function confirmEditFileSelectionForEdit() {
+             console.log('confirmFromAllTasks')
             editSelectedFiles = [...editTempSelectedFiles];
             updateEditSelectedFilesDisplay();
 
