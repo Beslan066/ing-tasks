@@ -13,6 +13,24 @@ const STATUS_MAP = {
     'done': 'выполнена'
 };
 
+function applyDoneStyle(card) {
+    card.style.removeProperty('opacity');
+    if (card.getAttribute('style') === '') {
+        card.removeAttribute('style');
+    }
+}
+
+function finishDrag(card = draggedItem) {
+    if (card) {
+        applyDoneStyle(card);
+    }
+    draggedItem = null;
+
+    if (window.mySwiper && typeof window.mySwiper.attachEvents === 'function') {
+        window.mySwiper.attachEvents();
+    }
+}
+
 /**
  * Инициализация / Переинициализация Drag and Drop
  */
@@ -26,6 +44,8 @@ export function initDragAndDrop() {
         card.removeEventListener('dragend', dragEnd);
         card.addEventListener('dragstart', dragStart);
         card.addEventListener('dragend', dragEnd);
+
+        applyDoneStyle(card);
     });
 
     columns.forEach(column => {
@@ -39,7 +59,6 @@ export function initDragAndDrop() {
 }
 
 function dragStart(e) {
-        console.log('welcome-dnd-cols.js')
     draggedItem = this;
     e.dataTransfer.setData('text/plain', this.dataset.task);
     this.style.opacity = '0.5';
@@ -54,19 +73,10 @@ function dragStart(e) {
 }
 
 function dragEnd(e) {
-    console.log('welcome-dnd-cols.js')
-    if (draggedItem) {
-        draggedItem.style.opacity = '';
-        draggedItem = null;
-    }
-
-    if (window.mySwiper && typeof window.mySwiper.attachEvents === 'function') {
-        window.mySwiper.attachEvents();
-    }
+    finishDrag(this);
 }
 
 function dragOver(e) {
-        console.log('welcome-dnd-cols.js')
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
 
@@ -89,7 +99,6 @@ function dragOver(e) {
 }
 
 function dragLeave(e) {
-        console.log('welcome-dnd-cols.js')
     const column = this.closest('.board-column');
     if (column) {
         column.classList.remove('drag-over-active');
@@ -102,15 +111,11 @@ function dragLeave(e) {
 }
 
 function drop(e) {
-        console.log('welcome-dnd-cols.js')
     e.preventDefault();
 
     if (swiperSlideTimeout) {
         clearTimeout(swiperSlideTimeout);
         swiperSlideTimeout = null;
-        if (window.mySwiper && typeof window.mySwiper.attachEvents === 'function') {
-            window.mySwiper.attachEvents();
-        }
     }
 
     const column = this.closest('.board-column');
@@ -120,22 +125,21 @@ function drop(e) {
 
     if (!draggedItem || !column) return;
 
+    const card = draggedItem;
     const newStatus = column.dataset.status;
-    const currentColumn = draggedItem.closest('.task-container');
+    const currentColumn = card.closest('.board-column');
     const currentStatus = currentColumn ? currentColumn.dataset.status : null;
-
     if (currentStatus === newStatus) {
-        draggedItem.style.opacity = '1';
-        draggedItem = null;
+        finishDrag(card);
         return;
     }
 
-    // 1. Физическое перемещение карточки в DOM
     const targetContainer = column.querySelector('.task-container') || column;
-    targetContainer.prepend(draggedItem);
+    targetContainer.prepend(card);
 
-    // 2. Отправка обновленного статуса на сервер
-    const taskId = draggedItem.dataset.task;
+    finishDrag(card);
+
+    const taskId = card.dataset.task;
     const newStatusValue = STATUS_MAP[newStatus];
 
     if (newStatusValue && typeof window.updateTaskStatus === 'function') {
@@ -145,10 +149,8 @@ function drop(e) {
     }
 }
 
-// Делаем функцию доступной глобально на случай классического подключения через <script>
 window.initDragAndDrop = initDragAndDrop;
 
-// Автоинициализация при загрузке DOM
 document.addEventListener('DOMContentLoaded', () => {
     initDragAndDrop();
 });

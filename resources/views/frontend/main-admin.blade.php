@@ -3187,6 +3187,7 @@ console.log('test1')
 console.log('test2')
 </script>
     @push('scripts')
+    @vite('resources/js/pages/main-admin.page.js')
         <script>
             function copyTaskLink() {
                 const taskId = window.currentTaskId;

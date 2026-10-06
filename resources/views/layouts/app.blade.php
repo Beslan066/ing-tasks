@@ -1044,7 +1044,7 @@ media-src https://meet.jit.si https:;
         if (modalTitle) modalTitle.textContent = 'Новая задача';
 
         const modalDesc = document.querySelector('#taskModal p');
-        if (modalDesc) modalDesc.textContent = 'Заполните информацию о задаче';
+        if (modalDesc) modalDesc.textContent = 'Заполните информацию о задаче2';
 
         const submitBtn = document.querySelector('#taskModal button[type="submit"]');
         if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-plus mr-2"></i>Создать задачу';
@@ -1105,6 +1105,7 @@ media-src https://meet.jit.si https:;
     // ==================== УПРАВЛЕНИЕ ФАЙЛАМИ ====================
 
     function switchFileTab(tabName) {
+        console.log('switChFileTab')
         document.querySelectorAll('.tab-button').forEach(btn => {
             btn.classList.remove('active');
             if (btn.dataset.tab === tabName) {
@@ -1123,6 +1124,7 @@ media-src https://meet.jit.si https:;
     }
 
     async function openFileManager() {
+        console.log('app.blade openFileManager');
         const modal = document.getElementById('fileManagerModal');
         if (modal) {
             modal.classList.remove('hidden');
@@ -1498,11 +1500,24 @@ media-src https://meet.jit.si https:;
     const taskForm = document.getElementById('taskForm');
     if (taskForm) {
         taskForm.addEventListener('submit', async function (e) {
+            console.log('subi');
             e.preventDefault();
             const formData = new FormData(this);
+            // const selectedFilesData = JSON.parse(document.getElementById('selectedFiles')?.value || '[]');
+            // console.log(selectedFilesData);
+            // selectedFilesData.forEach(file => {
+            //     formData.append('selected_file_ids[]', file.id);
+            // });
             const selectedFilesData = JSON.parse(document.getElementById('selectedFiles')?.value || '[]');
             selectedFilesData.forEach(file => {
-                formData.append('selected_file_ids[]', file.id);
+                // Если в инпуте сохранен массив объектов {id: ...}
+                if (file && typeof file === 'object' && file.id !== undefined) {
+                    formData.append('selected_file_ids[]', file.id);
+                }
+                // Если в инпуте сохранен массив чистых ID (как делает confirmCreateFileSelection)
+                else if (file !== undefined && file !== null) {
+                    formData.append('selected_file_ids[]', file);
+                }
             });
             const submitButton = this.querySelector('button[type="submit"]');
             const originalText = submitButton ? submitButton.innerHTML : '';
@@ -3225,7 +3240,6 @@ setDefaultTab()
             formData.append('user_id', '{{ auth()->id() }}');
             formData.append('author_id', '{{ auth()->id() }}');
             @endif
-
             const response = await fetch('/tasks/personal/store', {
                 method: 'POST',
                 headers: {

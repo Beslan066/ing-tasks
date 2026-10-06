@@ -2159,6 +2159,9 @@ document.body.classList.remove('overflow-y-hidden');
         .board-column {
             min-height: 600px;
         }
+        .board-column[data-status="done"] .task-card {
+    opacity: 0.5;
+}
         @media(max-width:500px) {
             .board-column {
                 min-height: auto;

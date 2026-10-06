@@ -18,9 +18,37 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Validation\Rule;
 class TaskController extends Controller
 {
+
+
+private function attachFiles(Task $task, Request $request, $user): void
+{
+    $ids = File::whereIn('id', $request->input('selected_file_ids', []))
+        ->where('company_id', $user->company_id)
+        ->pluck('id');
+    $task->files()->syncWithoutDetaching($ids);
+
+    foreach ($request->file('new_files', []) as $file) {
+        $path = $file->store("tasks/{$task->id}", 'public');
+        $record = File::create([
+            'name' => $file->getClientOriginalName(),
+            'path' => $path, 'file_path' => $path,
+            'size' => $file->getSize(),
+            'mime_type' => $file->getMimeType(),
+            'extension' => $file->getClientOriginalExtension(),
+            'uploaded_by' => $user->id,
+            'company_id' => $user->company_id,
+            'department_id' => $task->department_id,
+            'disk' => 'public',
+            'folder' => 'tasks',
+            'is_public' => false,
+        ]);
+        $task->files()->attach($record->id);
+    }
+}
+
     /**
      * Display a listing of the resource.
      */
@@ -1016,88 +1044,68 @@ class TaskController extends Controller
     }
 
     public function storePersonal(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        $validator = \Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'category_id' => 'nullable|exists:categories,id',
-            'priority' => 'required|in:низкий,средний,высокий,критический',
-            'deadline' => 'nullable|date',
-            'estimated_hours' => 'nullable|numeric|min:0',
-            'files.*' => 'nullable|file|max:10240',
-        ]);
+    $validator = \Validator::make($request->all(), [
+        'name'            => 'required|string|max:255',
+        'description'     => 'nullable|string|max:5000',
+        'category_id'     => ['nullable', Rule::exists('categories', 'id')->where('company_id', $user->company_id)],
+        'priority'        => 'required|in:низкий,средний,высокий,критический',
+        'deadline'        => 'nullable|date',
+        'estimated_hours' => 'nullable|numeric|min:0',
+        'selected_file_ids'   => 'nullable|array|max:20',
+        'selected_file_ids.*' => ['integer', Rule::exists('files', 'id')->where('company_id', $user->company_id)],
+        'new_files'   => 'nullable|array|max:10',
+        'new_files.*' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,gif,zip',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибки валидации',
-                'errors' => $validator->errors()
-            ], 422);
-        }
+    if ($validator->fails()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Ошибки валидации',
+            'errors'  => $validator->errors(),
+        ], 422);
+    }
 
-        try {
-            if ($request->category_id) {
-                $category = Category::find($request->category_id);
-                if (!$category || $category->company_id !== $user->company_id) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Выбранная категория не доступна'
-                    ], 422);
-                }
-            }
+    try {
+        $departmentId = $user->departments()->first()?->id;
 
-            $primaryDepartment = $user->departments()->first();
-            $departmentId = $primaryDepartment ? $primaryDepartment->id : null;
-
-            $taskData = [
-                'name' => $request->name,
-                'description' => $request->description,
-                'department_id' => $departmentId,
-                'category_id' => $request->category_id,
-                'user_id' => $user->id,
-                'priority' => $request->priority,
-                'status' => 'назначена',
-                'deadline' => $request->deadline,
+        $task = DB::transaction(function () use ($request, $user, $departmentId) {
+            $task = Task::create([
+                'name'            => $request->name,
+                'description'     => $request->description,
+                'department_id'   => $departmentId,
+                'category_id'     => $request->category_id,
+                'user_id'         => $user->id,
+                'priority'        => $request->priority,
+                'status'          => 'назначена',
+                'deadline'        => $request->deadline,
                 'estimated_hours' => $request->estimated_hours,
-                'company_id' => $user->company_id,
-                'author_id' => $user->id,
-                'is_personal' => true,
-            ];
-
-            $task = Task::create($taskData);
-
-            if ($request->hasFile('files')) {
-                foreach ($request->file('files') as $file) {
-                    $path = $file->store('tasks/' . $task->id, 'public');
-                    File::create([
-                        'name' => $file->getClientOriginalName(),
-                        'file' => $path,
-                        'file_path' => $path,
-                        'file_size' => $file->getSize(),
-                        'mime_type' => $file->getMimeType(),
-                        'task_id' => $task->id,
-                        'user_id' => $user->id,
-                        'department_id' => $departmentId,
-                    ]);
-                }
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Личная задача успешно создана',
-                'task' => $task->load(['department', 'category'])
+                'company_id'      => $user->company_id,
+                'author_id'       => $user->id,
+                'is_personal'     => true,
             ]);
 
-        } catch (\Exception $e) {
-            \Log::error('Error creating personal task: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибка при создании задачи: ' . $e->getMessage()
-            ], 500);
-        }
+            $this->attachFiles($task, $request, $user);
+
+            return $task;
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Личная задача успешно создана',
+            'task'    => $task->load(['department', 'category', 'author:id,name'])->loadCount('files'),
+        ]);
+    } catch (\Throwable $e) {
+        \Log::error('Error creating personal task: ' . $e->getMessage(), ['exception' => $e]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Не удалось создать задачу. Попробуйте ещё раз.',
+        ], 500);
     }
+}
 
     /**
      * Архивировать задачу (мягкое удаление)
