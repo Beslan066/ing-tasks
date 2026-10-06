@@ -58,7 +58,7 @@
             if (response.ok && data.success) {
                 showNotification('Задача успешно обновлена!', 'success');
                 closeEditModal();
-                // location.reload();
+                location.reload();
             } else {
                 const firstError = data.errors ? Object.values(data.errors)[0][0] : null;
                 showNotification(firstError || data.message || 'Ошибка при обновлении задачи', 'error');

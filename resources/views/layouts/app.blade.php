@@ -2458,44 +2458,45 @@ setDefaultTab()
     }
     }
     // Закрыть модальное окно просмотра задачи
-    function closeTaskViewModal() {
-        const modal = document.getElementById('taskViewModal');
-        const content = document.getElementById('taskModalContent');
+    // function closeTaskViewModal() {
+    //     console.log('app.blade.php')
+    //     const modal = document.getElementById('taskViewModal');
+    //     const content = document.getElementById('taskModalContent');
 
-        if (modal) {
-            modal.classList.add('hidden');
-            modal.style.backdropFilter = '';
-        }
+    //     if (modal) {
+    //         modal.classList.add('hidden');
+    //         modal.style.backdropFilter = '';
+    //     }
 
-        if (content) {
-            content.innerHTML = `
-            <div class="text-center py-8">
-                <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
-                <p class="text-gray-500 mt-2">Загрузка задачи...</p>
-            </div>
-        `;
-        }
+    //     if (content) {
+    //         content.innerHTML = `
+    //         <div class="text-center py-8">
+    //             <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
+    //             <p class="text-gray-500 mt-2">Загрузка задачи...</p>
+    //         </div>
+    //     `;
+    //     }
 
-        // Убираем ID задачи из URL, возвращаемся к /team/tasks или на предыдущую страницу
-        const currentPath = window.location.pathname;
+    //     // Убираем ID задачи из URL, возвращаемся к /team/tasks или на предыдущую страницу
+    //     const currentPath = window.location.pathname;
 
-        // Если в URL есть /tasks/число или /tasks/page/число
-        if (currentPath.match(/\/tasks\/(page\/)?\d+/)) {
-            // Возвращаемся на страницу со списком задач
-            window.history.pushState({}, '', '/team/tasks');
-        } else {
-            // Иначе просто назад
-            window.history.back();
-        }
-         document.body.classList.remove('overflow-y-hidden')
-    }
+    //     // Если в URL есть /tasks/число или /tasks/page/число
+    //     if (currentPath.match(/\/tasks\/(page\/)?\d+/)) {
+    //         // Возвращаемся на страницу со списком задач
+    //         window.history.pushState({}, '', '/team/tasks');
+    //     } else {
+    //         // Иначе просто назад
+    //         window.history.back();
+    //     }
+    //      document.body.classList.remove('overflow-y-hidden')
+    // }
 
     // Обрабатываем кнопку "Назад" в браузере
     window.addEventListener('popstate', function (event) {
         const modal = document.getElementById('taskViewModal');
 
         if (modal && !modal.classList.contains('hidden')) {
-            closeTaskViewModal();
+            closeTaskViewModal('/team/tasks');
         }
     });
 
@@ -2503,7 +2504,7 @@ setDefaultTab()
     document.addEventListener('keydown', function (e) {
         const modal = document.getElementById('taskViewModal');
         if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
-            closeTaskViewModal();
+            closeTaskViewModal('/team/tasks');
         }
     });
 
@@ -2511,7 +2512,7 @@ setDefaultTab()
     document.addEventListener('click', function (e) {
         const modal = document.getElementById('taskViewModal');
         if (e.target === modal) {
-            closeTaskViewModal();
+            closeTaskViewModal('/team/tasks');
         }
     });
 
@@ -2649,7 +2650,7 @@ setDefaultTab()
 
             if (data.success) {
                 showNotification('Задача переведена в работу!', 'success');
-                closeTaskViewModal();
+                closeTaskViewModal('/team/tasks');
                 location.reload();
             } else {
                 showNotification(data.message || 'Ошибка при обновлении статуса', 'error');

@@ -27,7 +27,6 @@
                 </ol>
             </nav>
             <div class="max-[500px]:hidden">
-                <button onclick="showNotification('Тестовое уведомление', 'success')">notify test</button>
                 @if($backgroundEnabled && $backgroundImage)
                     <h2 class="text-3xl font-bold text-white  max-[500px]:text-[26px]">Команда</h2>
                     <p class="text-white text-sm  max-[500px]:text-[13px]">Участники вашей организации</p>

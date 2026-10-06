@@ -464,6 +464,7 @@
 
 
 @push('scripts')
+ @vite('resources/js/pages/all-team-tasks.page.js')
     <script>
         let currentTaskId = null;
         let currentRows = [];
@@ -679,39 +680,17 @@
             }
         }
 
-        // Закрыть модальное окно просмотра задачи
-        function closeTaskViewModal() {
-            const modal = document.getElementById('taskViewModal');
-            const content = document.getElementById('taskModalContent');
 
-            if (modal) {
-                modal.classList.add('hidden');
-                modal.style.backdropFilter = '';
-            }
-
-            if (content) {
-                content.innerHTML = `
-            <div class="text-center py-8">
-                <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
-                <p class="text-gray-500 mt-2">Загрузка задачи...</p>
-            </div>
-        `;
-            }
-
-            // Возвращаемся на ту же страницу, откуда открыли модалку
-            const returnUrl = window.returnUrl || window.location.pathname;
-            window.history.pushState({}, '', returnUrl);
-        }
         // Обрабатываем кнопку "Назад" в браузере
         window.addEventListener('popstate', function(event) {
             const modal = document.getElementById('taskViewModal');
 
             if (event.state && event.state.modalOpen) {
                 if (modal && !modal.classList.contains('hidden')) {
-                    closeTaskViewModal();
+                    closeTaskViewModal('/team/all-tasks');
                 }
             } else if (modal && !modal.classList.contains('hidden')) {
-                closeTaskViewModal();
+                closeTaskViewModal('/team/all-tasks');
             }
         });
 
@@ -719,7 +698,7 @@
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('taskViewModal');
             if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
-                closeTaskViewModal();
+                closeTaskViewModal('/team/all-tasks');
             }
         });
 
@@ -727,7 +706,7 @@
         document.addEventListener('click', function(e) {
             const modal = document.getElementById('taskViewModal');
             if (e.target === modal) {
-                closeTaskViewModal();
+                closeTaskViewModal('/team/all-tasks');
             }
         });
 
@@ -845,7 +824,7 @@
 
                 if (data.success) {
                     alert('Задача переведена в работу!');
-                    closeTaskViewModal();
+                    closeTaskViewModal('/team/all-tasks');
                     location.reload();
                 } else {
                     alert(data.message || 'Ошибка при обновлении статуса');
@@ -858,7 +837,7 @@
 
         function sendForReview(taskId) {
             currentTaskId = taskId;
-            closeTaskViewModal();
+            closeTaskViewModal('/team/all-tasks');
             document.getElementById('timeModal').classList.remove('hidden');
         }
 
@@ -900,7 +879,7 @@
 
         function showRejectModal(taskId) {
             currentTaskId = taskId;
-            closeTaskViewModal();
+            closeTaskViewModal('/team/all-tasks');
             document.getElementById('rejectModal').classList.remove('hidden');
         }
 
@@ -951,13 +930,13 @@
 
         document.addEventListener('click', function (e) {
             if (e.target.id === 'taskViewModal') {
-                closeTaskViewModal();
+                closeTaskViewModal('/team/all-tasks');
             }
         });
 
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
-                closeTaskViewModal();
+                closeTaskViewModal('/team/all-tasks');
             }
         });
     </script>

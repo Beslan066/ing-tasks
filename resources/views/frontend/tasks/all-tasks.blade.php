@@ -746,6 +746,7 @@
 @endsection
 
 @push('scripts')
+    @vite('resources/js/pages/all-tasks.page.js')
     <script>
         let currentTaskId = null;
         let currentRows = [];
@@ -847,44 +848,16 @@
     //         }
     //     }
 
-        // Закрыть модальное окно просмотра задачи - эта функция уже написана в app.blade.php
-        function closeTaskViewModal() {
-    console.log('closeTaskViewModal all-tasks.blade.php');
-    const modal = document.getElementById('taskViewModal');
-    const content = document.getElementById('taskModalContent');
-
-    if (modal) {
-        modal.classList.add('hidden');
-        modal.style.backdropFilter = '';
-    }
-
-    if (content) {
-        content.innerHTML = `
-            <div class="text-center py-8">
-                <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
-                <p class="text-gray-500 mt-2">Загрузка задачи...</p>
-            </div>
-        `;
-    }
-
-    if (window.history.length > 1) {
-        window.history.back();
-    } else {
-        window.location.href = window.returnUrl || '/';
-    }
-
-    document.body.classList.remove('overflow-y-hidden');
-}
         // Обрабатываем кнопку "Назад" в браузере
         window.addEventListener('popstate', function(event) {
             const modal = document.getElementById('taskViewModal');
 
             if (event.state && event.state.modalOpen) {
                 if (modal && !modal.classList.contains('hidden')) {
-                    closeTaskViewModal();
+                    closeTaskViewModal('/all-tasks');
                 }
             } else if (modal && !modal.classList.contains('hidden')) {
-                closeTaskViewModal();
+                closeTaskViewModal('/all-tasks');
             }
         });
 
@@ -892,7 +865,7 @@
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('taskViewModal');
             if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
-                closeTaskViewModal();
+                closeTaskViewModal('/all-tasks');
             }
         });
 
@@ -900,7 +873,7 @@
         document.addEventListener('click', function(e) {
             const modal = document.getElementById('taskViewModal');
             if (e.target === modal) {
-                closeTaskViewModal();
+                closeTaskViewModal('/all-tasks');
             }
         });
 
@@ -1146,7 +1119,7 @@
 
                 if (data.success) {
                     showNotification('Задача переведена в работу!', 'success');
-                    closeTaskViewModal();
+                    closeTaskViewModal('/all-tasks');
                     location.reload();
                 } else {
                     showNotification(data.message || 'Ошибка при обновлении статуса', 'error');
@@ -1159,7 +1132,7 @@
 
         function sendForReview(taskId) {
             currentTaskId = taskId;
-            closeTaskViewModal();
+            closeTaskViewModal('/all-tasks');
             document.getElementById('timeModal').classList.remove('hidden');
         }
 
@@ -1201,7 +1174,7 @@
 
         function showRejectModal(taskId) {
             currentTaskId = taskId;
-            closeTaskViewModal();
+            closeTaskViewModal('/all-tasks');
             document.getElementById('rejectModal').classList.remove('hidden');
         }
 
@@ -1252,13 +1225,13 @@
 
         document.addEventListener('click', function (e) {
             if (e.target.id === 'taskViewModal') {
-                closeTaskViewModal();
+                closeTaskViewModal('/all-tasks');
             }
         });
 
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
-                closeTaskViewModal();
+                closeTaskViewModal('/all-tasks');
             }
         });
     </script>
