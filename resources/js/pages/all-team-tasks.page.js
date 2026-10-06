@@ -1,4 +1,3 @@
-import '../components/task-create-files';
 import {closeTaskViewModal}from '../functions/close-task-view-modal';
 window.closeTaskViewModal=closeTaskViewModal;
-console.log('main-admin.page.js')
+console.log('all-team-tasks.page.js')

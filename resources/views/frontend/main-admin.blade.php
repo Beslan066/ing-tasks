@@ -2697,33 +2697,20 @@
             }
         }
 
-        function closeTaskViewModal() {
-            const modal = document.getElementById('taskViewModal');
-            const content = document.getElementById('taskModalContent');
-
-            if (modal) {
-                modal.classList.add('hidden');
-                modal.style.backdropFilter = '';
-            }
-            if (content) {
-                content.innerHTML = `<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i><p class="text-gray-500 mt-2">Загрузка задачи...</p></div>`;
-            }
-            window.history.pushState({}, '', '/team/tasks');
-        }
 
         window.addEventListener('popstate', function(event) {
             const modal = document.getElementById('taskViewModal');
-            if (modal && !modal.classList.contains('hidden')) closeTaskViewModal();
+            if (modal && !modal.classList.contains('hidden')) closeTaskViewModal('/team/tasks');
         });
 
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('taskViewModal');
-            if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeTaskViewModal();
+            if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeTaskViewModal('/team/tasks');
         });
 
         document.addEventListener('click', function(e) {
             const modal = document.getElementById('taskViewModal');
-            if (e.target === modal) closeTaskViewModal();
+            if (e.target === modal) closeTaskViewModal('/team/tasks');
         });
 
         // ==================== ФУНКЦИИ ДЛЯ СТАРТА ЗАДАЧИ, ОТПРАВКИ НА ПРОВЕРКУ, ОДОБРЕНИЯ, ОТКАЗА ====================

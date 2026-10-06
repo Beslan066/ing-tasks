@@ -1946,6 +1946,7 @@ document.body.classList.remove('overflow-y-hidden');
 
         // Закрыть модальное окно просмотра задачи - эта функция уже написана в  app.blade.php
         // function closeTaskViewModal() {
+        //     console.log('closeTaskViewModal Welcome')
         //     const modal = document.getElementById('taskViewModal');
         //     const content = document.getElementById('taskModalContent');
 
@@ -1972,7 +1973,7 @@ document.body.classList.remove('overflow-y-hidden');
             const modal = document.getElementById('taskViewModal');
 
             if (modal && !modal.classList.contains('hidden')) {
-                closeTaskViewModal();
+                closeTaskViewModal('/home');
             }
         });
 
@@ -1980,7 +1981,7 @@ document.body.classList.remove('overflow-y-hidden');
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById('taskViewModal');
             if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
-                closeTaskViewModal();
+                closeTaskViewModal('/home');
             }
         });
 
@@ -1988,7 +1989,7 @@ document.body.classList.remove('overflow-y-hidden');
         document.addEventListener('click', function(e) {
             const modal = document.getElementById('taskViewModal');
             if (e.target === modal) {
-                closeTaskViewModal();
+                closeTaskViewModal('/home');
             }
         });
 
@@ -2006,11 +2007,11 @@ document.body.classList.remove('overflow-y-hidden');
         });
 
         document.addEventListener('click', function (e) {
-            if (e.target.id === 'taskViewModal') closeTaskViewModal();
+            if (e.target.id === 'taskViewModal') closeTaskViewModal('/home');
         });
 
         document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeTaskViewModal();
+            if (e.key === 'Escape') closeTaskViewModal('/home');
         });
 
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
@@ -2136,11 +2137,11 @@ document.body.classList.remove('overflow-y-hidden');
         });
 
         document.addEventListener('click', function (e) {
-            if (e.target.id === 'taskViewModal') closeTaskViewModal();
+            if (e.target.id === 'taskViewModal') closeTaskViewModal('/home');
         });
 
         document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeTaskViewModal();
+            if (e.key === 'Escape') closeTaskViewModal('/home');
         });
 
     </script>
