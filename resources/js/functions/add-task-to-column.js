@@ -1,6 +1,8 @@
+import { buildTaskMenu } from "../components/build-task-menu";
+
 export function addTaskToColumn(columnContainer, task, canManage) {
     if (!columnContainer || !task) return;
-
+    console.log('taskstat',task.status);
     const taskCard = document.createElement('div');
     taskCard.className = `task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between ${task.status === "просрочена" ? "border-l-4 border-red-500" : ""}`;
     taskCard.setAttribute('draggable', 'true');
@@ -12,10 +14,10 @@ export function addTaskToColumn(columnContainer, task, canManage) {
     taskCard.dataset.authorId = task.author_id;
 
     const prioritySignals = {
-        'низкий': {level: 1, bg: 'bg-green-50', border: 'border-green-200', filled: 'bg-green-500', empty: 'bg-green-200', text: 'text-green-700'},
-        'средний': {level: 2, bg: 'bg-blue-50', border: 'border-blue-200', filled: 'bg-blue-500', empty: 'bg-blue-100', text: 'text-blue-700'},
-        'высокий': {level: 3, bg: 'bg-orange-50', border: 'border-orange-200', filled: 'bg-orange-500', empty: 'bg-orange-100', text: 'text-orange-700'},
-        'критический': {level: 4, bg: 'bg-red-50', border: 'border-red-200', filled: 'bg-red-500', empty: 'bg-red-100', text: 'text-red-700'},
+        'низкий': { level: 1, bg: 'bg-green-50', border: 'border-green-200', filled: 'bg-green-500', empty: 'bg-green-200', text: 'text-green-700' },
+        'средний': { level: 2, bg: 'bg-blue-50', border: 'border-blue-200', filled: 'bg-blue-500', empty: 'bg-blue-100', text: 'text-blue-700' },
+        'высокий': { level: 3, bg: 'bg-orange-50', border: 'border-orange-200', filled: 'bg-orange-500', empty: 'bg-orange-100', text: 'text-orange-700' },
+        'критический': { level: 4, bg: 'bg-red-50', border: 'border-red-200', filled: 'bg-red-500', empty: 'bg-red-100', text: 'text-red-700' },
     };
     const signal = prioritySignals[task.priority] || prioritySignals['средний'];
 
@@ -32,26 +34,7 @@ export function addTaskToColumn(columnContainer, task, canManage) {
                         <i class="fas fa-ellipsis-v"></i>
                     </button>
                     <div id="taskMenu-${task.id}" class="task-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50">
-                        <div class="py-1">
-                            ${canManage ? `
-                                <button onclick="openEditModal(${task.id})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                    <i class="fas fa-edit mr-2 text-blue-500"></i> Редактировать
-                                </button>
-                                <button onclick="archiveTask(${task.id})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                    <i class="fas fa-archive mr-2 text-yellow-500"></i> В архив
-                                </button>
-                            ` : ''}
-
-                            <button onclick="openCreateSubtaskModal(${task.id})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                <i class="fas fa-list mr-2 text-green-500"></i>Подзадача
-                            </button>
-                            <button onclick="startTask(${task.id})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                <i class="fas fa-play mr-2 text-green-500"></i> Начать
-                            </button>
-                            <button onclick="showRejectModal(${task.id})" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center">
-                                <i class="fas fa-times-circle mr-2"></i> Отказаться
-                            </button>
-                        </div>
+                             ${buildTaskMenu(task.id, task.status, canManage)}
                     </div>
                 </div>
             </div>
@@ -117,7 +100,7 @@ export function addTaskToColumn(columnContainer, task, canManage) {
 
     columnContainer.prepend(taskCard);
     if (typeof initDragAndDrop === 'function') {
-    initDragAndDrop();
-    console.log('dnd inited in column')
-}
+        initDragAndDrop();
+        console.log('dnd inited in column')
+    }
 }

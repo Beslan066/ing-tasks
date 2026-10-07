@@ -2,6 +2,8 @@
  * Kanban Drag & Drop Module with Swiper support
  */
 
+import { buildTaskMenu } from "./build-task-menu";
+
 let draggedItem = null;
 let swiperSlideTimeout = null;
 
@@ -109,7 +111,14 @@ function dragLeave(e) {
         swiperSlideTimeout = null;
     }
 }
-
+function refreshCardMenu(card, status) {
+    console.log('refreshCardMenu',card)
+    card.dataset.status = status;
+    const menu = card.querySelector('.task-menu');
+    if (!menu) return;
+    menu.innerHTML = buildTaskMenu(card.dataset.task, status, true);
+    menu.classList.add('hidden');
+}
 function drop(e) {
     e.preventDefault();
 
@@ -126,6 +135,7 @@ function drop(e) {
     if (!draggedItem || !column) return;
 
     const card = draggedItem;
+    console.log(card);
     const newStatus = column.dataset.status;
     const currentColumn = card.closest('.board-column');
     const currentStatus = currentColumn ? currentColumn.dataset.status : null;
@@ -141,7 +151,9 @@ function drop(e) {
 
     const taskId = card.dataset.task;
     const newStatusValue = STATUS_MAP[newStatus];
-
+if (newStatusValue) {
+    refreshCardMenu(card, newStatusValue);
+}
     if (newStatusValue && typeof window.updateTaskStatus === 'function') {
         window.updateTaskStatus(taskId, newStatusValue);
     } else if (newStatusValue && typeof updateTaskStatus === 'function') {
