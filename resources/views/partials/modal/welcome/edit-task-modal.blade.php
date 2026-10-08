@@ -23,16 +23,14 @@
             <input type="hidden" name="selected_files" id="editSelectedFiles" value="[]">
 
             <!-- Название -->
-            <div class="space-y-1.5">
-                <label class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
-                    Название задачи <span class="text-rose-500">*</span>
-                </label>
-                <div class="relative group">
-                    <input type="text" name="name" id="editTaskName" required
-                           class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300"
-                           placeholder="Введите название задачи">
-                </div>
-            </div>
+            <x-input
+                name="name"
+                id="editTaskName"
+                label="Название задачи"
+                placeholder="Введите название задачи"
+                :required="true"
+                :value="$task->name ?? null"
+            />
             <!-- Приоритет и статус -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                     <x-input-select
