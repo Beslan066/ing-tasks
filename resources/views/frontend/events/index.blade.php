@@ -83,7 +83,7 @@
                     </div>
                 </div>
 
-                <!-- Сетка календаря - альтернативный вариант с flex -->
+                <!-- Сетка календаря -->
                 <div class="p-4">
                     <!-- Дни недели -->
                     <div class="grid grid-cols-7 gap-1 mb-2">
@@ -94,7 +94,7 @@
                         </template>
                     </div>
 
-                    <!-- Ячейки дней - каждая неделя отдельный flex -->
+                    <!-- Ячейки дней -->
                     <div class="flex flex-col gap-1">
                         <template x-for="(week, weekIndex) in calendarDays" :key="weekIndex">
                             <div class="grid grid-cols-7 gap-1">
@@ -102,19 +102,19 @@
                                     <div @click="day.date && openDayModal(day)"
                                          class="min-h-[100px] p-1 rounded-lg transition-all cursor-pointer"
                                          :class="{
-                             'bg-green-50 dark:bg-green-900/20 border-2 border-green-500': day.isToday,
-                             'bg-gray-50 dark:bg-gray-700/30': !day.isToday && day.date,
-                             'opacity-40': !day.date,
-                             'hover:bg-gray-100 dark:hover:bg-gray-700/50': day.date
-                         }">
+                                            'bg-green-50 dark:bg-green-900/20 border-2 border-green-500': day.isToday,
+                                            'bg-gray-50 dark:bg-gray-700/30': !day.isToday && day.date,
+                                            'opacity-40': !day.date,
+                                            'hover:bg-gray-100 dark:hover:bg-gray-700/50': day.date
+                                        }">
                                         <div class="flex justify-between items-start">
-                            <span class="text-sm font-medium p-1 rounded-full"
-                                  :class="{
-                                      'bg-green-500 text-white w-8 h-8 flex items-center justify-center': day.isToday,
-                                      'text-gray-700 dark:text-gray-300': !day.isToday && day.date,
-                                      'text-gray-400 dark:text-gray-600': !day.date
-                                  }"
-                                  x-text="day.day"></span>
+                                            <span class="text-sm font-medium p-1 rounded-full"
+                                                  :class="{
+                                                      'bg-green-500 text-white w-8 h-8 flex items-center justify-center': day.isToday,
+                                                      'text-gray-700 dark:text-gray-300': !day.isToday && day.date,
+                                                      'text-gray-400 dark:text-gray-600': !day.date
+                                                  }"
+                                                  x-text="day.day"></span>
                                             <span x-show="day.eventCount > 0"
                                                   class="text-xs bg-red-500 text-white rounded-full px-1.5 py-0.5"
                                                   x-text="day.eventCount"></span>
@@ -124,9 +124,9 @@
                                                 <div @click.stop="openEventModal(event)"
                                                      class="text-xs px-1.5 py-0.5 rounded truncate cursor-pointer hover:opacity-80 transition-opacity"
                                                      :style="{
-                                         backgroundColor: event.color || '#3B82F6',
-                                         color: 'white'
-                                     }"
+                                                        backgroundColor: event.color || '#3B82F6',
+                                                        color: 'white'
+                                                    }"
                                                      x-text="event.title">
                                                 </div>
                                             </template>
@@ -143,363 +143,442 @@
         <!-- МОДАЛЬНОЕ ОКНО ПРОСМОТРА ДНЯ -->
         <div x-show="showDayModal"
              x-cloak
-             class="fixed inset-0 overflow-y-auto backdrop-blur-md bg-black/50 z-50 flex items-center justify-center px-4 py-8"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 overflow-y-auto bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center px-4 py-8"
              @click.away="closeDayModal()">
-            <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-                <div class="px-4 pt-5 pb-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
-                    <div class="flex items-start justify-between mb-4 sticky top-0 bg-white dark:bg-gray-800 pt-2 pb-4 border-b border-gray-200 dark:border-gray-700">
-                        <div>
-                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white" x-text="selectedDay.dateFormatted"></h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5" x-text="selectedDay.events.length + ' событий'"></p>
-                        </div>
-                        <button @click="closeDayModal()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 p-1">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
-                    </div>
+            <div x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 class="relative bg-white rounded-[24px] shadow-2xl shadow-slate-900/25 border border-slate-200/50 max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
 
-                    <div class="space-y-3 mt-4">
-                        <template x-if="selectedDay.events.length === 0">
-                            <div class="text-center py-12">
-                                <svg class="w-20 h-20 mx-auto text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                                <p class="text-gray-500 dark:text-gray-400 text-lg font-medium">Нет событий на этот день</p>
-                                <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Нажмите кнопку ниже, чтобы создать событие</p>
-                            </div>
-                        </template>
-
-                        <template x-for="event in selectedDay.events" :key="event.id">
-                            <div @click="closeDayModal(); setTimeout(() => openEventModal(event), 300)"
-                                 class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/30 cursor-pointer transition-colors">
-                                <div class="w-1 h-full min-h-[40px] rounded-full" :style="{ backgroundColor: event.color || '#3B82F6' }"></div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="font-medium text-gray-900 dark:text-white truncate" x-text="event.title"></div>
-                                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                                        <span x-text="formatEventTime(event)"></span>
-                                        <span x-show="event.extendedProps?.location" class="ml-2">
-                                            • <span x-text="event.extendedProps.location"></span>
-                                        </span>
-                                    </div>
-                                    <div class="text-xs text-gray-400 dark:text-gray-500 mt-0.5" x-show="event.extendedProps?.creator_name">
-                                        Создал: <span x-text="event.extendedProps.creator_name"></span>
-                                    </div>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
-                                          x-text="event.extendedProps?.type_label || 'Другое'"></span>
-                                </div>
-                            </div>
-                        </template>
+                {{-- Заголовок --}}
+                <div class="px-6 pt-6 pb-4 border-b border-slate-100 flex items-start justify-between gap-3 flex-shrink-0">
+                    <div>
+                        <h3 class="text-[20px] font-bold text-slate-900 tracking-tight" x-text="selectedDay.dateFormatted"></h3>
+                        <p class="text-[13px] text-slate-500 mt-1" x-text="selectedDay.events.length + ' событий'"></p>
                     </div>
+                    <button @click="closeDayModal()"
+                            class="text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 transition-all duration-200 p-2 rounded-full">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
                 </div>
 
-                <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700/30 sm:px-6 flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700">
+                {{-- Список событий --}}
+                <div class="flex-1 overflow-y-auto px-6 py-5 space-y-3 scrollbar-none [&::-webkit-scrollbar]:hidden">
+                    <template x-if="selectedDay.events.length === 0">
+                        <div class="text-center py-16">
+                            <div class="w-16 h-16 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <p class="text-slate-500 text-[14px] font-medium">Нет событий на этот день</p>
+                            <p class="text-slate-400 text-[12px] mt-1">Нажмите кнопку ниже, чтобы создать событие</p>
+                        </div>
+                    </template>
+
+                    <template x-for="event in selectedDay.events" :key="event.id">
+                        <div @click="closeDayModal(); setTimeout(() => openEventModal(event), 300)"
+                             class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-emerald-300 hover:shadow-md hover:bg-slate-50/50 cursor-pointer transition-all duration-200">
+                            <div class="w-1 h-full min-h-[44px] rounded-full flex-shrink-0" :style="{ backgroundColor: event.color || '#3B82F6' }"></div>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-semibold text-slate-900 text-[13px] truncate" x-text="event.title"></div>
+                                <div class="text-[12px] text-slate-500 mt-0.5 flex items-center gap-2 flex-wrap">
+                                    <span x-text="formatEventTime(event)"></span>
+                                    <template x-if="event.extendedProps?.location">
+                                        <span class="flex items-center gap-1">
+                                            <span class="text-slate-300">•</span>
+                                            <i class="fas fa-map-marker-alt text-[10px] opacity-60"></i>
+                                            <span x-text="event.extendedProps.location"></span>
+                                        </span>
+                                    </template>
+                                </div>
+                                <div class="text-[11px] text-slate-400 mt-1" x-show="event.extendedProps?.creator_name">
+                                    Создал: <span x-text="event.extendedProps.creator_name" class="font-medium"></span>
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <span class="text-[10px] font-semibold px-2 py-1 rounded-full bg-slate-100 text-slate-600 uppercase tracking-wide"
+                                      x-text="event.extendedProps?.type_label || 'Другое'"></span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                {{-- Кнопки действий --}}
+                <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 flex-shrink-0 rounded-b-[24px]">
+                    <button @click="closeDayModal()"
+                            class="px-5 py-2.5 text-[13px] font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
+                        Закрыть
+                    </button>
                     @if($canManage)
                         <button @click="closeDayModal(); setTimeout(() => openCreateModal(selectedDay.date), 300)"
-                                class="px-6 py-2.5 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2">
+                                class="px-5 py-2.5 text-[13px] font-semibold text-white bg-emerald-500 rounded-xl hover:bg-emerald-600 transition-all duration-200 flex items-center gap-2 shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
                             Создать событие
                         </button>
                     @endif
-                    <button @click="closeDayModal()"
-                            class="px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                        Закрыть
-                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- МОДАЛЬНОЕ ОКНО СОЗДАНИЯ -->
+        <!-- МОДАЛЬНОЕ ОКНО СОЗДАНИЯ / РЕДАКТИРОВАНИЯ -->
         <div x-show="showCreateModal"
              x-cloak
-             class="fixed inset-0 overflow-y-auto backdrop-blur-md bg-black/50 z-50 flex items-center justify-center px-4 py-8">
-            <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-                <div class="px-4 pt-5 pb-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
-                    <div class="flex items-start justify-between mb-4 sticky top-0 bg-white dark:bg-gray-800 pt-2 pb-4 border-b border-gray-200 dark:border-gray-700">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white" x-text="modalTitle">Создание события</h3>
-                        <button @click="closeModal()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 p-1">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 overflow-y-auto bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center px-4 py-8">
+            <div x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 class="relative bg-white rounded-[24px] shadow-2xl shadow-slate-900/25 border border-slate-200/50 max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+
+                {{-- Заголовок --}}
+                <div class="px-8 pt-6 pb-5 border-b border-slate-100 flex items-start justify-between gap-3 flex-shrink-0">
+                    <div>
+                        <h3 class="text-[22px] font-semibold text-slate-800 tracking-tight" x-text="modalTitle">Создание события</h3>
+                        <p class="text-[13px] text-slate-400 mt-0.5">Заполните информацию о событии</p>
                     </div>
+                    <button @click="closeModal()"
+                            class="text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 transition-all duration-200 p-2.5 rounded-full">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
 
-                    <form @submit.prevent="saveEvent()">
-                        <div class="space-y-4">
+                {{-- Форма --}}
+                <form @submit.prevent="saveEvent()" class="flex-1 overflow-y-auto px-8 py-6 scrollbar-none [&::-webkit-scrollbar]:hidden">
+                    <div class="space-y-5">
+
+                        {{-- Название --}}
+                        <div>
+                            <label class="block text-slate-600 text-[13px] font-medium mb-1.5">
+                                Название <span class="text-rose-500">*</span>
+                            </label>
+                            <input type="text" x-model="form.title" required
+                                   class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300"
+                                   placeholder="Введите название события">
+                        </div>
+
+                        {{-- Даты --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Название *</label>
-                                <input type="text" x-model="form.title" required
-                                       class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent px-3 py-2.5 text-sm text-gray-800 dark:text-white focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none"
-                                       placeholder="Введите название события">
+                                <label class="block text-slate-600 text-[13px] font-medium mb-1.5">
+                                    Начало <span class="text-rose-500">*</span>
+                                </label>
+                                <input type="datetime-local" x-model="form.start_date" required
+                                       class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 color-scheme-light min-h-[42px]">
                             </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Начало *</label>
-                                    <input type="datetime-local" x-model="form.start_date" required
-                                           class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent px-3 py-2.5 text-sm text-gray-800 dark:text-white focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Окончание *</label>
-                                    <input type="datetime-local" x-model="form.end_date" required
-                                           class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent px-3 py-2.5 text-sm text-gray-800 dark:text-white focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none">
-                                </div>
-                            </div>
-
-                            <div class="flex items-center">
-                                <input type="checkbox" x-model="form.all_day" id="all_day"
-                                       class="rounded border-gray-300 dark:border-gray-600 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50">
-                                <label for="all_day" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Весь день</label>
-                            </div>
-
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Описание</label>
-                                <textarea x-model="form.description" rows="2"
-                                          class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent px-3 py-2.5 text-sm text-gray-800 dark:text-white focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none"
-                                          placeholder="Описание события"></textarea>
+                                <label class="block text-slate-600 text-[13px] font-medium mb-1.5">
+                                    Окончание <span class="text-rose-500">*</span>
+                                </label>
+                                <input type="datetime-local" x-model="form.end_date" required
+                                       class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 color-scheme-light min-h-[42px]">
                             </div>
+                        </div>
 
+                        {{-- Весь день --}}
+                        <div class="flex items-center p-3 bg-slate-50/50 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                            <input type="checkbox" x-model="form.all_day" id="all_day"
+                                   class="w-4 h-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500/30 focus:ring-2 cursor-pointer">
+                            <label for="all_day" class="ml-2.5 text-[13px] text-slate-700 font-medium cursor-pointer select-none">Весь день</label>
+                        </div>
+
+                        {{-- Описание --}}
+                        <div>
+                            <label class="block text-slate-600 text-[13px] font-medium mb-1.5">Описание</label>
+                            <textarea x-model="form.description" rows="3"
+                                      class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 resize-none text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300"
+                                      placeholder="Описание события"></textarea>
+                        </div>
+
+                        {{-- Местоположение --}}
+                        <div>
+                            <label class="block text-slate-600 text-[13px] font-medium mb-1.5">Местоположение</label>
+                            <input type="text" x-model="form.location"
+                                   class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300"
+                                   placeholder="Офис, Zoom, адрес...">
+                        </div>
+
+                        {{-- Тип и Отдел --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Местоположение</label>
-                                <input type="text" x-model="form.location"
-                                       class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent px-3 py-2.5 text-sm text-gray-800 dark:text-white focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none"
-                                       placeholder="Офис, Zoom, адрес...">
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Тип</label>
+                                <label class="block text-slate-600 text-[13px] font-medium mb-1.5">Тип</label>
+                                <div class="relative">
                                     <select x-model="form.type"
-                                            class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent px-3 py-2.5 text-sm text-gray-800 dark:text-white focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none">
+                                            class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 appearance-none cursor-pointer text-sm hover:border-slate-300">
                                         <option value="meeting">Встреча</option>
                                         <option value="deadline">Дедлайн</option>
                                         <option value="reminder">Напоминание</option>
                                         <option value="other">Другое</option>
                                     </select>
+                                    <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                                        <i class="fas fa-chevron-down text-slate-400 text-[10px]"></i>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Отдел</label>
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 text-[13px] font-medium mb-1.5">Отдел</label>
+                                <div class="relative">
                                     <select x-model="form.department_id"
-                                            class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent px-3 py-2.5 text-sm text-gray-800 dark:text-white focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none">
+                                            class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 appearance-none cursor-pointer text-sm hover:border-slate-300">
                                         <option value="">Все отделы</option>
                                         @foreach($departments as $dept)
                                             <option value="{{ $dept->id }}">{{ $dept->name }}</option>
                                         @endforeach
                                     </select>
-                                </div>
-                            </div>
-
-                            <!-- Участники - красивый select -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Участники</label>
-
-                                <div class="relative">
-                                    <select x-model="form.participants" multiple
-                                            class="w-full rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2.5 text-sm text-gray-800 dark:text-white focus:border-green-400 focus:ring-4 focus:ring-green-100 dark:focus:ring-green-900/30 outline-none h-32 appearance-none">
-                                        @foreach($users as $user)
-                                            <option value="{{ $user->id }}"
-                                                    class="py-1.5 px-3 hover:bg-green-50 dark:hover:bg-green-900/20 cursor-pointer">
-                                                {{ $user->name }}
-                                                @if($user->email)
-                                                    <span class="text-gray-400 dark:text-gray-500">({{ $user->email }})</span>
-                                                @endif
-                                            </option>
-                                        @endforeach
-                                    </select>
-
-                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 dark:text-gray-500">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                        </svg>
+                                    <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                                        <i class="fas fa-chevron-down text-slate-400 text-[10px]"></i>
                                     </div>
                                 </div>
-
-                                <div class="mt-1 flex items-center justify-between text-xs">
-        <span class="text-gray-500 dark:text-gray-400">
-            Выбрано: <span class="font-medium text-green-600 dark:text-green-400" x-text="form.participants.length"></span> участников
-        </span>
-                                    <span x-show="form.participants.length > 0"
-                                          class="text-red-500 dark:text-red-400 cursor-pointer hover:underline"
-                                          @click="form.participants = []">
-            Очистить все
-        </span>
-                                </div>
-                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                                    💡 Удерживайте <kbd class="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs">Ctrl</kbd> для выбора нескольких участников
-                                </p>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Цвет</label>
-                                <input type="color" x-model="form.color"
-                                       class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent px-3 py-1 text-sm focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none h-10">
                             </div>
                         </div>
 
-                        <div class="mt-6 flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                            <button type="button" @click="closeModal()"
-                                    class="px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                                Отмена
-                            </button>
-                            <button type="submit"
-                                    class="px-6 py-2.5 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                    :disabled="loading">
-                                <span x-show="!loading" x-text="modalButtonText">Создать</span>
-                                <span x-show="loading" class="flex items-center">
-                                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        {{-- Участники --}}
+                        <div>
+                            <label class="block text-slate-600 text-[13px] font-medium mb-1.5">Участники</label>
+                            <div class="relative">
+                                <select x-model="form.participants" multiple
+                                        class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 h-32 appearance-none cursor-pointer">
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}"
+                                                class="py-1.5 px-3 hover:bg-emerald-50 cursor-pointer">
+                                            {{ $user->name }}
+                                            @if($user->email)
+                                                <span class="text-slate-400">({{ $user->email }})</span>
+                                            @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div class="pointer-events-none absolute top-3 right-3 text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex items-center justify-between text-[12px]">
+                                <span class="text-slate-500">
+                                    Выбрано: <span class="font-semibold text-emerald-600" x-text="form.participants.length"></span> участников
+                                </span>
+                                <span x-show="form.participants.length > 0"
+                                      class="text-rose-500 cursor-pointer hover:underline font-medium"
+                                      @click="form.participants = []">
+                                    Очистить все
+                                </span>
+                            </div>
+                            <p class="text-[11px] text-slate-400 mt-1.5">
+                                💡 Удерживайте <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-mono">Ctrl</kbd> для выбора нескольких участников
+                            </p>
+                        </div>
+
+                        {{-- Цвет --}}
+                        <div>
+                            <label class="block text-slate-600 text-[13px] font-medium mb-1.5">Цвет</label>
+                            <input type="color" x-model="form.color"
+                                   class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-1 focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 h-11 cursor-pointer">
+                        </div>
+                    </div>
+
+                    {{-- Кнопки --}}
+                    <div class="mt-7 flex justify-end gap-3 pt-5 border-t border-slate-100">
+                        <button type="button" @click="closeModal()"
+                                class="px-5 py-2.5 text-[13px] font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
+                            Отмена
+                        </button>
+                        <button type="submit"
+                                class="px-6 py-2.5 text-[13px] font-semibold text-white bg-emerald-500 rounded-xl hover:bg-emerald-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30"
+                                :disabled="loading">
+                            <template x-if="!loading">
+                                <span class="flex items-center gap-2">
+                                    <i class="fas fa-check text-[11px]"></i>
+                                    <span x-text="modalButtonText">Создать</span>
+                                </span>
+                            </template>
+                            <template x-if="loading">
+                                <span class="flex items-center gap-2">
+                                    <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                    Сохранение...
+                                    <span>Сохранение...</span>
                                 </span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                            </template>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
         <!-- МОДАЛЬНОЕ ОКНО ПРОСМОТРА СОБЫТИЯ -->
         <div x-show="showViewModal"
              x-cloak
-             class="fixed inset-0 overflow-y-auto backdrop-blur-md bg-black/50 z-50 flex items-center justify-center px-4 py-8">
-            <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-hidden">
-                <div class="px-4 pt-5 pb-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
-                    <div class="flex items-start justify-between mb-4 sticky top-0 bg-white dark:bg-gray-800 pt-2 pb-4 border-b border-gray-200 dark:border-gray-700">
-                        <div class="flex items-center gap-3">
-                            <span class="inline-block w-4 h-4 rounded-full" :style="{ backgroundColor: selectedEvent.color || '#6B7280' }"></span>
-                            <div>
-                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white" x-text="selectedEvent.title">Событие</h3>
-                                <!-- Статус пользователя -->
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 overflow-y-auto bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center px-4 py-8">
+            <div x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 class="relative bg-white rounded-[24px] shadow-2xl shadow-slate-900/25 border border-slate-200/50 max-w-lg w-full max-h-[90vh] overflow-hidden flex flex-col">
+
+                {{-- Заголовок --}}
+                <div class="px-6 pt-6 pb-4 border-b border-slate-100 flex items-start justify-between gap-3 flex-shrink-0">
+                    <div class="flex items-start gap-3 min-w-0">
+                        <span class="inline-block w-3.5 h-3.5 rounded-full mt-1.5 flex-shrink-0 ring-2 ring-white shadow-sm" :style="{ backgroundColor: selectedEvent.color || '#6B7280' }"></span>
+                        <div class="min-w-0">
+                            <h3 class="text-[19px] font-bold text-slate-900 tracking-tight truncate" x-text="selectedEvent.title">Событие</h3>
+                            <div class="mt-1.5 flex flex-wrap gap-1.5">
                                 <span x-show="userStatus === 'creator'"
-                                      class="text-xs px-2 py-0.5 rounded-full mt-1 inline-block bg-purple-100 text-purple-700">
-    👑 Создатель
-</span>
+                                      class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+                                    👑 Создатель
+                                </span>
                                 <span x-show="userStatus && userStatus !== 'invited' && userStatus !== 'creator'"
-                                      class="text-xs px-2 py-0.5 rounded-full mt-1 inline-block"
+                                      class="text-[11px] font-medium px-2 py-0.5 rounded-full border"
                                       :class="{
-                                          'bg-green-100 text-green-700': userStatus === 'confirmed',
-                                          'bg-red-100 text-red-700': userStatus === 'declined',
-                                          'bg-yellow-100 text-yellow-700': userStatus === 'maybe'
+                                          'bg-emerald-50 text-emerald-700 border-emerald-200': userStatus === 'confirmed',
+                                          'bg-rose-50 text-rose-700 border-rose-200': userStatus === 'declined',
+                                          'bg-amber-50 text-amber-700 border-amber-200': userStatus === 'maybe'
                                       }"
-                                                                      x-text="userStatus === 'confirmed' ? '✅ Вы приняли' :
+                                      x-text="userStatus === 'confirmed' ? '✅ Вы приняли' :
                                               userStatus === 'declined' ? '❌ Вы отклонили' :
-                                              userStatus === 'maybe' ? '🤔 Вы отметили Возможно' : ''">
+                                              userStatus === 'maybe' ? '🤔 Возможно' : ''">
                                 </span>
                             </div>
                         </div>
-                        <button @click="closeViewModal()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 p-1">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
                     </div>
+                    <button @click="closeViewModal()"
+                            class="text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 transition-all duration-200 p-2 rounded-full flex-shrink-0">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
 
-                    <div class="space-y-3 text-sm mt-4">
+                {{-- Содержимое --}}
+                <div class="flex-1 overflow-y-auto px-6 py-5 scrollbar-none [&::-webkit-scrollbar]:hidden">
+                    <div class="space-y-3.5 text-[13px]">
+
                         <div class="flex items-start gap-3">
-                            <span class="text-gray-500 dark:text-gray-400 w-20">Время:</span>
-                            <span class="text-gray-800 dark:text-gray-200" x-text="formatEventTime(selectedEvent)"></span>
+                            <span class="text-slate-400 font-medium w-24 flex-shrink-0">Время</span>
+                            <span class="text-slate-800 font-medium" x-text="formatEventTime(selectedEvent)"></span>
                         </div>
+
                         <div class="flex items-start gap-3" x-show="selectedEvent.extendedProps?.description">
-                            <span class="text-gray-500 dark:text-gray-400 w-20">Описание:</span>
-                            <span class="text-gray-800 dark:text-gray-200" x-text="selectedEvent.extendedProps?.description"></span>
-                        </div>
-                        <div class="flex items-start gap-3" x-show="selectedEvent.extendedProps?.location">
-                            <span class="text-gray-500 dark:text-gray-400 w-20">Место:</span>
-                            <span class="text-gray-800 dark:text-gray-200" x-text="selectedEvent.extendedProps?.location"></span>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <span class="text-gray-500 dark:text-gray-400 w-20">Создатель:</span>
-                            <span class="text-gray-800 dark:text-gray-200" x-text="selectedEvent.extendedProps?.creator_name || 'Неизвестно'"></span>
-                        </div>
-                        <div class="flex items-start gap-3" x-show="selectedEvent.extendedProps?.department_name">
-                            <span class="text-gray-500 dark:text-gray-400 w-20">Отдел:</span>
-                            <span class="text-gray-800 dark:text-gray-200" x-text="selectedEvent.extendedProps?.department_name"></span>
+                            <span class="text-slate-400 font-medium w-24 flex-shrink-0">Описание</span>
+                            <span class="text-slate-700 leading-relaxed" x-text="selectedEvent.extendedProps?.description"></span>
                         </div>
 
-                        <!-- УЧАСТНИКИ С ИХ СТАТУСАМИ -->
+                        <div class="flex items-start gap-3" x-show="selectedEvent.extendedProps?.location">
+                            <span class="text-slate-400 font-medium w-24 flex-shrink-0">Место</span>
+                            <span class="text-slate-700" x-text="selectedEvent.extendedProps?.location"></span>
+                        </div>
+
                         <div class="flex items-start gap-3">
-                            <span class="text-gray-500 dark:text-gray-400 w-20">Участники:</span>
-                            <div class="flex flex-wrap gap-1">
+                            <span class="text-slate-400 font-medium w-24 flex-shrink-0">Создатель</span>
+                            <span class="text-slate-700" x-text="selectedEvent.extendedProps?.creator_name || 'Неизвестно'"></span>
+                        </div>
+
+                        <div class="flex items-start gap-3" x-show="selectedEvent.extendedProps?.department_name">
+                            <span class="text-slate-400 font-medium w-24 flex-shrink-0">Отдел</span>
+                            <span class="text-slate-700" x-text="selectedEvent.extendedProps?.department_name"></span>
+                        </div>
+
+                        {{-- Участники --}}
+                        <div class="flex items-start gap-3">
+                            <span class="text-slate-400 font-medium w-24 flex-shrink-0 pt-0.5">Участники</span>
+                            <div class="flex flex-wrap gap-1.5">
                                 <template x-for="p in selectedEvent.extendedProps?.participants || []" :key="p.id">
-            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs"
-                  :class="{
-                      'bg-purple-100 text-purple-700': p.id === selectedEvent.extendedProps?.creator_id,
-                      'bg-green-100 text-green-700': p.status === 'confirmed' && p.id !== selectedEvent.extendedProps?.creator_id,
-                      'bg-red-100 text-red-700': p.status === 'declined',
-                      'bg-yellow-100 text-yellow-700': p.status === 'maybe',
-                      'bg-gray-100 text-gray-700': p.status === 'invited'
-                  }"
-                  x-text="p.id === selectedEvent.extendedProps?.creator_id ? p.name + ' 👑 (создатель)' :
-                          p.status === 'confirmed' ? p.name + ' ✅' :
-                          p.status === 'declined' ? p.name + ' ❌' :
-                          p.status === 'maybe' ? p.name + ' 🤔' :
-                          p.name">
-            </span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border"
+                                          :class="{
+                                              'bg-purple-50 text-purple-700 border-purple-200': p.id === selectedEvent.extendedProps?.creator_id,
+                                              'bg-emerald-50 text-emerald-700 border-emerald-200': p.status === 'confirmed' && p.id !== selectedEvent.extendedProps?.creator_id,
+                                              'bg-rose-50 text-rose-700 border-rose-200': p.status === 'declined',
+                                              'bg-amber-50 text-amber-700 border-amber-200': p.status === 'maybe',
+                                              'bg-slate-50 text-slate-700 border-slate-200': p.status === 'invited'
+                                          }"
+                                          x-text="p.id === selectedEvent.extendedProps?.creator_id ? p.name + ' 👑' :
+                                                  p.status === 'confirmed' ? p.name + ' ✅' :
+                                                  p.status === 'declined' ? p.name + ' ❌' :
+                                                  p.status === 'maybe' ? p.name + ' 🤔' :
+                                                  p.name">
+                                    </span>
                                 </template>
                             </div>
                         </div>
                     </div>
 
-                    <!-- КНОПКИ ОТВЕТА - показываем если пользователь участник -->
-                    <div class="mt-6 flex justify-end gap-3" x-show="isParticipant && userStatus === 'invited'">
+                    {{-- Кнопки ответа (для участников) --}}
+                    <div class="mt-6 pt-5 border-t border-slate-100 flex flex-wrap gap-2" x-show="isParticipant && userStatus === 'invited'">
                         <button @click="respondToEvent('confirmed')"
-                                class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2">
+                                class="flex-1 min-w-[100px] px-4 py-2.5 text-[13px] font-semibold text-white bg-emerald-500 rounded-xl hover:bg-emerald-600 transition-all duration-200 flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20">
                             ✅ Принять
                         </button>
                         <button @click="respondToEvent('maybe')"
-                                class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-2">
+                                class="flex-1 min-w-[100px] px-4 py-2.5 text-[13px] font-semibold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition-all duration-200 flex items-center justify-center gap-2">
                             🤔 Возможно
                         </button>
                         <button @click="respondToEvent('declined')"
-                                class="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2">
+                                class="flex-1 min-w-[100px] px-4 py-2.5 text-[13px] font-semibold text-white bg-rose-500 rounded-xl hover:bg-rose-600 transition-all duration-200 flex items-center justify-center gap-2 shadow-md shadow-rose-500/20">
                             ❌ Отказаться
                         </button>
                     </div>
 
-                    <!-- Показываем статус если уже ответили -->
-                    <div x-show="isParticipant && userStatus !== 'invited'"
-                         class="mt-6 p-3 rounded-lg text-center"
+                    {{-- Текущий статус --}}
+                    <div x-show="isParticipant && userStatus !== 'invited' && userStatus !== 'creator'"
+                         class="mt-6 p-3.5 rounded-xl text-center text-[13px] font-medium border"
                          :class="{
-                     'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300': userStatus === 'confirmed',
-                     'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300': userStatus === 'declined',
-                     'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300': userStatus === 'maybe'
-                 }">
-                <span x-text="userStatus === 'confirmed' ? '✅ Вы приняли приглашение' :
-                              userStatus === 'declined' ? '❌ Вы отклонили приглашение' :
-                              userStatus === 'maybe' ? '🤔 Вы отметили Возможно' : ''">
+                             'bg-emerald-50 text-emerald-700 border-emerald-200': userStatus === 'confirmed',
+                             'bg-rose-50 text-rose-700 border-rose-200': userStatus === 'declined',
+                             'bg-amber-50 text-amber-700 border-amber-200': userStatus === 'maybe'
+                         }">
+                        <span x-text="userStatus === 'confirmed' ? '✅ Вы приняли приглашение' :
+                                      userStatus === 'declined' ? '❌ Вы отклонили приглашение' :
+                                      userStatus === 'maybe' ? '🤔 Вы отметили «Возможно»' : ''">
                         </span>
                     </div>
+                </div>
 
-                    <!-- Кнопки управления (для менеджеров) -->
-                    <div class="mt-4 flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700" x-show="canManage">
+                {{-- Кнопки управления --}}
+                <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-wrap justify-between items-center gap-2 flex-shrink-0 rounded-b-[24px]">
+                    <div class="flex gap-2" x-show="canManage">
                         <button @click="editEvent(selectedEvent)"
-                                class="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                class="px-3.5 py-2 text-[12px] font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-all duration-200 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
                             Редактировать
                         </button>
                         <button @click="deleteEvent(selectedEvent.id)"
-                                class="px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                class="px-3.5 py-2 text-[12px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-all duration-200 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                             </svg>
                             Удалить
                         </button>
                     </div>
 
-                    <!-- Кнопка закрытия -->
-                    <div class="mt-4 flex justify-end">
-                        <button @click="closeViewModal()"
-                                class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                            Закрыть
-                        </button>
-                    </div>
+                    <button @click="closeViewModal()"
+                            class="ml-auto px-5 py-2 text-[13px] font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
+                        Закрыть
+                    </button>
                 </div>
             </div>
         </div>
@@ -518,74 +597,32 @@
             max-height: calc(90vh - 80px);
         }
 
-        .fixed.inset-0 {
-            animation: fadeIn 0.2s ease-out;
+        .color-scheme-light {
+            color-scheme: light;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+        /* Скрытие скроллбара */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
-        .max-h-60::-webkit-scrollbar {
-            width: 4px;
+        /* Кастомный скроллбар для select multiple */
+        select[multiple]::-webkit-scrollbar {
+            width: 6px;
         }
-        .max-h-60::-webkit-scrollbar-track {
+        select[multiple]::-webkit-scrollbar-track {
             background: transparent;
         }
-        .max-h-60::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 2px;
+        select[multiple]::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
         }
-        .dark .max-h-60::-webkit-scrollbar-thumb {
-            background: #4b5563;
-        }
-
-        /* Анимация появления */
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        /* Стили для компонента с тегами */
-        .absolute.z-50 {
-            animation: slideDown 0.15s ease-out;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .max-h-48::-webkit-scrollbar {
-            width: 4px;
-        }
-        .max-h-48::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .max-h-48::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 2px;
-        }
-        .dark .max-h-48::-webkit-scrollbar-thumb {
-            background: #4b5563;
+        select[multiple]::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
 @endsection
@@ -718,7 +755,6 @@
                 updateForm() {
                     const parent = this.$el.closest('[x-data="calendarApp()"]');
                     if (parent && parent.__x) {
-                        // ОБНОВЛЯЕМ ТОЛЬКО ТО, ЧТО ВЫБРАНО (без создателя)
                         parent.__x.$data.form.participants = [...this.selectedIds];
                         console.log('Updated form participants:', this.selectedIds);
                     }
@@ -779,23 +815,17 @@
                     const month = this.currentDate.getMonth();
                     const today = new Date();
 
-                    // Первый день месяца
                     const firstDay = new Date(year, month, 1);
-                    // Сколько дней в месяце
                     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-                    // День недели первого дня (0 - воскресенье, 1 - понедельник ... 6 - суббота)
                     let startDay = firstDay.getDay();
-                    // Если воскресенье (0), то это 7
                     startDay = startDay === 0 ? 7 : startDay;
-                    // Сдвигаем чтобы неделя начиналась с понедельника (понедельник = 0)
                     startDay = startDay - 1;
 
                     const weeks = [];
                     let currentWeek = [];
                     let dayCount = 1;
 
-                    // Пустые ячейки до первого дня месяца
                     for (let i = 0; i < startDay; i++) {
                         currentWeek.push({
                             day: '',
@@ -806,7 +836,6 @@
                         });
                     }
 
-                    // Заполняем дни месяца (1, 2, 3, ...)
                     while (dayCount <= daysInMonth) {
                         const dateObj = new Date(year, month, dayCount);
                         const isToday = dateObj.toDateString() === today.toDateString();
@@ -834,7 +863,6 @@
                         }
                     }
 
-                    // Пустые ячейки в конце последней недели
                     while (currentWeek.length < 7) {
                         currentWeek.push({
                             day: '',
@@ -848,7 +876,6 @@
                         weeks.push(currentWeek);
                     }
 
-                    // ✅ НЕ ПЕРЕВОРАЧИВАЕМ - недели уже в правильном порядке (1-я неделя сверху)
                     return weeks;
                 },
 
@@ -927,7 +954,6 @@
                     this.showCreateModal = true;
                 },
 
-                // ИСПРАВЛЕННЫЙ МЕТОД РЕДАКТИРОВАНИЯ
                 editEvent(event) {
                     console.log('editEvent called with:', event);
                     this.showViewModal = false;
@@ -955,13 +981,11 @@
                             }
                         }
 
-                        // ✅ ПРАВИЛЬНО: Исключаем создателя из списка участников
                         const allParticipants = event.extendedProps?.participants || [];
                         const creatorId = event.extendedProps?.creator_id || {{ auth()->id() }};
 
-                        // Фильтруем участников - убираем создателя
                         const participantIds = allParticipants
-                            .filter(p => p.id !== creatorId) // Убираем создателя
+                            .filter(p => p.id !== creatorId)
                             .map(p => p.id);
 
                         console.log('Creator ID:', creatorId);
@@ -981,7 +1005,6 @@
                             participants: participantIds,
                         };
 
-                        // ✅ Обновляем компонент tagSelect
                         const tagSelectEl = document.querySelector('[x-data="tagSelect()"]');
                         if (tagSelectEl && tagSelectEl.__x) {
                             tagSelectEl.__x.$data.selectedIds = [...participantIds];
@@ -1013,12 +1036,10 @@
                     const currentUser = {{ auth()->id() }};
                     const creatorId = this.selectedEvent.extendedProps?.creator_id;
 
-                    // ✅ Проверяем, является ли текущий пользователь создателем
                     if (currentUser === creatorId) {
                         this.isParticipant = true;
                         this.userStatus = 'creator';
                     } else {
-                        // Ищем пользователя в списке участников
                         const participant = this.selectedEvent.extendedProps?.participants?.find(p => p.id === currentUser);
                         this.isParticipant = !!participant;
                         this.userStatus = participant?.status || 'invited';
@@ -1099,7 +1120,6 @@
                 saveEvent() {
                     this.loading = true;
 
-                    // ✅ ПРЯМОЕ ЧТЕНИЕ ИЗ SELECT
                     const selectEl = document.querySelector('select[x-model="form.participants"]');
                     let participants = [];
 
