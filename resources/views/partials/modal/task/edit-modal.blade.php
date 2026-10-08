@@ -7,7 +7,7 @@
             <div class="flex justify-between items-center p-6">
                 <div>
                     <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent max-[500px]:text-xl">
-                        Редактирование задачи2
+                        Редактирование задачи
                     </h3>
                     <p class="text-sm text-gray-500 mt-1 max-[500px]:text-[12px]">Измените информацию о задаче</p>
                 </div>
