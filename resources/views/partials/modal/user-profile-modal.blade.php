@@ -31,7 +31,9 @@
             </div>
             <div class="flex justify-between">
                 <span class="text-gray-600">Телефон:</span>
-                <span class="font-medium">+7 (999) 123-45-67</span>
+                @if(isset(auth()->user()->company->phone))
+                    <span class="font-medium">{{auth()->user()->company->phone}}</span>
+                @endif
             </div>
             <div class="flex justify-between">
                 <span class="text-gray-600">Организация:</span>

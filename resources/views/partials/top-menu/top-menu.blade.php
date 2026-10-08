@@ -27,6 +27,13 @@
                         </span>
                     </a>
                 </li>
+
+                <li><a href="{{route('events.index')}}" class="top-menu__link text-white">
+                        <span class="font-medium">
+                            Календарь
+                        </span>
+                    </a>
+                </li>
                 <li>
                     <a href="#" class="top-menu__link text-white">
                         <span class="font-medium">

@@ -161,8 +161,8 @@
                     В СЕТИ</h3>
 
                 @if(isset($onlineUsersCount) && $onlineUsersCount > 0)
-                    <div class="flex items-center mb-3">
-                        <div class="flex -space-x-2 mr-3">
+                    <div class="flex items-center mb-3 flex-wrap">
+                        <div class="flex -space-x-2 mr-3 ">
                             @if(isset($onlineUsers) && $onlineUsers->count() > 0)
                                 @foreach($onlineUsers->take(3) as $user)
                                     <div class="avatar-container">
@@ -183,10 +183,6 @@
                                     </div>
                                 @endif
                             @endif
-                        </div>
-                        <div>
-                            <div class="text-white font-medium text-sm">{{ $onlineUsersCount }} онлайн</div>
-                            <div class="text-sidebar-text text-xs flex-shrink-0 whitespace-nowrap">Активные сейчас</div>
                         </div>
                     </div>
                 @else
