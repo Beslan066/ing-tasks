@@ -56,100 +56,109 @@
     </div>
 
     <!-- Modal for File Upload -->
-    <div id="uploadModal" class="fixed inset-0 hidden overflow-y-auto backdrop-blur-md bg-black bg-opacity-50 z-50">
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0"></div>
+    <div id="uploadModal" class="fixed inset-0 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-sm z-50">
+        <div class="flex items-start pt-16 justify-center min-h-screen px-4 py-8">
+            <div class="relative bg-white rounded-[24px] shadow-2xl shadow-slate-900/25 border border-slate-200/50 w-full max-w-lg overflow-hidden flex flex-col">
 
-            <div
-                class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl dark:bg-gray-800 sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div class="px-4 pt-5 pb-4 bg-white dark:bg-gray-800 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
-                        <div class="w-full mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                            <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">
-                                Загрузка файла
-                            </h3>
-                            <div class="mt-4">
-                                <!-- Прогресс бар -->
-                                <div id="uploadProgress" class="mt-4 hidden">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Загрузка...</span>
-                                        <span id="uploadPercent" class="text-sm font-medium text-green-600 dark:text-green-400">0%</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                        <div id="uploadProgressBar" class="bg-green-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
-                                    </div>
-                                    <p id="uploadStatus" class="mt-2 text-xs text-gray-500 dark:text-gray-400">Подготовка к загрузке...</p>
-                                </div>
+                {{-- Заголовок (как в других модалках) --}}
+                <div class="px-8 pt-6 pb-5 border-b border-slate-100 flex items-start justify-between gap-3 flex-shrink-0">
+                    <div>
+                        <h3 class="text-[22px] font-semibold text-slate-800 tracking-tight">Загрузка файла</h3>
+                        <p class="text-[13px] text-slate-400 mt-0.5">Выберите файл и укажите папку</p>
+                    </div>
+                    <button type="button" onclick="closeUploadModal()"
+                            class="text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 transition-all duration-200 p-2.5 rounded-full flex-shrink-0">
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                </div>
 
-                                <!-- Блок ошибок -->
-                                <div id="uploadError" class="mt-4 hidden">
-                                    <div
-                                        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-700 dark:text-red-300"
-                                        role="alert">
-                                        <strong class="font-bold">Ошибка!</strong>
-                                        <span id="errorMessage" class="block sm:inline"></span>
-                                    </div>
-                                </div>
+                {{-- Тело --}}
+                <div class="px-8 py-6">
 
-                                <form id="uploadForm" action="{{ route('files.upload') }}" method="POST"
-                                      enctype="multipart/form-data">
-                                    @csrf
-                                    <div class="mb-4">
-                                        <label
-                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 cursor-pointer">
-                                            Выберите файл
-                                        </label>
-                                     <input type="file" name="file" id="fileInput"
-                                            class="block w-full text-sm text-gray-500 cursor-pointer
-                                                    file:mr-4 file:py-2 file:px-4
-                                                    file:rounded-full file:border-0
-                                                    file:text-sm file:font-semibold file:text-white
-                                                    file:bg-gradient-to-br file:from-emerald-500 file:to-emerald-600
-                                                    hover:file:from-emerald-600 hover:file:to-emerald-700"
-                                            required>
-                                        @php
-                                            $maxFileSizeBytes = match($company->license_type) {
-                                                'basic' => 104857600,
-                                                'optimal' => 524288000,
-                                                'premium' => 1073741824,
-                                                default => 104857600
-                                            };
-                                            $maxFileSizeFormatted = match($company->license_type) {
-                                                'basic' => '100 MB',
-                                                'optimal' => '500 MB',
-                                                'premium' => '1 GB',
-                                                default => '100 MB'
-                                            };
-                                        @endphp
-                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                            Максимальный размер:
-                                            <span class="font-medium text-green-600 dark:text-green-400">
-                                                {{ $maxFileSizeFormatted }}
-                                            </span>
-                                            (Тариф: {{ $company->getLicenseTypeName() ?? 'Базовый' }})
-                                        </p>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Папка (необязательно)
-                                        </label>
-                                        <input type="text" name="folder"
-                                               class="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                               placeholder="Например: documents">
-                                    </div>
-                                </form>
+                    {{-- Прогресс --}}
+                    <div id="uploadProgress" class="mb-5 hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[13px] font-medium text-slate-700">Загрузка...</span>
+                            <span id="uploadPercent" class="text-[13px] font-semibold text-emerald-600">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                            <div id="uploadProgressBar" class="bg-emerald-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        <p id="uploadStatus" class="mt-2 text-[11px] text-slate-500">Подготовка к загрузке...</p>
+                    </div>
+
+                    {{-- Ошибка --}}
+                    <div id="uploadError" class="mb-5 hidden">
+                        <div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl flex items-start gap-2.5">
+                            <i class="fas fa-exclamation-circle text-rose-500 mt-0.5 flex-shrink-0"></i>
+                            <div class="text-[13px]">
+                                <strong class="font-semibold">Ошибка!</strong>
+                                <span id="errorMessage" class="block mt-0.5"></span>
                             </div>
                         </div>
                     </div>
+
+                    <form id="uploadForm" action="{{ route('files.upload') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @php
+                            $maxFileSizeBytes = match($company->license_type) {
+                                'basic' => 104857600,
+                                'optimal' => 524288000,
+                                'premium' => 1073741824,
+                                default => 104857600
+                            };
+                            $maxFileSizeFormatted = match($company->license_type) {
+                                'basic' => '100 MB',
+                                'optimal' => '500 MB',
+                                'premium' => '1 GB',
+                                default => '100 MB'
+                            };
+                        @endphp
+
+                        {{-- Выбор файла --}}
+                        <div class="mb-5">
+                            <label for="fileInput" class="block text-slate-600 text-[13px] font-medium mb-1.5">
+                                Выберите файл <span class="text-rose-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="file" name="file" id="fileInput" required
+                                       class="block w-full text-[13px] text-slate-600 cursor-pointer
+                                          file:mr-3 file:py-2.5 file:px-4
+                                          file:rounded-xl file:border-0
+                                          file:text-[13px] file:font-semibold file:text-white
+                                          file:bg-emerald-500 hover:file:bg-emerald-600
+                                          file:transition-all file:duration-200 file:cursor-pointer
+                                          file:shadow-md file:shadow-emerald-500/20">
+                            </div>
+                            <p class="mt-2 text-[11px] text-slate-500">
+                                Максимальный размер:
+                                <span class="font-semibold text-emerald-600">{{ $maxFileSizeFormatted }}</span>
+                                <span class="text-slate-400">(Тариф: {{ $company->getLicenseTypeName() ?? 'Базовый' }})</span>
+                            </p>
+                        </div>
+
+                        {{-- Папка --}}
+                        <div class="mb-2">
+                            <label class="block text-slate-600 text-[13px] font-medium mb-1.5">
+                                Папка <span class="text-slate-400 font-normal">(необязательно)</span>
+                            </label>
+                            <input type="text" name="folder"
+                                   class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300"
+                                   placeholder="Например: documents">
+                        </div>
+                    </form>
                 </div>
-                <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 sm:px-6 sm:flex sm:flex-row-reverse">
-                   <button type="submit" form="uploadForm"
-                            class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white border border-transparent rounded-md bg-gradient-to-br from-emerald-500 to-emerald-600 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-emerald-500 sm:ml-3 sm:w-auto sm:text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
-                        Загрузить
-                    </button>
+
+                {{-- Кнопки --}}
+                <div class="px-8 py-5 bg-slate-50 border-t border-slate-100 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 flex-shrink-0">
                     <button type="button" onclick="closeUploadModal()"
-                            class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-green-500 dark:bg-gray-600 dark:text-white dark:border-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            class="px-5 py-2.5 text-[13px] font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                         Отмена
+                    </button>
+                    <button type="submit" form="uploadForm"
+                            class="px-6 py-2.5 text-[13px] font-semibold text-white bg-emerald-500 rounded-xl hover:bg-emerald-600 transition-all duration-200 flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 focus:outline-none focus:ring-4 focus:ring-emerald-500/20">
+                        <i class="fas fa-cloud-upload-alt text-[11px]"></i>
+                        Загрузить
                     </button>
                 </div>
             </div>
@@ -157,33 +166,33 @@
     </div>
 
     <!-- Modal for Warning -->
-    <div id="warningModal" class="fixed inset-0 hidden overflow-y-auto backdrop-blur-md bg-black bg-opacity-50 z-50">
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0"></div>
+    <div id="warningModal" class="fixed inset-0 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-sm z-50">
+        <div class="flex items-center justify-center min-h-screen px-4 py-8">
+            <div class="relative bg-white rounded-[24px] shadow-2xl shadow-slate-900/25 border border-slate-200/50 w-full max-w-md overflow-hidden flex flex-col">
 
-            <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl dark:bg-gray-800 sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
-                <div class="px-4 pt-5 pb-4 bg-white dark:bg-gray-800 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
-                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 sm:mx-0 sm:h-10 sm:w-10">
-                            <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {{-- Тело --}}
+                <div class="px-8 pt-6 pb-5">
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0 flex items-center justify-center h-11 w-11 rounded-full bg-rose-50 border border-rose-200">
+                            <svg class="h-5 w-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
                         </div>
-                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                            <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">
+                        <div class="min-w-0">
+                            <h3 class="text-[17px] font-semibold text-slate-800 tracking-tight">
                                 Внимание!
                             </h3>
-                            <div class="mt-2">
-                                <p id="warningMessage" class="text-sm text-gray-500 dark:text-gray-300">
-                                    Текст предупреждения
-                                </p>
-                            </div>
+                            <p id="warningMessage" class="mt-1.5 text-[13px] text-slate-600 leading-relaxed whitespace-pre-line">
+                                Текст предупреждения
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 sm:px-6 sm:flex sm:flex-row-reverse">
+
+                {{-- Кнопка --}}
+                <div class="px-8 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
                     <button type="button" onclick="closeWarningModal()"
-                            class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-green-500 border border-transparent rounded-md shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm">
+                            class="px-6 py-2.5 text-[13px] font-semibold text-white bg-emerald-500 rounded-xl hover:bg-emerald-600 transition-all duration-200 shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 focus:outline-none focus:ring-4 focus:ring-emerald-500/20">
                         Понятно
                     </button>
                 </div>
@@ -217,7 +226,7 @@
             // Восстанавливаем кнопку
             const submitBtn = document.querySelector('#uploadForm button[type="submit"]');
             if (submitBtn) {
-                submitBtn.innerHTML = 'Загрузить';
+                submitBtn.innerHTML = '<i class="fas fa-cloud-upload-alt text-[11px]"></i> Загрузить';
                 submitBtn.disabled = false;
             }
 
@@ -278,7 +287,7 @@
             // Восстанавливаем кнопку
             const submitBtn = document.querySelector('#uploadForm button[type="submit"]');
             if (submitBtn) {
-                submitBtn.innerHTML = 'Загрузить';
+                submitBtn.innerHTML = '<i class="fas fa-cloud-upload-alt text-[11px]"></i> Загрузить';
                 submitBtn.disabled = false;
             }
 
@@ -372,9 +381,9 @@
 
                 // Меняем текст кнопки
                 const submitBtn = uploadForm.querySelector('button[type="submit"]');
-                const originalText = submitBtn ? submitBtn.innerHTML : 'Загрузить';
+                const originalText = submitBtn ? submitBtn.innerHTML : '<i class="fas fa-cloud-upload-alt text-[11px]"></i> Загрузить';
                 if (submitBtn) {
-                    submitBtn.innerHTML = '<span class="flex items-center"><svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Загрузка...</span>';
+                    submitBtn.innerHTML = '<span class="flex items-center gap-2"><svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Загрузка...</span>';
                     submitBtn.disabled = true;
                 }
 
