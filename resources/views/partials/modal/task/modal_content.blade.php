@@ -215,55 +215,66 @@
             <div class="py-1 grid grid-cols-6 gap-2 max-[1250px]:grid-cols-4">
 
                 @if($task->status === 'назначена')
-                    <button onclick="startTask({{ $task->id }})"
-                            class="text-white px-3 py-2.5 rounded-xl flex items-center justify-center space-x-2 text-[13px] font-semibold col-span-3 max-[1250px]:col-span-2 max-[800px]:col-span-4 bg-emerald-500 hover:bg-emerald-600 transition-all duration-200 shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30">
-                        <i class="fas fa-play text-[11px]"></i>
-                        <span>Начать</span>
-                    </button>
+                    <x-ui.button
+                        variant="action"
+                        icon="fas fa-play"
+                        onclick="startTask({{ $task->id }})"
+                        class="col-span-3 max-[1250px]:col-span-2 max-[800px]:col-span-4">
+                        Начать
+                    </x-ui.button>
                 @elseif($task->status === 'в работе')
-                    <button onclick="sendForReview({{ $task->id }})"
-                            class="text-white px-3 py-2.5 rounded-xl flex items-center justify-center space-x-2 text-[13px] font-semibold col-span-3 max-[1250px]:col-span-2 max-[800px]:col-span-4 bg-emerald-500 hover:bg-emerald-600 transition-all duration-200 shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30">
-                        <i class="fas fa-paper-plane text-[11px]"></i>
-                        <span>На проверку</span>
-                    </button>
+                    <x-ui.button
+                        variant="action"
+                        icon="fas fa-paper-plane"
+                        onclick="sendForReview({{ $task->id }})"
+                        class="col-span-3 max-[1250px]:col-span-2 max-[800px]:col-span-4">
+                        На проверку
+                    </x-ui.button>
                 @else
-                    <button onclick="startTask({{ $task->id }})"
-                            class="text-white px-3 py-2.5 rounded-xl flex items-center justify-center space-x-2 text-[13px] font-semibold col-span-3 max-[1250px]:col-span-2 max-[800px]:col-span-4 bg-emerald-500 hover:bg-emerald-600 transition-all duration-200 shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30">
-                        <i class="fas fa-check text-[11px]"></i>
-                        <span>Завершить</span>
-                    </button>
+                    <x-ui.button
+                        variant="action"
+                        icon="fas fa-check"
+                        onclick="startTask({{ $task->id }})"
+                        class="col-span-3 max-[1250px]:col-span-2 max-[800px]:col-span-4">
+                        Завершить
+                    </x-ui.button>
                 @endif
 
-                <button onclick="showRejectModal({{ $task->id }})"
-                        class="bg-white border-2 border-rose-200 text-rose-600 px-3 py-2.5 rounded-xl hover:bg-rose-50 hover:border-rose-300 transition-all duration-200 flex items-center justify-center space-x-2 text-[13px] font-semibold col-span-3 max-[1250px]:col-span-2 max-[800px]:col-span-4">
-                    <i class="fas fa-times-circle text-[11px]"></i>
-                    <span>Отказаться</span>
-                </button>
+                <x-ui.button
+                    variant="danger-outline"
+                    icon="fas fa-times-circle"
+                    onclick="showRejectModal({{ $task->id }})"
+                    class="col-span-3 max-[1250px]:col-span-2 max-[800px]:col-span-4">
+                    Отказаться
+                </x-ui.button>
             </div>
 
             {{-- Дополнительные ссылки --}}
             <div class="mt-4 pt-4 border-t border-slate-200 flex flex-wrap items-center justify-center gap-1 max-[800px]:grid max-[800px]:grid-cols-2 max-[800px]:gap-2">
                 @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                    <button onclick="openEditModal({{ $task->id }})"
-                            class="px-3 py-2 text-[12px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg flex items-center gap-1.5 transition-all duration-200 font-medium">
-                        <i class="fas fa-edit text-blue-500"></i>
-                        <span>Редактировать</span>
-                    </button>
+                    <x-ui.button
+                        variant="ghost"
+                        icon="fas fa-edit text-blue-500"
+                        onclick="openEditModal({{ $task->id }})">
+                        Редактировать
+                    </x-ui.button>
                 @endif
 
                 @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                    <button onclick="archiveTask({{ $task->id }})"
-                            class="px-3 py-2 text-[12px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg flex items-center gap-1.5 transition-all duration-200 font-medium">
-                        <i class="fas fa-archive text-amber-500"></i>
-                        <span>В архив</span>
-                    </button>
+                    <x-ui.button
+                        variant="ghost"
+                        icon="fas fa-archive text-amber-500"
+                        onclick="archiveTask({{ $task->id }})">
+                        В архив
+                    </x-ui.button>
                 @endif
 
-                <button onclick="openCreateSubtaskModal({{ $task->id }})"
-                        class="px-3 py-2 text-[12px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg flex items-center gap-1.5 transition-all duration-200 font-medium">
-                    <i class="fas fa-list text-emerald-500"></i>
-                    <span>Подзадача</span>
-                </button>
+                <x-ui.button
+                    variant="ghost"
+                    icon="fas fa-list text-emerald-500"
+                    onclick="openCreateSubtaskModal({{ $task->id }})">
+                    Подзадача
+                </x-ui.button>
             </div>
         </div>
     </div>

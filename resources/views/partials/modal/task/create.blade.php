@@ -22,107 +22,61 @@
 
             <!-- Основная информация -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                <div class="space-y-1.5">
-                    <label class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
-                        Название задачи <span class="text-rose-500">*</span>
-                    </label>
-                    <div class="relative group">
-                        <input type="text" name="name"
-                               class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300"
-                               placeholder="Введите название задачи" required>
-                    </div>
-                </div>
+                  <x-form.input
+                        name="name"
+                        label="Название задачи"
+                        placeholder="Введите название задачи"
+                        :required="true"
+                    />
 
-                <div class="space-y-1.5">
-                    <label class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
-                        Приоритет <span class="text-rose-500">*</span>
-                    </label>
-                    <div class="relative group">
-                        <select name="priority"
-                                class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 appearance-none cursor-pointer text-sm hover:border-slate-300">
-                            <option value="низкий" class="priority-option">Низкий</option>
-                            <option value="средний" selected class="priority-option">Средний</option>
-                            <option value="высокий" class="priority-option">Высокий</option>
-                            <option value="критический" class="priority-option">Критический</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
-                            <i class="fas fa-chevron-down text-slate-400 text-[10px]"></i>
-                        </div>
-                    </div>
-                </div>
+                <x-form.input-select
+                    name="priority"
+                    label="Приоритет"
+                    :required="true"
+                    :options="[
+                        'низкий'       => 'Низкий',
+                        'средний'      => 'Средний',
+                        'высокий'      => 'Высокий',
+                        'критический'  => 'Критический',
+                    ]"
+                />
             </div>
 
             <!-- Описание -->
-            <div class="space-y-1.5">
-                <label class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
-                    Описание
-                </label>
-                <div class="relative group">
-                    <textarea name="description"
-                              class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 resize-none text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300"
-                              rows="3" placeholder="Добавьте подробное описание..."></textarea>
-                </div>
-            </div>
-
+            <x-form.textarea
+                name="description"
+                label="Описание"
+                placeholder="Добавьте подробное описание..."
+                :rows="3"
+            />
             <!-- Отдел и категория -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                <div class="space-y-1.5">
-                    <label class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
-                        Отдел <span class="text-rose-500">*</span>
-                    </label>
-                    <div class="relative group">
-                        <select name="department_id"
-                                class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 appearance-none cursor-pointer text-sm hover:border-slate-300">
-                            <option value="" class="text-slate-400">Выберите отдел</option>
-                            @foreach($departments as $department)
-                                <option value="{{ $department->id }}">{{ $department->name }}</option>
-                            @endforeach
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
-                            <i class="fas fa-chevron-down text-slate-400 text-[10px]"></i>
-                        </div>
-                    </div>
-                </div>
+           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                <x-form.input-select
+                    name="department_id"
+                    label="Отдел"
+                    placeholder="Выберите отдел"
+                    :required="true"
+                    :options="collect($departments ?? [])->pluck('name', 'id')->all()"
+                />
 
-                <div class="space-y-1.5">
-                    <label class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
-                        Категория
-                    </label>
-                    <div class="relative group">
-                        <select name="category_id"
-                                class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 appearance-none cursor-pointer text-sm hover:border-slate-300">
-                            <option value="" class="text-slate-400">Выберите категорию</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
-                            <i class="fas fa-chevron-down text-slate-400 text-[10px]"></i>
-                        </div>
-                    </div>
-                </div>
+                <x-form.input-select
+                    name="category_id"
+                    label="Категория"
+                    placeholder="Выберите категорию"
+                    :options="collect($categories ?? [])->pluck('name', 'id')->all()"
+                />
             </div>
 
             <!-- Исполнитель и сроки -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                <div class="space-y-1.5">
-                    <label class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
-                        Исполнитель
-                    </label>
-                    <div class="relative group">
-                        <select name="user_id"
-                                class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 appearance-none cursor-pointer text-sm hover:border-slate-300">
-                            <option value="" class="text-slate-400">Не назначено</option>
-                            @foreach($assignableUsers as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }}</option>
-                            @endforeach
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
-                            <i class="fas fa-chevron-down text-slate-400 text-[10px]"></i>
-                        </div>
-                    </div>
-                </div>
-
+                    <x-form.input-select
+                        name="user_id"
+                        id="editTaskUser"
+                        label="Исполнитель"
+                        placeholder="Не назначено"
+                        :options="collect($assignableUsers ?? [])->pluck('name', 'id')->all()"
+                        :selected="$task->user_id ?? null"
+                    />
                 <div class="space-y-1.5">
                     <label class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
                         Дедлайн
@@ -148,30 +102,20 @@
                     </div>
                 </div>
 
-                <div class="space-y-1.5">
-                    <label class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
-                        Статус <span class="text-rose-500">*</span>
-                    </label>
-                    <div class="relative group">
-                        <select name="status"
-                                class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 appearance-none cursor-pointer text-sm hover:border-slate-300"
-                                required>
-                            @php
-                                $availableStatuses = array_filter(\App\Models\Task::getStatuses(), function($status) {
-                                    return $status !== 'в работе';
-                                });
-                            @endphp
-                            @foreach($availableStatuses as $status)
-                                <option value="{{ $status }}" {{ $status == 'назначена' ? 'selected' : '' }}>
-                                    {{ $status }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
-                            <i class="fas fa-chevron-down text-slate-400 text-[10px]"></i>
-                        </div>
-                    </div>
-                </div>
+                 @php
+                    $availableStatuses = array_filter(\App\Models\Task::getStatuses(), function($status) {
+                        return $status !== 'в работе';
+                    });
+                    $statusOptions = array_combine($availableStatuses, $availableStatuses);
+                @endphp
+
+                <x-form.input-select
+                    name="status"
+                    label="Статус"
+                    :required="true"
+                    selected="назначена"
+                    :options="$statusOptions"
+                />
             </div>
 
             <!-- Вкладки для файлов (оставлено без изменений по вашему запросу) -->
@@ -260,13 +204,20 @@
 
             <!-- Кнопки действий -->
             <div class="flex justify-end items-center gap-3 pt-6 border-t border-slate-100 max-[500px]:justify-center max-[500px]:flex-col-reverse max-[500px]:space-x-0 max-[500px]:gap-3">
-                <button type="button" onclick="closeTaskModal()"
-                        class="px-5 py-2.5 rounded-xl text-slate-600 hover:text-slate-800 hover:bg-slate-50 font-medium text-[13px] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-200">
+                <x-ui.button
+                    variant="secondary"
+                    onclick="closeTaskModal()"
+                >
                     Отмена
-                </button>
-                <button type="submit" class="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-medium text-[13px] transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 flex items-center shadow-sm hover:shadow-md max-[500px]:w-full max-[500px]:justify-center">
-                    <i class="fas fa-plus mr-1.5 text-[11px]"></i>Создать задачу
-                </button>
+                </x-ui.button>
+
+                <x-ui.button
+                    type="submit"
+                    variant="primary"
+                    icon="fas fa-plus"
+                >
+                    Создать задачу
+                </x-ui.button>
             </div>
         </form>
     </div>
