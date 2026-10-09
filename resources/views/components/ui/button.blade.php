@@ -14,6 +14,7 @@
         'action' => 'px-3 py-2.5 rounded-xl text-[13px] font-semibold text-white bg-emerald-500 hover:bg-emerald-600 shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30',
         'danger-outline' => 'px-3 py-2.5 rounded-xl text-[13px] font-semibold bg-white border-2 border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300',
         'ghost' => 'px-3 py-2 rounded-lg text-[12px] font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100',
+        'outline' => 'px-5 py-2.5 rounded-xl text-[13px] font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300',
     ];
 
     $iconSizes = [
