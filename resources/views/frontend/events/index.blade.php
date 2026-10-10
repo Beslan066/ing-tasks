@@ -261,125 +261,104 @@
                 </div>
 
                 {{-- Форма --}}
-                <form @submit.prevent="saveEvent()" class="flex-1 overflow-y-auto px-8 py-6 scrollbar-none [&::-webkit-scrollbar]:hidden">
+                    <form @submit.prevent="saveEvent()" class="flex-1 overflow-y-auto px-8 py-6 scrollbar-none [&::-webkit-scrollbar]:hidden">
                     <div class="space-y-5">
 
                         {{-- Название --}}
-                        <div>
-                            <label class="block text-slate-600 text-[13px] font-medium mb-1.5">
-                                Название <span class="text-rose-500">*</span>
-                            </label>
-                            <input type="text" x-model="form.title" required
-                                   class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300"
-                                   placeholder="Введите название события">
-                        </div>
+                        <x-form.input
+                            name="title"
+                            id="eventTitle"
+                            label="Название"
+                            placeholder="Введите название события"
+                            :required="true"
+                            x-model="form.title" />
 
                         {{-- Даты --}}
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-slate-600 text-[13px] font-medium mb-1.5">
+                                <label for="eventStart" class="block text-slate-600 text-[13px] font-medium mb-1.5">
                                     Начало <span class="text-rose-500">*</span>
                                 </label>
-                                <input type="datetime-local" x-model="form.start_date" required
-                                       class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 color-scheme-light min-h-[42px]">
+                                <input type="datetime-local" id="eventStart" x-model="form.start_date" required
+                                    class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 [color-scheme:light] min-h-[42px]">
                             </div>
                             <div>
-                                <label class="block text-slate-600 text-[13px] font-medium mb-1.5">
+                                <label for="eventEnd" class="block text-slate-600 text-[13px] font-medium mb-1.5">
                                     Окончание <span class="text-rose-500">*</span>
                                 </label>
-                                <input type="datetime-local" x-model="form.end_date" required
-                                       class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 color-scheme-light min-h-[42px]">
+                                <input type="datetime-local" id="eventEnd" x-model="form.end_date" required
+                                    class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 [color-scheme:light] min-h-[42px]">
                             </div>
                         </div>
 
                         {{-- Весь день --}}
                         <div class="flex items-center p-3 bg-slate-50/50 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
                             <input type="checkbox" x-model="form.all_day" id="all_day"
-                                   class="w-4 h-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500/30 focus:ring-2 cursor-pointer">
+                                class="w-4 h-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500/30 focus:ring-2 cursor-pointer">
                             <label for="all_day" class="ml-2.5 text-[13px] text-slate-700 font-medium cursor-pointer select-none">Весь день</label>
                         </div>
 
                         {{-- Описание --}}
-                        <div>
-                            <label class="block text-slate-600 text-[13px] font-medium mb-1.5">Описание</label>
-                            <textarea x-model="form.description" rows="3"
-                                      class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 resize-none text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300"
-                                      placeholder="Описание события"></textarea>
-                        </div>
+                        <x-form.textarea
+                            name="description"
+                            id="eventDescription"
+                            label="Описание"
+                            placeholder="Описание события"
+                            :rows="3"
+                            x-model="form.description" />
 
                         {{-- Местоположение --}}
-                        <div>
-                            <label class="block text-slate-600 text-[13px] font-medium mb-1.5">Местоположение</label>
-                            <input type="text" x-model="form.location"
-                                   class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300"
-                                   placeholder="Офис, Zoom, адрес...">
-                        </div>
+                        <x-form.input
+                            name="location"
+                            id="eventLocation"
+                            label="Местоположение"
+                            placeholder="Офис, Zoom, адрес..."
+                            x-model="form.location" />
 
                         {{-- Тип и Отдел --}}
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-slate-600 text-[13px] font-medium mb-1.5">Тип</label>
-                                <div class="relative">
-                                    <select x-model="form.type"
-                                            class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 appearance-none cursor-pointer text-sm hover:border-slate-300">
-                                        <option value="meeting">Встреча</option>
-                                        <option value="deadline">Дедлайн</option>
-                                        <option value="reminder">Напоминание</option>
-                                        <option value="other">Другое</option>
-                                    </select>
-                                    <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
-                                        <i class="fas fa-chevron-down text-slate-400 text-[10px]"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 text-[13px] font-medium mb-1.5">Отдел</label>
-                                <div class="relative">
-                                    <select x-model="form.department_id"
-                                            class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 appearance-none cursor-pointer text-sm hover:border-slate-300">
-                                        <option value="">Все отделы</option>
-                                        @foreach($departments as $dept)
-                                            <option value="{{ $dept->id }}">{{ $dept->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
-                                        <i class="fas fa-chevron-down text-slate-400 text-[10px]"></i>
-                                    </div>
-                                </div>
-                            </div>
+                            <x-form.input-select
+                                name="type"
+                                id="eventType"
+                                label="Тип"
+                                :options="[
+                                    'meeting'  => 'Встреча',
+                                    'deadline' => 'Дедлайн',
+                                    'reminder' => 'Напоминание',
+                                    'other'    => 'Другое',
+                                ]"
+                                x-model="form.type" />
+                            <x-form.input-select
+                                name="department_id"
+                                id="eventDepartment"
+                                label="Отдел"
+                                placeholder="Все отделы"
+                                :options="collect($departments)->pluck('name', 'id')->all()"
+                                x-model="form.department_id" />
                         </div>
 
                         {{-- Участники --}}
                         <div>
-                            <label class="block text-slate-600 text-[13px] font-medium mb-1.5">Участники</label>
+                            <label for="eventParticipants" class="block text-slate-600 text-[13px] font-medium mb-1.5">Участники</label>
                             <div class="relative">
-                                <select x-model="form.participants" multiple
+                                <select id="eventParticipants" x-model="form.participants" multiple
                                         class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 h-32 appearance-none cursor-pointer">
                                     @foreach($users as $user)
-                                        <option value="{{ $user->id }}"
-                                                class="py-1.5 px-3 hover:bg-emerald-50 cursor-pointer">
-                                            {{ $user->name }}
-                                            @if($user->email)
-                                                <span class="text-slate-400">({{ $user->email }})</span>
-                                            @endif
+                                        <option value="{{ $user->id }}" class="py-1.5 px-3 hover:bg-emerald-50 cursor-pointer">
+                                            {{ $user->name }}{{ $user->email ? ' (' . $user->email . ')' : '' }}
                                         </option>
                                     @endforeach
                                 </select>
-                                <div class="pointer-events-none absolute top-3 right-3 text-slate-400">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                    </svg>
-                                </div>
                             </div>
                             <div class="mt-2 flex items-center justify-between text-[12px]">
                                 <span class="text-slate-500">
                                     Выбрано: <span class="font-semibold text-emerald-600" x-text="form.participants.length"></span> участников
                                 </span>
-                                <span x-show="form.participants.length > 0"
-                                      class="text-rose-500 cursor-pointer hover:underline font-medium"
-                                      @click="form.participants = []">
+                                <button type="button" x-show="form.participants.length > 0"
+                                        class="text-rose-500 hover:underline font-medium"
+                                        x-on:click="form.participants = []">
                                     Очистить все
-                                </span>
+                                </button>
                             </div>
                             <p class="text-[11px] text-slate-400 mt-1.5">
                                 💡 Удерживайте <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-mono">Ctrl</kbd> для выбора нескольких участников
@@ -388,37 +367,27 @@
 
                         {{-- Цвет --}}
                         <div>
-                            <label class="block text-slate-600 text-[13px] font-medium mb-1.5">Цвет</label>
-                            <input type="color" x-model="form.color"
-                                   class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-1 focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 h-11 cursor-pointer">
+                            <label for="eventColor" class="block text-slate-600 text-[13px] font-medium mb-1.5">Цвет</label>
+                            <input type="color" id="eventColor" x-model="form.color"
+                                class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-1 focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 h-11 cursor-pointer">
                         </div>
                     </div>
 
                     {{-- Кнопки --}}
-                    <div class="mt-7 flex justify-end gap-3 pt-5 border-t border-slate-100">
-                        <button type="button" @click="closeModal()"
-                                class="px-5 py-2.5 text-[13px] font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
+                    <div class="mt-7 flex justify-end gap-3 pt-5 border-t border-slate-100 max-[500px]:flex-col-reverse">
+                        <x-ui.button variant="outline" x-on:click="closeModal()">
                             Отмена
-                        </button>
-                        <button type="submit"
-                                class="px-6 py-2.5 text-[13px] font-semibold text-white bg-emerald-500 rounded-xl hover:bg-emerald-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30"
-                                :disabled="loading">
-                            <template x-if="!loading">
-                                <span class="flex items-center gap-2">
-                                    <i class="fas fa-check text-[11px]"></i>
-                                    <span x-text="modalButtonText">Создать</span>
-                                </span>
-                            </template>
-                            <template x-if="loading">
-                                <span class="flex items-center gap-2">
-                                    <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    <span>Сохранение...</span>
-                                </span>
-                            </template>
-                        </button>
+                        </x-ui.button>
+
+                        <x-ui.button type="submit" variant="primary" x-bind:disabled="loading">
+                            <i x-show="!loading" class="fas fa-check text-[11px] mr-1.5" aria-hidden="true"></i>
+                            <svg x-show="loading" x-cloak class="animate-spin h-4 w-4 text-white mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span x-show="!loading" x-text="modalButtonText">Создать</span>
+                            <span x-show="loading" x-cloak>Сохранение...</span>
+                        </x-ui.button>
                     </div>
                 </form>
             </div>

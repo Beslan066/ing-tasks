@@ -2,11 +2,12 @@
 @props([
     'name',
     'label'       => null,
-    'options'     => [],      // ['значение' => 'Подпись']
+    'options'     => [],
     'selected'    => null,
     'required'    => false,
     'id'          => null,
-    'placeholder' => null,    // если не задан — выбирается первая опция
+    'placeholder' => null,
+    'emptyText'   => 'Список пуст',
 ])
 
 @php
@@ -33,6 +34,7 @@
     x-data="{
         options: @js($items),
         placeholder: @js($placeholder),
+        emptyText: @js($emptyText),
         value: @js($current),
         initial: @js($current),
         open: false,
@@ -42,6 +44,7 @@
             return this.options.find(o => o.value === this.value)
         },
         show() {
+            if (!this.options.length) return
             this.active = Math.max(0, this.options.findIndex(o => o.value === this.value))
             this.open = true
             this.scrollToActive()
@@ -72,7 +75,7 @@
         },
     }"
     x-modelable="value"
-     x-init="
+    x-init="
         $watch('value', () => $nextTick(() => $refs.input.dispatchEvent(new Event('change', { bubbles: true }))));
         $el.closest('form')?.addEventListener('reset', () => setTimeout(() => value = initial));
 
@@ -110,11 +113,11 @@
             aria-controls="{{ $id }}-listbox"
             aria-required="{{ $required ? 'true' : 'false' }}"
             :aria-expanded="open"
-            :aria-activedescendant="open ? '{{ $id }}-option-' + active : null"
-            class="w-full px-4 py-2.5 flex items-center justify-between gap-3 text-left text-sm bg-slate-50/50 border {{ $hasError ? 'border-rose-400' : 'border-slate-200' }} rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 cursor-pointer"
+            :aria-activedescendant="open ? '{{ $id }}-option-' + active : null; "
+            :disabled="!options.length"
+            class="w-full px-4 py-2.5 flex items-center justify-between gap-3 text-left text-sm bg-slate-50/50 border {{ $hasError ? 'border-rose-400' : 'border-slate-200' }} rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-slate-100/50 cursor-pointer select-none"
             :class="open ? 'bg-white border-emerald-500 ring-4 ring-emerald-500/10' : 'hover:border-slate-300'"
             @click="toggle()"
-
             @keydown.arrow-down.prevent="open ? move(1) : show()"
             @keydown.arrow-up.prevent="open ? move(-1) : show()"
             @keydown.home.prevent="open && (active = 0, scrollToActive())"
@@ -127,7 +130,7 @@
             <span
                 class="block truncate"
                 :class="selected ? 'text-slate-700' : 'text-slate-400'"
-                x-text="selected ? selected.label : placeholder"
+                x-text="options.length ? (selected ? selected.label : placeholder) : emptyText"
             ></span>
             <i
                 class="fas fa-chevron-down text-slate-400 text-[10px] shrink-0 transition-transform duration-200"
@@ -161,7 +164,7 @@
                         'font-medium': option.value === value,
                     }"
                     @click="choose(index)"
-                    @mouseenter="active = index"
+                    @mousemove="if (active !== index) active = index"
                 >
                     <span class="truncate" x-text="option.label"></span>
                     <i x-show="option.value === value" class="fas fa-check text-emerald-500 text-[10px] shrink-0"></i>
