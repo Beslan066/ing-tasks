@@ -177,7 +177,8 @@ function confirmCreateFileSelection() {
     console.log('state.temp.length:', state.temp.length);
 
     if (!state.temp || state.temp.length === 0) {
-        alert('Пожалуйста, выберите хотя бы один файл');
+        // alert('Пожалуйста, выберите хотя бы один файл');
+        showNotification('Пожалуйста, выберите хотя бы один файл',"info");
         return;
     }
 

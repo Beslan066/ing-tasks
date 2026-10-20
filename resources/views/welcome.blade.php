@@ -1161,34 +1161,6 @@
             }
         }
 
-        // ==================== ОСНОВНАЯ ФУНКЦИЯ ПОДТВЕРЖДЕНИЯ ====================
-        window.confirmFileSelection = function() {
-            const isEditModalVisible = document.getElementById('editTaskModal') && !document.getElementById('editTaskModal').classList.contains('hidden');
-            const isCreateModalVisible = document.getElementById('taskModal') && !document.getElementById('taskModal').classList.contains('hidden');
-
-            if (isEditModalVisible) {
-                if (taskEditSelectedFiles.length === 0) {
-                    showNotification('Пожалуйста, выберите хотя бы один файл',"info");
-                    return;
-                }
-                console.log('Подтверждение выбора. Файлы для сохранения:', taskEditSelectedFiles.map(f => f.id));
-                updateTaskEditSelectedFilesDisplay();
-                closeTaskStorageManager();
-            } else if (isCreateModalVisible) {
-                if (taskSelectedFiles.length === 0) {
-                    showNotification('Пожалуйста, выберите хотя бы один файл',"info");
-                    return;
-                }
-                const selectedFilesInput = document.getElementById('selectedFiles');
-                if (selectedFilesInput) {
-                    selectedFilesInput.value = JSON.stringify(taskSelectedFiles);
-                }
-                updateTaskSelectedFilesDisplay();
-                switchFileTab('storage');
-                closeTaskStorageManager();
-            }
-        };
-
 
         // ==================== ФУНКЦИИ ДЛЯ ЛИЧНЫХ ЗАДАЧ ====================
         function openPersonalTaskModal() {
@@ -1579,7 +1551,7 @@ document.body.classList.remove('overflow-y-hidden');
 @push('scripts')
  @vite('resources/js/pages/welcome.page.js')
    <script>
-document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
 
     if (window.DragDropTouch) {
         window.DragDropTouch._HOLD_DELAY = 150;
@@ -1618,154 +1590,13 @@ document.addEventListener('DOMContentLoaded', () => {
         bulletClass: 'swiper-pagination-bullet bg-gray-400 opacity-50 mx-1 inline-block rounded-full w-2 h-2',
         bulletActiveClass: '!bg-[#22c55e] !opacity-100 w-4 rounded-lg transition-all duration-300'
     },
-});
+    });
         console.log('Swiper успешно запущен для мобильного экрана!');
     }
-});
-</script>
+    });
+    </script>
 
-<script>
-    // Переменные для хранения ID задачи в модальных окнах
-    let pendingRestoreTaskId = null;
-    let pendingForceDeleteTaskId = null;
-
-    // ==================== ВОССТАНОВЛЕНИЕ С МОДАЛЬНЫМ ОКНОМ ====================
-    function restoreTask(taskId) {
-        pendingRestoreTaskId = taskId;
-        const modal = document.getElementById('confirmRestoreModal');
-        const modalContent = document.getElementById('confirmRestoreModalContent');
-
-        if (modal) {
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modalContent.classList.remove('scale-95', 'opacity-0');
-                modalContent.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-    }
-
-    function closeConfirmRestoreModal() {
-        const modal = document.getElementById('confirmRestoreModal');
-        const modalContent = document.getElementById('confirmRestoreModalContent');
-
-        if (modal) {
-            modalContent.classList.remove('scale-100', 'opacity-100');
-            modalContent.classList.add('scale-95', 'opacity-0');
-
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                pendingRestoreTaskId = null;
-            }, 300);
-        }
-    }
-
-    async function confirmRestore() {
-        if (!pendingRestoreTaskId) return;
-
-        const confirmBtn = document.querySelector('#confirmRestoreModal .bg-green-500');
-        const originalText = confirmBtn.innerHTML;
-        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Восстановление...';
-        confirmBtn.disabled = true;
-
-        try {
-            const response = await fetch(`/tasks/${pendingRestoreTaskId}/restore`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                }
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                showNotification(data.message, 'success');
-                closeConfirmRestoreModal();
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                showNotification(data.message, 'error');
-                closeConfirmRestoreModal();
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showNotification('Ошибка при восстановлении задачи', 'error');
-            closeConfirmRestoreModal();
-        } finally {
-            confirmBtn.innerHTML = originalText;
-            confirmBtn.disabled = false;
-        }
-    }
-
-    // ==================== ПОЛНОЕ УДАЛЕНИЕ С МОДАЛЬНЫМ ОКНОМ ====================
-    function forceDeleteTask(taskId) {
-        pendingForceDeleteTaskId = taskId;
-        const modal = document.getElementById('confirmForceDeleteModal');
-        const modalContent = document.getElementById('confirmForceDeleteModalContent');
-
-        if (modal) {
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modalContent.classList.remove('scale-95', 'opacity-0');
-                modalContent.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-    }
-
-    function closeConfirmForceDeleteModal() {
-        const modal = document.getElementById('confirmForceDeleteModal');
-        const modalContent = document.getElementById('confirmForceDeleteModalContent');
-
-        if (modal) {
-            modalContent.classList.remove('scale-100', 'opacity-100');
-            modalContent.classList.add('scale-95', 'opacity-0');
-
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                pendingForceDeleteTaskId = null;
-            }, 300);
-        }
-    }
-
-    async function confirmForceDelete() {
-        if (!pendingForceDeleteTaskId) return;
-
-        const confirmBtn = document.querySelector('#confirmForceDeleteModal .bg-red-500');
-        const originalText = confirmBtn.innerHTML;
-        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Удаление...';
-        confirmBtn.disabled = true;
-
-        try {
-            const response = await fetch(`/tasks/${pendingForceDeleteTaskId}/force-delete`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                }
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                showNotification(data.message, 'success');
-                closeConfirmForceDeleteModal();
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                showNotification(data.message, 'error');
-                closeConfirmForceDeleteModal();
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showNotification('Ошибка при удалении задачи', 'error');
-            closeConfirmForceDeleteModal();
-        } finally {
-            confirmBtn.innerHTML = originalText;
-            confirmBtn.disabled = false;
-        }
-    }
-
-
+    <script>
     // Закрытие модальных окон по клику на фон
     document.addEventListener('click', function(e) {
         if (e.target.id === 'confirmArchiveModal') closeConfirmArchiveModal();
@@ -1781,5 +1612,5 @@ document.addEventListener('DOMContentLoaded', () => {
             closeConfirmForceDeleteModal();
         }
     });
-</script>
+    </script>
 @endpush
