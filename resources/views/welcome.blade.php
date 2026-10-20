@@ -1,5 +1,8 @@
 @extends('layouts.app')
-
+@push('styles')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
+    @vite('resources/css/pages/welcome.page.css')
+@endpush
 @section('content')
 
     @php
@@ -723,37 +726,9 @@
     <!-- Модальные окна -->
     @include('partials.modal.task.show')
     @include('partials.modal.task.create-subtask')
+    @include('partials.modal.task.reject-task')
+    @include('partials.modal.task.submit-for-review')
 
-    <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 max-[500px]:p-6">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 class="text-lg font-semibold mb-4">Отказ от задачи</h3>
-            <p class="text-gray-600 mb-4">Пожалуйста, укажите причину отказа от задачи:</p>
-            <textarea id="rejectReason" placeholder="Причина отказа..."
-                      class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 h-24 resize-none"></textarea>
-            <div class="flex space-x-3">
-                <button onclick="submitRejection()"
-                        class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">Подтвердить отказ</button>
-                <button onclick="closeRejectModal()"
-                        class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Отмена</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="timeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 class="text-lg font-semibold mb-4">Отправка на проверку</h3>
-            <p class="text-gray-600 mb-4">Укажите фактическое время работы над задачей:</p>
-            <input type="number" id="actualHours" step="0.5" min="0" placeholder="Часы"
-                   class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4">
-            <div class="flex space-x-3">
-                <button onclick="submitForReview()"
-                        class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">Отправить на
-                    проверку</button>
-                <button onclick="closeTimeModal()"
-                        class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Отмена</button>
-            </div>
-        </div>
-    </div>
 
     <!-- Модальное окно создания задачи -->
     @include('partials.modal.task.create')
@@ -764,123 +739,21 @@
     @include('partials.modal.welcome.edit-task-modal')
 
     <!-- Модальное окно подтверждения архивации -->
-    <div id="confirmArchiveModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[100] backdrop-blur-sm max-[500px]:p-6">
-        <div class="bg-white rounded-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0" id="confirmArchiveModalContent">
-            <div class="p-6">
-                <div class="flex items-center justify-center mb-4">
-                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-archive text-3xl text-yellow-600"></i>
-                    </div>
-                </div>
-
-                <h3 class="text-xl font-bold text-center text-gray-800 mb-2">Архивация задачи</h3>
-                <p class="text-gray-600 text-center mb-6" id="archiveTaskMessage">
-                    Вы уверены, что хотите отправить эту задачу в архив?
-                </p>
-
-                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-info-circle text-yellow-400"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-yellow-700">
-                                Архивированные задачи можно будет восстановить на странице "Все задачи"
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex space-x-3">
-                    <button onclick="closeConfirmArchiveModal()"
-                            class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition font-medium">
-                        Отмена
-                    </button>
-                    <button onclick="confirmArchive()"
-                            class="flex-1 px-4 py-2.5 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600 transition font-medium">
-                        <i class="fas fa-archive mr-2"></i>Архивировать
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+     @include('partials.modal.task.confirm-archive')
 
     <!-- Модальное окно подтверждения восстановления -->
-    <div id="confirmRestoreModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[100] backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0" id="confirmRestoreModalContent">
-            <div class="p-6">
-                <div class="flex items-center justify-center mb-4">
-                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-trash-restore text-3xl text-green-600"></i>
-                    </div>
-                </div>
-
-                <h3 class="text-xl font-bold text-center text-gray-800 mb-2">Восстановление задачи</h3>
-                <p class="text-gray-600 text-center mb-6">
-                    Задача будет восстановлена и появится на канбан-доске. Продолжить?
-                </p>
-
-                <div class="flex space-x-3">
-                    <button onclick="closeConfirmRestoreModal()"
-                            class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition font-medium">
-                        Отмена
-                    </button>
-                    <button onclick="confirmRestore()"
-                            class="flex-1 px-4 py-2.5 bg-green-500 text-white rounded-xl hover:bg-green-600 transition font-medium">
-                        <i class="fas fa-check mr-2"></i>Восстановить
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('partials.modal.task.confirm-restore')
 
     <!-- Модальное окно подтверждения полного удаления -->
-    <div id="confirmForceDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[100] backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0" id="confirmForceDeleteModalContent">
-            <div class="p-6">
-                <div class="flex items-center justify-center mb-4">
-                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-exclamation-triangle text-3xl text-red-600"></i>
-                    </div>
-                </div>
-
-                <h3 class="text-xl font-bold text-center text-gray-800 mb-2">Удаление задачи</h3>
-                <p class="text-gray-600 text-center mb-4">
-                    Вы действительно хотите удалить эту задачу <span class="font-bold text-red-600">НАВСЕГДА</span>?
-                </p>
-
-                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-exclamation-circle text-red-400"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-red-700">
-                                Это действие невозможно отменить. Задача и все связанные с ней данные будут удалены безвозвратно.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex space-x-3">
-                    <button onclick="closeConfirmForceDeleteModal()"
-                            class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition font-medium">
-                        Отмена
-                    </button>
-                    <button onclick="confirmForceDelete()"
-                            class="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-xl hover:bg-red-600 transition font-medium">
-                        <i class="fas fa-trash-alt mr-2"></i>Удалить навсегда
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+      @include('partials.modal.task.confirm-force-delete')
 <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
     <script
   src="https://cdn.jsdelivr.net/npm/@dragdroptouch/drag-drop-touch@latest/dist/drag-drop-touch.esm.min.js"
   type="module"
 ></script>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
         //  ПЕРЕМЕННЫЕ
         let taskSelectedFiles = [];
         let taskAllFiles = [];
@@ -913,7 +786,7 @@
                 menu.classList.toggle('hidden');
             }
         }
-
+    window.toggleTaskMenu = toggleTaskMenu;
         document.addEventListener('click', function(event) {
             if (!event.target.closest('.task-menu') && !event.target.closest('[onclick*="toggleTaskMenu"]')) {
                 document.querySelectorAll('.task-menu').forEach(menu => {
@@ -921,48 +794,6 @@
                 });
             }
         });
-
-        // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
-        function getFileIcon(extension) {
-            const ext = (extension || '').toLowerCase();
-            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) return '🖼️';
-            if (['pdf'].includes(ext)) return '📄';
-            if (['doc', 'docx'].includes(ext)) return '📝';
-            if (['xls', 'xlsx', 'csv'].includes(ext)) return '📊';
-            if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return '📦';
-            if (['mp3', 'wav', 'ogg', 'flac'].includes(ext)) return '🎵';
-            if (['mp4', 'avi', 'mov', 'mkv', 'webm'].includes(ext)) return '🎬';
-            return '📎';
-        }
-
-        function getFileTypeClass(extension) {
-            const ext = (extension || '').toLowerCase();
-            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) return { bg: 'bg-blue-100' };
-            if (['pdf'].includes(ext)) return { bg: 'bg-red-100' };
-            if (['doc', 'docx'].includes(ext)) return { bg: 'bg-blue-100' };
-            if (['xls', 'xlsx', 'csv'].includes(ext)) return { bg: 'bg-green-100' };
-            return { bg: 'bg-gray-100' };
-        }
-
-        function formatFileSize(bytes) {
-            if (!bytes) return '0 B';
-            const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(1024));
-            return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('ru-RU');
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
 
         // ==================== ФУНКЦИИ ДЛЯ СОЗДАНИЯ ЗАДАЧИ ====================
         function updateTaskSelectedFilesDisplay() {
@@ -1159,7 +990,7 @@
                 document.body.classList.remove('overflow-hidden');
             }
         }
-
+        })
         // ==================== ФУНКЦИИ ДЛЯ РЕДАКТИРОВАНИЯ ====================
         let currentEditTaskId = null;
 
@@ -1440,39 +1271,39 @@
 
         // ==================== ФУНКЦИИ ФИЛЬТРАЦИИ ====================
       function toggleFiltersDropdown() {
-    const dropdown = document.getElementById('filtersDropdown');
-    const chevron = document.getElementById('filtersChevron');
+            const dropdown = document.getElementById('filtersDropdown');
+            const chevron = document.getElementById('filtersChevron');
 
-    if (!dropdown || !chevron) return;
-    const isHidden = dropdown.classList.contains('hidden');
+            if (!dropdown || !chevron) return;
+            const isHidden = dropdown.classList.contains('hidden');
 
-    if (isHidden) {
-        dropdown.classList.remove('hidden');
-        dropdown.classList.remove('fade-out-x');
-        dropdown.classList.add('fade-in-x');
-        chevron.style.transform = 'rotate(180deg)';
-    } else {
-        dropdown.classList.remove('fade-in-x');
-        dropdown.classList.add('fade-out-x');
+            if (isHidden) {
+                dropdown.classList.remove('hidden');
+                dropdown.classList.remove('fade-out-x');
+                dropdown.classList.add('fade-in-x');
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                dropdown.classList.remove('fade-in-x');
+                dropdown.classList.add('fade-out-x');
 
-        chevron.style.transform = 'rotate(0deg)';
+                chevron.style.transform = 'rotate(0deg)';
 
-        setTimeout(() => {
-            if (dropdown.classList.contains('fade-out-x')) {
-                dropdown.classList.add('hidden');
+                setTimeout(() => {
+                    if (dropdown.classList.contains('fade-out-x')) {
+                        dropdown.classList.add('hidden');
+                    }
+                }, 200);
             }
-        }, 200);
     }
-}
 
-        function toggleFilterSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            const icon = document.getElementById(sectionId + 'Icon');
-            if (section && icon) {
-                section.classList.toggle('hidden');
-                icon.style.transform = section.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
-            }
+    function toggleFilterSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        const icon = document.getElementById(sectionId + 'Icon');
+        if (section && icon) {
+            section.classList.toggle('hidden');
+            icon.style.transform = section.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
         }
+    }
 
         function collectFiltersFromCheckboxes() {
             activeFilters = { priority: [], deadline: [], hasFiles: [] };
@@ -1880,94 +1711,6 @@ document.body.classList.remove('overflow-y-hidden');
             currentTaskId = null;
         }
 
-        // Открыть модальное окно просмотра задачи- эта функция уже написана в  app.blade.php
-    //     async function openTaskViewModal(taskId) {
-    //         console.log('openTaskViewModal')
-    //         const modal = document.getElementById('taskViewModal');
-    //         const content = document.getElementById('taskModalContent');
-
-    //         if (!modal || !content) {
-    //             console.error('Модальное окно не найдено');
-    //             return;
-    //         }
-
-    //         // Сохраняем ID задачи
-    //         window.currentTaskId = taskId;
-    //         window.taskId = taskId;
-
-    //         // МЕНЯЕМ URL БЕЗ ПЕРЕЗАГРУЗКИ СТРАНИЦЫ
-    //         const newUrl = `/team/tasks/${taskId}`;
-    //         window.history.pushState({ taskId: taskId, modalOpen: true }, '', newUrl);
-
-    //         // Показываем загрузчик
-    //         content.innerHTML = `
-    //     <div class="text-center py-8">
-    //         <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
-    //         <p class="text-gray-500 mt-2">Загрузка задачи...</p>
-    //     </div>
-    // `;
-
-    //         // Показываем модальное окно
-    //         modal.style.backdropFilter = 'blur(10px)';
-    //         modal.classList.remove('hidden');
-
-    //         try {
-    //             // ПРАВИЛЬНЫЙ URL - без /view и без /page
-    //             const response = await fetch(`/tasks/${taskId}`, {
-    //                 method: 'GET',
-    //                 headers: {
-    //                     'X-Requested-With': 'XMLHttpRequest',
-    //                     'Accept': 'text/html'
-    //                 }
-    //             });
-
-    //             if (!response.ok) {
-    //                 throw new Error(`HTTP error! status: ${response.status}`);
-    //             }
-
-    //             const html = await response.text();
-    //             content.innerHTML = html;
-
-    //         } catch (error) {
-    //             console.error('Ошибка:', error);
-    //             content.innerHTML = `
-    //         <div class="text-center py-8">
-    //             <i class="fas fa-exclamation-triangle text-3xl text-red-400"></i>
-    //             <p class="text-gray-500 mt-2">Не удалось загрузить задачу</p>
-    //             <p class="text-sm text-gray-400 mt-1">${error.message}</p>
-    //             <button onclick="openTaskViewModal(${taskId})"
-    //                     class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
-    //                 <i class="fas fa-sync-alt mr-2"></i>Повторить
-    //             </button>
-    //         </div>
-    //     `;
-    //         }
-    //     }
-
-        // Закрыть модальное окно просмотра задачи - эта функция уже написана в  app.blade.php
-        // function closeTaskViewModal() {
-        //     console.log('closeTaskViewModal Welcome')
-        //     const modal = document.getElementById('taskViewModal');
-        //     const content = document.getElementById('taskModalContent');
-
-        //     if (modal) {
-        //         modal.classList.add('hidden');
-        //         modal.style.backdropFilter = '';
-        //     }
-
-        //     if (content) {
-        //         content.innerHTML = `
-        //     <div class="text-center py-8">
-        //         <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
-        //         <p class="text-gray-500 mt-2">Загрузка задачи...</p>
-        //     </div>
-        // `;
-        //     }
-
-        //     // Меняем URL обратно на /team/tasks без перезагрузки
-        //     window.history.pushState({}, '', '/home');
-        // }
-
         // Обрабатываем кнопку "Назад" в браузере
         window.addEventListener('popstate', function(event) {
             const modal = document.getElementById('taskViewModal');
@@ -2146,150 +1889,7 @@ document.body.classList.remove('overflow-y-hidden');
 
     </script>
 
-    <style>
-        .swiper-notification {
-            display: none !important;
-        }
-        .task-card {
-            transition: all 0.2s ease-in-out;
-        }
-        .task-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        .board-column {
-            min-height: 600px;
-        }
-        .board-column[data-status="done"] .task-card {
-    opacity: 0.5;
-}
-        @media(max-width:500px) {
-            .board-column {
-                min-height: auto;
-            }
-        }
-        #filtersDropdown {
-            transition: all 0.2s ease;
-        }
-        .canban-col-title {
-            background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);
-        }
-
-        .tab-button {
-            border-color: transparent;
-            color: #6b7280;
-        }
-        .tab-button:hover {
-            color: #374151;
-            border-color: #d1d5db;
-        }
-        .tab-button.active {
-            border-color: #10b981;
-            color: #10b981;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .file-card {
-            transition: all 0.2s ease;
-        }
-        .file-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        .file-upload-area.drag-over {
-            border-color: #10b981;
-            background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
-            transform: scale(0.98);
-        }
-      .modal-content {
-    animation: fadeIn 0.3s ease-out;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.modal-content::-webkit-scrollbar {
-    display: none;
-}
-
-        .task-menu {
-            animation: fadeIn 0.15s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .board-column.drag-over {
-            background-color: rgba(229, 231, 235, 0.5) !important;
-            border-radius: 0.5rem;
-            transition: all 0.2s ease;
-        }
-
-        .board-column.drag-over-active {
-            background-color: rgba(16, 185, 129, 0.2) !important;
-            border: 2px dashed #10b981;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-        .shake {
-            animation: shake 0.3s ease-in-out;
-        }
-   @media (max-width: 500px) {
-    .board-column {
-        flex-shrink: 0 !important;
-        width: 87% !important;
-        max-width: 87% !important;
-    }
-    .board-column:first-child,
-    .board-column:last-child {
-        width: 92% !important;
-        max-width: 92% !important;
-    }
-
-    .task-card, .task-card * {
-        touch-action: pan-x pan-y !important;
-        -webkit-user-select: none !important;
-        user-select: none !important;
-        -webkit-touch-callout: none !important;
-    }
-}
-    </style>
-
 @endsection
-@push('styles')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
-    <style>
-        .sw-v-wrapper {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            position: relative;
-            z-index: 1;
-            transition-property: transform;
-            box-sizing: content-box;
-        }
-    </style>
-@endpush
 
 
 @push('scripts')
@@ -2361,59 +1961,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function closeConfirmArchiveModal() {
-        const modal = document.getElementById('confirmArchiveModal');
-        const modalContent = document.getElementById('confirmArchiveModalContent');
 
-        if (modal) {
-            modalContent.classList.remove('scale-100', 'opacity-100');
-            modalContent.classList.add('scale-95', 'opacity-0');
-
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                pendingArchiveTaskId = null;
-            }, 300);
-        }
-    }
-
-    async function confirmArchive() {
-        if (!pendingArchiveTaskId) return;
-
-        // Показываем индикатор загрузки на кнопке
-        const confirmBtn = document.querySelector('#confirmArchiveModal .bg-yellow-500');
-        const originalText = confirmBtn.innerHTML;
-        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Архивация...';
-        confirmBtn.disabled = true;
-
-        try {
-            const response = await fetch(`/tasks/${pendingArchiveTaskId}/archive`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                }
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                showNotification(data.message, 'success');
-                closeConfirmArchiveModal();
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                showNotification(data.message, 'error');
-                closeConfirmArchiveModal();
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showNotification('Ошибка при архивации задачи', 'error');
-            closeConfirmArchiveModal();
-        } finally {
-            confirmBtn.innerHTML = originalText;
-            confirmBtn.disabled = false;
-        }
-    }
 
     // ==================== ВОССТАНОВЛЕНИЕ С МОДАЛЬНЫМ ОКНОМ ====================
     function restoreTask(taskId) {
