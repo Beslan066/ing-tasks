@@ -1214,6 +1214,7 @@ media-src https://meet.jit.si https:;
     }
 
     function updateSelectedFilesDisplay() {
+        console.log('updateSelectedFiles')
         const container = document.getElementById('selectedFilesContainer');
         const fileCounter = document.getElementById('fileCounter');
         const fileCount = document.getElementById('fileCount');

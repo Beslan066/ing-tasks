@@ -1,5 +1,4 @@
 export function getFileIcon(extension) {
-    console.log('helpers.js getFileIcon')
     const ext = (extension || '').toLowerCase();
     if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) return '🖼️';
     if (['pdf'].includes(ext)) return '📄';
@@ -12,7 +11,6 @@ export function getFileIcon(extension) {
 }
 
 export function getFileTypeClass(extension) {
-        console.log('helpers.js getFileTypeClass')
     const ext = (extension || '').toLowerCase();
     if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) return { bg: 'bg-blue-100' };
     if (['pdf'].includes(ext)) return { bg: 'bg-red-100' };
@@ -22,7 +20,6 @@ export function getFileTypeClass(extension) {
 }
 
 export function formatFileSize(bytes) {
-        console.log('helpers.js formatFileSize')
     if (!bytes) return '0 B';
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
@@ -30,14 +27,12 @@ export function formatFileSize(bytes) {
 }
 
 export function formatDate(dateString) {
-        console.log('helpers.js formatDate')
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('ru-RU');
 }
 
 export function escapeHtml(text) {
-        console.log('helpers.js escapeHtml')
     if (!text) return '';
     const div = document.createElement('div');
     div.textContent = text;

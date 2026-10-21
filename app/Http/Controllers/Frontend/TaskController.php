@@ -597,237 +597,470 @@ private function attachFiles(Task $task, Request $request, $user): void
     /**
      * Update task
      */
+    // old
+    // public function update(Request $request, Task $task)
+    // {
+    //     $user = Auth::user();
+    //     $oldUserId = $task->user_id;
+    //     $oldStatus = $task->status;
+    //     $oldDepartmentId = $task->department_id;
+    //     $oldPriority = $task->priority;
+    //     $oldDeadline = $task->deadline;
+    //     $oldEstimatedHours = $task->estimated_hours;
+    //     $oldActualHours = $task->actual_hours;
+    //     $oldName = $task->name;
+    //     $oldDescription = $task->description;
+    //     $oldCategoryId = $task->category_id;
+
+    //     if (!$user->canViewAllCompanyTasks()) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'У вас нет прав для редактирования задач'
+    //         ], 403);
+    //     }
+
+    //     if ($task->company_id !== $user->company_id) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Задача не принадлежит вашей компании'
+    //         ], 403);
+    //     }
+
+    //     $validator = \Validator::make($request->all(), [
+    //         'name' => 'required|string|max:255',
+    //         'description' => 'nullable|string',
+    //         'department_id' => 'required|exists:departments,id',
+    //         'category_id' => 'nullable|exists:categories,id',
+    //         'user_id' => 'nullable|exists:users,id',
+    //         'priority' => 'required|in:низкий,средний,высокий,критический',
+    //         'status' => 'required|in:назначена,не назначена,в работе,просрочена,на проверке,выполнена',
+    //         'deadline' => 'nullable|date',
+    //         'estimated_hours' => 'nullable|numeric|min:0',
+    //         'actual_hours' => 'nullable|numeric|min:0',
+    //         'new_files' => 'nullable|array|max:10',
+    //         'new_files.*' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,png,jpg,jpeg,gif,zip',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Ошибки валидации',
+    //             'errors' => $validator->errors()
+    //         ], 422);
+    //     }
+
+    //     try {
+    //         DB::beginTransaction();
+
+    //         $department = Department::find($request->department_id);
+    //         if (!$department || $department->company_id !== $user->company_id) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Выбранный отдел не принадлежит вашей компании'
+    //             ], 422);
+    //         }
+
+    //         $newAssignedUser = null;
+
+    //         if ($request->user_id) {
+    //             $newAssignedUser = User::find($request->user_id);
+    //             if (!$newAssignedUser || $newAssignedUser->company_id !== $user->company_id) {
+    //                 return response()->json([
+    //                     'success' => false,
+    //                     'message' => 'Выбранный исполнитель не работает в вашей компании'
+    //                 ], 422);
+    //             }
+    //         }
+
+    //         $updateData = [
+    //             'name' => $request->name,
+    //             'description' => $request->description,
+    //             'department_id' => $request->department_id,
+    //             'category_id' => $request->category_id,
+    //             'user_id' => $request->user_id,
+    //             'priority' => $request->priority,
+    //             'status' => $request->status,
+    //             'deadline' => $request->deadline,
+    //             'estimated_hours' => $request->estimated_hours,
+    //             'actual_hours' => $request->actual_hours,
+    //         ];
+
+    //         if ($request->status === 'выполнена' && $task->status !== 'выполнена') {
+    //             $updateData['completed_at'] = now();
+    //         }
+
+    //         if ($request->status !== 'выполнена' && $task->status === 'выполнена') {
+    //             $updateData['completed_at'] = null;
+    //         }
+
+    //         $task->update($updateData);
+
+    //         $selectedFileIds = [];
+    //         $selectedFilesInput = $request->input('selected_files');
+
+    //         if (is_string($selectedFilesInput)) {
+    //             $decoded = json_decode($selectedFilesInput, true);
+    //             if (is_array($decoded)) {
+    //                 $selectedFileIds = $decoded;
+    //             }
+    //         } elseif (is_array($selectedFilesInput)) {
+    //             $selectedFileIds = $selectedFilesInput;
+    //         }
+
+    //         $selectedFileIds = array_values(array_unique(array_map('intval', array_filter($selectedFileIds))));
+
+    //                         // Оставляем только файлы своей компании: id приходят от клиента и их можно подделать
+    //             $selectedFileIds = File::whereIn('id', $selectedFileIds)
+    //                 ->where('company_id', $user->company_id)
+    //                 ->pluck('id')
+    //                 ->all();
+
+    //             // Новые файлы: сохраняем и добавляем их id в общий список ДО sync
+    //             if ($request->hasFile('new_files')) {
+    //                 foreach ($request->file('new_files') as $file) {
+    //                     $path = $file->store("tasks/{$task->id}", 'public');
+
+    //                     $fileRecord = File::create([
+    //                         'name' => $file->getClientOriginalName(),
+    //                         'file_path' => $path,
+    //                         'path' => $path,
+    //                         'file_size' => $file->getSize(),
+    //                         'size' => $file->getSize(),
+    //                         'mime_type' => $file->getMimeType(),
+    //                         'extension' => $file->getClientOriginalExtension(),
+    //                         'uploaded_by' => $user->id,
+    //                         'company_id' => $user->company_id,
+    //                         'department_id' => $task->department_id,
+    //                         'disk' => 'public',
+    //                         'folder' => 'tasks',
+    //                         'is_public' => false,
+    //                     ]);
+
+    //                     $selectedFileIds[] = $fileRecord->id;
+    //                 }
+    //             }
+
+    //             // sync([]) сам отвяжет всё, if/else с detach() больше не нужен
+    //             $task->files()->sync($selectedFileIds);
+
+    //         if (!empty($selectedFileIds)) {
+    //             $task->files()->sync($selectedFileIds);
+    //         } else {
+    //             $task->files()->detach();
+    //         }
+
+    //         if ($newAssignedUser && $oldUserId !== $newAssignedUser->id) {
+    //             try {
+    //                 $newAssignedUser->notify(new TaskAssignedNotification($task));
+    //             } catch (\Exception $e) {
+    //                 \Log::error('Notification error: ' . $e->getMessage());
+    //             }
+    //         }
+
+    //         $changes = [];
+
+    //         if ($oldName != $request->name) {
+    //             $changes[] = "название: '{$oldName}' → '{$request->name}'";
+    //         }
+    //         if ($oldStatus != $request->status) {
+    //             $changes[] = "статус: '{$oldStatus}' → '{$request->status}'";
+    //         }
+    //         if ($oldUserId != $request->user_id) {
+    //             $oldUserName = $oldUserId ? User::find($oldUserId)?->name : 'не назначен';
+    //             $newUserName = $request->user_id ? User::find($request->user_id)?->name : 'не назначен';
+    //             $changes[] = "исполнитель: '{$oldUserName}' → '{$newUserName}'";
+    //         }
+    //         if ($oldDepartmentId != $request->department_id) {
+    //             $oldDeptName = Department::find($oldDepartmentId)?->name ?? 'не указан';
+    //             $newDeptName = Department::find($request->department_id)?->name ?? 'не указан';
+    //             $changes[] = "отдел: '{$oldDeptName}' → '{$newDeptName}'";
+    //         }
+    //         if ($oldCategoryId != $request->category_id) {
+    //             $oldCatName = Category::find($oldCategoryId)?->name ?? 'не указана';
+    //             $newCatName = Category::find($request->category_id)?->name ?? 'не указана';
+    //             $changes[] = "категория: '{$oldCatName}' → '{$newCatName}'";
+    //         }
+    //         if ($oldPriority != $request->priority) {
+    //             $changes[] = "приоритет: '{$oldPriority}' → '{$request->priority}'";
+    //         }
+    //         if ($oldDeadline != $request->deadline) {
+    //             $oldDeadlineStr = $oldDeadline ? date('d.m.Y H:i', strtotime($oldDeadline)) : 'не указан';
+    //             $newDeadlineStr = $request->deadline ? date('d.m.Y H:i', strtotime($request->deadline)) : 'не указан';
+    //             $changes[] = "дедлайн: '{$oldDeadlineStr}' → '{$newDeadlineStr}'";
+    //         }
+    //         if ($oldEstimatedHours != $request->estimated_hours) {
+    //             $changes[] = "планируемые часы: '{$oldEstimatedHours}' → '{$request->estimated_hours}'";
+    //         }
+    //         if ($oldActualHours != $request->actual_hours) {
+    //             $changes[] = "фактические часы: '{$oldActualHours}' → '{$request->actual_hours}'";
+    //         }
+
+    //         if (!empty($changes)) {
+    //             $changesText = implode(', ', $changes);
+    //             ActivityLogger::taskUpdated($task, $user, $changesText);
+    //         }
+
+    //         if ($oldUserId != $request->user_id && $request->user_id) {
+    //             $newUser = User::find($request->user_id);
+    //             ActivityLogger::taskAssigned($task, $newUser, $user);
+    //         }
+
+    //         if ($oldStatus != $request->status) {
+    //             ActivityLogger::taskStatusChanged($task, $oldStatus, $request->status, $user);
+    //         }
+
+    //         DB::commit();
+
+    //         $task->load(['department', 'category', 'user', 'author', 'files']);
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Задача успешно обновлена',
+    //             'task' => $task
+    //         ]);
+
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         \Log::error('Error updating task: ' . $e->getMessage());
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Ошибка при обновлении задачи: ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+    // new:
     public function update(Request $request, Task $task)
-    {
-        $user = Auth::user();
-        $oldUserId = $task->user_id;
-        $oldStatus = $task->status;
-        $oldDepartmentId = $task->department_id;
-        $oldPriority = $task->priority;
-        $oldDeadline = $task->deadline;
-        $oldEstimatedHours = $task->estimated_hours;
-        $oldActualHours = $task->actual_hours;
-        $oldName = $task->name;
-        $oldDescription = $task->description;
-        $oldCategoryId = $task->category_id;
+{
+    $user = Auth::user();
+    $oldUserId = $task->user_id;
+    $oldStatus = $task->status;
+    $oldDepartmentId = $task->department_id;
+    $oldPriority = $task->priority;
+    $oldDeadline = $task->deadline;
+    $oldEstimatedHours = $task->estimated_hours;
+    $oldActualHours = $task->actual_hours;
+    $oldName = $task->name;
+    $oldDescription = $task->description;
+    $oldCategoryId = $task->category_id;
 
-        if (!$user->canViewAllCompanyTasks()) {
+    if (!$user->canViewAllCompanyTasks()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'У вас нет прав для редактирования задач'
+        ], 403);
+    }
+
+    if ($task->company_id !== $user->company_id) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Задача не принадлежит вашей компании'
+        ], 403);
+    }
+
+    $validator = \Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'department_id' => 'required|exists:departments,id',
+        'category_id' => 'nullable|exists:categories,id',
+        'user_id' => 'nullable|exists:users,id',
+        'priority' => 'required|in:низкий,средний,высокий,критический',
+        'status' => 'required|in:назначена,не назначена,в работе,просрочена,на проверке,выполнена',
+        'deadline' => 'nullable|date',
+        'estimated_hours' => 'nullable|numeric|min:0',
+        'actual_hours' => 'nullable|numeric|min:0',
+        'new_files' => 'nullable|array|max:10',
+        'new_files.*' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,png,jpg,jpeg,gif,zip',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Ошибки валидации',
+            'errors' => $validator->errors()
+        ], 422);
+    }
+
+    if ($task->is_personal) {
+        $newUserId = $task->author_id;
+    } elseif ($request->filled('user_id')) {
+        $newUserId = (int) $request->user_id;
+    } elseif ($request->has('user_id')) {
+        $newUserId = null;
+    } else {
+        $newUserId = $task->user_id;
+    }
+
+    try {
+        DB::beginTransaction();
+
+        $department = Department::find($request->department_id);
+        if (!$department || $department->company_id !== $user->company_id) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'У вас нет прав для редактирования задач'
-            ], 403);
-        }
-
-        if ($task->company_id !== $user->company_id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Задача не принадлежит вашей компании'
-            ], 403);
-        }
-
-        $validator = \Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'department_id' => 'required|exists:departments,id',
-            'category_id' => 'nullable|exists:categories,id',
-            'user_id' => 'nullable|exists:users,id',
-            'priority' => 'required|in:низкий,средний,высокий,критический',
-            'status' => 'required|in:назначена,не назначена,в работе,просрочена,на проверке,выполнена',
-            'deadline' => 'nullable|date',
-            'estimated_hours' => 'nullable|numeric|min:0',
-            'actual_hours' => 'nullable|numeric|min:0',
-            'new_files' => 'nullable|array|max:10',
-            'new_files.*' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,png,jpg,jpeg,gif,zip',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибки валидации',
-                'errors' => $validator->errors()
+                'message' => 'Выбранный отдел не принадлежит вашей компании'
             ], 422);
         }
 
-        try {
-            DB::beginTransaction();
+        $newAssignedUser = null;
 
-            $department = Department::find($request->department_id);
-            if (!$department || $department->company_id !== $user->company_id) {
+        if ($newUserId) {
+            $newAssignedUser = User::find($newUserId);
+            if (!$newAssignedUser || $newAssignedUser->company_id !== $user->company_id) {
+                DB::rollBack(); // ИЗМЕНЕНО
                 return response()->json([
                     'success' => false,
-                    'message' => 'Выбранный отдел не принадлежит вашей компании'
+                    'message' => 'Выбранный исполнитель не работает в вашей компании'
                 ], 422);
             }
-
-            $newAssignedUser = null;
-
-            if ($request->user_id) {
-                $newAssignedUser = User::find($request->user_id);
-                if (!$newAssignedUser || $newAssignedUser->company_id !== $user->company_id) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Выбранный исполнитель не работает в вашей компании'
-                    ], 422);
-                }
-            }
-
-            $updateData = [
-                'name' => $request->name,
-                'description' => $request->description,
-                'department_id' => $request->department_id,
-                'category_id' => $request->category_id,
-                'user_id' => $request->user_id,
-                'priority' => $request->priority,
-                'status' => $request->status,
-                'deadline' => $request->deadline,
-                'estimated_hours' => $request->estimated_hours,
-                'actual_hours' => $request->actual_hours,
-            ];
-
-            if ($request->status === 'выполнена' && $task->status !== 'выполнена') {
-                $updateData['completed_at'] = now();
-            }
-
-            if ($request->status !== 'выполнена' && $task->status === 'выполнена') {
-                $updateData['completed_at'] = null;
-            }
-
-            $task->update($updateData);
-
-            $selectedFileIds = [];
-            $selectedFilesInput = $request->input('selected_files');
-
-            if (is_string($selectedFilesInput)) {
-                $decoded = json_decode($selectedFilesInput, true);
-                if (is_array($decoded)) {
-                    $selectedFileIds = $decoded;
-                }
-            } elseif (is_array($selectedFilesInput)) {
-                $selectedFileIds = $selectedFilesInput;
-            }
-
-            $selectedFileIds = array_values(array_unique(array_map('intval', array_filter($selectedFileIds))));
-
-                            // Оставляем только файлы своей компании: id приходят от клиента и их можно подделать
-                $selectedFileIds = File::whereIn('id', $selectedFileIds)
-                    ->where('company_id', $user->company_id)
-                    ->pluck('id')
-                    ->all();
-
-                // Новые файлы: сохраняем и добавляем их id в общий список ДО sync
-                if ($request->hasFile('new_files')) {
-                    foreach ($request->file('new_files') as $file) {
-                        $path = $file->store("tasks/{$task->id}", 'public');
-
-                        $fileRecord = File::create([
-                            'name' => $file->getClientOriginalName(),
-                            'file_path' => $path,
-                            'path' => $path,
-                            'file_size' => $file->getSize(),
-                            'size' => $file->getSize(),
-                            'mime_type' => $file->getMimeType(),
-                            'extension' => $file->getClientOriginalExtension(),
-                            'uploaded_by' => $user->id,
-                            'company_id' => $user->company_id,
-                            'department_id' => $task->department_id,
-                            'disk' => 'public',
-                            'folder' => 'tasks',
-                            'is_public' => false,
-                        ]);
-
-                        $selectedFileIds[] = $fileRecord->id;
-                    }
-                }
-
-                // sync([]) сам отвяжет всё, if/else с detach() больше не нужен
-                $task->files()->sync($selectedFileIds);
-
-            if (!empty($selectedFileIds)) {
-                $task->files()->sync($selectedFileIds);
-            } else {
-                $task->files()->detach();
-            }
-
-            if ($newAssignedUser && $oldUserId !== $newAssignedUser->id) {
-                try {
-                    $newAssignedUser->notify(new TaskAssignedNotification($task));
-                } catch (\Exception $e) {
-                    \Log::error('Notification error: ' . $e->getMessage());
-                }
-            }
-
-            $changes = [];
-
-            if ($oldName != $request->name) {
-                $changes[] = "название: '{$oldName}' → '{$request->name}'";
-            }
-            if ($oldStatus != $request->status) {
-                $changes[] = "статус: '{$oldStatus}' → '{$request->status}'";
-            }
-            if ($oldUserId != $request->user_id) {
-                $oldUserName = $oldUserId ? User::find($oldUserId)?->name : 'не назначен';
-                $newUserName = $request->user_id ? User::find($request->user_id)?->name : 'не назначен';
-                $changes[] = "исполнитель: '{$oldUserName}' → '{$newUserName}'";
-            }
-            if ($oldDepartmentId != $request->department_id) {
-                $oldDeptName = Department::find($oldDepartmentId)?->name ?? 'не указан';
-                $newDeptName = Department::find($request->department_id)?->name ?? 'не указан';
-                $changes[] = "отдел: '{$oldDeptName}' → '{$newDeptName}'";
-            }
-            if ($oldCategoryId != $request->category_id) {
-                $oldCatName = Category::find($oldCategoryId)?->name ?? 'не указана';
-                $newCatName = Category::find($request->category_id)?->name ?? 'не указана';
-                $changes[] = "категория: '{$oldCatName}' → '{$newCatName}'";
-            }
-            if ($oldPriority != $request->priority) {
-                $changes[] = "приоритет: '{$oldPriority}' → '{$request->priority}'";
-            }
-            if ($oldDeadline != $request->deadline) {
-                $oldDeadlineStr = $oldDeadline ? date('d.m.Y H:i', strtotime($oldDeadline)) : 'не указан';
-                $newDeadlineStr = $request->deadline ? date('d.m.Y H:i', strtotime($request->deadline)) : 'не указан';
-                $changes[] = "дедлайн: '{$oldDeadlineStr}' → '{$newDeadlineStr}'";
-            }
-            if ($oldEstimatedHours != $request->estimated_hours) {
-                $changes[] = "планируемые часы: '{$oldEstimatedHours}' → '{$request->estimated_hours}'";
-            }
-            if ($oldActualHours != $request->actual_hours) {
-                $changes[] = "фактические часы: '{$oldActualHours}' → '{$request->actual_hours}'";
-            }
-
-            if (!empty($changes)) {
-                $changesText = implode(', ', $changes);
-                ActivityLogger::taskUpdated($task, $user, $changesText);
-            }
-
-            if ($oldUserId != $request->user_id && $request->user_id) {
-                $newUser = User::find($request->user_id);
-                ActivityLogger::taskAssigned($task, $newUser, $user);
-            }
-
-            if ($oldStatus != $request->status) {
-                ActivityLogger::taskStatusChanged($task, $oldStatus, $request->status, $user);
-            }
-
-            DB::commit();
-
-            $task->load(['department', 'category', 'user', 'author', 'files']);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Задача успешно обновлена',
-                'task' => $task
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            \Log::error('Error updating task: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибка при обновлении задачи: ' . $e->getMessage()
-            ], 500);
         }
-    }
 
+        $updateData = [
+            'name' => $request->name,
+            'description' => $request->description,
+            'department_id' => $request->department_id,
+            'category_id' => $request->category_id,
+            'user_id' => $newUserId,
+            'priority' => $request->priority,
+            'status' => $request->status,
+            'deadline' => $request->deadline,
+            'estimated_hours' => $request->estimated_hours,
+            'actual_hours' => $request->actual_hours,
+        ];
+
+        if ($request->status === 'выполнена' && $task->status !== 'выполнена') {
+            $updateData['completed_at'] = now();
+        }
+
+        if ($request->status !== 'выполнена' && $task->status === 'выполнена') {
+            $updateData['completed_at'] = null;
+        }
+
+        $task->update($updateData);
+
+        $selectedFileIds = [];
+        $selectedFilesInput = $request->input('selected_files');
+
+        if (is_string($selectedFilesInput)) {
+            $decoded = json_decode($selectedFilesInput, true);
+            if (is_array($decoded)) {
+                $selectedFileIds = $decoded;
+            }
+        } elseif (is_array($selectedFilesInput)) {
+            $selectedFileIds = $selectedFilesInput;
+        }
+
+        $selectedFileIds = array_values(array_unique(array_map('intval', array_filter($selectedFileIds))));
+
+        $selectedFileIds = File::whereIn('id', $selectedFileIds)
+            ->where('company_id', $user->company_id)
+            ->pluck('id')
+            ->all();
+
+        if ($request->hasFile('new_files')) {
+            foreach ($request->file('new_files') as $file) {
+                $path = $file->store("tasks/{$task->id}", 'public');
+
+                $fileRecord = File::create([
+                    'name' => $file->getClientOriginalName(),
+                    'file_path' => $path,
+                    'path' => $path,
+                    'file_size' => $file->getSize(),
+                    'size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
+                    'extension' => $file->getClientOriginalExtension(),
+                    'uploaded_by' => $user->id,
+                    'company_id' => $user->company_id,
+                    'department_id' => $task->department_id,
+                    'disk' => 'public',
+                    'folder' => 'tasks',
+                    'is_public' => false,
+                ]);
+
+                $selectedFileIds[] = $fileRecord->id;
+            }
+        }
+
+        $task->files()->sync($selectedFileIds);
+
+        if ($newAssignedUser && $oldUserId !== $newAssignedUser->id) {
+            try {
+                $newAssignedUser->notify(new TaskAssignedNotification($task));
+            } catch (\Exception $e) {
+                \Log::error('Notification error: ' . $e->getMessage());
+            }
+        }
+
+        $changes = [];
+
+        if ($oldName != $request->name) {
+            $changes[] = "название: '{$oldName}' → '{$request->name}'";
+        }
+        if ($oldStatus != $request->status) {
+            $changes[] = "статус: '{$oldStatus}' → '{$request->status}'";
+        }
+        if ($oldUserId != $newUserId) { // ИЗМЕНЕНО
+            $oldUserName = $oldUserId ? User::find($oldUserId)?->name : 'не назначен';
+            $newUserName = $newUserId ? User::find($newUserId)?->name : 'не назначен';
+            $changes[] = "исполнитель: '{$oldUserName}' → '{$newUserName}'";
+        }
+        if ($oldDepartmentId != $request->department_id) {
+            $oldDeptName = Department::find($oldDepartmentId)?->name ?? 'не указан';
+            $newDeptName = Department::find($request->department_id)?->name ?? 'не указан';
+            $changes[] = "отдел: '{$oldDeptName}' → '{$newDeptName}'";
+        }
+        if ($oldCategoryId != $request->category_id) {
+            $oldCatName = Category::find($oldCategoryId)?->name ?? 'не указана';
+            $newCatName = Category::find($request->category_id)?->name ?? 'не указана';
+            $changes[] = "категория: '{$oldCatName}' → '{$newCatName}'";
+        }
+        if ($oldPriority != $request->priority) {
+            $changes[] = "приоритет: '{$oldPriority}' → '{$request->priority}'";
+        }
+        if ($oldDeadline != $request->deadline) {
+            $oldDeadlineStr = $oldDeadline ? date('d.m.Y H:i', strtotime($oldDeadline)) : 'не указан';
+            $newDeadlineStr = $request->deadline ? date('d.m.Y H:i', strtotime($request->deadline)) : 'не указан';
+            $changes[] = "дедлайн: '{$oldDeadlineStr}' → '{$newDeadlineStr}'";
+        }
+        if ($oldEstimatedHours != $request->estimated_hours) {
+            $changes[] = "планируемые часы: '{$oldEstimatedHours}' → '{$request->estimated_hours}'";
+        }
+        if ($oldActualHours != $request->actual_hours) {
+            $changes[] = "фактические часы: '{$oldActualHours}' → '{$request->actual_hours}'";
+        }
+
+        if (!empty($changes)) {
+            $changesText = implode(', ', $changes);
+            ActivityLogger::taskUpdated($task, $user, $changesText);
+        }
+
+        if ($oldUserId != $newUserId && $newAssignedUser) {
+            ActivityLogger::taskAssigned($task, $newAssignedUser, $user);
+        }
+
+        if ($oldStatus != $request->status) {
+            ActivityLogger::taskStatusChanged($task, $oldStatus, $request->status, $user);
+        }
+
+        DB::commit();
+
+        $task->load(['department', 'category', 'user', 'author', 'files']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Задача успешно обновлена',
+            'task' => $task
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        \Log::error('Error updating task: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Ошибка при обновлении задачи: ' . $e->getMessage()
+        ], 500);
+    }
+}
     /**
      * Add files to task
      */
@@ -1044,68 +1277,67 @@ private function attachFiles(Task $task, Request $request, $user): void
     }
 
     public function storePersonal(Request $request)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    $validator = \Validator::make($request->all(), [
-        'name'            => 'required|string|max:255',
-        'description'     => 'nullable|string|max:5000',
-        'category_id'     => ['nullable', Rule::exists('categories', 'id')->where('company_id', $user->company_id)],
-        'priority'        => 'required|in:низкий,средний,высокий,критический',
-        'deadline'        => 'nullable|date',
-        'estimated_hours' => 'nullable|numeric|min:0',
-        'selected_file_ids'   => 'nullable|array|max:20',
-        'selected_file_ids.*' => ['integer', Rule::exists('files', 'id')->where('company_id', $user->company_id)],
-        'new_files'   => 'nullable|array|max:10',
-        'new_files.*' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,gif,zip',
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Ошибки валидации',
-            'errors'  => $validator->errors(),
-        ], 422);
-    }
-
-    try {
-        $departmentId = $user->departments()->first()?->id;
-
-        $task = DB::transaction(function () use ($request, $user, $departmentId) {
-            $task = Task::create([
-                'name'            => $request->name,
-                'description'     => $request->description,
-                'department_id'   => $departmentId,
-                'category_id'     => $request->category_id,
-                'user_id'         => $user->id,
-                'priority'        => $request->priority,
-                'status'          => 'назначена',
-                'deadline'        => $request->deadline,
-                'estimated_hours' => $request->estimated_hours,
-                'company_id'      => $user->company_id,
-                'author_id'       => $user->id,
-                'is_personal'     => true,
-            ]);
-
-            $this->attachFiles($task, $request, $user);
-
-            return $task;
-        });
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Личная задача успешно создана',
-            'task'    => $task->load(['department', 'category', 'author:id,name'])->loadCount('files'),
+        $validator = \Validator::make($request->all(), [
+            'name'            => 'required|string|max:255',
+            'description'     => 'nullable|string|max:5000',
+            'category_id'     => ['nullable', Rule::exists('categories', 'id')->where('company_id', $user->company_id)],
+            'priority'        => 'required|in:низкий,средний,высокий,критический',
+            'deadline'        => 'nullable|date',
+            'estimated_hours' => 'nullable|numeric|min:0',
+            'selected_file_ids'   => 'nullable|array|max:20',
+            'selected_file_ids.*' => ['integer', Rule::exists('files', 'id')->where('company_id', $user->company_id)],
+            'new_files'   => 'nullable|array|max:10',
+            'new_files.*' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,gif,zip',
         ]);
-    } catch (\Throwable $e) {
-        \Log::error('Error creating personal task: ' . $e->getMessage(), ['exception' => $e]);
 
-        return response()->json([
-            'success' => false,
-            'message' => 'Не удалось создать задачу. Попробуйте ещё раз.',
-        ], 500);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибки валидации',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+
+            $task = DB::transaction(function () use ($request, $user) {
+                $task = Task::create([
+                    'name'            => $request->name,
+                    'description'     => $request->description,
+                    'department_id'   => null,
+                    'category_id'     => $request->category_id,
+                    'user_id'         => $user->id,
+                    'priority'        => $request->priority,
+                    'status'          => 'назначена',
+                    'deadline'        => $request->deadline,
+                    'estimated_hours' => $request->estimated_hours,
+                    'company_id'      => $user->company_id,
+                    'author_id'       => $user->id,
+                    'is_personal'     => true,
+                ]);
+
+                $this->attachFiles($task, $request, $user);
+
+                return $task;
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Личная задача успешно создана',
+                'task'    => $task->load(['department', 'category', 'author:id,name'])->loadCount('files'),
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Error creating personal task: ' . $e->getMessage(), ['exception' => $e]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Не удалось создать задачу. Попробуйте ещё раз.',
+            ], 500);
+        }
     }
-}
 
     /**
      * Архивировать задачу (мягкое удаление)

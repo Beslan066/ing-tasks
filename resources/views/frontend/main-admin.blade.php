@@ -128,20 +128,13 @@
                             </div>
 
                             <!-- Статус -->
-                            <div>
-                                <label class="block text-sm font-medium text-white mb-1">Статус</label>
-                                <select name="status"
-                                        class="w-full border border-gray-800 rounded-lg appearance-none px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
-                                    <option value="">Все статусы</option>
-                                    @foreach($filterData['statuses'] as $status)
-                                        <option class="text-gray-800"
-                                                value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
-                                            {{ $status }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
+                            <x-form.input-select
+                                name="status"
+                                label="Статус"
+                                :required="false"
+                                :value="request('status')"
+                                :options="collect($filterData['statuses'])->mapWithKeys(fn($status) => [$status => $status])->prepend('Все статусы', '')->toArray()"
+                            />
                             <!-- Исполнитель -->
                             <div>
                                 <label class="block text-sm font-medium text-white mb-1">Исполнитель</label>
@@ -204,11 +197,11 @@
 
                             <!-- Кнопки фильтра -->
                             <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                              <button type="button" onclick="updateViewModeBeforeSubmit()"
+                              <button type="button" onclick="window.mainPageFilters.updateViewModeBeforeSubmit()"
                                         class="text-white px-4 py-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm md:text-base transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                                     Применить фильтры
                                 </button>
-                                <button type="button" onclick="resetWithCurrentMode()"
+                                <button type="button" onclick="window.mainPageFilters.resetWithCurrentMode()"
                                         class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm md:text-base">
                                     Сбросить
                                 </button>
@@ -232,7 +225,7 @@
                             </div>
 
                             <!-- Статус -->
-                            <div>
+                            <!-- <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
                                 <select name="status"
                                         class="w-full border border-gray-300 rounded-lg appearance-none px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
@@ -243,8 +236,14 @@
                                         </option>
                                     @endforeach
                                 </select>
-                            </div>
-
+                            </div> -->
+                             <x-form.input-select
+                                name="status"
+                                label="Статус"
+                                :required="false"
+                                :value="request('status')"
+                                :options="collect($filterData['statuses'])->mapWithKeys(fn($status) => [$status => $status])->prepend('Все статусы', '')->toArray()"
+                            />
                             <!-- Исполнитель -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Исполнитель</label>
@@ -303,11 +302,11 @@
 
                             <!-- Кнопки фильтра -->
                             <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                                  <button type="button" onclick="updateViewModeBeforeSubmit()"
+                                  <button type="button" onclick="window.mainPageFilters.updateViewModeBeforeSubmit()"
                                         class="text-white px-4 py-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm md:text-base transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
                                     Применить фильтры
                                 </button>
-                                <button type="button" onclick="resetWithCurrentMode()"
+                                <button type="button" onclick="window.mainPageFilters.resetWithCurrentMode()"
                                         class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm md:text-base">
                                     Сбросить
                                 </button>
@@ -1627,87 +1626,6 @@
         let taskSelectedFiles = [];
         let taskAllFiles = [];
 
-        // ==================== ПЕРЕКЛЮЧЕНИЕ РЕЖИМОВ ====================
-        function setViewMode(mode) {
-              const listContainer = document.getElementById('listViewContainer');
-              const kanbanContainer = document.getElementById('kanbanViewContainer');
-              const statisticCard = document.getElementById('statisticCardContainer');
-              const listBtn = document.getElementById('viewModeListBtn');
-              const kanbanBtn = document.getElementById('viewModeKanbanBtn');
-              const filterForm = document.getElementById('filterForm');
-              const filterFormList = document.getElementById('filterFormList');
-
-                if (mode === 'list') {
-                    listContainer.classList.remove('hidden');
-                    kanbanContainer.classList.add('hidden');
-                    statisticCard.classList.remove('hidden');
-
-                    listBtn.classList.add('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
-                    listBtn.classList.remove('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
-                    kanbanBtn.classList.remove('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
-                    kanbanBtn.classList.add('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
-                } else {
-                    listContainer.classList.add('hidden');
-                    kanbanContainer.classList.remove('hidden');
-                    statisticCard.classList.add('hidden');
-                    kanbanBtn.classList.add('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
-                    kanbanBtn.classList.remove('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
-                    listBtn.classList.remove('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
-                    listBtn.classList.add('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
-                }
-
-            // Используем правильный URL /set-view-mode
-            fetch('/set-view-mode', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ view_mode: mode })
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        // Обновляем URL в адресной строке
-                        const url = new URL(window.location.href);
-                        url.searchParams.set('view_mode', mode);
-                        window.history.pushState({}, '', url);
-
-                        // Обновляем скрытые поля в формах фильтров
-                        if (filterForm) {
-                            let viewModeInput = filterForm.querySelector('input[name="view_mode"]');
-                            if (!viewModeInput) {
-                                viewModeInput = document.createElement('input');
-                                viewModeInput.type = 'hidden';
-                                viewModeInput.name = 'view_mode';
-                                filterForm.appendChild(viewModeInput);
-                            }
-                            viewModeInput.value = mode;
-                        }
-
-                        if (filterFormList) {
-                            let viewModeInput = filterFormList.querySelector('input[name="view_mode"]');
-                            if (!viewModeInput) {
-                                viewModeInput = document.createElement('input');
-                                viewModeInput.type = 'hidden';
-                                viewModeInput.name = 'view_mode';
-                                filterFormList.appendChild(viewModeInput);
-                            }
-                            viewModeInput.value = mode;
-                        }
-
-                        console.log('View mode saved:', mode);
-                    }
-                })
-                .catch(error => console.error('Error saving view mode:', error));
-        }
-
         // ==================== ФУНКЦИИ ДЛЯ МЕНЮ С ТРЕМЯ ТОЧКАМИ ====================
         function toggleTaskMenu(event, taskId) {
             event.stopPropagation();
@@ -1724,35 +1642,6 @@
             }
         });
 
-        // ==================== ПЕРЕКЛЮЧЕНИЕ ФИЛЬТРОВ ====================
-        // document.getElementById('filterToggle')?.addEventListener('click', function () {
-        //     document.getElementById('filtersPanel').classList.toggle('hidden');
-        // });
-  function toggleFiltersDropdown() {
-    const dropdown = document.getElementById('filtersPanel');
-    const chevron = document.getElementById('filterIcon');
-
-    if (!dropdown || !chevron) return;
-    const isHidden = dropdown.classList.contains('hidden');
-
-    if (isHidden) {
-        dropdown.classList.remove('hidden');
-        dropdown.classList.remove('fade-out-x');
-        dropdown.classList.add('fade-in-x');
-        chevron.style.transform = 'rotate(180deg)';
-    } else {
-        dropdown.classList.remove('fade-in-x');
-        dropdown.classList.add('fade-out-x');
-
-        chevron.style.transform = 'rotate(0deg)';
-
-        setTimeout(() => {
-            if (dropdown.classList.contains('fade-out-x')) {
-                dropdown.classList.add('hidden');
-            }
-        }, 200);
-    }
-}
         // ==================== СОРТИРОВКА ====================
         // Обновите обработчики сортировки
         document.getElementById('sortSelect')?.addEventListener('change', function () {
@@ -1987,9 +1876,9 @@
             const contentDiv = document.getElementById('fileManagerContent');
             if (!contentDiv) return;
             contentDiv.innerHTML = `<div class="col-span-full text-center py-12">
-        <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
-        <p class="text-gray-500 mt-2">Загрузка файлов...</p>
-    </div>`;
+                <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
+                <p class="text-gray-500 mt-2">Загрузка файлов...</p>
+            </div>`;
 
             try {
                 const response = await fetch('/tasks/file-storage/get-files', {
@@ -2008,7 +1897,7 @@
                 contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">
             <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
             <p>Ошибка загрузки файлов</p>
-        </div>`;
+            </div>`;
             }
         }
 
@@ -2019,7 +1908,7 @@
                 contentDiv.innerHTML = `<div class="col-span-full text-center py-12">
             <i class="fas fa-folder-open text-3xl text-gray-300 mb-2"></i>
             <p class="text-gray-500">Нет файлов в хранилище</p>
-        </div>`;
+            </div>`;
                 return;
             }
 
@@ -2990,39 +2879,6 @@
         }
 
         // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
-        function getFileIcon(ext) {
-            const icons = {
-                'pdf': '📄', 'doc': '📝', 'docx': '📝', 'xls': '📊', 'xlsx': '📊',
-                'jpg': '🖼️', 'png': '🖼️', 'gif': '🖼️', 'zip': '📦', 'rar': '📦',
-                'mp3': '🎵', 'mp4': '🎬', 'avi': '🎬', 'mov': '🎬'
-            };
-            return icons[(ext || '').toLowerCase()] || '📎';
-        }
-
-        function getFileTypeClass(ext) {
-            return { bg: 'bg-gray-100' };
-        }
-
-        function formatFileSize(bytes) {
-            if (!bytes) return '0 B';
-            const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(1024));
-            return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('ru-RU');
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
         function displayRejections(rejections) {
             const container = document.getElementById('editRejectionsList');
             const countSpan = document.getElementById('editRejectionsCount');
@@ -3152,41 +3008,6 @@ console.log('test2')
 
             function printTask() {
                 window.print();
-            }
-
-            function updateViewModeBeforeSubmit() {
-                const mode = document.querySelector('#viewModeListBtn').classList.contains('bg-green-600') ? 'list' : 'kanban';
-                const filterForm = document.getElementById('filterForm');
-                const filterFormList = document.getElementById('filterFormList');
-
-                const formToUse = filterForm || filterFormList;
-                if (formToUse) {
-                    let viewModeInput = formToUse.querySelector('input[name="view_mode"]');
-                    if (!viewModeInput) {
-                        viewModeInput = document.createElement('input');
-                        viewModeInput.type = 'hidden';
-                        viewModeInput.name = 'view_mode';
-                        formToUse.appendChild(viewModeInput);
-                    }
-                    viewModeInput.value = mode;
-                    formToUse.submit();
-                }
-            }
-
-            function resetWithCurrentMode() {
-                const mode = document.querySelector('#viewModeListBtn').classList.contains('bg-green-600') ? 'list' : 'kanban';
-                const url = new URL(window.location.href);
-                // Очищаем все параметры фильтрации
-                url.searchParams.delete('search');
-                url.searchParams.delete('status');
-                url.searchParams.delete('user_id');
-                url.searchParams.delete('department_id');
-                url.searchParams.delete('priority');
-                url.searchParams.delete('category_id');
-                url.searchParams.delete('sort');
-                url.searchParams.delete('order');
-                url.searchParams.set('view_mode', mode);
-                window.location.href = url.toString();
             }
 
             // Переменные для хранения ID задачи
@@ -3444,14 +3265,14 @@ console.log('test2')
             transform: scale(0.98);
         }
          .modal-content {
-    animation: fadeIn 0.3s ease-out;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
+            animation: fadeIn 0.3s ease-out;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
 
-.modal-content::-webkit-scrollbar {
-    display: none;
-}
+        .modal-content::-webkit-scrollbar {
+            display: none;
+        }
         .task-menu {
             animation: fadeIn 0.15s ease-out;
         }

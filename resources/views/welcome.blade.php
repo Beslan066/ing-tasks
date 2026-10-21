@@ -1,85 +1,149 @@
-@extends('layouts.app')
-@push('styles')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
-    @vite('resources/css/pages/welcome.page.css')
+@extends ('layouts.app')
+@push ('styles')
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css"
+    />
+    @vite ('resources/css/pages/welcome.page.css')
 @endpush
-@section('content')
-
+@section ('content')
     @php
         $backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
         $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
     @endphp
-        <!-- Заголовок и статистика -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
+    <!-- Заголовок и статистика -->
+    <div
+        class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4"
+    >
         <nav class="hidden max-[500px]:block">
-                            <ol class="flex items-center gap-1.5">
-                                <li>
-                                    <a class="inline-flex items-center gap-1.5 text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-500 dark:text-gray-400' }}"
-                                       href="{{ route('welcome') }}">
-                                        Главная
-                                        <svg class="stroke-current" width="17" height="16" viewBox="0 0 17 16" fill="none"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366" stroke="" stroke-width="1.2"
-                                                  stroke-linecap="round" stroke-linejoin="round"></path>
-                                        </svg>
-                                    </a>
-                                </li>
-                                <li class="text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-800 dark:text-white/90' }}" x-text="pageName">Мои задачи</li>
-                            </ol>
-                        </nav>
+            <ol class="flex items-center gap-1.5">
+                <li>
+                    <a
+                        class="inline-flex items-center gap-1.5 text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-500 dark:text-gray-400' }}"
+                        href="{{ route('welcome') }}"
+                    >
+                        Главная
+                        <svg
+                            class="stroke-current"
+                            width="17"
+                            height="16"
+                            viewBox="0 0 17 16"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366"
+                                stroke=""
+                                stroke-width="1.2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            ></path>
+                        </svg>
+                    </a>
+                </li>
+                <li
+                    class="text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-800 dark:text-white/90' }}"
+                    x-text="pageName"
+                >
+                    Мои задачи
+                </li>
+            </ol>
+        </nav>
         <div class="max-[500px]:hidden">
-            @if($backgroundEnabled && $backgroundImage)
-                <h2 class="text-3xl font-bold text-white max-[500px]:text-[26px]">Мои задачи</h2>
+            @if ($backgroundEnabled && $backgroundImage)
+                <h2
+                    class="text-3xl font-bold text-white max-[500px]:text-[26px]"
+                >
+                    Мои задачи
+                </h2>
                 <p class="text-white text-sm max-[500px]:text-[13px]">Ваши личные задачи не видны на странице Команда</p>
             @else
-                <h2 class="text-3xl font-bold max-[500px]:text-[26px]" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Мои задачи</h2>
+                <h2
+                    class="text-3xl font-bold max-[500px]:text-[26px]"
+                    style="
+                        background: linear-gradient(
+                            135deg,
+                            #10b981 0%,
+                            #059669 100%
+                        );
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                    "
+                >
+                    Мои задачи
+                </h2>
                 <p class="text-gray-700 text-sm max-[500px]:text-[13px]">Ваши личные задачи не видны на странице Команда</p>
             @endif
         </div>
 
         <div class="flex space-x-4 w-full md:w-auto">
-            <button onclick="openPersonalTaskModal()"
-        class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
-    <i class="fas fa-plus"></i>
-    <span>Добавить</span>
-</button>
+            <x-ui.button
+                class="flex-1 px-3 py-2 md:px-6 md:py-2"
+                variant="action"
+                icon="fas fa-plus"
+                onclick="openPersonalTaskModal()"
+            >
+                <span>Добавить</span>
+            </x-ui.button>
         </div>
     </div>
 
     <!-- Фильтры -->
     <div class="mb-4 max-[500px]:mb-1 relative">
         <div class="flex items-center gap-2 flex-wrap">
-<!-- class="max-[450px]:fixed max-[450px]:bottom-3 max-[450px]:left-3" -->
+            <!-- class="max-[450px]:fixed max-[450px]:bottom-3 max-[450px]:left-3" -->
             <!-- Кнопка фильтров -->
             <div class="relative">
-
-                @if($backgroundEnabled && $backgroundImage)
-                    <button onclick="toggleFiltersDropdown()"
-                            class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
+                @if ($backgroundEnabled && $backgroundImage)
+                    <button
+                        onclick="toggleFiltersDropdown()"
+                        class="bg-transparent/20 border-none text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm"
+                    >
                         <i class="fas fa-filter"></i>
                         <span>Фильтры</span>
-                        <span id="activeFiltersCount"
-                              class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
-                        <i class="fas fa-chevron-down ml-1 text-xs transition-transform" id="filtersChevron"></i>
+                        <span
+                            id="activeFiltersCount"
+                            class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden"
+                            >0</span
+                        >
+                        <i
+                            class="fas fa-chevron-down ml-1 text-xs transition-transform"
+                            id="filtersChevron"
+                        ></i>
                     </button>
                 @else
-                    <button onclick="toggleFiltersDropdown()"
-                            class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm">
+                    <button
+                        onclick="toggleFiltersDropdown()"
+                        class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition text-sm"
+                    >
                         <i class="fas fa-filter"></i>
                         <span>Фильтры</span>
-                        <span id="activeFiltersCount"
-                              class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden">0</span>
-                        <i class="fas fa-chevron-down ml-1 text-xs transition-transform" id="filtersChevron"></i>
+                        <span
+                            id="activeFiltersCount"
+                            class="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded-full ml-1 hidden"
+                            >0</span
+                        >
+                        <i
+                            class="fas fa-chevron-down ml-1 text-xs transition-transform"
+                            id="filtersChevron"
+                        ></i>
                     </button>
                 @endif
 
                 <!-- Выпадающая панель фильтров -->
-                <div id="filtersDropdown"
-                     class="hidden absolute left-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border z-50 max-[500px]:w-[95vw] max-[500px]:left-[-100%] max-[500px]:transform max-[500px]:translate-x-[5%] max-[450px]:left-[-0%]  max-[450px]:translate-x-[0%]">
+                <div
+                    id="filtersDropdown"
+                    class="hidden absolute left-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border z-50 max-[500px]:w-[95vw] max-[500px]:left-[-100%] max-[500px]:transform max-[500px]:translate-x-[5%] max-[450px]:left-[-0%] max-[450px]:translate-x-[0%]"
+                >
                     <div class="p-4 border-b border-gray-100">
                         <div class="flex justify-between items-center">
-                            <h3 class="font-semibold text-gray-800">Фильтрация задач</h3>
-                            <button onclick="clearAllFilters()" class="text-sm text-gray-500 hover:text-gray-700">
+                            <h3 class="font-semibold text-gray-800">
+                                Фильтрация задач
+                            </h3>
+                            <button
+                                onclick="clearAllFilters()"
+                                class="text-sm text-gray-500 hover:text-gray-700"
+                            >
                                 <i class="fas fa-undo-alt mr-1"></i>Сбросить
                             </button>
                         </div>
@@ -88,291 +152,536 @@
                     <div class="max-h-96 overflow-y-auto">
                         <!-- Приоритет -->
                         <div class="p-4 border-b border-gray-100">
-                            <div class="flex justify-between items-center cursor-pointer"
-                                 onclick="toggleFilterSection('prioritySection')">
-                                <span class="font-medium text-gray-700 text-sm">Приоритет</span>
-                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform"
-                                   id="prioritySectionIcon"></i>
+                            <div
+                                class="flex justify-between items-center cursor-pointer"
+                                onclick="toggleFilterSection('prioritySection')"
+                            >
+                                <span class="font-medium text-gray-700 text-sm"
+                                    >Приоритет</span
+                                >
+                                <i
+                                    class="fas fa-chevron-down text-gray-400 text-xs transition-transform"
+                                    id="prioritySectionIcon"
+                                ></i>
                             </div>
                             <div id="prioritySection" class="mt-3 space-y-2">
-                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
-                                           data-filter-type="priority" value="critical">
-                                    <span class="text-sm text-gray-700">Критический</span>
+                                <label
+                                    class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="priority"
+                                        value="critical"
+                                    />
+                                    <span class="text-sm text-gray-700"
+                                        >Критический</span
+                                    >
                                 </label>
-                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
-                                           data-filter-type="priority" value="high">
-                                    <span class="text-sm text-gray-700">Высокий</span>
+                                <label
+                                    class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="priority"
+                                        value="high"
+                                    />
+                                    <span class="text-sm text-gray-700"
+                                        >Высокий</span
+                                    >
                                 </label>
-                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
-                                           data-filter-type="priority" value="medium">
-                                    <span class="text-sm text-gray-700">Средний</span>
+                                <label
+                                    class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="priority"
+                                        value="medium"
+                                    />
+                                    <span class="text-sm text-gray-700"
+                                        >Средний</span
+                                    >
                                 </label>
-                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
-                                           data-filter-type="priority" value="low">
-                                    <span class="text-sm text-gray-700">Низкий</span>
+                                <label
+                                    class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="priority"
+                                        value="low"
+                                    />
+                                    <span class="text-sm text-gray-700"
+                                        >Низкий</span
+                                    >
                                 </label>
                             </div>
                         </div>
 
                         <!-- Сроки -->
                         <div class="p-4 border-b border-gray-100">
-                            <div class="flex justify-between items-center cursor-pointer"
-                                 onclick="toggleFilterSection('deadlineSection')">
-                                <span class="font-medium text-gray-700 text-sm">Сроки</span>
-                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform"
-                                   id="deadlineSectionIcon"></i>
+                            <div
+                                class="flex justify-between items-center cursor-pointer"
+                                onclick="toggleFilterSection('deadlineSection')"
+                            >
+                                <span class="font-medium text-gray-700 text-sm"
+                                    >Сроки</span
+                                >
+                                <i
+                                    class="fas fa-chevron-down text-gray-400 text-xs transition-transform"
+                                    id="deadlineSectionIcon"
+                                ></i>
                             </div>
                             <div id="deadlineSection" class="mt-3 space-y-2">
-                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
-                                           data-filter-type="deadline" value="overdue">
-                                    <span class="text-sm text-gray-700">Просроченные</span>
+                                <label
+                                    class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="deadline"
+                                        value="overdue"
+                                    />
+                                    <span class="text-sm text-gray-700"
+                                        >Просроченные</span
+                                    >
                                 </label>
-                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
-                                           data-filter-type="deadline" value="today">
-                                    <span class="text-sm text-gray-700">Сегодня</span>
+                                <label
+                                    class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="deadline"
+                                        value="today"
+                                    />
+                                    <span class="text-sm text-gray-700"
+                                        >Сегодня</span
+                                    >
                                 </label>
-                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
-                                           data-filter-type="deadline" value="tomorrow">
-                                    <span class="text-sm text-gray-700">Завтра</span>
+                                <label
+                                    class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="deadline"
+                                        value="tomorrow"
+                                    />
+                                    <span class="text-sm text-gray-700"
+                                        >Завтра</span
+                                    >
                                 </label>
-                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
-                                           data-filter-type="deadline" value="week">
-                                    <span class="text-sm text-gray-700">На этой неделе</span>
+                                <label
+                                    class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="deadline"
+                                        value="week"
+                                    />
+                                    <span class="text-sm text-gray-700"
+                                        >На этой неделе</span
+                                    >
                                 </label>
                             </div>
                         </div>
 
                         <!-- Файлы -->
                         <div class="p-4 border-b border-gray-100">
-                            <div class="flex justify-between items-center cursor-pointer"
-                                 onclick="toggleFilterSection('filesSection')">
-                                <span class="font-medium text-gray-700 text-sm">Файлы</span>
-                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform"
-                                   id="filesSectionIcon"></i>
+                            <div
+                                class="flex justify-between items-center cursor-pointer"
+                                onclick="toggleFilterSection('filesSection')"
+                            >
+                                <span class="font-medium text-gray-700 text-sm"
+                                    >Файлы</span
+                                >
+                                <i
+                                    class="fas fa-chevron-down text-gray-400 text-xs transition-transform"
+                                    id="filesSectionIcon"
+                                ></i>
                             </div>
                             <div id="filesSection" class="mt-3 space-y-2">
-                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
-                                           data-filter-type="has-files" value="true">
-                                    <span class="text-sm text-gray-700">Есть файлы</span>
+                                <label
+                                    class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="has-files"
+                                        value="true"
+                                    />
+                                    <span class="text-sm text-gray-700"
+                                        >Есть файлы</span
+                                    >
                                 </label>
-                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                    <input type="checkbox" class="filter-checkbox rounded border-gray-300 accent-green-600"
-                                           data-filter-type="has-files" value="false">
-                                    <span class="text-sm text-gray-700">Нет файлов</span>
+                                <label
+                                    class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        class="filter-checkbox rounded border-gray-300 accent-green-600"
+                                        data-filter-type="has-files"
+                                        value="false"
+                                    />
+                                    <span class="text-sm text-gray-700"
+                                        >Нет файлов</span
+                                    >
                                 </label>
                             </div>
                         </div>
                     </div>
 
                     <div class="p-4 bg-gray-50 rounded-b-lg">
-                        <button onclick="applyFiltersAndClose()"
-                                class="w-full text-white py-2 rounded-lg text-sm font-medium bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_4px_15px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+                        <x-ui.button
+                            variant="action"
+                            onclick="applyFiltersAndClose()"
+                            class="w-full"
+                        >
                             Применить фильтры
-                        </button>
+                        </x-ui.button>
                     </div>
                 </div>
             </div>
 
             <!-- Поиск -->
-            @if($backgroundEnabled && $backgroundImage)
+            @if ($backgroundEnabled && $backgroundImage)
                 <div class="relative flex-1 max-w-xs">
-                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-white text-sm"></i>
-                    <input type="text" id="taskSearchInput" placeholder="Поиск по названию..."
-                        class="w-full pl-9 pr-3 py-2 border-none rounded-lg text-sm text-white bg-transparent/20 placeholder:text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:shadow-[0_0_15px_rgba(16,185,129,0.5)]">
+                    <i
+                        class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-white text-sm"
+                    ></i>
+                    <input
+                        type="text"
+                        id="taskSearchInput"
+                        placeholder="Поиск по названию..."
+                        class="w-full pl-9 pr-3 py-2 border-none rounded-lg text-sm text-white bg-transparent/20 placeholder:text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:shadow-[0_0_15px_rgba(16,185,129,0.5)]"
+                    />
                 </div>
             @else
                 <div class="relative flex-1 max-w-xs">
-                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
-                    <input type="text" id="taskSearchInput" placeholder="Поиск по названию..."
-                        class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm transition-all duration-300 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                    <i
+                        class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"
+                    ></i>
+                    <input
+                        type="text"
+                        id="taskSearchInput"
+                        placeholder="Поиск по названию..."
+                        class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm transition-all duration-300 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                    />
                 </div>
             @endif
         </div>
 
         <!-- Активные фильтры (чипсы) -->
-        <div id="activeFiltersContainer" class="flex flex-wrap gap-2 mt-3 min-h-[32px] max-[500px]:min-h-[10px]">
+        <div
+            id="activeFiltersContainer"
+            class="flex flex-wrap gap-2 mt-3 min-h-[32px] max-[500px]:min-h-[10px]"
+        >
             <!-- Сюда динамически добавляются активные фильтры -->
         </div>
     </div>
 
     <!-- Доска с задачами -->
-     <div class="sw-v overflow-hidden w-full">
-    <div class="sw-v-wrapper flex lg:grid lg:grid-cols-4 xl:grid-cols-4 gap-6 max-[500px]:gap-0">
-        <!-- Колонка "Новые" -->
-        <div class="rounded-lg p-4 board-column bg-transparent max-[600px]:p-0" data-status="new">
-            @if($backgroundEnabled && $backgroundImage)
-                <div class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
-                    <h3 class="font-semibold text-white">Новые</h3>
-                    <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['new'] }}</span>
-                </div>
-            @else
-                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title">
-                    <h3 class="font-semibold text-white">Новые</h3>
-                    <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['new'] }}</span>
-                </div>
-            @endif
+    <div class="sw-v overflow-hidden w-full">
+        <div
+            class="sw-v-wrapper flex lg:grid lg:grid-cols-4 xl:grid-cols-4 gap-6 max-[500px]:gap-0"
+        >
+            <!-- Колонка "Новые" -->
+            <div
+                class="rounded-lg p-4 board-column bg-transparent max-[600px]:p-0"
+                data-status="new"
+            >
+                @if ($backgroundEnabled && $backgroundImage)
+                    <div
+                        class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2"
+                    >
+                        <h3 class="font-semibold text-white">Новые</h3>
+                        <span
+                            class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count"
+                            >{{ $stats['new'] }}</span
+                        >
+                    </div>
+                @else
+                    <div
+                        class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title"
+                    >
+                        <h3 class="font-semibold text-white">Новые</h3>
+                        <span
+                            class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count"
+                            >{{ $stats['new'] }}</span
+                        >
+                    </div>
+                @endif
 
-            <!-- КНОПКА БЫСТРОГО ДОБАВЛЕНИЯ -->
-            <div id="quickAddBlock" class="mb-4">
-                <button onclick="showQuickAddForm()"
+                <!-- КНОПКА БЫСТРОГО ДОБАВЛЕНИЯ -->
+                <div id="quickAddBlock" class="mb-4">
+                    <button
+                        onclick="showQuickAddForm()"
                         id="showQuickAddBtn"
-                        class="w-full group relative overflow-hidden bg-transparent/10
-                        hover:from-green-50 hover:to-white border-2 border-dashed border-gray-300 hover:border-green-400 rounded-xl p-2 text-gray-500 hover:text-green-600 transition-all duration-300 flex items-center justify-center space-x-2">
-                    <div class="absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/0 to-green-500/0
-                    group-hover:from-green-500/5 group-hover:via-green-500/10 group-hover:to-green-500/5 transition-all duration-500"></div>
-                    <i class="fas fa-plus-circle text-green-500 text-xl group-hover:scale-110 transition-transform duration-300"></i>
-                    <span class="text-sm font-medium">Быстрая задача</span>
-                </button>
+                        class="w-full group relative overflow-hidden bg-transparent/10 hover:from-green-50 hover:to-white border-2 border-dashed border-gray-300 hover:border-green-400 rounded-xl p-2 text-gray-500 hover:text-green-600 transition-all duration-300 flex items-center justify-center space-x-2"
+                    >
+                        <div
+                            class="absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/0 to-green-500/0 group-hover:from-green-500/5 group-hover:via-green-500/10 group-hover:to-green-500/5 transition-all duration-500"
+                        ></div>
+                        <i
+                            class="fas fa-plus-circle text-green-500 text-xl group-hover:scale-110 transition-transform duration-300"
+                        ></i>
+                        <span class="text-sm font-medium">Быстрая задача</span>
+                    </button>
 
-                <!-- ФОРМА БЫСТРОГО ДОБАВЛЕНИЯ -->
-                <div id="quickAddForm" class="hidden mt-2">
-                    <div class="bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden transform transition-all duration-300 scale-95 opacity-0" id="quickAddFormInner">
-
-                        <div class="p-4 space-y-4">
-                            <div class="relative">
-                                <i class="fas fa-tasks absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
-                                <input type="text"
-                                       id="quickTaskName"
-                                       placeholder="Что нужно сделать?"
-                                       class="w-full pl-10 pr-4 py-3 bg-gray-50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all duration-200 text-sm"
-                                       autocomplete="off">
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3">
+                    <!-- ФОРМА БЫСТРОГО ДОБАВЛЕНИЯ -->
+                    <div id="quickAddForm" class="hidden mt-2">
+                        <div
+                            class="bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden transform transition-all duration-300 scale-95 opacity-0"
+                            id="quickAddFormInner"
+                        >
+                            <div class="p-4 space-y-4">
                                 <div class="relative">
-                                    <i class="fas fa-flag absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
-                                    <select id="quickTaskPriority"
-                                            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all duration-200 text-sm appearance-none cursor-pointer">
-                                        <option value="низкий">Низкий</option>
-                                        <option value="средний" selected>⚡ Средний</option>
-                                        <option value="высокий">Высокий</option>
-                                        <option value="критический">Критический</option>
-                                    </select>
-                                    <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+                                    <i
+                                        class="fas fa-tasks absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"
+                                    ></i>
+                                    <input
+                                        type="text"
+                                        id="quickTaskName"
+                                        placeholder="Что нужно сделать?"
+                                        class="w-full pl-10 pr-4 py-3 bg-gray-50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all duration-200 text-sm"
+                                        autocomplete="off"
+                                    />
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="relative">
+                                        <i
+                                            class="fas fa-flag absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"
+                                        ></i>
+                                        <select
+                                            id="quickTaskPriority"
+                                            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all duration-200 text-sm appearance-none cursor-pointer"
+                                        >
+                                            <option value="низкий">
+                                                Низкий
+                                            </option>
+                                            <option value="средний" selected>
+                                                ⚡ Средний
+                                            </option>
+                                            <option value="высокий">
+                                                Высокий
+                                            </option>
+                                            <option value="критический">
+                                                Критический
+                                            </option>
+                                        </select>
+                                        <i
+                                            class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none"
+                                        ></i>
+                                    </div>
+
+                                    <div class="relative">
+                                        <i
+                                            class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"
+                                        ></i>
+                                        <input
+                                            type="datetime-local"
+                                            id="quickTaskDeadline"
+                                            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all duration-200 text-sm cursor-pointer"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div class="relative">
-                                    <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
-                                    <input type="datetime-local"
-                                           id="quickTaskDeadline"
-                                           class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all duration-200 text-sm cursor-pointer">
+                                    <i
+                                        class="fas fa-align-left absolute left-3 top-3 text-gray-400 text-sm"
+                                    ></i>
+                                    <textarea
+                                        id="quickTaskDescription"
+                                        rows="2"
+                                        placeholder="Добавить описание..."
+                                        class="w-full pl-10 pr-4 py-2 bg-gray-50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all duration-200 text-sm resize-none"
+                                    ></textarea>
+                                </div>
+
+                                <div
+                                    class="flex space-x-3 pt-2 max-[500px]:flex-col max-[500px]:space-x-0 max-[500px]:space-y-2"
+                                >
+                                    <x-ui.button
+                                        class="flex-1"
+                                        variant="action"
+                                        icon="fas fa-check-circle"
+                                        onclick="createQuickTask()"
+                                    >
+                                        Создать
+                                    </x-ui.button>
+
+                                    <x-ui.button
+                                        variant="secondary"
+                                        class="flex-1 bg-gray-100 text-gray-600"
+                                        icon="fas fa-times"
+                                        onclick="hideQuickAddForm()"
+                                    >
+                                        Отмена
+                                    </x-ui.button>
                                 </div>
                             </div>
 
-                            <div class="relative">
-                                <i class="fas fa-align-left absolute left-3 top-3 text-gray-400 text-sm"></i>
-                                <textarea id="quickTaskDescription"
-                                          rows="2"
-                                          placeholder="Добавить описание..."
-                                          class="w-full pl-10 pr-4 py-2 bg-gray-50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all duration-200 text-sm resize-none"></textarea>
-                            </div>
-
-                            <div class="flex space-x-3 pt-2">
-                                <button onclick="createQuickTask()"
-                                        class="flex-1 text-white px-4 py-2.5 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 text-sm font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center space-x-2" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Создать</span>
-                                </button>
-                                <button onclick="hideQuickAddForm()"
-                                        class="px-4 py-2.5 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-all duration-200 text-sm font-medium flex items-center justify-center space-x-1">
-                                    <i class="fas fa-times"></i>
-                                    <span>Отмена</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="bg-gray-50 px-4 py-2 border-t border-gray-100 max-[500px]:hidden">
-                            <div class="flex items-center justify-between text-xs text-gray-400">
-                                <span><i class="fas fa-keyboard mr-1"></i> Enter — создать</span>
-                                <span><i class="fas fa-arrow-left mr-1"></i> Esc — отмена</span>
+                            <div
+                                class="bg-gray-50 px-4 py-2 border-t border-gray-100 max-[500px]:hidden"
+                            >
+                                <div
+                                    class="flex items-center justify-between text-xs text-gray-400"
+                                >
+                                    <span
+                                        ><i class="fas fa-keyboard mr-1"></i>
+                                        Enter — создать</span
+                                    >
+                                    <span
+                                        ><i class="fas fa-arrow-left mr-1"></i>
+                                        Esc — отмена</span
+                                    >
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="space-y-4 task-container" data-status="new">
-                @foreach($tasksByStatus['new'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between {{ $task->status == 'просрочена' ? 'border-l-4 border-red-500' : '' }}"
-                         draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
-                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
-                         data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
-                         data-author-id="{{ $task->author_id }}">
-                        <div class="flex justify-between items-start mb-2">
-                            <a href="/team/tasks/{{ $task->id }}"
-                               onclick="openTaskViewModal({{ $task->id }}); return false;">
-                                <h4 class="font-medium cursor-pointer hover:text-blue-600 flex-1">
-                                    {{ $task->name }}
-                                </h4>
-                            </a>
-                            <div class="flex items-center space-x-2">
-                                <div class="relative">
-                                    <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <div id="taskMenu-{{ $task->id }}" class="task-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50">
-                                        <div class="py-1">
-                                            @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                <button onclick="openEditModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                                    <i class="fas fa-edit mr-2 text-blue-500"></i> Редактировать
-                                                </button>
-                                            @endif
-                                                <!-- КНОПКА АРХИВАЦИИ -->
-                                                @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                    <button onclick="archiveTask({{ $task->id }})"
-                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                                        <i class="fas fa-archive mr-2 text-yellow-500"></i> В архив
+                <div class="space-y-4 task-container" data-status="new">
+                    @foreach ($tasksByStatus['new'] as $task)
+                        <div
+                            class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between {{ $task->status == 'просрочена' ? 'border-l-4 border-red-500' : '' }}"
+                            draggable="true"
+                            data-task="{{ $task->id }}"
+                            data-priority="{{ $task->priority ?? 'medium' }}"
+                            data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
+                            data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                            data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
+                            data-author-id="{{ $task->author_id }}"
+                        >
+                            <div class="flex justify-between items-start mb-2">
+                                <a
+                                    href="/team/tasks/{{ $task->id }}"
+                                    onclick="openTaskViewModal({{ $task->id }}); return false;"
+                                >
+                                    <h4
+                                        class="font-medium cursor-pointer hover:text-blue-600 flex-1"
+                                    >
+                                        {{ $task->name }}
+                                    </h4>
+                                </a>
+                                <div class="flex items-center space-x-2">
+                                    <div class="relative">
+                                        <button
+                                            onclick="toggleTaskMenu(event, {{ $task->id }})"
+                                            class="text-gray-500 hover:text-gray-700 p-1"
+                                            title="Действия"
+                                        >
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <div
+                                            id="taskMenu-{{ $task->id }}"
+                                            class="task-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50"
+                                        >
+                                            <div class="py-1">
+                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                    <button
+                                                        onclick="openEditModal({{ $task->id }})"
+                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                    >
+                                                        <i
+                                                            class="fas fa-edit mr-2 text-blue-500"
+                                                        ></i>
+                                                        Редактировать
                                                     </button>
                                                 @endif
-                                            <button onclick="openCreateSubtaskModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                                <i class="fas fa-list mr-2 text-green-500"></i>Подзадача
-                                            </button>
-                                                <button onclick="startTask({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                                <i class="fas fa-play mr-2 text-green-500"></i> Начать
-                                            </button>
-                                            <button onclick="showRejectModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center">
-                                                <i class="fas fa-times-circle mr-2"></i> Отказаться
-                                            </button>
+                                                <!-- КНОПКА АРХИВАЦИИ -->
+                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                    <button
+                                                        onclick="archiveTask({{ $task->id }})"
+                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                    >
+                                                        <i
+                                                            class="fas fa-archive mr-2 text-yellow-500"
+                                                        ></i>
+                                                        В архив
+                                                    </button>
+                                                @endif
+                                                <button
+                                                    onclick="openCreateSubtaskModal({{ $task->id }})"
+                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                >
+                                                    <i
+                                                        class="fas fa-list mr-2 text-green-500"
+                                                    ></i
+                                                    >Подзадача
+                                                </button>
+                                                <button
+                                                    onclick="startTask({{ $task->id }})"
+                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                >
+                                                    <i
+                                                        class="fas fa-play mr-2 text-green-500"
+                                                    ></i>
+                                                    Начать
+                                                </button>
+                                                <button
+                                                    onclick="showRejectModal({{ $task->id }})"
+                                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
+                                                >
+                                                    <i
+                                                        class="fas fa-times-circle mr-2"
+                                                    ></i>
+                                                    Отказаться
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        @if($task->files_count > 0)
-                            <div class="mb-2 flex items-center text-xs text-gray-500">
-                                <i class="fas fa-paperclip mr-1"></i>
-                                <span>Файлы: {{ $task->files_count }}</span>
-                            </div>
-                        @endif
-
-                        @if($task->deadline)
-                            <div class="mb-3 max-[500px]:hidden">
-                                <div class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
-                                    <i class="fas fa-clock mr-2"></i>
-                                    {{ $task->deadline->format('d.m.Y H:i') }}
-                                    @if($task->deadline->isPast())
-                                        <span class="ml-1">(Просрочено)</span>
-                                    @endif
+                            @if ($task->files_count > 0)
+                                <div
+                                    class="mb-2 flex items-center text-xs text-gray-500"
+                                >
+                                    <i class="fas fa-paperclip mr-1"></i>
+                                    <span>Файлы: {{ $task->files_count }}</span>
                                 </div>
-                            </div>
-                        @endif
+                            @endif
 
-                        <div class="flex justify-between items-center max-[1300px]:items-end">
-                            <div class="flex space-x-1 max-[1300px]:flex-col max-[1300px]:gap-1 max-[500px]:flex-wrap max-[500px]:space-x-0 max-[500px]:flex-row">
-                        <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-                              class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
-                                @php
+                            @if ($task->deadline)
+                                <div class="mb-3 max-[500px]:hidden">
+                                    <div
+                                        class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}"
+                                    >
+                                        <i class="fas fa-clock mr-2"></i>
+                                        {{ $task->deadline->format('d.m.Y H:i') }}
+                                        @if ($task->deadline->isPast())
+                                            <span class="ml-1"
+                                                >(Просрочено)</span
+                                            >
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div
+                                class="flex justify-between items-center max-[1300px]:items-end"
+                            >
+                                <div
+                                    class="flex space-x-1 max-[1300px]:flex-col max-[1300px]:gap-1 max-[500px]:flex-wrap max-[500px]:space-x-0 max-[500px]:flex-row"
+                                >
+                                    <span
+                                        style="
+                                            background: linear-gradient(
+                                                180deg,
+                                                #1a1f2e 0%,
+                                                #161b28 100%
+                                            );
+                                        "
+                                        class="text-xs px-2 py-1 rounded text-white"
+                                        >{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span
+                                    >
+                                    @php
                                     $prioritySignals = [
                                         'низкий' => ['level' => 1, 'color' => 'green', 'bg' => 'bg-green-50', 'border' => 'border-green-200', 'filled' => 'bg-green-500', 'empty' => 'bg-green-200', 'text' => 'text-green-700'],
                                         'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
@@ -382,49 +691,81 @@
                                     $signal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
                                 @endphp
 
-                                @if(!$task->trashed())
-                                    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $signal['bg'] }} border {{ $signal['border'] }}">
-                                        <div class="flex items-end gap-[3px] h-5">
-                                            <div class="w-1.5 rounded-sm {{ $signal['level'] >= 1 ? $signal['filled'] : $signal['empty'] }} h-2"></div>
-                                            <div class="w-1.5 rounded-sm {{ $signal['level'] >= 2 ? $signal['filled'] : $signal['empty'] }} h-3"></div>
-                                            <div class="w-1.5 rounded-sm {{ $signal['level'] >= 3 ? $signal['filled'] : $signal['empty'] }} h-4"></div>
-                                            <div class="w-1.5 rounded-sm {{ $signal['level'] >= 4 ? $signal['filled'] : $signal['empty'] }} h-5"></div>
+                                    @if (!$task->trashed())
+                                        <div
+                                            class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $signal['bg'] }} border {{ $signal['border'] }}"
+                                        >
+                                            <div
+                                                class="flex items-end gap-[3px] h-5"
+                                            >
+                                                <div
+                                                    class="w-1.5 rounded-sm {{ $signal['level'] >= 1 ? $signal['filled'] : $signal['empty'] }} h-2"
+                                                ></div>
+                                                <div
+                                                    class="w-1.5 rounded-sm {{ $signal['level'] >= 2 ? $signal['filled'] : $signal['empty'] }} h-3"
+                                                ></div>
+                                                <div
+                                                    class="w-1.5 rounded-sm {{ $signal['level'] >= 3 ? $signal['filled'] : $signal['empty'] }} h-4"
+                                                ></div>
+                                                <div
+                                                    class="w-1.5 rounded-sm {{ $signal['level'] >= 4 ? $signal['filled'] : $signal['empty'] }} h-5"
+                                                ></div>
+                                            </div>
+                                            <span
+                                                class="text-xs font-medium {{ $signal['text'] }}"
+                                                >{{ ucfirst($task->priority) }}</span
+                                            >
                                         </div>
-                                        <span class="text-xs font-medium {{ $signal['text'] }}">{{ ucfirst($task->priority) }}</span>
+                                    @else
+                                        <span class="text-sm text-gray-400"
+                                            >—</span
+                                        >
+                                    @endif
+                                </div>
+                                <div class="flex space-x-1">
+                                    <div
+                                        class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
+                                        title="{{ $task->author->name }}"
+                                    >
+                                        {{ substr($task->author->name, 0, 2) }}
                                     </div>
-                                @else
-                                    <span class="text-sm text-gray-400">—</span>
-                                @endif
-                            </div>
-                            <div class="flex space-x-1">
-                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
-                                     title="{{ $task->author->name }}">
-                                    {{ substr($task->author->name, 0, 2) }}
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
-        </div>
 
-        <!-- Колонка "В работе" -->
-        <div class="rounded-lg p-4 board-column max-[600px]:p-0" data-status="in-progress">
-            @if($backgroundEnabled && $backgroundImage)
-                <div class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
-                    <h3 class="font-semibold text-white">В работе</h3>
-                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['in_progress'] }}</span>
-                </div>
-            @else
-                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title">
-                    <h3 class="font-semibold text-white">В работе</h3>
-                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['in_progress'] }}</span>
-                </div>
-            @endif
+            <!-- Колонка "В работе" -->
+            <div
+                class="rounded-lg p-4 board-column max-[600px]:p-0"
+                data-status="in-progress"
+            >
+                @if ($backgroundEnabled && $backgroundImage)
+                    <div
+                        class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2"
+                    >
+                        <h3 class="font-semibold text-white">В работе</h3>
+                        <span
+                            class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count"
+                            >{{ $stats['in_progress'] }}</span
+                        >
+                    </div>
+                @else
+                    <div
+                        class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title"
+                    >
+                        <h3 class="font-semibold text-white">В работе</h3>
+                        <span
+                            class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded stat-count"
+                            >{{ $stats['in_progress'] }}</span
+                        >
+                    </div>
+                @endif
 
-            <div class="space-y-4 task-container" data-status="in-progress">
-                @foreach($tasksByStatus['in_progress'] as $task)
-                    @php
+                <div class="space-y-4 task-container" data-status="in-progress">
+                    @foreach ($tasksByStatus['in_progress'] as $task)
+                        @php
                         $prioritySignals = [
                             'низкий' => ['level' => 1, 'color' => 'green', 'bg' => 'bg-green-50', 'border' => 'border-green-200', 'filled' => 'bg-green-500', 'empty' => 'bg-green-200', 'text' => 'text-green-700'],
                             'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
@@ -434,119 +775,210 @@
                         $signal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
                     @endphp
 
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between {{ $task->status == 'просрочена' ? 'border-l-4 border-red-500' : '' }}"
-                         draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
-                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
-                         data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
-                         data-author-id="{{ $task->author_id }}">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-medium cursor-pointer hover:text-blue-600 flex-1"
-                                onclick="openTaskViewModal({{ $task->id }})">
-                                {{ $task->name }}
-                            </h4>
-                            <div class="flex items-center space-x-2">
-                                <div class="relative">
-                                    <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <div id="taskMenu-{{ $task->id }}" class="task-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50">
-                                        <div class="py-1">
-                                            @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                <button onclick="openEditModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                                    <i class="fas fa-edit mr-2 text-blue-500"></i> Редактировать
-                                                </button>
-                                            @endif
-                                                <!-- КНОПКА АРХИВАЦИИ -->
-                                                @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                    <button onclick="archiveTask({{ $task->id }})"
-                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                                        <i class="fas fa-archive mr-2 text-yellow-500"></i> В архив
+                        <div
+                            class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between {{ $task->status == 'просрочена' ? 'border-l-4 border-red-500' : '' }}"
+                            draggable="true"
+                            data-task="{{ $task->id }}"
+                            data-priority="{{ $task->priority ?? 'medium' }}"
+                            data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
+                            data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                            data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
+                            data-author-id="{{ $task->author_id }}"
+                        >
+                            <div class="flex justify-between items-start mb-2">
+                                <h4
+                                    class="font-medium cursor-pointer hover:text-blue-600 flex-1"
+                                    onclick="openTaskViewModal({{ $task->id }})"
+                                >
+                                    {{ $task->name }}
+                                </h4>
+                                <div class="flex items-center space-x-2">
+                                    <div class="relative">
+                                        <button
+                                            onclick="toggleTaskMenu(event, {{ $task->id }})"
+                                            class="text-gray-500 hover:text-gray-700 p-1"
+                                            title="Действия"
+                                        >
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <div
+                                            id="taskMenu-{{ $task->id }}"
+                                            class="task-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50"
+                                        >
+                                            <div class="py-1">
+                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                    <button
+                                                        onclick="openEditModal({{ $task->id }})"
+                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                    >
+                                                        <i
+                                                            class="fas fa-edit mr-2 text-blue-500"
+                                                        ></i>
+                                                        Редактировать
                                                     </button>
                                                 @endif
-                                            <button onclick="sendForReview({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                                <i class="fas fa-check-circle mr-2 text-green-500"></i> Отправить на проверку
-                                            </button>
-                                            <button onclick="showRejectModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center">
-                                                <i class="fas fa-times-circle mr-2"></i> Отказаться
-                                            </button>
+                                                <!-- КНОПКА АРХИВАЦИИ -->
+                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                    <button
+                                                        onclick="archiveTask({{ $task->id }})"
+                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                    >
+                                                        <i
+                                                            class="fas fa-archive mr-2 text-yellow-500"
+                                                        ></i>
+                                                        В архив
+                                                    </button>
+                                                @endif
+                                                <button
+                                                    onclick="sendForReview({{ $task->id }})"
+                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                >
+                                                    <i
+                                                        class="fas fa-check-circle mr-2 text-green-500"
+                                                    ></i>
+                                                    Отправить на проверку
+                                                </button>
+                                                <button
+                                                    onclick="showRejectModal({{ $task->id }})"
+                                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
+                                                >
+                                                    <i
+                                                        class="fas fa-times-circle mr-2"
+                                                    ></i>
+                                                    Отказаться
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        @if($task->files_count > 0)
-                            <div class="mb-2 flex items-center text-xs text-gray-500">
-                                <i class="fas fa-paperclip mr-1"></i>
-                                <span>Файлы: {{ $task->files_count }}</span>
-                            </div>
-                        @endif
+                            @if ($task->files_count > 0)
+                                <div
+                                    class="mb-2 flex items-center text-xs text-gray-500"
+                                >
+                                    <i class="fas fa-paperclip mr-1"></i>
+                                    <span>Файлы: {{ $task->files_count }}</span>
+                                </div>
+                            @endif
 
-                        @if($task->deadline)
-                            <div class="mb-3 max-[500px]:hidden">
-                                <div class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
-                                    <i class="fas fa-clock mr-2"></i>
-                                    {{ $task->deadline->format('d.m.Y H:i') }}
-                                    @if($task->deadline->isPast())
-                                        <span class="ml-1">(Просрочено)</span>
+                            @if ($task->deadline)
+                                <div class="mb-3 max-[500px]:hidden">
+                                    <div
+                                        class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}"
+                                    >
+                                        <i class="fas fa-clock mr-2"></i>
+                                        {{ $task->deadline->format('d.m.Y H:i') }}
+                                        @if ($task->deadline->isPast())
+                                            <span class="ml-1"
+                                                >(Просрочено)</span
+                                            >
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div
+                                class="flex justify-between items-center max-[1300px]:items-end"
+                            >
+                                <div
+                                    class="flex space-x-1 max-[1300px]:flex-col max-[1300px]:gap-1 max-[500px]:flex-wrap max-[500px]:space-x-0 max-[500px]:flex-row"
+                                >
+                                    <span
+                                        style="
+                                            background: linear-gradient(
+                                                180deg,
+                                                #1a1f2e 0%,
+                                                #161b28 100%
+                                            );
+                                        "
+                                        class="text-xs px-2 py-1 rounded text-white"
+                                        >{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span
+                                    >
+
+                                    <!-- НОВЫЙ СТИКЕР ПРИОРИТЕТА (как на второй странице) -->
+                                    <div
+                                        class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $signal['bg'] }} border {{ $signal['border'] }}"
+                                    >
+                                        <div
+                                            class="flex items-end gap-[3px] h-5"
+                                        >
+                                            <div
+                                                class="w-1.5 rounded-sm {{ $signal['level'] >= 1 ? $signal['filled'] : $signal['empty'] }} h-2"
+                                            ></div>
+                                            <div
+                                                class="w-1.5 rounded-sm {{ $signal['level'] >= 2 ? $signal['filled'] : $signal['empty'] }} h-3"
+                                            ></div>
+                                            <div
+                                                class="w-1.5 rounded-sm {{ $signal['level'] >= 3 ? $signal['filled'] : $signal['empty'] }} h-4"
+                                            ></div>
+                                            <div
+                                                class="w-1.5 rounded-sm {{ $signal['level'] >= 4 ? $signal['filled'] : $signal['empty'] }} h-5"
+                                            ></div>
+                                        </div>
+                                        <span
+                                            class="text-xs font-medium {{ $signal['text'] }}"
+                                            >{{ ucfirst($task->priority) }}</span
+                                        >
+                                    </div>
+
+                                    @if ($task->category)
+                                        <span
+                                            class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded"
+                                            >{{ $task->category->name }}</span
+                                        >
+                                    @endif
+                                    @if ($task->status == 'просрочена')
+                                        <span
+                                            class="bg-red-500 text-white text-xs px-2 py-1 rounded"
+                                            >⚠️ Просрочена</span
+                                        >
                                     @endif
                                 </div>
-                            </div>
-                        @endif
-
-                        <div class="flex justify-between items-center max-[1300px]:items-end">
-                             <div class="flex space-x-1 max-[1300px]:flex-col max-[1300px]:gap-1 max-[500px]:flex-wrap max-[500px]:space-x-0 max-[500px]:flex-row">
-                <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-                      class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
-
-                                <!-- НОВЫЙ СТИКЕР ПРИОРИТЕТА (как на второй странице) -->
-                                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $signal['bg'] }} border {{ $signal['border'] }}">
-                                    <div class="flex items-end gap-[3px] h-5">
-                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 1 ? $signal['filled'] : $signal['empty'] }} h-2"></div>
-                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 2 ? $signal['filled'] : $signal['empty'] }} h-3"></div>
-                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 3 ? $signal['filled'] : $signal['empty'] }} h-4"></div>
-                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 4 ? $signal['filled'] : $signal['empty'] }} h-5"></div>
+                                <div class="flex space-x-1">
+                                    <div
+                                        class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
+                                        title="{{ $task->author->name }}"
+                                    >
+                                        {{ substr($task->author->name, 0, 2) }}
                                     </div>
-                                    <span class="text-xs font-medium {{ $signal['text'] }}">{{ ucfirst($task->priority) }}</span>
-                                </div>
-
-                                @if($task->category)
-                                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ $task->category->name }}</span>
-                                @endif
-                                @if($task->status == 'просрочена')
-                                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">⚠️ Просрочена</span>
-                                @endif
-                            </div>
-                            <div class="flex space-x-1">
-                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
-                                     title="{{ $task->author->name }}">
-                                    {{ substr($task->author->name, 0, 2) }}
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
-        </div>
 
-        <!-- Колонка "На проверке" -->
-        <div class="rounded-lg p-4 board-column max-[600px]:p-0" data-status="review">
-            @if($backgroundEnabled && $backgroundImage)
-                <div class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
-                    <h3 class="font-semibold text-white">На проверке</h3>
-                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['review'] }}</span>
-                </div>
-            @else
-                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title">
-                    <h3 class="font-semibold text-white">На проверке</h3>
-                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['review'] }}</span>
-                </div>
-            @endif
+            <!-- Колонка "На проверке" -->
+            <div
+                class="rounded-lg p-4 board-column max-[600px]:p-0"
+                data-status="review"
+            >
+                @if ($backgroundEnabled && $backgroundImage)
+                    <div
+                        class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2"
+                    >
+                        <h3 class="font-semibold text-white">На проверке</h3>
+                        <span
+                            class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count"
+                            >{{ $stats['review'] }}</span
+                        >
+                    </div>
+                @else
+                    <div
+                        class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title"
+                    >
+                        <h3 class="font-semibold text-white">На проверке</h3>
+                        <span
+                            class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded stat-count"
+                            >{{ $stats['review'] }}</span
+                        >
+                    </div>
+                @endif
 
-            <div class="space-y-4 task-container" data-status="review">
-                @foreach($tasksByStatus['review'] as $task)
-                    @php
+                <div class="space-y-4 task-container" data-status="review">
+                    @foreach ($tasksByStatus['review'] as $task)
+                        @php
                         $prioritySignals = [
                             'низкий' => ['level' => 1, 'color' => 'green', 'bg' => 'bg-green-50', 'border' => 'border-green-200', 'filled' => 'bg-green-500', 'empty' => 'bg-green-200', 'text' => 'text-green-700'],
                             'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
@@ -556,438 +988,457 @@
                         $signal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
                     @endphp
 
-                    <div class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between {{ $task->status == 'просрочена' ? 'border-l-4 border-red-500' : '' }}"
-                         draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
-                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
-                         data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
-                         data-author-id="{{ $task->author_id }}">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-medium cursor-pointer hover:text-blue-600 flex-1"
-                                onclick="openTaskViewModal({{ $task->id }})">
-                                {{ $task->name }}
-                            </h4>
-                            <div class="flex items-center space-x-2">
-                                <div class="relative">
-                                    <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <div id="taskMenu-{{ $task->id }}" class="task-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50">
-                                        <div class="py-1">
-                                            @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                <button onclick="openEditModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                                    <i class="fas fa-edit mr-2 text-blue-500"></i> Редактировать
-                                                </button>
-                                            @endif
-                                                <!-- КНОПКА АРХИВАЦИИ -->
-                                                @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                    <button onclick="archiveTask({{ $task->id }})"
-                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                                                        <i class="fas fa-archive mr-2 text-yellow-500"></i> В архив
+                        <div
+                            class="task-card bg-white p-4 rounded-lg shadow cursor-move min-h-[100px] flex flex-col justify-between {{ $task->status == 'просрочена' ? 'border-l-4 border-red-500' : '' }}"
+                            draggable="true"
+                            data-task="{{ $task->id }}"
+                            data-priority="{{ $task->priority ?? 'medium' }}"
+                            data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
+                            data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                            data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
+                            data-author-id="{{ $task->author_id }}"
+                        >
+                            <div class="flex justify-between items-start mb-2">
+                                <h4
+                                    class="font-medium cursor-pointer hover:text-blue-600 flex-1"
+                                    onclick="openTaskViewModal({{ $task->id }})"
+                                >
+                                    {{ $task->name }}
+                                </h4>
+                                <div class="flex items-center space-x-2">
+                                    <div class="relative">
+                                        <button
+                                            onclick="toggleTaskMenu(event, {{ $task->id }})"
+                                            class="text-gray-500 hover:text-gray-700 p-1"
+                                            title="Действия"
+                                        >
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <div
+                                            id="taskMenu-{{ $task->id }}"
+                                            class="task-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50"
+                                        >
+                                            <div class="py-1">
+                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                    <button
+                                                        onclick="openEditModal({{ $task->id }})"
+                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                    >
+                                                        <i
+                                                            class="fas fa-edit mr-2 text-blue-500"
+                                                        ></i>
+                                                        Редактировать
                                                     </button>
                                                 @endif
-                                            <button onclick="showRejectModal({{ $task->id }})" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center">
-                                                <i class="fas fa-times-circle mr-2"></i> Отказаться
-                                            </button>
+                                                <!-- КНОПКА АРХИВАЦИИ -->
+                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                    <button
+                                                        onclick="archiveTask({{ $task->id }})"
+                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                    >
+                                                        <i
+                                                            class="fas fa-archive mr-2 text-yellow-500"
+                                                        ></i>
+                                                        В архив
+                                                    </button>
+                                                @endif
+                                                <button
+                                                    onclick="showRejectModal({{ $task->id }})"
+                                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
+                                                >
+                                                    <i
+                                                        class="fas fa-times-circle mr-2"
+                                                    ></i>
+                                                    Отказаться
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        @if($task->files_count > 0)
-                            <div class="mb-2 flex items-center text-xs text-gray-500">
-                                <i class="fas fa-paperclip mr-1"></i>
-                                <span>Файлы: {{ $task->files_count }}</span>
-                            </div>
-                        @endif
+                            @if ($task->files_count > 0)
+                                <div
+                                    class="mb-2 flex items-center text-xs text-gray-500"
+                                >
+                                    <i class="fas fa-paperclip mr-1"></i>
+                                    <span>Файлы: {{ $task->files_count }}</span>
+                                </div>
+                            @endif
 
-                        @if($task->deadline)
-                            <div class="mb-3 max-[500px]:hidden">
-                                <div class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
-                                    <i class="fas fa-clock mr-2"></i>
-                                    {{ $task->deadline->format('d.m.Y H:i') }}
-                                    @if($task->deadline->isPast())
-                                        <span class="ml-1">(Просрочено)</span>
+                            @if ($task->deadline)
+                                <div class="mb-3 max-[500px]:hidden">
+                                    <div
+                                        class="flex items-center text-sm {{ $task->deadline->isPast() ? 'text-red-600 font-semibold' : 'text-gray-500' }}"
+                                    >
+                                        <i class="fas fa-clock mr-2"></i>
+                                        {{ $task->deadline->format('d.m.Y H:i') }}
+                                        @if ($task->deadline->isPast())
+                                            <span class="ml-1"
+                                                >(Просрочено)</span
+                                            >
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($task->actual_hours)
+                                <div class="mb-3">
+                                    <div
+                                        class="flex items-center text-sm text-gray-500"
+                                    >
+                                        <i
+                                            class="fas fa-hourglass-end mr-2"
+                                        ></i>
+                                        Фактическое время: {{ $task->actual_hours }}ч
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div
+                                class="flex justify-between items-center max-[1300px]:items-end max-[500px]:items-center"
+                            >
+                                <div
+                                    class="flex space-x-1 max-[1300px]:flex-col max-[1300px]:gap-1 max-[500px]:flex-wrap max-[500px]:space-x-0 max-[500px]:flex-row"
+                                >
+                                    <span
+                                        style="
+                                            background: linear-gradient(
+                                                180deg,
+                                                #1a1f2e 0%,
+                                                #161b28 100%
+                                            );
+                                        "
+                                        class="text-xs px-2 py-1 rounded text-white"
+                                        >{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span
+                                    >
+
+                                    <!-- НОВЫЙ СТИКЕР ПРИОРИТЕТА (как на второй странице) -->
+                                    <div
+                                        class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $signal['bg'] }} border {{ $signal['border'] }}"
+                                    >
+                                        <div
+                                            class="flex items-end gap-[3px] h-5"
+                                        >
+                                            <div
+                                                class="w-1.5 rounded-sm {{ $signal['level'] >= 1 ? $signal['filled'] : $signal['empty'] }} h-2"
+                                            ></div>
+                                            <div
+                                                class="w-1.5 rounded-sm {{ $signal['level'] >= 2 ? $signal['filled'] : $signal['empty'] }} h-3"
+                                            ></div>
+                                            <div
+                                                class="w-1.5 rounded-sm {{ $signal['level'] >= 3 ? $signal['filled'] : $signal['empty'] }} h-4"
+                                            ></div>
+                                            <div
+                                                class="w-1.5 rounded-sm {{ $signal['level'] >= 4 ? $signal['filled'] : $signal['empty'] }} h-5"
+                                            ></div>
+                                        </div>
+                                        <span
+                                            class="text-xs font-medium {{ $signal['text'] }}"
+                                            >{{ ucfirst($task->priority) }}</span
+                                        >
+                                    </div>
+
+                                    @if ($task->status == 'просрочена')
+                                        <span
+                                            class="bg-red-500 text-white text-xs px-2 py-1 rounded"
+                                            >⚠️ Просрочена</span
+                                        >
                                     @endif
                                 </div>
-                            </div>
-                        @endif
-
-                        @if($task->actual_hours)
-                            <div class="mb-3">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-hourglass-end mr-2"></i>
-                                    Фактическое время: {{ $task->actual_hours }}ч
-                                </div>
-                            </div>
-                        @endif
-
-                         <div class="flex justify-between items-center max-[1300px]:items-end max-[500px]:items-center">
-                            <div class="flex space-x-1 max-[1300px]:flex-col max-[1300px]:gap-1 max-[500px]:flex-wrap max-[500px]:space-x-0 max-[500px]:flex-row">
-                <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-                      class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
-
-                                <!-- НОВЫЙ СТИКЕР ПРИОРИТЕТА (как на второй странице) -->
-                                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $signal['bg'] }} border {{ $signal['border'] }}">
-                                    <div class="flex items-end gap-[3px] h-5">
-                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 1 ? $signal['filled'] : $signal['empty'] }} h-2"></div>
-                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 2 ? $signal['filled'] : $signal['empty'] }} h-3"></div>
-                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 3 ? $signal['filled'] : $signal['empty'] }} h-4"></div>
-                                        <div class="w-1.5 rounded-sm {{ $signal['level'] >= 4 ? $signal['filled'] : $signal['empty'] }} h-5"></div>
+                                <div class="flex space-x-1">
+                                    <div
+                                        class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
+                                        title="{{ $task->author->name }}"
+                                    >
+                                        {{ substr($task->author->name, 0, 2) }}
                                     </div>
-                                    <span class="text-xs font-medium {{ $signal['text'] }}">{{ ucfirst($task->priority) }}</span>
-                                </div>
-
-                                @if($task->status == 'просрочена')
-                                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">⚠️ Просрочена</span>
-                                @endif
-                            </div>
-                            <div class="flex space-x-1">
-                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
-                                     title="{{ $task->author->name }}">
-                                    {{ substr($task->author->name, 0, 2) }}
                                 </div>
                             </div>
                         </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Колонка "Завершено" -->
+            <div
+                class="rounded-lg p-4 board-column bg-transparent max-[600px]:p-0"
+                data-status="done"
+            >
+                @if ($backgroundEnabled && $backgroundImage)
+                    <div
+                        class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2"
+                    >
+                        <h3 class="font-semibold text-white">Завершено</h3>
+                        <span
+                            class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count"
+                            >{{ $stats['done'] }}</span
+                        >
                     </div>
-                @endforeach
+                @else
+                    <div
+                        class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title"
+                    >
+                        <h3 class="font-semibold text-white">Завершено</h3>
+                        <span
+                            class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count"
+                            >{{ $stats['done'] }}</span
+                        >
+                    </div>
+                @endif
+
+                <div class="space-y-4 task-container" data-status="done">
+                    @foreach ($tasksByStatus['done'] as $task)
+                        <div
+                            class="task-card bg-white p-4 rounded-lg shadow opacity-80 cursor-move flex flex-col justify-between"
+                            draggable="true"
+                            data-task="{{ $task->id }}"
+                            data-priority="{{ $task->priority ?? 'medium' }}"
+                            data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
+                            data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                            data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
+                            data-author-id="{{ $task->author_id }}"
+                        >
+                            <div class="flex justify-between items-start mb-2">
+                                <h4
+                                    class="font-medium cursor-pointer hover:text-blue-600 flex-1"
+                                    onclick="openTaskViewModal({{ $task->id }})"
+                                >
+                                    {{ $task->name }}
+                                </h4>
+                                <div class="flex space-x-1">
+                                    <div
+                                        class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
+                                        title="{{ $task->author->name }}"
+                                    >
+                                        {{ substr($task->author->name, 0, 2) }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if ($task->files_count > 0)
+                                <div
+                                    class="mb-2 flex items-center text-xs text-gray-500"
+                                >
+                                    <i class="fas fa-paperclip mr-1"></i>
+                                    <span>Файлы: {{ $task->files_count }}</span>
+                                </div>
+                            @endif
+
+                            @if ($task->actual_hours)
+                                <div class="mb-3 max-[500px]:hidden">
+                                    <div
+                                        class="flex items-center text-sm text-gray-500"
+                                    >
+                                        <i
+                                            class="fas fa-hourglass-end mr-2"
+                                        ></i>
+                                        Затрачено времени: {{ $task->actual_hours }}ч
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div
+                                class="flex justify-between items-center max-[1100px]:flex-col max-[1100px]:items-start max-[1100px]:gap-2"
+                            >
+                                <span
+                                    style="
+                                        background: linear-gradient(
+                                            180deg,
+                                            #1a1f2e 0%,
+                                            #161b28 100%
+                                        );
+                                    "
+                                    class="text-xs px-2 py-1 rounded text-white"
+                                    >{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span
+                                >
+                                <span class="text-xs text-gray-500"
+                                    >Завершено</span
+                                >
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
-
-        <!-- Колонка "Завершено" -->
-        <div class="rounded-lg p-4 board-column bg-transparent max-[600px]:p-0" data-status="done">
-            @if($backgroundEnabled && $backgroundImage)
-                <div class="flex justify-between items-center mb-4 border-none backdrop-blur-md bg-transparent/20 rounded-lg p-2">
-                    <h3 class="font-semibold text-white">Завершено</h3>
-                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['done'] }}</span>
-                </div>
-            @else
-                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title">
-                    <h3 class="font-semibold text-white">Завершено</h3>
-                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded stat-count">{{ $stats['done'] }}</span>
-                </div>
-            @endif
-
-            <div class="space-y-4 task-container" data-status="done">
-                @foreach($tasksByStatus['done'] as $task)
-                    <div class="task-card bg-white p-4 rounded-lg shadow opacity-80 cursor-move flex flex-col justify-between"
-                         draggable="true" data-task="{{ $task->id }}" data-priority="{{ $task->priority ?? 'medium' }}"
-                         data-deadline="{{ $task->deadline ? $task->deadline->format('Y-m-d') : '' }}"
-                         data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
-                         data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
-                         data-author-id="{{ $task->author_id }}">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-medium cursor-pointer hover:text-blue-600 flex-1"
-                                onclick="openTaskViewModal({{ $task->id }})">
-                                {{ $task->name }}
-                            </h4>
-                            <div class="flex space-x-1">
-                                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs"
-                                     title="{{ $task->author->name }}">
-                                    {{ substr($task->author->name, 0, 2) }}
-                                </div>
-                            </div>
-                        </div>
-
-                        @if($task->files_count > 0)
-                            <div class="mb-2 flex items-center text-xs text-gray-500">
-                                <i class="fas fa-paperclip mr-1"></i>
-                                <span>Файлы: {{ $task->files_count }}</span>
-                            </div>
-                        @endif
-
-                        @if($task->actual_hours)
-                            <div class="mb-3 max-[500px]:hidden">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-hourglass-end mr-2"></i>
-                                    Затрачено времени: {{ $task->actual_hours }}ч
-                                </div>
-                            </div>
-                        @endif
-
-                        <div class="flex justify-between items-center max-[1100px]:flex-col max-[1100px]:items-start max-[1100px]:gap-2">
-                        <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-                              class="text-xs px-2 py-1 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
-                            <span class="text-xs text-gray-500">Завершено</span>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
+        <div
+            class="swiper-pagination flex justify-center pt-5 px-0 !bottom-2 min-[501px]:hidden"
+        ></div>
     </div>
-   <div class="swiper-pagination flex justify-center pt-5 px-0 !bottom-2 min-[501px]:hidden"></div>
-   </div>
 
     <!-- Модальные окна -->
-    @include('partials.modal.task.show')
-    @include('partials.modal.task.create-subtask')
-    @include('partials.modal.task.reject-task')
-    @include('partials.modal.task.submit-for-review')
-
+    @include ('partials.modal.task.show')
+    @include ('partials.modal.task.create-subtask')
+    @include ('partials.modal.task.reject-task')
+    @include ('partials.modal.task.submit-for-review')
 
     <!-- Модальное окно создания задачи -->
-    @include('partials.modal.task.create')
+    @include ('partials.modal.task.create')
 
     <!-- Модальное окно файлового менеджера -->
-    @include('partials.modal.task.task-files-edit-modal')
+    @include ('partials.modal.task.task-files-edit-modal')
     <!-- МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ ЗАДАЧИ  -->
-    @include('partials.modal.welcome.edit-task-modal')
+    @include ('partials.modal.welcome.edit-task-modal')
 
     <!-- Модальное окно подтверждения архивации -->
-     @include('partials.modal.task.confirm-archive')
+    @include ('partials.modal.task.confirm-archive')
 
     <!-- Модальное окно подтверждения восстановления -->
-    @include('partials.modal.task.confirm-restore')
+    @include ('partials.modal.task.confirm-restore')
 
     <!-- Модальное окно подтверждения полного удаления -->
-      @include('partials.modal.task.confirm-force-delete')
-<script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+    @include ('partials.modal.task.confirm-force-delete')
+    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
     <script
-  src="https://cdn.jsdelivr.net/npm/@dragdroptouch/drag-drop-touch@latest/dist/drag-drop-touch.esm.min.js"
-  type="module"
-></script>
+        src="https://cdn.jsdelivr.net/npm/@dragdroptouch/drag-drop-touch@latest/dist/drag-drop-touch.esm.min.js"
+        type="module"
+    ></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener("DOMContentLoaded", () => {
+            //  ПЕРЕМЕННЫЕ
+            let taskSelectedFiles = [];
+            let taskAllFiles = [];
 
-        //  ПЕРЕМЕННЫЕ
-        let taskSelectedFiles = [];
-        let taskAllFiles = [];
+            // Переменные для фильтров
+            let currentTaskId = null;
 
-        // Переменные для фильтров
-        let currentTaskId = null;
+            // ==================== ФУНКЦИИ ДЛЯ СОЗДАНИЯ ЗАДАЧИ ===================
 
-        // ==================== ФУНКЦИИ ДЛЯ СОЗДАНИЯ ЗАДАЧИ ====================
-        function updateTaskSelectedFilesDisplay() {
-            const container = document.getElementById('selectedFilesContainer');
-            const fileCounter = document.getElementById('fileCounter');
-            const fileCount = document.getElementById('fileCount');
-
-            if (!container) return;
-
-            if (taskSelectedFiles.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
-                    <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
-                    <p class="text-sm text-gray-500">Файлы не выбраны</p>
-                    <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
-                </div>`;
-                if (fileCounter) fileCounter.classList.add('hidden');
-            } else {
-                let html = '';
-                taskSelectedFiles.forEach(file => {
-                    const fileIcon = getFileIcon(file.extension);
-                    const fileType = getFileTypeClass(file.extension);
-                    html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
-                                <span class="text-lg">${fileIcon}</span>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-800">${escapeHtml(file.name)}</p>
-                                <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                            </div>
-                        </div>
-                        <button onclick="removeTaskSelectedFile(${file.id})" class="text-red-500 hover:text-red-700 p-1">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>`;
-                });
-                container.innerHTML = html;
-                if (fileCount) fileCount.textContent = taskSelectedFiles.length;
-                if (fileCounter) fileCounter.classList.remove('hidden');
-            }
-        }
-
-        function removeTaskSelectedFile(fileId) {
-            taskSelectedFiles = taskSelectedFiles.filter(f => f.id !== fileId);
-            updateTaskSelectedFilesDisplay();
-            updateTaskSelectedCount();
-        }
-
-        function clearTaskSelectedFiles() {
-            if (taskSelectedFiles.length === 0) return;
-            if (confirm(`Удалить все выбранные файлы (${taskSelectedFiles.length})?`)) {
-                taskSelectedFiles = [];
-                updateTaskSelectedFilesDisplay();
-                updateTaskSelectedCount();
-            }
-        }
-
-        function switchFileTab(tabName) {
-            document.querySelectorAll('#taskModal .tab-button').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.tab === tabName) btn.classList.add('active');
-            });
-            document.querySelectorAll('#taskModal .tab-content').forEach(content => {
-                content.classList.add('hidden');
-            });
-            const activeContent = document.getElementById(tabName + 'TabContent');
-            if (activeContent) activeContent.classList.remove('hidden');
-        }
-
-        function handleTaskFileSearch(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            if (!taskAllFiles) return;
-            const filtered = taskAllFiles.filter(file => file.name.toLowerCase().includes(searchTerm));
-            renderTaskFiles(filtered);
-        }
-
-        function renderTaskFiles(files) {
-            console.log('renderTaskFiles welcom')
-            const contentDiv = document.getElementById('fileManagerContent');
-            if (!contentDiv) return;
-
-            if (!files || files.length === 0) {
-                contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Нет файлов</div>`;
-                return;
+            async function downloadTaskFile(fileId) {
+                window.open(`/file-storage/download/${fileId}`, "_blank");
             }
 
-            let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
-            files.forEach(file => {
-                const isSelected = taskSelectedFiles.some(f => f.id === file.id);
-                const fileIcon = getFileIcon(file.extension);
-                const fileType = getFileTypeClass(file.extension);
-                html += `
-                      <div class="file-card bg-white border-2 ${isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200'} rounded-lg p-3 transition-all duration-200 hover:shadow-md cursor-pointer"
-                 onclick="toggleEditFileSelection(${file.id})">
-                <div class="flex justify-between items-start mb-2">
-                    <div class="w-5 h-5 rounded ${isSelected ? 'bg-green-500' : 'border-2 border-gray-300'} flex items-center justify-center">
-                        ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
-                    </div>
-                    <button type="button"
-                            onclick="event.stopPropagation(); downloadEditFile(${file.id})"
-                            class="text-gray-400 hover:text-green-600 p-1 transition-colors"
-                            title="Скачать">
-                        <i class="fas fa-download"></i>
-                    </button>
-                </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
-                        <img src="/storage/${file.path}" alt="${escapeHtml(file.name)}" class="w-full h-full object-cover">
-                    </div>
-                    <p class="text-sm font-medium text-gray-800 truncate" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</p>
-                    <p class="text-xs text-gray-500 mt-1">${formatFileSize(file.size)}</p>
-                    <p class="text-xs text-gray-400">${formatDate(file.created_at)}</p>
-                </div>
-            </div>`;
-            });
-            html += '</div>';
-            contentDiv.innerHTML = html;
-            updateTaskSelectedCount();
-        }
-
-        function toggleTaskFileSelection(fileId) {
-            console.log('toggleTaskFileSelectionwelcome')
-            let file = taskAllFiles.find(f => f.id === fileId);
-            if (!file) return;
-
-            const index = taskSelectedFiles.findIndex(f => f.id === fileId);
-            if (index === -1) {
-                taskSelectedFiles.push(file);
-            } else {
-                taskSelectedFiles.splice(index, 1);
+            function closeTaskStorageManager() {
+                console.log(
+                    "welcome.blade.php: Закрытие модального окна хранилища файлов",
+                );
+                const modal = document.getElementById("fileManagerModal");
+                if (modal) {
+                    modal.classList.add("hidden");
+                    document.body.classList.remove("overflow-hidden");
+                }
             }
-
-            renderTaskFiles(taskAllFiles);
-            updateTaskSelectedCount();
-        }
-
-        function updateTaskSelectedCount() {
-            const selectedCountSpan = document.getElementById('selectedCount');
-            const confirmCountSpan = document.getElementById('confirmCount');
-            if (selectedCountSpan) selectedCountSpan.textContent = taskSelectedFiles.length;
-            if (confirmCountSpan) confirmCountSpan.textContent = taskSelectedFiles.length;
-        }
-
-        async function downloadTaskFile(fileId) {
-            window.open(`/file-storage/download/${fileId}`, '_blank');
-        }
-
-        function closeTaskStorageManager() {
-            console.log('welcome.blade.php: Закрытие модального окна хранилища файлов');
-            const modal = document.getElementById('fileManagerModal');
-            if (modal) {
-                modal.classList.add('hidden');
-                document.body.classList.remove('overflow-hidden');
-            }
-        }
-        })
+        });
         // ==================== ФУНКЦИИ ДЛЯ РЕДАКТИРОВАНИЯ ====================
         let currentEditTaskId = null;
 
         async function openEditModal(taskId) {
-            console.log('openEditTaskModal2')
             currentEditTaskId = taskId;
             taskEditSelectedFiles = [];
 
             try {
                 const response = await fetch(`/tasks/${taskId}/get`, {
-                    method: 'GET',
+                    method: "GET",
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    }
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        Accept: "application/json",
+                    },
                 });
 
                 const data = await response.json();
 
-                if (data.success) {
-                    const task = data.task;
-
-                    const currentUserId = {{ auth()->id() }};
-                    const isLeader = {{ auth()->user()->isLeader() ? 'true' : 'false' }};
-
-                    if (task.author_id !== currentUserId && !isLeader) {
-                        showNotification('Вы не можете редактировать эту задачу. Редактировать может только автор задачи или руководитель.',"error");
-                        return;
-                    }
-
-                    document.getElementById('editTaskId').value = task.id;
-                    document.getElementById('editTaskName').value = task.name;
-                    document.getElementById('editTaskDescription').value = task.description || '';
-                    document.getElementById('editTaskDepartment').value = task.department_id || '';
-                    document.getElementById('editTaskCategory').value = task.category_id || '';
-                    document.getElementById('editTaskUser').value = task.user_id || '';
-                    document.getElementById('editTaskPriority').value = task.priority || 'средний';
-                    document.getElementById('editTaskStatus').value = task.status;
-                    document.getElementById('editTaskDeadline').value = task.deadline ? task.deadline.slice(0, 16) : '';
-                    document.getElementById('editTaskEstimatedHours').value = task.estimated_hours || '';
-                    document.getElementById('editTaskActualHours').value = task.actual_hours || '';
-
-                    if (task.files && task.files.length > 0) {
-                        taskEditSelectedFiles = task.files;
-                        console.log('Загружены файлы задачи:', taskEditSelectedFiles.map(f => f.id));
-                        updateTaskEditSelectedFilesDisplay();
-                    } else {
-                        updateTaskEditSelectedFilesDisplay();
-                    }
-
-                    document.getElementById('editTaskModal').classList.remove('hidden');
-                    document.body.classList.add('overflow-y-hidden')
-                } else {
-                    showNotification('Ошибка при загрузке задачи','error');
+                if (!data.success) {
+                    showNotification("Ошибка при загрузке задачи", "error");
+                    return;
                 }
+
+                const task = data.task;
+
+                const currentUserId = {{ auth()->id() }};
+                const isLeader = {{ auth()->user()->isLeader() ? 'true' : 'false' }};
+
+                if (task.author_id !== currentUserId && !isLeader) {
+                    showNotification(
+                        "Вы не можете редактировать эту задачу. Редактировать может только автор задачи или руководитель.",
+                        "error",
+                    );
+                    return;
+                }
+
+                document.getElementById("editTaskId").value = task.id;
+                document.getElementById("editTaskName").value = task.name;
+                document.getElementById("editTaskDescription").value =
+                    task.description || "";
+                document.getElementById("editTaskDepartment").value =
+                    task.department_id || "";
+                document.getElementById("editTaskCategory").value =
+                    task.category_id || "";
+                document.getElementById("editTaskPriority").value =
+                    task.priority || "средний";
+                document.getElementById("editTaskStatus").value = task.status;
+                document.getElementById("editTaskDeadline").value = task.deadline
+                    ? task.deadline.slice(0, 16)
+                    : "";
+                document.getElementById("editTaskEstimatedHours").value =
+                    task.estimated_hours || "";
+                document.getElementById("editTaskActualHours").value =
+                    task.actual_hours || "";
+
+                // ===== Исполнитель =====
+                const form = document.getElementById("editTaskForm");
+                const userId = task.user_id ?? "";
+
+                let userField = form.querySelector('[name="user_id"]');
+
+                // если компонент не отдал поле с name="user_id", создаём скрытое
+                if (!userField) {
+                    userField = document.createElement("input");
+                    userField.type = "hidden";
+                    userField.name = "user_id";
+                    form.appendChild(userField);
+                }
+
+                // сброс состояния от прошлого открытия модалки
+                userField.disabled = false;
+                userField.style.pointerEvents = "";
+                userField.removeAttribute("tabindex");
+
+                if (userField.tagName === "SELECT") {
+                    userField
+                        .querySelectorAll("option[data-dynamic]")
+                        .forEach((o) => o.remove());
+
+                    // если исполнителя нет в списке $assignableUsers, добавляем опцию
+                    if (
+                        userId !== "" &&
+                        !userField.querySelector(`option[value="${userId}"]`)
+                    ) {
+                        const opt = new Option(
+                            task.user?.name ?? `Пользователь #${userId}`,
+                            userId,
+                        );
+                        opt.dataset.dynamic = "1";
+                        userField.appendChild(opt);
+                    }
+                }
+
+                userField.value = userId;
+                userField.dispatchEvent(new Event("change", { bubbles: true }));
+
+                // у личной задачи исполнитель всегда автор: менять нельзя,
+                // но поле остаётся в форме и уходит в запросе
+                if (task.is_personal) {
+                    userField.style.pointerEvents = "none";
+                    userField.setAttribute("tabindex", "-1");
+                }
+                // =======================
+
+                taskEditSelectedFiles = task.files?.length ? task.files : [];
+                updateTaskEditSelectedFilesDisplay();
+
+                document.getElementById("editTaskModal").classList.remove("hidden");
+                document.body.classList.add("overflow-y-hidden");
             } catch (error) {
-                console.error('Ошибка:', error);
-                 showNotification('Ошибка при загрузке задачи','error');
+                console.error("Ошибка:", error);
+                showNotification("Ошибка при загрузке задачи", "error");
             }
         }
 
-        function closeEditModal() {
-            document.getElementById('editTaskModal').classList.add('hidden');
-            document.getElementById('editTaskForm').reset();
-            currentEditTaskId = null;
-            taskEditSelectedFiles = [];
-            document.getElementById('editUploadNewFilesInput').value = '';
-            document.getElementById('editUploadFilesList').classList.add('hidden');
-            document.body.classList.remove('overflow-y-hidden')
-        }
-
         function updateTaskEditSelectedFilesDisplay() {
-            const container = document.getElementById('editSelectedFilesContainer');
-            const fileCounter = document.getElementById('editFileCounter');
-            const fileCount = document.getElementById('editFileCount');
+            const container = document.getElementById("editSelectedFilesContainer");
+            const fileCounter = document.getElementById("editFileCounter");
+            const fileCount = document.getElementById("editFileCount");
 
             if (!container) return;
 
@@ -997,10 +1448,10 @@
                     <p class="text-sm text-gray-500">Файлы не выбраны</p>
                     <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
                 </div>`;
-                if (fileCounter) fileCounter.classList.add('hidden');
+                if (fileCounter) fileCounter.classList.add("hidden");
             } else {
-                let html = '';
-                taskEditSelectedFiles.forEach(file => {
+                let html = "";
+                taskEditSelectedFiles.forEach((file) => {
                     const fileIcon = getFileIcon(file.extension);
                     const fileType = getFileTypeClass(file.extension);
                     html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
@@ -1020,55 +1471,68 @@
                 });
                 container.innerHTML = html;
                 if (fileCount) fileCount.textContent = taskEditSelectedFiles.length;
-                if (fileCounter) fileCounter.classList.remove('hidden');
+                if (fileCounter) fileCounter.classList.remove("hidden");
             }
         }
 
         function removeTaskEditSelectedFile(fileId) {
-            taskEditSelectedFiles = taskEditSelectedFiles.filter(f => f.id !== fileId);
+            taskEditSelectedFiles = taskEditSelectedFiles.filter(
+                (f) => f.id !== fileId,
+            );
             updateTaskEditSelectedFilesDisplay();
         }
 
         function clearTaskEditSelectedFiles() {
             if (taskEditSelectedFiles.length === 0) return;
-            if (confirm(`Удалить все выбранные файлы (${taskEditSelectedFiles.length})?`)) {
+            if (
+                confirm(
+                    `Удалить все выбранные файлы (${taskEditSelectedFiles.length})?`,
+                )
+            ) {
                 taskEditSelectedFiles = [];
                 updateTaskEditSelectedFilesDisplay();
             }
         }
 
-
         async function openTaskEditFileManager() {
-            const modal = document.getElementById('fileManagerModal');
+            const modal = document.getElementById("fileManagerModal");
             if (modal) {
-                modal.classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
+                modal.classList.remove("hidden");
+                document.body.classList.add("overflow-hidden");
                 await loadTaskEditFiles();
             }
         }
 
         async function loadTaskEditFiles() {
-            const contentDiv = document.getElementById('fileManagerContent');
+            const contentDiv = document.getElementById("fileManagerContent");
             if (!contentDiv) return;
             contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Загрузка...</div>`;
 
             try {
-                const response = await fetch('/tasks/file-storage/get-files', {
+                const response = await fetch("/tasks/file-storage/get-files", {
                     headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                    }
+                        Accept: "application/json",
+                        "X-CSRF-TOKEN":
+                            document.querySelector('meta[name="csrf-token"]')
+                                ?.content || "",
+                    },
                 });
-                if (!response.ok) throw new Error('Ошибка');
+                if (!response.ok) throw new Error("Ошибка");
                 window.taskEditState.all = await response.json();
-                console.log('Загружены все файлы из хранилища:', window.taskEditState.all.length);
-                console.log('Текущие выбранные файлы (taskEditSelectedFiles):', taskEditSelectedFiles.map(f => f.id));
+                console.log(
+                    "Загружены все файлы из хранилища:",
+                    window.taskEditState.all.length,
+                );
+                console.log(
+                    "Текущие выбранные файлы (taskEditSelectedFiles):",
+                    taskEditSelectedFiles.map((f) => f.id),
+                );
                 renderTaskEditFiles(window.taskEditState.all);
 
-                const searchInput = document.getElementById('fileManagerSearch');
+                const searchInput = document.getElementById("fileManagerSearch");
                 if (searchInput) {
-                    searchInput.removeEventListener('input', handleTaskEditFileSearch);
-                    searchInput.addEventListener('input', handleTaskEditFileSearch);
+                    searchInput.removeEventListener("input", handleTaskEditFileSearch);
+                    searchInput.addEventListener("input", handleTaskEditFileSearch);
                 }
             } catch (error) {
                 contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">Ошибка загрузки2</div>`;
@@ -1078,72 +1542,83 @@
         function handleTaskEditFileSearch(e) {
             const searchTerm = e.target.value.toLowerCase();
             if (!window.taskEditState.all) return;
-            const filtered = window.taskEditState.all.filter(file => file.name.toLowerCase().includes(searchTerm));
+            const filtered = window.taskEditState.all.filter((file) =>
+                file.name.toLowerCase().includes(searchTerm),
+            );
             renderTaskEditFiles(filtered);
         }
-
 
         function handleTaskEditCheckboxChange(e) {
             e.stopPropagation();
             const fileId = parseInt(this.value);
-            const file = window.taskEditState.all.find(f => f.id === fileId);
+            const file = window.taskEditState.all.find((f) => f.id === fileId);
             if (file) {
                 if (this.checked) {
-                    if (!taskEditSelectedFiles.some(f => f.id === fileId)) {
+                    if (!taskEditSelectedFiles.some((f) => f.id === fileId)) {
                         taskEditSelectedFiles.push(file);
                     }
                 } else {
-                    taskEditSelectedFiles = taskEditSelectedFiles.filter(f => f.id !== fileId);
+                    taskEditSelectedFiles = taskEditSelectedFiles.filter(
+                        (f) => f.id !== fileId,
+                    );
                 }
-                const card = this.closest('.file-card');
+                const card = this.closest(".file-card");
                 if (card) {
                     if (this.checked) {
-                        card.classList.add('border-green-500', 'shadow-md');
-                        card.classList.remove('border-gray-200');
+                        card.classList.add("border-green-500", "shadow-md");
+                        card.classList.remove("border-gray-200");
                     } else {
-                        card.classList.remove('border-green-500', 'shadow-md');
-                        card.classList.add('border-gray-200');
+                        card.classList.remove("border-green-500", "shadow-md");
+                        card.classList.add("border-gray-200");
                     }
                 }
                 updateTaskEditSelectedCount();
-                console.log('taskEditSelectedFiles после измененddия:', taskEditSelectedFiles.map(f => f.id));
+                console.log(
+                    "taskEditSelectedFiles после измененddия:",
+                    taskEditSelectedFiles.map((f) => f.id),
+                );
             }
         }
 
         function toggleTaskEditFileSelection(fileId) {
-            let file = window.taskEditState.all.find(f => f.id === fileId);
+            let file = window.taskEditState.all.find((f) => f.id === fileId);
             if (!file) return;
 
-            const index = taskEditSelectedFiles.findIndex(f => f.id === fileId);
+            const index = taskEditSelectedFiles.findIndex((f) => f.id === fileId);
             if (index === -1) {
                 taskEditSelectedFiles.push(file);
             } else {
                 taskEditSelectedFiles.splice(index, 1);
             }
 
-            const checkbox = document.querySelector(`#fileManagerContent .task-edit-file-checkbox[value="${fileId}"]`);
+            const checkbox = document.querySelector(
+                `#fileManagerContent .task-edit-file-checkbox[value="${fileId}"]`,
+            );
             if (checkbox) {
                 checkbox.checked = index === -1;
-                const card = checkbox.closest('.file-card');
+                const card = checkbox.closest(".file-card");
                 if (card) {
                     if (checkbox.checked) {
-                        card.classList.add('border-green-500', 'shadow-md');
-                        card.classList.remove('border-gray-200');
+                        card.classList.add("border-green-500", "shadow-md");
+                        card.classList.remove("border-gray-200");
                     } else {
-                        card.classList.remove('border-green-500', 'shadow-md');
-                        card.classList.add('border-gray-200');
+                        card.classList.remove("border-green-500", "shadow-md");
+                        card.classList.add("border-gray-200");
                     }
                 }
             }
 
             updateTaskEditSelectedCount();
-            console.log('taskEditSelectedFiles после toggle:', taskEditSelectedFiles.map(f => f.id));
+            console.log(
+                "taskEditSelectedFiles после toggle:",
+                taskEditSelectedFiles.map((f) => f.id),
+            );
         }
 
         function updateTaskEditSelectedCount() {
-            const selectedCountSpan = document.getElementById('selectedCount');
-            const confirmCountSpan = document.getElementById('confirmCount');
-            const confirmBtn = document.getElementById('confirmFileSelectionBtn');
+            const selectedCountSpan = document.getElementById("selectedCount");
+            const confirmCountSpan = document.getElementById("confirmCount");
+            const confirmBtn = document.getElementById("confirmFileSelectionBtn");
 
             const count = taskEditSelectedFiles.length;
 
@@ -1153,96 +1628,121 @@
             if (confirmBtn) {
                 if (count === 0) {
                     confirmBtn.disabled = true;
-                    confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    confirmBtn.classList.add("opacity-50", "cursor-not-allowed");
                 } else {
                     confirmBtn.disabled = false;
-                    confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    confirmBtn.classList.remove("opacity-50", "cursor-not-allowed");
                 }
             }
         }
 
-
         // ==================== ФУНКЦИИ ДЛЯ ЛИЧНЫХ ЗАДАЧ ====================
         function openPersonalTaskModal() {
-            console.log('openPersonalTaskModal welcome.page')
-            const modal = document.getElementById('taskModal');
-            const form = document.getElementById('taskForm');
+            console.log("openPersonalTaskModal welcome.page");
+            const modal = document.getElementById("taskModal");
+            const form = document.getElementById("taskForm");
 
             if (!modal || !form) return;
 
             // Отключаем HTML5 валидацию формы
-            form.setAttribute('novalidate', 'novalidate');
+            form.setAttribute("novalidate", "novalidate");
 
             // Удаляем старые скрытые поля если есть
-            const oldHiddenDept = form.querySelector('input[name="department_id"][type="hidden"]');
+            const oldHiddenDept = form.querySelector(
+                'input[name="department_id"][type="hidden"]',
+            );
             if (oldHiddenDept) oldHiddenDept.remove();
 
             const oldIsPersonal = form.querySelector('input[name="is_personal"]');
             if (oldIsPersonal) oldIsPersonal.remove();
-
-            // Добавляем скрытое поле department_id с отделом пользователя
-            @if(isset($user) && $user->department_id)
-            const hiddenDeptInput = document.createElement('input');
-            hiddenDeptInput.type = 'hidden';
-            hiddenDeptInput.name = 'department_id';
-            hiddenDeptInput.value = '{{ $user->department_id }}';
-            form.appendChild(hiddenDeptInput);
-            @endif
+            form.querySelectorAll('[name="department_id"]').forEach(el => {
+                el.value = '';
+                el.disabled = true;   // disabled-поля не попадают в FormDataы
+            });
+            form.querySelectorAll('#department_id-field').forEach(el=> {
+                el.classList.add('hidden')
+            })
+            //  form.querySelectorAll('#editTaskUser-field').forEach(el=> {
+            //     el.classList.add('hidden')
+            // })
+            // // Добавляем скрытое поле department_id с отделом пользователя
+            // !закоментировал так как у личных задач не должно быть отдела, по умолчанию это поле null
+            // @if (isset($user) && $user->department_id)
+            // const hiddenDeptInput = document.createElement("input");
+            // hiddenDeptInput.type = "hidden";
+            // hiddenDeptInput.name = "department_id";
+            // hiddenDeptInput.value = "{{ $user->department_id }}";
+            // form.appendChild(hiddenDeptInput);
+            // @endif
 
             // Добавляем скрытое поле is_personal
-            const isPersonalInput = document.createElement('input');
-            isPersonalInput.type = 'hidden';
-            isPersonalInput.name = 'is_personal';
-            isPersonalInput.value = '1';
+            const isPersonalInput = document.createElement("input");
+            isPersonalInput.type = "hidden";
+            isPersonalInput.name = "is_personal";
+            isPersonalInput.value = "1";
             form.appendChild(isPersonalInput);
 
-            const titleElement = modal.querySelector('h3');
-            const descElement = modal.querySelector('p');
-            if (titleElement) titleElement.textContent = 'Новая личная задача';
-            if (descElement) descElement.textContent = 'Создайте задачу для себя';
+            const titleElement = modal.querySelector("h3");
+            const descElement = modal.querySelector("p");
+            if (titleElement) titleElement.textContent = "Новая личная задача";
+            if (descElement) descElement.textContent = "Создайте задачу для себя";
 
             // Скрываем ненужные поля
-            const executorField = document.querySelector('select[name="user_id"]')?.closest('.space-y-2');
-            const departmentField = document.querySelector('select[name="department_id"]:not([type="hidden"])')?.closest('.space-y-2');
-            const statusField = document.querySelector('select[name="status"]')?.closest('.space-y-2');
+            const executorField = document
+                .querySelector('select[name="user_id"]')
+                ?.closest(".space-y-2");
+            const departmentField = document
+                .querySelector('select[name="department_id"]:not([type="hidden"])')
+                ?.closest(".space-y-2");
+            const statusField = document
+                .querySelector('select[name="status"]')
+                ?.closest(".space-y-2");
 
-            if (executorField) executorField.style.display = 'none';
-            if (departmentField) departmentField.style.display = 'none';
-            if (statusField) statusField.style.display = 'none';
+            if (executorField) executorField.style.display = "none";
+            if (departmentField) departmentField.style.display = "none";
+            if (statusField) statusField.style.display = "none";
 
-            modal.classList.remove('hidden');
-            document.body.classList.add('overflow-y-hidden');
+            modal.classList.remove("hidden");
+            document.body.classList.add("overflow-y-hidden");
         }
 
         function closeTaskModal() {
-            const modal = document.getElementById('taskModal');
-            const form = document.getElementById('taskForm');
+            const modal = document.getElementById("taskModal");
+            const form = document.getElementById("taskForm");
 
             if (!modal) return;
 
             // Восстанавливаем валидацию формы
-            form.removeAttribute('novalidate');
+            form.removeAttribute("novalidate");
 
             // Восстанавливаем видимость полей
-            const executorField = document.querySelector('select[name="user_id"]')?.closest('.space-y-2');
-            const departmentField = document.querySelector('select[name="department_id"]:not([type="hidden"])')?.closest('.space-y-2');
-            const statusField = document.querySelector('select[name="status"]')?.closest('.space-y-2');
+            const executorField = document
+                .querySelector('select[name="user_id"]')
+                ?.closest(".space-y-2");
+            const departmentField = document
+                .querySelector('select[name="department_id"]:not([type="hidden"])')
+                ?.closest(".space-y-2");
+            const statusField = document
+                .querySelector('select[name="status"]')
+                ?.closest(".space-y-2");
 
-            if (executorField) executorField.style.display = 'block';
-            if (departmentField) departmentField.style.display = 'block';
-            if (statusField) statusField.style.display = 'block';
+            if (executorField) executorField.style.display = "block";
+            if (departmentField) departmentField.style.display = "block";
+            if (statusField) statusField.style.display = "block";
 
             // Удаляем скрытые поля
-            const hiddenDept = form.querySelector('input[name="department_id"][type="hidden"]');
+            const hiddenDept = form.querySelector(
+                'input[name="department_id"][type="hidden"]',
+            );
             if (hiddenDept) hiddenDept.remove();
 
             const hiddenIsPersonal = form.querySelector('input[name="is_personal"]');
             if (hiddenIsPersonal) hiddenIsPersonal.remove();
 
-            const titleElement = modal.querySelector('h3');
-            const descElement = modal.querySelector('p');
-            if (titleElement) titleElement.textContent = 'Новая задача';
-            if (descElement) descElement.textContent = 'Заполните информацию о задаче';
+            const titleElement = modal.querySelector("h3");
+            const descElement = modal.querySelector("p");
+            if (titleElement) titleElement.textContent = "Новая задача";
+            if (descElement) descElement.textContent = "Заполните информацию о задаче";
 
             if (form) {
                 form.reset();
@@ -1251,202 +1751,223 @@
             taskSelectedFiles = [];
             updateTaskSelectedFilesDisplay();
 
-            modal.classList.add('hidden');
-document.body.classList.remove('overflow-y-hidden');
-
+            modal.classList.add("hidden");
+            document.body.classList.remove("overflow-y-hidden");
         }
 
         async function startTask(taskId) {
             try {
                 const response = await fetch(`/tasks/${taskId}/status`, {
-                    method: 'PATCH',
+                    method: "PATCH",
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
                     },
-                    body: JSON.stringify({ status: 'в работе' })
+                    body: JSON.stringify({ status: "в работе" }),
                 });
                 const data = await response.json();
                 if (data.success) {
-                    showNotification('Задача переведена в работу!','success');
+                    showNotification("Задача переведена в работу!", "success");
                     location.reload();
                 } else {
-                    showNotification(data.message || 'Ошибка при обновлении статуса','error');
+                    showNotification(
+                        data.message || "Ошибка при обновлении статуса",
+                        "error",
+                    );
                 }
             } catch (error) {
-                console.error('Ошибка:', error);
-                 showNotification('Ошибка при обновлении статуса','error');
+                console.error("Ошибка:", error);
+                showNotification("Ошибка при обновлении статуса", "error");
             }
         }
 
         async function sendForReview(taskId) {
             currentTaskId = taskId;
-            const timeModal = document.getElementById('timeModal');
-            if (timeModal) timeModal.classList.remove('hidden');
+            const timeModal = document.getElementById("timeModal");
+            if (timeModal) timeModal.classList.remove("hidden");
         }
 
         async function submitForReview() {
-            const actualHours = document.getElementById('actualHours')?.value;
+            const actualHours = document.getElementById("actualHours")?.value;
             if (!actualHours || actualHours <= 0) {
-                 showNotification('Пожалуйста, укажите корректное время работы','warning');
+                showNotification(
+                    "Пожалуйста, укажите корректное время работы",
+                    "warning",
+                );
                 return;
             }
 
             try {
                 const response = await fetch(`/tasks/${currentTaskId}/status`, {
-                    method: 'PATCH',
+                    method: "PATCH",
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
                     },
-                    body: JSON.stringify({ status: 'на проверке', actual_hours: actualHours })
+                    body: JSON.stringify({
+                        status: "на проверке",
+                        actual_hours: actualHours,
+                    }),
                 });
                 const data = await response.json();
                 if (data.success) {
-                     showNotification('Задача отправлена на проверку!','success');
+                    showNotification("Задача отправлена на проверку!", "success");
                     closeTimeModal();
                     location.reload();
                 } else {
-                     showNotification(data.message || 'Ошибка при отправке на проверку','error');
+                    showNotification(
+                        data.message || "Ошибка при отправке на проверку",
+                        "error",
+                    );
                 }
             } catch (error) {
-                console.error('Ошибка:', error);
-                showNotification('Ошибка при отправке на проверку','error');
+                console.error("Ошибка:", error);
+                showNotification("Ошибка при отправке на проверку", "error");
             }
         }
 
         function showRejectModal(taskId) {
             currentTaskId = taskId;
-            const rejectModal = document.getElementById('rejectModal');
-            if (rejectModal) rejectModal.classList.remove('hidden');
+            const rejectModal = document.getElementById("rejectModal");
+            if (rejectModal) rejectModal.classList.remove("hidden");
         }
 
         async function submitRejection() {
-            const reason = document.getElementById('rejectReason')?.value.trim();
+            const reason = document.getElementById("rejectReason")?.value.trim();
             if (!reason) {
-                showNotification('Пожалуйста, укажите причину отказа','error');
+                showNotification("Пожалуйста, укажите причину отказа", "error");
                 return;
             }
 
             try {
                 const response = await fetch(`/tasks/${currentTaskId}/reject`, {
-                    method: 'POST',
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
                     },
-                    body: JSON.stringify({ reason })
+                    body: JSON.stringify({ reason }),
                 });
                 const data = await response.json();
                 if (data.success) {
-                    showNotification('Вы отказались от задачи','warning');
+                    showNotification("Вы отказались от задачи", "warning");
                     closeRejectModal();
                     location.reload();
                 } else {
-                    showNotification(data.message || 'Ошибка при отказе от задачи','error');
+                    showNotification(
+                        data.message || "Ошибка при отказе от задачи",
+                        "error",
+                    );
                 }
             } catch (error) {
-                console.error('Ошибка:', error);
-                 showNotification('Ошибка при отказе от задачи','error');
+                console.error("Ошибка:", error);
+                showNotification("Ошибка при отказе от задачи", "error");
             }
         }
 
         function closeTimeModal() {
-            const timeModal = document.getElementById('timeModal');
-            const actualHours = document.getElementById('actualHours');
-            if (timeModal) timeModal.classList.add('hidden');
-            if (actualHours) actualHours.value = '';
+            const timeModal = document.getElementById("timeModal");
+            const actualHours = document.getElementById("actualHours");
+            if (timeModal) timeModal.classList.add("hidden");
+            if (actualHours) actualHours.value = "";
             currentTaskId = null;
         }
 
         function closeRejectModal() {
-            const rejectModal = document.getElementById('rejectModal');
-            const rejectReason = document.getElementById('rejectReason');
-            if (rejectModal) rejectModal.classList.add('hidden');
-            if (rejectReason) rejectReason.value = '';
+            const rejectModal = document.getElementById("rejectModal");
+            const rejectReason = document.getElementById("rejectReason");
+            if (rejectModal) rejectModal.classList.add("hidden");
+            if (rejectReason) rejectReason.value = "";
             currentTaskId = null;
         }
 
         // Обрабатываем кнопку "Назад" в браузере
-        window.addEventListener('popstate', function(event) {
-            const modal = document.getElementById('taskViewModal');
+        window.addEventListener("popstate", function (event) {
+            const modal = document.getElementById("taskViewModal");
 
-            if (modal && !modal.classList.contains('hidden')) {
-                closeTaskViewModal('/home');
+            if (modal && !modal.classList.contains("hidden")) {
+                closeTaskViewModal("/home");
             }
         });
 
         // Закрытие по Escape
-        document.addEventListener('keydown', function(e) {
-            const modal = document.getElementById('taskViewModal');
-            if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
-                closeTaskViewModal('/home');
+        document.addEventListener("keydown", function (e) {
+            const modal = document.getElementById("taskViewModal");
+            if (e.key === "Escape" && modal && !modal.classList.contains("hidden")) {
+                closeTaskViewModal("/home");
             }
         });
 
         // Закрытие по клику на фон
-        document.addEventListener('click', function(e) {
-            const modal = document.getElementById('taskViewModal');
+        document.addEventListener("click", function (e) {
+            const modal = document.getElementById("taskViewModal");
             if (e.target === modal) {
-                closeTaskViewModal('/home');
+                closeTaskViewModal("/home");
             }
         });
 
         // При загрузке страницы проверяем URL и открываем модалку если нужно
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const match = window.location.pathname.match(/\/tasks\/(\d+)/);
 
-            if (match && !window.location.pathname.includes('/page/')) {
+            if (match && !window.location.pathname.includes("/page/")) {
                 const taskId = match[1];
                 // Открываем модальное окно с задачей
-                setTimeout(function() {
+                setTimeout(function () {
                     openTaskViewModal(taskId);
                 }, 100);
             }
         });
 
-        document.addEventListener('click', function (e) {
-            if (e.target.id === 'taskViewModal') closeTaskViewModal('/home');
+        document.addEventListener("click", function (e) {
+            if (e.target.id === "taskViewModal") closeTaskViewModal("/home");
         });
 
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeTaskViewModal('/home');
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape") closeTaskViewModal("/home");
         });
 
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
-        document.addEventListener('DOMContentLoaded', function () {
-            const searchInput = document.getElementById('taskSearchInput');
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById("taskSearchInput");
             if (searchInput) {
-                searchInput.addEventListener('input', applyFilters);
-                searchInput.addEventListener('keyup', applyFilters);
+                searchInput.addEventListener("input", applyFilters);
+                searchInput.addEventListener("keyup", applyFilters);
             }
 
-            document.addEventListener('click', function (event) {
-                const dropdown = document.getElementById('filtersDropdown');
-                const filterButton = event.target.closest('[onclick="toggleFiltersDropdown()"]');
+            document.addEventListener("click", function (event) {
+                const dropdown = document.getElementById("filtersDropdown");
+                const filterButton = event.target.closest(
+                    '[onclick="toggleFiltersDropdown()"]',
+                );
                 const isInsideDropdown = dropdown && dropdown.contains(event.target);
 
-                if (dropdown && !dropdown.classList.contains('hidden') && !filterButton && !isInsideDropdown) {
-                    dropdown.classList.add('hidden');
-                    const chevron = document.getElementById('filtersChevron');
-                    if (chevron) chevron.style.transform = 'rotate(0deg)';
+                if (
+                    dropdown &&
+                    !dropdown.classList.contains("hidden") &&
+                    !filterButton &&
+                    !isInsideDropdown
+                ) {
+                    dropdown.classList.add("hidden");
+                    const chevron = document.getElementById("filtersChevron");
+                    if (chevron) chevron.style.transform = "rotate(0deg)";
                 }
             });
 
             initDragAndDrop();
 
-            const uploadNewFilesInput = document.getElementById('uploadNewFilesInput');
+            const uploadNewFilesInput = document.getElementById("uploadNewFilesInput");
             if (uploadNewFilesInput) {
-                uploadNewFilesInput.addEventListener('change', function(e) {
+                uploadNewFilesInput.addEventListener("change", function (e) {
                     const files = Array.from(e.target.files);
-                    const container = document.getElementById('uploadFilesContainer');
-                    const listContainer = document.getElementById('uploadFilesList');
+                    const container = document.getElementById("uploadFilesContainer");
+                    const listContainer = document.getElementById("uploadFilesList");
 
                     if (files.length > 0 && container) {
-                        listContainer?.classList.remove('hidden');
-                        let html = '';
+                        listContainer?.classList.remove("hidden");
+                        let html = "";
                         files.forEach((file, index) => {
-                            const fileIcon = getFileIcon(file.name.split('.').pop());
+                            const fileIcon = getFileIcon(file.name.split(".").pop());
                             html += `
                                 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200" data-file-index="${index}">
                                     <div class="flex items-center space-x-3">
@@ -1466,24 +1987,30 @@ document.body.classList.remove('overflow-y-hidden');
                         });
                         container.innerHTML = html;
                     } else if (files.length === 0 && container) {
-                        listContainer?.classList.add('hidden');
-                        container.innerHTML = '';
+                        listContainer?.classList.add("hidden");
+                        container.innerHTML = "";
                     }
                 });
             }
 
-            const editUploadNewFilesInput = document.getElementById('editUploadNewFilesInput');
+            const editUploadNewFilesInput = document.getElementById(
+                "editUploadNewFilesInput",
+            );
             if (editUploadNewFilesInput) {
-                editUploadNewFilesInput.addEventListener('change', function(e) {
+                editUploadNewFilesInput.addEventListener("change", function (e) {
                     const files = Array.from(e.target.files);
-                    const container = document.getElementById('editUploadFilesContainer');
-                    const listContainer = document.getElementById('editUploadFilesList');
+                    const container = document.getElementById(
+                        "editUploadFilesContainer",
+                    );
+                    const listContainer = document.getElementById(
+                        "editUploadFilesList",
+                    );
 
                     if (files.length > 0 && container) {
-                        listContainer?.classList.remove('hidden');
-                        let html = '';
+                        listContainer?.classList.remove("hidden");
+                        let html = "";
                         files.forEach((file, index) => {
-                            const fileIcon = getFileIcon(file.name.split('.').pop());
+                            const fileIcon = getFileIcon(file.name.split(".").pop());
                             html += `
                                 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200" data-file-index="${index}">
                                     <div class="flex items-center space-x-3">
@@ -1503,114 +2030,114 @@ document.body.classList.remove('overflow-y-hidden');
                         });
                         container.innerHTML = html;
                     } else if (files.length === 0 && container) {
-                        listContainer?.classList.add('hidden');
-                        container.innerHTML = '';
+                        listContainer?.classList.add("hidden");
+                        container.innerHTML = "";
                     }
                 });
             }
 
-            const uploadArea = document.querySelector('.file-upload-area');
+            const uploadArea = document.querySelector(".file-upload-area");
             if (uploadArea) {
-                uploadArea.addEventListener('dragover', function(e) {
+                uploadArea.addEventListener("dragover", function (e) {
                     e.preventDefault();
-                    this.classList.add('drag-over');
+                    this.classList.add("drag-over");
                 });
 
-                uploadArea.addEventListener('dragleave', function(e) {
-                    this.classList.remove('drag-over');
+                uploadArea.addEventListener("dragleave", function (e) {
+                    this.classList.remove("drag-over");
                 });
 
-                uploadArea.addEventListener('drop', function(e) {
+                uploadArea.addEventListener("drop", function (e) {
                     e.preventDefault();
-                    this.classList.remove('drag-over');
+                    this.classList.remove("drag-over");
                     const files = Array.from(e.dataTransfer.files);
-                    const input = document.getElementById('uploadNewFilesInput');
+                    const input = document.getElementById("uploadNewFilesInput");
                     if (input && files.length > 0) {
                         const dataTransfer = new DataTransfer();
-                        files.forEach(file => dataTransfer.items.add(file));
+                        files.forEach((file) => dataTransfer.items.add(file));
                         input.files = dataTransfer.files;
-                        input.dispatchEvent(new Event('change'));
+                        input.dispatchEvent(new Event("change"));
                     }
                 });
             }
         });
 
-        document.addEventListener('click', function (e) {
-            if (e.target.id === 'taskViewModal') closeTaskViewModal('/home');
+        document.addEventListener("click", function (e) {
+            if (e.target.id === "taskViewModal") closeTaskViewModal("/home");
         });
 
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeTaskViewModal('/home');
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape") closeTaskViewModal("/home");
         });
-
     </script>
 
 @endsection
 
+@push ('scripts')
+    @vite ('resources/js/pages/welcome.page.js')
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            if (window.DragDropTouch) {
+                window.DragDropTouch._HOLD_DELAY = 150;
+                console.log("Полифил успешно найден и настроен!", 1);
+            } else {
+                console.log("drag not found — полифил всё еще не загрузился.");
+            }
 
-@push('scripts')
- @vite('resources/js/pages/welcome.page.js')
-   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+            if (window.innerWidth > 500) return;
 
-    if (window.DragDropTouch) {
-        window.DragDropTouch._HOLD_DELAY = 150;
-        console.log('Полифил успешно найден и настроен!',1);
-    } else {
-        console.log('drag not found — полифил всё еще не загрузился.');
-    }
+            const sliderElement = document.querySelector(".sw-v");
 
+            if (sliderElement) {
+                window.mySwiper = new Swiper(".sw-v", {
+                    wrapperClass: "sw-v-wrapper",
+                    slideClass: "board-column",
+                    centeredSlides: true,
+                    centeredSlidesBounds: true,
+                    slidesPerView: "auto",
+                    spaceBetween: 10,
+                    loop: false,
 
-    if (window.innerWidth > 500) return;
+                    /* УДАЛЕНО / ЗАКОММЕНТИРОВАНО: */
+                    /* noSwiping: true, */
+                    /* noSwipingClass: 'task-card', */
 
-    const sliderElement = document.querySelector('.sw-v');
-
-
-    if (sliderElement) {
-      window.mySwiper = new Swiper('.sw-v', {
-    wrapperClass: 'sw-v-wrapper',
-    slideClass: 'board-column',
-    centeredSlides: true,
-    centeredSlidesBounds: true,
-    slidesPerView: 'auto',
-    spaceBetween: 10,
-    loop: false,
-
-    /* УДАЛЕНО / ЗАКОММЕНТИРОВАНО: */
-    /* noSwiping: true, */
-    /* noSwipingClass: 'task-card', */
-
-    observer: true,
-    observeParents: true,
-    watchSlidesProgress: true,
-     touchStartPreventDefault: false,
-     pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-        bulletClass: 'swiper-pagination-bullet bg-gray-400 opacity-50 mx-1 inline-block rounded-full w-2 h-2',
-        bulletActiveClass: '!bg-[#22c55e] !opacity-100 w-4 rounded-lg transition-all duration-300'
-    },
-    });
-        console.log('Swiper успешно запущен для мобильного экрана!');
-    }
-    });
+                    observer: true,
+                    observeParents: true,
+                    watchSlidesProgress: true,
+                    touchStartPreventDefault: false,
+                    pagination: {
+                        el: ".swiper-pagination",
+                        clickable: true,
+                        bulletClass:
+                            "swiper-pagination-bullet bg-gray-400 opacity-50 mx-1 inline-block rounded-full w-2 h-2",
+                        bulletActiveClass:
+                            "!bg-[#22c55e] !opacity-100 w-4 rounded-lg transition-all duration-300",
+                    },
+                });
+                console.log("Swiper успешно запущен для мобильного экрана!");
+            }
+        });
     </script>
 
     <script>
-    // Закрытие модальных окон по клику на фон
-    document.addEventListener('click', function(e) {
-        if (e.target.id === 'confirmArchiveModal') closeConfirmArchiveModal();
-        if (e.target.id === 'confirmRestoreModal') closeConfirmRestoreModal();
-        if (e.target.id === 'confirmForceDeleteModal') closeConfirmForceDeleteModal();
-    });
+        // Закрытие модальных окон по клику на фон
+        document.addEventListener("click", function (e) {
+            if (e.target.id === "confirmArchiveModal")
+                closeConfirmArchiveModal();
+            if (e.target.id === "confirmRestoreModal")
+                closeConfirmRestoreModal();
+            if (e.target.id === "confirmForceDeleteModal")
+                closeConfirmForceDeleteModal();
+        });
 
-    // Закрытие по Escape
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeConfirmArchiveModal();
-            closeConfirmRestoreModal();
-            closeConfirmForceDeleteModal();
-        }
-    });
+        // Закрытие по Escape
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape") {
+                closeConfirmArchiveModal();
+                closeConfirmRestoreModal();
+                closeConfirmForceDeleteModal();
+            }
+        });
     </script>
 @endpush

@@ -75,7 +75,7 @@ async function loadCreateFiles() {
         const response = await fetch('/tasks/file-storage/get-files', {
             headers: {
                 'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                'X-CSRF-TOKEN':window.csrfToken(),
             }
         });
         if (!response.ok) throw new Error('Ошибка сети');

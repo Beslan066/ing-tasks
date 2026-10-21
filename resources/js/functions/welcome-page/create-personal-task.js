@@ -1,8 +1,8 @@
-import { addTaskToColumn } from "./add-task-to-column";
+import { addTaskToColumn } from "./../add-task-to-column";
 
 (function () {
     'use strict';
-console.log('init create-personal task')
+    console.log('init create-personal task')
 
     function isPersonalTaskModal() {
         const modal = document.getElementById('taskModal');
@@ -30,11 +30,11 @@ console.log('init create-personal task')
     //         console.log('ℹ️ [PersonalTask] Файлы не выбраны');
     //     }
     // }
-function syncSelectedFiles(formData) {
-    formData.delete('selected_files');
-    (window.taskCreateState?.selected ?? [])
-        .forEach(f => formData.append('selected_file_ids[]', f.id));
-}
+    function syncSelectedFiles(formData) {
+        formData.delete('selected_files');
+        (window.taskCreateState?.selected ?? [])
+            .forEach(f => formData.append('selected_file_ids[]', f.id));
+    }
     function resetFileState() {
         if (window.taskCreateState) {
             window.taskCreateState.selected = [];
@@ -66,7 +66,7 @@ function syncSelectedFiles(formData) {
             const response = await fetch('/tasks/personal/store', {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': getCsrfToken(form),
+                    'X-CSRF-TOKEN': csrfToken(form),
                     'Accept': 'application/json'
                 },
                 body: formData
@@ -116,7 +116,7 @@ function syncSelectedFiles(formData) {
                     location.reload();
                     console.log(data)
                 }
-            }else {
+            } else {
                 const errorMsg = data.message || 'Ошибка при создании личной задачи';
                 if (typeof showNotification === 'function') {
                     showNotification(errorMsg, 'error');

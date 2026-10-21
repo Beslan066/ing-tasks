@@ -2,7 +2,7 @@
  * Kanban Drag & Drop Module with Swiper support
  */
 
-import { buildTaskMenu } from "./build-task-menu";
+import { buildTaskMenu } from "../build-task-menu";
 
 let draggedItem = null;
 let swiperSlideTimeout = null;

@@ -7,9 +7,11 @@ import { showNotification } from './functions/show-notification';
 window.Alpine = Alpine;
 window.addTaskToCol=addTaskToColumn;
 window.showNotification=showNotification;
+window.csrfToken = () => document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 Alpine.start();
 document.addEventListener('DOMContentLoaded', () => {
     initFilePreview();
 
     console.log('initFilePreview')
 });
+ console.log('toke:',window.csrfToken())
