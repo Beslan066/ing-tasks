@@ -5,9 +5,9 @@
             <textarea id="rejectReason" placeholder="Причина отказа..."
                       class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 h-24 resize-none"></textarea>
             <div class="flex space-x-3">
-                <button onclick="submitRejection()"
+                <button onclick="window.submitRejection()"
                         class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">Подтвердить отказ</button>
-                <button onclick="closeRejectModal()"
+                <button onclick="window.closeRejectModal()"
                         class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Отмена</button>
             </div>
         </div>

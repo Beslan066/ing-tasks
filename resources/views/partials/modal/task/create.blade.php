@@ -399,6 +399,7 @@
             window.openFileManager = openCreateFileManager;
             window.switchFileTab = switchCreateFileTab;
             window.closeFileManager = closeCreateFileManager;
+            window.downloadCreateFile=downloadCreateFile;
         }
     </script>
 @endpush

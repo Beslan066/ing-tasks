@@ -34,7 +34,7 @@ import {closeEditModal} from './close-edit-modal'
             const response = await fetch(`/tasks/${taskId}/update`, {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': window.csrfToken(),
+                    'X-CSRF-TOKEN': window.getCsrfToken(),
                     'Accept': 'application/json'
                 },
                 body: formData

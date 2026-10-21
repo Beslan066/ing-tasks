@@ -33,7 +33,7 @@ export function setViewMode(mode) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': window.csrfToken(),
+            'X-CSRF-TOKEN': window.getCsrfToken(),
             'Accept': 'application/json'
         },
         body: JSON.stringify({ view_mode: mode })

@@ -5,10 +5,10 @@
             <input type="number" id="actualHours" step="0.5" min="0" placeholder="Часы"
                    class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4">
             <div class="flex space-x-3">
-                <button onclick="submitForReview()"
+                <button onclick="window.submitForReview()"
                         class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">Отправить на
                     проверку</button>
-                <button onclick="closeTimeModal()"
+                <button onclick="window.closeTimeModal()"
                         class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Отмена</button>
             </div>
         </div>

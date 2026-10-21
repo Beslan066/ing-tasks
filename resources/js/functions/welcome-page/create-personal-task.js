@@ -1,4 +1,6 @@
+import { getCsrfToken } from "../../helpers/getCsrfToken";
 import { addTaskToColumn } from "./../add-task-to-column";
+import { closeTaskModal } from "./personal-task.functions";
 
 (function () {
     'use strict';
@@ -12,11 +14,6 @@ import { addTaskToColumn } from "./../add-task-to-column";
         return titleElement && titleElement.textContent.trim() === 'Новая личная задача';
     }
 
-    function getCsrfToken(form) {
-        return document.querySelector('meta[name="csrf-token"]')?.content
-            || form?.querySelector('input[name="_token"]')?.value
-            || '';
-    }
 
     // function syncSelectedFiles(formData) {
     //     const state = window.taskCreateState;
@@ -66,7 +63,7 @@ import { addTaskToColumn } from "./../add-task-to-column";
             const response = await fetch('/tasks/personal/store', {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': csrfToken(form),
+                    'X-CSRF-TOKEN': getCsrfToken(),
                     'Accept': 'application/json'
                 },
                 body: formData
