@@ -1,316 +1,257 @@
 <div id="editTaskModal"
-     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[51] backdrop-blur-md max-[500px]:p-4">
-    <div
-        class="bg-white modal-content rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
+     role="dialog" aria-modal="true" aria-labelledby="editTaskModalTitle"
+     class="fixed inset-0 bg-slate-900/40 flex items-center justify-center hidden z-[51] backdrop-blur-sm max-[500px]:p-4">
+    <div class="bg-white modal-content rounded-[24px] w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl shadow-slate-900/10
+            scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden max-[500px]:w-[98%] max-[500px]:max-h-[85vh] transition-all duration-300">
+
         <!-- Заголовок -->
-        <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-100">
-            <div class="flex justify-between items-center p-6">
+        <div class="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-100">
+            <div class="flex justify-between items-center px-8 py-6 max-[500px]:px-5 max-[500px]:py-4">
                 <div>
-                    <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent max-[500px]:text-xl">
-                        Редактирование задачи
-                    </h3>
-                    <p class="text-sm text-gray-500 mt-1 max-[500px]:text-[12px]">Измените информацию о задаче</p>
+                    <h3 id="editTaskModalTitle" class="text-[22px] font-semibold text-slate-800 tracking-tight max-[500px]:text-xl">Редактирование задачи</h3>
+                    <p class="text-[13px] text-slate-400 mt-0.5 max-[500px]:text-[12px]">Измените информацию о задаче</p>
                 </div>
-                <button onclick="closeEditModal()"
-                        class="text-gray-400 hover:text-gray-600 transition-all duration-200 p-2 rounded-xl hover:bg-gray-100 hover:scale-110">
-                    <i class="fas fa-times text-lg"></i>
+                <button type="button" onclick="closeEditModal()" aria-label="Закрыть"
+                        class="text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 transition-all duration-200 p-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-200">
+                    <i class="fas fa-times text-sm"></i>
                 </button>
             </div>
         </div>
 
         <!-- Форма -->
-        <form id="editTaskForm" class="p-6 space-y-6">
+        <form id="editTaskForm" enctype="multipart/form-data" class="px-8 py-6 space-y-7 max-[500px]:px-5 max-[500px]:py-4">
             @csrf
             <input type="hidden" name="selected_file_ids" id="editSelectedFiles" value="[]">
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Название задачи -->
-                <div class="md:col-span-2 space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
-                        <i class="fas fa-tag text-green-500 mr-2 text-xs"></i>Название задачи *
-                    </label>
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-tasks text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
-                        </div>
-                        <input type="text" name="name" id="editTaskName"
-                               class="w-full pl-10 pr-4 py-3 border-2 outline-none border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400 hover:border-gray-300"
-                               placeholder="Введите название задачи" required>
-                    </div>
-                </div>
+            @php
+                $editStatusOptions = collect(\App\Models\Task::getStatuses())
+                    ->mapWithKeys(fn ($status) => [$status => \Illuminate\Support\Str::ucfirst($status)])
+                    ->all();
+            @endphp
 
-                <!-- Описание -->
-                <div class="md:col-span-2 space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
-                        <i class="fas fa-align-left text-green-500 mr-2 text-xs"></i>Описание
-                    </label>
-                    <textarea name="description" id="editTaskDescription" rows="4"
-                              class="w-full px-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 resize-none bg-white placeholder-gray-400"
-                              placeholder="Подробное описание задачи..."></textarea>
-                </div>
+            <!-- Название -->
+            <div class="space-y-1.5">
+                <label for="editTaskName" class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
+                    Название задачи <span class="text-rose-500">*</span>
+                </label>
+                <input type="text" name="name" id="editTaskName" required
+                       class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300"
+                       placeholder="Введите название задачи">
+            </div>
 
-                <!-- Отдел -->
-                <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
-                        <i class="fas fa-building text-green-500 mr-2 text-xs"></i>Отдел *
-                    </label>
-                    <div class="relative group">
-                        <select name="department_id" id="editTaskDepartment"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl outline-none focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
-                                required>
-                            <option value="">Выберите отдел</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
-                        </div>
-                    </div>
-                </div>
+            <!-- Описание -->
+            <div class="space-y-1.5">
+                <label for="editTaskDescription" class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
+                    Описание
+                </label>
+                <textarea name="description" id="editTaskDescription" rows="3"
+                          class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 placeholder-slate-400 text-sm resize-none hover:border-slate-300"
+                          placeholder="Добавьте подробное описание..."></textarea>
+            </div>
 
-                <!-- Категория -->
-                <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
-                        <i class="fas fa-folder text-green-500 mr-2 text-xs"></i>Категория
-                    </label>
-                    <div class="relative group">
-                        <select name="category_id" id="editTaskCategory"
-                                class="w-full px-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
-                            <option value="">Без категории</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
-                        </div>
-                    </div>
-                </div>
+            <!-- Приоритет и статус -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                <x-form.input-select
+                    name="priority"
+                    id="editTaskPriority"
+                    label="Приоритет"
+                    :required="true"
+                    :options="[
+                        'низкий'       => 'Низкий',
+                        'средний'      => 'Средний',
+                        'высокий'      => 'Высокий',
+                        'критический'  => 'Критический',
+                    ]"
+                />
 
-                <!-- Исполнитель -->
-                <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
-                        <i class="fas fa-user-check text-green-500 mr-2 text-xs"></i>Исполнитель
-                    </label>
-                    <div class="relative group">
-                        <select name="user_id" id="editTaskUser"
-                                class="w-full px-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300">
-                            <option value="">Не назначен</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
-                        </div>
-                    </div>
-                </div>
+                <x-form.input-select
+                    name="status"
+                    id="editTaskStatus"
+                    label="Статус"
+                    :required="true"
+                    :options="$editStatusOptions"
+                />
+            </div>
 
-                <!-- Приоритет -->
-                <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
-                        <i class="fas fa-flag text-green-500 mr-2 text-xs"></i>Приоритет *
-                    </label>
-                    <div class="relative group">
-                        <select name="priority" id="editTaskPriority"
-                                class="w-full px-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
-                                required>
-                            <option value="низкий">Низкий</option>
-                            <option value="средний">Средний</option>
-                            <option value="высокий">Высокий</option>
-                            <option value="критический">Критический</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
-                        </div>
-                    </div>
-                </div>
+            <!-- Отдел и категория -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                <x-form.input-select
+                    name="department_id"
+                    id="editTaskDepartment"
+                    label="Отдел"
+                    placeholder="Выберите отдел"
+                    :required="true"
+                    :options="collect($departments ?? [])->pluck('name', 'id')->all()"
+                />
 
-                <!-- Статус -->
-                <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
-                        <i class="fas fa-chart-line text-green-500 mr-2 text-xs"></i>Статус *
-                    </label>
-                    <div class="relative group">
-                        <select name="status" id="editTaskStatus"
-                                class="w-full px-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white appearance-none cursor-pointer hover:border-gray-300"
-                                required>
-                            <option value="не назначена">Не назначена</option>
-                            <option value="назначена">Назначена</option>
-                            <option value="в работе">В работе</option>
-                            <option value="на проверке">На проверке</option>
-                            <option value="выполнена">Выполнена</option>
-                            <option value="просрочена">Просрочена</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
-                        </div>
-                    </div>
-                </div>
+                <x-form.input-select
+                    name="category_id"
+                    id="editTaskCategory"
+                    label="Категория"
+                    placeholder="Без категории"
+                    :options="collect($categories ?? [])->pluck('name', 'id')->all()"
+                />
+            </div>
 
-                <!-- Дедлайн -->
-                <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
-                        <i class="fas fa-calendar-alt text-green-500 mr-2 text-xs"></i>Дедлайн
-                    </label>
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-clock text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
-                        </div>
-                        <!-- <input type="datetime-local" name="deadline" id="editTaskDeadline"
-                               class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white cursor-pointer hover:border-gray-300"> -->
-                               <input type="datetime-local" name="deadline" id="editTaskDeadline"
-           class="w-full min-w-0 min-h-[52px] appearance-none pl-10 pr-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white cursor-pointer hover:border-gray-300">
-                    </div>
-                </div>
+            <!-- Исполнитель и дедлайн -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                <x-form.input-select
+                    name="user_id"
+                    id="editTaskUser"
+                    label="Исполнитель"
+                    placeholder="Не назначен"
+                    :options="collect($assignableUsers ?? [])->pluck('name', 'id')->all()"
+                />
 
-                <!-- Планируемое время -->
-                <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
-                        <i class="fas fa-hourglass-half text-green-500 mr-2 text-xs"></i>Планируемое время (часы)
+                <div class="space-y-1.5">
+                    <label for="editTaskDeadline" class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
+                        Дедлайн
                     </label>
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-stopwatch text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
-                        </div>
-                        <input type="number" name="estimated_hours" id="editTaskEstimatedHours" step="0.5" min="0"
-                               class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
+                    <input type="datetime-local" name="deadline" id="editTaskDeadline"
+                           class="w-full min-w-0 min-h-[42px] box-border appearance-none px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl [color-scheme:light] focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 cursor-pointer text-sm hover:border-slate-300">
+                </div>
+            </div>
+
+            <!-- Планируемое и фактическое время -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                <div class="space-y-1.5">
+                    <label for="editTaskEstimatedHours" class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
+                        Планируемые часы
+                    </label>
+                    <div class="relative">
+                        <input type="number" name="estimated_hours" id="editTaskEstimatedHours" min="0" step="0.5"
+                               class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300"
                                placeholder="0.0">
-                        <span
-                            class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium text-sm">часов</span>
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-[12px] pointer-events-none">часов</span>
                     </div>
                 </div>
 
-                <!-- Фактическое время -->
-                <div class="space-y-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1 max-[500px]:text-[12px]">
-                        <i class="fas fa-check-circle text-green-500 mr-2 text-xs"></i>Фактическое время (часы)
+                <div class="space-y-1.5">
+                    <label for="editTaskActualHours" class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
+                        Фактические часы
                     </label>
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-chart-simple text-gray-400 group-focus-within:text-green-500 transition-colors text-sm"></i>
-                        </div>
-                        <input type="number" name="actual_hours" id="editTaskActualHours" step="0.5" min="0"
-                               class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 outline-none rounded-xl focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 transition-all duration-200 bg-white placeholder-gray-400"
+                    <div class="relative">
+                        <input type="number" name="actual_hours" id="editTaskActualHours" min="0" step="0.5"
+                               class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300"
                                placeholder="0.0">
-                        <span
-                            class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium text-sm">часов</span>
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-[12px] pointer-events-none">часов</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладки для файлов -->
+            <div class="space-y-4 pt-2">
+                <div class="border-b border-slate-100">
+                    <nav class="flex space-x-6" aria-label="Tabs">
+                        <button type="button"
+                                onclick="switchEditFileTab('storage')"
+                                id="editStorageTab"
+                                class="py-2.5 px-1 border-b-2 outline-none font-medium text-[13px] focus:outline-none tab-button active transition-all duration-200 max-[500px]:text-[12px]"
+                                data-tab="storage">
+                            <i class="fas fa-database mr-1.5 opacity-70"></i>Из хранилища
+                        </button>
+                        <button type="button"
+                                onclick="switchEditFileTab('upload')"
+                                id="editUploadTab"
+                                class="py-2.5 px-1 border-b-2 outline-none font-medium text-[13px] focus:outline-none tab-button transition-all duration-200 max-[500px]:text-[12px]"
+                                data-tab="upload">
+                            <i class="fas fa-cloud-upload-alt mr-1.5 opacity-70"></i>Новая загрузка
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Файлы из хранилища -->
+                <div id="editStorageTabContent" class="tab-content active">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                        <div>
+                            <h4 class="text-[13px] font-medium text-slate-700">Выберите файлы из хранилища</h4>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Файлы будут прикреплены к задаче</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button type="button" onclick="openEditFileManager()"
+                                    class="inline-flex items-center px-3 py-1.5 border border-slate-200 rounded-lg text-[12px] font-medium text-slate-600 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
+                                <i class="fas fa-folder-open mr-1.5 opacity-70"></i>Открыть хранилище
+                            </button>
+                            <button type="button" onclick="clearEditSelectedFiles()"
+                                    class="inline-flex items-center px-3 py-1.5 border border-slate-200 rounded-lg text-[12px] font-medium text-slate-600 bg-white hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 transition-all duration-200">
+                                <i class="fas fa-times mr-1.5 opacity-70"></i>Очистить
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="editSelectedFilesContainer" class="space-y-3 min-h-[100px]">
+                        <div class="text-center py-8 border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+                            <i class="fas fa-folder-open text-3xl text-slate-300 mb-3"></i>
+                            <p class="text-[13px] text-slate-500 font-medium">Файлы не выбраны</p>
+                            <p class="text-[11px] text-slate-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
+                        </div>
+                    </div>
+
+                    <div id="editFileCounter" class="hidden text-[12px] text-slate-500 mt-3">
+                        <i class="fas fa-paperclip mr-1"></i>
+                        <span id="editFileCount">0</span> файлов выбрано
                     </div>
                 </div>
 
-                <!-- Вкладки для файлов (как в создании) -->
-                <div class="md:col-span-2 space-y-4">
-                    <div class="border-b border-gray-200">
-                        <nav class="flex space-x-6" aria-label="Tabs">
-                            <button type="button"
-                                    onclick="switchEditFileTab('storage')"
-                                    id="editStorageTab"
-                                    class="py-2 px-1 border-b-2 outline-none font-medium text-sm focus:outline-none tab-button active transition-all duration-200 max-[500px]:text-[12px]"
-                                    data-tab="storage">
-                                <i class="fas fa-database mr-2"></i>Из хранилища
-                            </button>
-                            <button type="button"
-                                    onclick="switchEditFileTab('upload')"
-                                    id="editUploadTab"
-                                    class="py-2 px-1 border-b-2 outline-none font-medium text-sm focus:outline-none tab-button transition-all duration-200 max-[500px]:text-[12px]"
-                                    data-tab="upload">
-                                <i class="fas fa-cloud-upload-alt mr-2"></i>Новая загрузка
-                            </button>
-                        </nav>
+                <!-- Загрузка новых файлов -->
+                <div id="editUploadTabContent" class="tab-content hidden">
+                    <div class="mb-4">
+                        <h4 class="text-[13px] font-medium text-slate-700">Загрузите новые файлы</h4>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Файлы будут сохранены в хранилище и прикреплены к задаче</p>
                     </div>
 
-                    <!-- Контейнер для файлов из хранилища -->
-                    <div id="editStorageTabContent" class="tab-content active">
-                        <div
-                            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
-                            <div>
-                                <h4 class="text-sm font-semibold text-gray-700">Выберите файлы из хранилища</h4>
-                                <p class="text-xs text-gray-500 mt-1">Файлы будут прикреплены к задаче</p>
+                    <div class="file-upload-area border border-dashed border-slate-300 rounded-xl p-8 text-center transition-all duration-300 bg-slate-50/50 hover:bg-slate-50 cursor-pointer group"
+                         onclick="document.getElementById('editUploadNewFilesInput').click()">
+                        <input type="file" name="new_files[]" multiple class="hidden" id="editUploadNewFilesInput">
+                        <div class="flex flex-col items-center justify-center">
+                            <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm border border-slate-100 group-hover:scale-110 group-hover:border-emerald-100 transition-all duration-300">
+                                <i class="fas fa-cloud-upload-alt text-xl text-emerald-500"></i>
                             </div>
-                            <div class="flex space-x-2">
-                                <button type="button" onclick="openEditFileManager()"
-                                        class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 max-[500px]:text-[12px] max-[500px]:px-2">
-                                    <i class="fas fa-folder-open mr-2"></i>Открыть хранилище
-                                </button>
-                                <button type="button" onclick="clearEditSelectedFiles()"
-                                        class="inline-flex items-center px-4 py-2 border-2 border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-red-50 hover:border-red-300 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 max-[500px]:text-[12px] max-[500px]:px-2">
-                                    <i class="fas fa-times mr-2"></i>Очистить
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Выбранные файлы -->
-                        <div id="editSelectedFilesContainer" class="space-y-3 min-h-[100px]">
-                            <div
-                                class="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
-                                <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
-                                <p class="text-sm text-gray-500">Файлы не выбраны</p>
-                                <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
-                            </div>
-                        </div>
-
-                        <!-- Счетчик файлов -->
-                        <div id="editFileCounter" class="hidden text-sm text-gray-600 mt-3">
-                            <i class="fas fa-paperclip mr-1"></i>
-                            <span id="editFileCount">0</span> файлов выбрано
+                            <p class="text-[13px] font-medium text-slate-700 mb-1">Нажмите или перетащите файлы сюда</p>
+                            <p class="text-[11px] text-slate-400">PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF, ZIP</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5">Максимальный размер: 10MB на файл</p>
                         </div>
                     </div>
 
-                    <!-- Контейнер для загрузки новых файлов -->
-                    <div id="editUploadTabContent" class="tab-content hidden">
-                        <div class="mb-4">
-                            <h4 class="text-sm font-semibold text-gray-700">Загрузите новые файлы</h4>
-                            <p class="text-xs text-gray-500 mt-1">Файлы будут сохранены в хранилище и прикреплены к
-                                задаче</p>
-                        </div>
-
-                        <div
-                            class="file-upload-area border-2 border-dashed border-gray-300 rounded-xl p-8 text-center transition-all duration-300 bg-gradient-to-br from-gray-50 to-white hover:from-green-50 hover:to-white cursor-pointer group"
-                            onclick="document.getElementById('editUploadNewFilesInput').click()">
-                            <input type="file" name="new_files[]" multiple class="hidden"
-                                   id="editUploadNewFilesInput">
-                            <div class="flex flex-col items-center justify-center">
-                                <div
-                                    class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 max-[500px]:hidden">
-                                    <i class="fas fa-cloud-upload-alt text-3xl text-white"></i>
-                                </div>
-                                <p class="text-base font-medium text-gray-700 mb-2">Нажмите или перетащите файлы
-                                    сюда</p>
-                                <p class="text-sm text-gray-500">Поддерживаются: PDF, DOC, DOCX, XLS, XLSX, JPG,
-                                    PNG, GIF, ZIP</p>
-                                <p class="text-xs text-gray-400 mt-1">Максимальный размер: 10MB на файл</p>
-                            </div>
-                        </div>
-
-                        <!-- Список новых файлов -->
-                        <div id="editUploadFilesList" class="space-y-3 mt-4 hidden">
-                            <h5 class="text-sm font-semibold text-gray-700">Выбранные файлы:</h5>
-                            <div id="editUploadFilesContainer" class="space-y-2"></div>
-                        </div>
+                    <div id="editUploadFilesList" class="space-y-3 mt-4 hidden">
+                        <h5 class="text-[13px] font-medium text-slate-700">Выбранные файлы:</h5>
+                        <div id="editUploadFilesContainer" class="space-y-2"></div>
                     </div>
                 </div>
+            </div>
 
-                <!-- История отказов -->
-                <div class="md:col-span-2 space-y-3">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">
-                        <i class="fas fa-history text-green-500 mr-2 text-xs"></i>История отказов от задачи
-                        <span id="editRejectionsCount"
-                              class="bg-gradient-to-r from-red-400 to-red-500 text-white text-xs px-2 py-1 rounded-full ml-2 shadow-sm">0</span>
-                    </label>
-                    <div id="editRejectionsList"
-                         class="space-y-3 max-h-60 overflow-y-auto border-2 border-gray-200 rounded-xl p-4 bg-gray-50 custom-scrollbar">
-                        <div class="text-center py-8">
-                            <i class="fas fa-check-circle text-3xl text-gray-300 mb-2"></i>
-                            <p class="text-gray-500">Отказов нет</p>
-                        </div>
+            <!-- История отказов -->
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <h4 class="text-[13px] font-medium text-slate-700">История отказов от задачи</h4>
+                    <span id="editRejectionsCount"
+                          class="bg-rose-50 text-rose-600 border border-rose-100 text-[11px] font-medium px-2 py-0.5 rounded-full">0</span>
+                </div>
+                <div id="editRejectionsList"
+                     class="space-y-3 max-h-60 overflow-y-auto border border-slate-200 rounded-xl p-4 bg-slate-50/50 custom-scrollbar">
+                    <div class="text-center py-6">
+                        <i class="fas fa-check-circle text-3xl text-slate-300 mb-3"></i>
+                        <p class="text-[13px] text-slate-500 font-medium">Отказов нет</p>
                     </div>
                 </div>
             </div>
 
             <!-- Кнопки действий -->
-            <div class="flex justify-end space-x-3 pt-6 mt-4 border-t border-gray-200 max-[500px]:flex-col-reverse max-[500px]:space-x-0 max-[500px]:gap-3">
-                <button type="button" onclick="closeEditModal()"
-                        class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
+            <div class="flex justify-end items-center gap-3 pt-6 border-t border-slate-100 max-[500px]:justify-center max-[500px]:flex-col-reverse max-[500px]:space-x-0 max-[500px]:gap-3">
+                <x-ui.button
+                    variant="secondary"
+                    onclick="closeEditModal()"
+                >
                     Отмена
-                </button>
-               <button type="submit"
-                        class="px-6 py-3 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-xl font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none flex items-center justify-center">
-                    <i class="fas fa-save mr-2"></i>
-                    <span>Сохранить изменения</span>
-                </button>
+                </x-ui.button>
 
+                <x-ui.button
+                    type="submit"
+                    variant="primary"
+                    icon="fas fa-save"
+                >
+                    Сохранить изменения
+                </x-ui.button>
             </div>
         </form>
     </div>
