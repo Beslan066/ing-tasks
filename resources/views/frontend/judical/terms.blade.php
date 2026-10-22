@@ -1,9 +1,9 @@
-
+@extends('layouts.main')
 
 @section('title', 'Правила использования сервиса — МенеджерПлюс')
 
 @section('content')
-<main class="container-wide w-full pt-24 mb-20 px-4 md:px-10 mx-auto max-w-[1440px]">
+<section >
     <!-- Хлебные крошки -->
     <div class="flex items-center gap-2 text-xs text-gray-400 mb-6">
         <a href="/" class="hover:text-emerald-600 transition-colors">Главная</a>
@@ -56,5 +56,5 @@
             </div>
         </div>
     </div>
-</main>
+</section>
 @endsection
