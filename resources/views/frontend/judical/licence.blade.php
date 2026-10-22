@@ -3,6 +3,7 @@
 @section('title', 'Лицензионное соглашение — МенеджерПлюс')
 
 @section('content')
+
 <style>
     .gradient-text-primary {
         background: linear-gradient(135deg, #10b981, #059669);
@@ -13,7 +14,9 @@
 </style>
 
 <section>
-    <!-- Хлебные крошки -->
+
+    <div class="container-wide">
+        <!-- Хлебные крошки -->
     <div class="flex items-center gap-2 text-xs text-gray-400 mb-6">
         <a href="/" class="hover:text-emerald-600 transition-colors">Главная</a>
         <i data-lucide="chevron-right" class="w-3 h-3"></i>
@@ -94,6 +97,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </section>
 @endsection
