@@ -482,7 +482,7 @@
                                                     @else
                                                         <div class="relative action-buttons">
                                                             <!-- Кнопка с тремя точками -->
-                                                            <button onclick="toggleDropdown(event, {{ $task->id }})"
+                                                            <button onclick="window.toggleDropdown(event, {{ $task->id }})"
                                                                     class="text-white hover:text-gray-300 p-1 transition-colors"
                                                                     title="Действия">
                                                                 <i class="fas fa-ellipsis-v text-lg"></i>
@@ -563,7 +563,7 @@
                                                     <div class="relative action-buttons-mobile">
                                                         @if(!$task->trashed())
                                                             <!-- Кнопка с тремя точками для мобильной версии -->
-                                                            <button onclick="toggleDropdown(event, {{ $task->id }})"
+                                                            <button onclick="window.toggleDropdown(event, {{ $task->id }})"
                                                                     class="text-gray-600 hover:text-gray-800 p-1 transition-colors"
                                                                     title="Действия">
                                                                 <i class="fas fa-ellipsis-v text-lg"></i>
@@ -838,7 +838,7 @@
                                                         @else
                                                             <div class="relative action-buttons">
                                                                 <!-- Кнопка с тремя точками -->
-                                                                <button onclick="toggleDropdown(event, {{ $task->id }})"
+                                                                <button onclick="window.toggleDropdown(event, {{ $task->id }})"
                                                                         class="text-gray-600 hover:text-gray-800 p-1 transition-colors"
                                                                         title="Действия">
                                                                     <i class="fas fa-ellipsis-v text-lg"></i>
@@ -910,7 +910,7 @@
                                                     <div class="relative action-buttons-mobile">
                                                         @if(!$task->trashed())
                                                             <!-- Кнопка с тремя точками для мобильной версии -->
-                                                            <button onclick="toggleDropdown(event, {{ $task->id }})"
+                                                            <button onclick="window.toggleDropdown(event, {{ $task->id }})"
                                                                     class="text-gray-600 hover:text-gray-800 p-1 transition-colors"
                                                                     title="Действия">
                                                                 <i class="fas fa-ellipsis-v text-lg"></i>
@@ -2515,6 +2515,7 @@
 
         // ==================== ФУНКЦИИ ДЛЯ ПРОСМОТРА ЗАДАЧИ ====================
         async function openTaskViewModal(taskId) {
+            console.log('openTaskViewModal')
             const modal = document.getElementById('taskViewModal');
             const content = document.getElementById('taskModalContent');
 
@@ -3182,24 +3183,6 @@ console.log('test2')
                     closeConfirmForceDeleteModal();
                 }
             });
-
-            function toggleDropdown(event, taskId) {
-                event.stopPropagation();
-
-                // Закрыть все открытые меню
-                document.querySelectorAll('[id^="dropdown-"]').forEach(dropdown => {
-                    const id = dropdown.id.replace('dropdown-', '');
-                    if (parseInt(id) !== taskId) {
-                        dropdown.classList.add('hidden');
-                    }
-                });
-
-                // Открыть/закрыть текущее меню
-                const dropdown = document.getElementById(`dropdown-${taskId}`);
-                if (dropdown) {
-                    dropdown.classList.toggle('hidden');
-                }
-            }
 
             // Закрывать меню при клике вне его
             document.addEventListener('click', function(event) {
