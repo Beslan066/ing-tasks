@@ -810,7 +810,7 @@
         <div class="border-t border-gray-100 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-400">
             <span>© 2026 МенеджерПлюс. Все права защищены.</span>
             <div>
-                <a href="{{route('license')}}">Лицензионное соглашение / Оферта</a>
+                <a href="{{route('licence')}}">Лицензионное соглашение / Оферта</a>
                 <a href="{{route('privacy')}}">Политика конфиденциальности</a>
                 <a href="{{route('terms')}}">Правила использования сервиса</a>
             </div>
