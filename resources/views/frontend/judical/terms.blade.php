@@ -16,13 +16,13 @@
         <div class="lg:col-span-1 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm sticky top-24">
             <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 px-3">Юридическая информация</p>
             <nav class="flex lg:flex-col gap-1 overflow-x-auto whitespace-nowrap lg:whitespace-normal">
-                <a href="{{ route('legal.licence') }}" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-3 transition-all text-gray-600 hover:bg-gray-50">
+                <a href="{{ route('licence') }}" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-3 transition-all text-gray-600 hover:bg-gray-50">
                     <i data-lucide="file-text" class="w-4 h-4 shrink-0"></i> Лицензионная оферта
                 </a>
-                <a href="{{ route('legal.privacy') }}" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-3 transition-all text-gray-600 hover:bg-gray-50">
+                <a href="{{ route('privacy') }}" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-3 transition-all text-gray-600 hover:bg-gray-50">
                     <i data-lucide="shield-check" class="w-4 h-4 shrink-0"></i> Конфиденциальность
                 </a>
-                <a href="{{ route('legal.terms') }}" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-3 transition-all bg-emerald-50 text-emerald-700 border-l-4 border-emerald-500">
+                <a href="{{ route('terms') }}" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-3 transition-all bg-emerald-50 text-emerald-700 border-l-4 border-emerald-500">
                     <i data-lucide="scale" class="w-4 h-4 shrink-0"></i> Правила сервиса
                 </a>
             </nav>
