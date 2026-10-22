@@ -809,6 +809,11 @@
         </div>
         <div class="border-t border-gray-100 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-400">
             <span>© 2026 МенеджерПлюс. Все права защищены.</span>
+            <div>
+                <a href="{{route('license')}}">Лицензионное соглашение / Оферта</a>
+                <a href="{{route('privacy')}}">Политика конфиденциальности</a>
+                <a href="{{route('terms')}}">Правила использования сервиса</a>
+            </div>
             <div class="flex gap-4 mt-3 sm:mt-0">
                 <a href="#" class="hover:text-[#10b981] transition"><i data-lucide="twitter" class="w-4 h-4"></i></a>
                 <a href="#" class="hover:text-[#10b981] transition"><i data-lucide="github" class="w-4 h-4"></i></a>
