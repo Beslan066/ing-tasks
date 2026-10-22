@@ -96,9 +96,9 @@ Route::middleware(['auth', 'verified'])->post('/track-work-time', function (Requ
     return response()->json(['success' => false, 'message' => 'No time to save']);
 })->name('track.work.time');
 
-Route::view('/licence', 'judical.licence')->name('licence');
-    Route::view('/privacy-policy', 'judical.privacy')->name('privacy');
-    Route::view('/terms', 'judical.terms')->name('terms');
+Route::view('/licence', 'frontend.judical.licence')->name('licence');
+    Route::view('/privacy-policy', 'frontend.judical.privacy')->name('privacy');
+    Route::view('/terms', 'frontend.judical.terms')->name('terms');
 
 Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class, 'home'])->name('index');
 // Домашняя страница
