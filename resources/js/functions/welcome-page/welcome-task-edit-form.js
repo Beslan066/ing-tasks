@@ -1,10 +1,5 @@
-
+import {closeEditModal} from './close-edit-modal'
 (function () {
-    function getCsrfToken() {
-        const meta = document.querySelector('meta[name="csrf-token"]');
-        return meta ? meta.content : '';
-    }
-
     async function handleEditTaskSubmit(e) {
         e.preventDefault();
 
@@ -39,7 +34,7 @@
             const response = await fetch(`/tasks/${taskId}/update`, {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': getCsrfToken(),
+                    'X-CSRF-TOKEN': window.getCsrfToken(),
                     'Accept': 'application/json'
                 },
                 body: formData

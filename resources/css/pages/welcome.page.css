@@ -1,0 +1,129 @@
+.swiper-notification {
+    display: none !important;
+}
+
+.task-card {
+    transition: all 0.2s ease-in-out;
+}
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44, 46, 44, 0.1);
+}
+
+.board-column {
+    min-height: 600px;
+}
+.board-column[data-status="done"] .task-card {
+    opacity: 0.5;
+}
+.board-column.drag-over {
+    background-color: rgba(229, 231, 235, 0.5) !important;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+.board-column.drag-over-active {
+    background-color: rgba(16, 185, 129, 0.2) !important;
+    border: 2px dashed #10b981;
+}
+
+#filtersDropdown {
+    transition: all 0.2s ease;
+}
+
+.canban-col-title {
+    background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);
+}
+
+.tab-button {
+    border-color: transparent;
+    color: #6b7280;
+}
+.tab-button:hover {
+    color: #374151;
+    border-color: #d1d5db;
+}
+.tab-button.active {
+    border-color: #10b981;
+    color: #10b981;
+}
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.file-card {
+    transition: all 0.2s ease;
+}
+.file-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+.file-upload-area.drag-over {
+    border-color: #10b981;
+    background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+    transform: scale(0.98);
+}
+
+.modal-content {
+    animation: fadeIn 0.3s ease-out;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.modal-content::-webkit-scrollbar {
+    display: none;
+}
+
+.task-menu {
+    animation: fadeIn 0.15s ease-out;
+}
+
+.shake {
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25%      { transform: translateX(-5px); }
+    75%      { transform: translateX(5px); }
+}
+
+/* Swiper */
+.sw-v-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+    transition-property: transform;
+    box-sizing: content-box;
+}
+
+/* Мобильная версия */
+@media (max-width: 500px) {
+    .board-column {
+        min-height: auto;
+        flex-shrink: 0 !important;
+        width: 87% !important;
+        max-width: 87% !important;
+    }
+    .board-column:first-child,
+    .board-column:last-child {
+        width: 92% !important;
+        max-width: 92% !important;
+    }
+
+    .task-card,
+    .task-card * {
+        touch-action: pan-x pan-y !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
+        -webkit-touch-callout: none !important;
+    }
+}

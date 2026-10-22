@@ -9,7 +9,7 @@
                     <h3 class="text-[22px] font-semibold text-slate-800 tracking-tight max-[500px]:text-xl">Редактирование задачи</h3>
                     <p class="text-[13px] text-slate-400 mt-0.5 max-[500px]:text-[12px]">Измените информацию о задаче</p>
                 </div>
-                <button type="button" onclick="closeEditModal()" class="text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 transition-all duration-200 p-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-200">
+                <button type="button" onclick="window.closeEditModal()" class="text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 transition-all duration-200 p-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-200">
                     <i class="fas fa-times text-sm"></i>
                 </button>
             </div>
@@ -219,7 +219,7 @@
             <div class="flex justify-end items-center gap-3 pt-6 border-t border-slate-100 max-[500px]:justify-center max-[500px]:flex-col-reverse max-[500px]:space-x-0 max-[500px]:gap-3">
                 <x-ui.button
                     variant="secondary"
-                    onclick="closeEditModal()">
+                    onclick="window.closeEditModal()">
                     Отмена
                 </x-ui.button>
 

@@ -370,6 +370,7 @@
             }
 
             function closeCreateFileManager() {
+                console.log('create.blade.php closeCreateFileManager')
                 const modal = document.getElementById('createFileManagerModal');
                 if (modal) {
                     modal.classList.add('hidden');
@@ -399,6 +400,7 @@
             window.openFileManager = openCreateFileManager;
             window.switchFileTab = switchCreateFileTab;
             window.closeFileManager = closeCreateFileManager;
+            window.downloadCreateFile=downloadCreateFile;
         }
     </script>
 @endpush

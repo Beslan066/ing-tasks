@@ -75,7 +75,7 @@ async function loadCreateFiles() {
         const response = await fetch('/tasks/file-storage/get-files', {
             headers: {
                 'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                'X-CSRF-TOKEN':window.getCsrfToken(),
             }
         });
         if (!response.ok) throw new Error('Ошибка сети');
@@ -177,7 +177,8 @@ function confirmCreateFileSelection() {
     console.log('state.temp.length:', state.temp.length);
 
     if (!state.temp || state.temp.length === 0) {
-        alert('Пожалуйста, выберите хотя бы один файл');
+        // alert('Пожалуйста, выберите хотя бы один файл');
+        showNotification('Пожалуйста, выберите хотя бы один файл',"info");
         return;
     }
 

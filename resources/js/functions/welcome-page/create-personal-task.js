@@ -1,8 +1,10 @@
-import { addTaskToColumn } from "./add-task-to-column";
+import { getCsrfToken } from "../../helpers/getCsrfToken";
+import { addTaskToColumn } from "./../add-task-to-column";
+import { closeTaskModal } from "./personal-task.functions";
 
 (function () {
     'use strict';
-console.log('init create-personal task')
+    console.log('init create-personal task')
 
     function isPersonalTaskModal() {
         const modal = document.getElementById('taskModal');
@@ -12,11 +14,6 @@ console.log('init create-personal task')
         return titleElement && titleElement.textContent.trim() === 'Новая личная задача';
     }
 
-    function getCsrfToken(form) {
-        return document.querySelector('meta[name="csrf-token"]')?.content
-            || form?.querySelector('input[name="_token"]')?.value
-            || '';
-    }
 
     // function syncSelectedFiles(formData) {
     //     const state = window.taskCreateState;
@@ -30,11 +27,11 @@ console.log('init create-personal task')
     //         console.log('ℹ️ [PersonalTask] Файлы не выбраны');
     //     }
     // }
-function syncSelectedFiles(formData) {
-    formData.delete('selected_files');
-    (window.taskCreateState?.selected ?? [])
-        .forEach(f => formData.append('selected_file_ids[]', f.id));
-}
+    function syncSelectedFiles(formData) {
+        formData.delete('selected_files');
+        (window.taskCreateState?.selected ?? [])
+            .forEach(f => formData.append('selected_file_ids[]', f.id));
+    }
     function resetFileState() {
         if (window.taskCreateState) {
             window.taskCreateState.selected = [];
@@ -66,7 +63,7 @@ function syncSelectedFiles(formData) {
             const response = await fetch('/tasks/personal/store', {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': getCsrfToken(form),
+                    'X-CSRF-TOKEN': getCsrfToken(),
                     'Accept': 'application/json'
                 },
                 body: formData
@@ -116,7 +113,7 @@ function syncSelectedFiles(formData) {
                     location.reload();
                     console.log(data)
                 }
-            }else {
+            } else {
                 const errorMsg = data.message || 'Ошибка при создании личной задачи';
                 if (typeof showNotification === 'function') {
                     showNotification(errorMsg, 'error');
