@@ -1311,322 +1311,120 @@
             }
         });
         // ==================== ФУНКЦИИ ДЛЯ РЕДАКТИРОВАНИЯ ====================
-        let currentEditTaskId = null;
-
-        async function openEditModal(taskId) {
-            currentEditTaskId = taskId;
-            taskEditSelectedFiles = [];
-
-            try {
-                const response = await fetch(`/tasks/${taskId}/get`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                        Accept: "application/json",
-                    },
-                });
-
-                const data = await response.json();
-
-                if (!data.success) {
-                    showNotification("Ошибка при загрузке задачи", "error");
-                    return;
-                }
-
-                const task = data.task;
-
-                const currentUserId = {{ auth()->id() }};
-                const isLeader = {{ auth()->user()->isLeader() ? 'true' : 'false' }};
-
-                if (task.author_id !== currentUserId && !isLeader) {
-                    showNotification(
-                        "Вы не можете редактировать эту задачу. Редактировать может только автор задачи или руководитель.",
-                        "error",
-                    );
-                    return;
-                }
-
-                document.getElementById("editTaskId").value = task.id;
-                document.getElementById("editTaskName").value = task.name;
-                document.getElementById("editTaskDescription").value =
-                    task.description || "";
-                document.getElementById("editTaskDepartment").value =
-                    task.department_id || "";
-                document.getElementById("editTaskCategory").value =
-                    task.category_id || "";
-                document.getElementById("editTaskPriority").value =
-                    task.priority || "средний";
-                document.getElementById("editTaskStatus").value = task.status;
-                document.getElementById("editTaskDeadline").value = task.deadline
-                    ? task.deadline.slice(0, 16)
-                    : "";
-                document.getElementById("editTaskEstimatedHours").value =
-                    task.estimated_hours || "";
-                document.getElementById("editTaskActualHours").value =
-                    task.actual_hours || "";
-
-                // ===== Исполнитель =====
-                const form = document.getElementById("editTaskForm");
-                const userId = task.user_id ?? "";
-
-                let userField = form.querySelector('[name="user_id"]');
-
-                // если компонент не отдал поле с name="user_id", создаём скрытое
-                if (!userField) {
-                    userField = document.createElement("input");
-                    userField.type = "hidden";
-                    userField.name = "user_id";
-                    form.appendChild(userField);
-                }
-
-                // сброс состояния от прошлого открытия модалки
-                userField.disabled = false;
-                userField.style.pointerEvents = "";
-                userField.removeAttribute("tabindex");
-
-                if (userField.tagName === "SELECT") {
-                    userField
-                        .querySelectorAll("option[data-dynamic]")
-                        .forEach((o) => o.remove());
-
-                    // если исполнителя нет в списке $assignableUsers, добавляем опцию
-                    if (
-                        userId !== "" &&
-                        !userField.querySelector(`option[value="${userId}"]`)
-                    ) {
-                        const opt = new Option(
-                            task.user?.name ?? `Пользователь #${userId}`,
-                            userId,
-                        );
-                        opt.dataset.dynamic = "1";
-                        userField.appendChild(opt);
-                    }
-                }
-
-                userField.value = userId;
-                userField.dispatchEvent(new Event("change", { bubbles: true }));
-
-                // у личной задачи исполнитель всегда автор: менять нельзя,
-                // но поле остаётся в форме и уходит в запросе
-                if (task.is_personal) {
-                    userField.style.pointerEvents = "none";
-                    userField.setAttribute("tabindex", "-1");
-                }
-                // =======================
-
-                taskEditSelectedFiles = task.files?.length ? task.files : [];
-                updateTaskEditSelectedFilesDisplay();
-
-                document.getElementById("editTaskModal").classList.remove("hidden");
-                document.body.classList.add("overflow-y-hidden");
-            } catch (error) {
-                console.error("Ошибка:", error);
-                showNotification("Ошибка при загрузке задачи", "error");
-            }
-        }
-
-        function updateTaskEditSelectedFilesDisplay() {
-            const container = document.getElementById("editSelectedFilesContainer");
-            const fileCounter = document.getElementById("editFileCounter");
-            const fileCount = document.getElementById("editFileCount");
-
-            if (!container) return;
-
-            if (taskEditSelectedFiles.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
-                    <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
-                    <p class="text-sm text-gray-500">Файлы не выбраны</p>
-                    <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
-                </div>`;
-                if (fileCounter) fileCounter.classList.add("hidden");
-            } else {
-                let html = "";
-                taskEditSelectedFiles.forEach((file) => {
-                    const fileIcon = getFileIcon(file.extension);
-                    const fileType = getFileTypeClass(file.extension);
-                    html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <div class="flex items-center space-x-3 flex-1">
-                            <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
-                                <span class="text-lg">${fileIcon}</span>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm font-medium text-gray-800">${escapeHtml(file.name)}</p>
-                                <span class="text-xs text-gray-500">${formatFileSize(file.size)}</span>
-                            </div>
-                        </div>
-                        <button onclick="removeTaskEditSelectedFile(${file.id})" class="text-red-500 hover:text-red-700 p-1">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>`;
-                });
-                container.innerHTML = html;
-                if (fileCount) fileCount.textContent = taskEditSelectedFiles.length;
-                if (fileCounter) fileCounter.classList.remove("hidden");
-            }
-        }
-
-        function removeTaskEditSelectedFile(fileId) {
-            taskEditSelectedFiles = taskEditSelectedFiles.filter(
-                (f) => f.id !== fileId,
-            );
-            updateTaskEditSelectedFilesDisplay();
-        }
-
-        function clearTaskEditSelectedFiles() {
-            if (taskEditSelectedFiles.length === 0) return;
-            if (
-                confirm(
-                    `Удалить все выбранные файлы (${taskEditSelectedFiles.length})?`,
-                )
-            ) {
+            let currentEditTaskId = null;
+            // !VSECURE
+            async function openEditModal(taskId) {
+                currentEditTaskId = taskId;
                 taskEditSelectedFiles = [];
-                updateTaskEditSelectedFilesDisplay();
-            }
-        }
 
-        async function openTaskEditFileManager() {
-            const modal = document.getElementById("fileManagerModal");
-            if (modal) {
-                modal.classList.remove("hidden");
-                document.body.classList.add("overflow-hidden");
-                await loadTaskEditFiles();
-            }
-        }
+                try {
+                    const response = await fetch(`/tasks/${taskId}/get`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            Accept: "application/json",
+                        },
+                    });
 
-        async function loadTaskEditFiles() {
-            const contentDiv = document.getElementById("fileManagerContent");
-            if (!contentDiv) return;
-            contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Загрузка...</div>`;
+                    const data = await response.json();
 
-            try {
-                const response = await fetch("/tasks/file-storage/get-files", {
-                    headers: {
-                        Accept: "application/json",
-                        "X-CSRF-TOKEN":
-                            document.querySelector('meta[name="csrf-token"]')
-                                ?.content || "",
-                    },
-                });
-                if (!response.ok) throw new Error("Ошибка");
-                window.taskEditState.all = await response.json();
-                console.log(
-                    "Загружены все файлы из хранилища:",
-                    window.taskEditState.all.length,
-                );
-                console.log(
-                    "Текущие выбранные файлы (taskEditSelectedFiles):",
-                    taskEditSelectedFiles.map((f) => f.id),
-                );
-                renderTaskEditFiles(window.taskEditState.all);
-
-                const searchInput = document.getElementById("fileManagerSearch");
-                if (searchInput) {
-                    searchInput.removeEventListener("input", handleTaskEditFileSearch);
-                    searchInput.addEventListener("input", handleTaskEditFileSearch);
-                }
-            } catch (error) {
-                contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">Ошибка загрузки2</div>`;
-            }
-        }
-
-        function handleTaskEditFileSearch(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            if (!window.taskEditState.all) return;
-            const filtered = window.taskEditState.all.filter((file) =>
-                file.name.toLowerCase().includes(searchTerm),
-            );
-            renderTaskEditFiles(filtered);
-        }
-
-        function handleTaskEditCheckboxChange(e) {
-            e.stopPropagation();
-            const fileId = parseInt(this.value);
-            const file = window.taskEditState.all.find((f) => f.id === fileId);
-            if (file) {
-                if (this.checked) {
-                    if (!taskEditSelectedFiles.some((f) => f.id === fileId)) {
-                        taskEditSelectedFiles.push(file);
+                    if (!data.success) {
+                        showNotification("Ошибка при загрузке задачи", "error");
+                        return;
                     }
-                } else {
-                    taskEditSelectedFiles = taskEditSelectedFiles.filter(
-                        (f) => f.id !== fileId,
-                    );
-                }
-                const card = this.closest(".file-card");
-                if (card) {
-                    if (this.checked) {
-                        card.classList.add("border-green-500", "shadow-md");
-                        card.classList.remove("border-gray-200");
-                    } else {
-                        card.classList.remove("border-green-500", "shadow-md");
-                        card.classList.add("border-gray-200");
+
+                    const task = data.task;
+
+                    const currentUserId = {{ auth()->id() }};
+                    const isLeader = {{ auth()->user()->isLeader() ? 'true' : 'false' }};
+
+                    if (task.author_id !== currentUserId && !isLeader) {
+                        showNotification(
+                            "Вы не можете редактировать эту задачу. Редактировать может только автор задачи или руководитель.",
+                            "error",
+                        );
+                        return;
                     }
-                }
-                updateTaskEditSelectedCount();
-                console.log(
-                    "taskEditSelectedFiles после измененddия:",
-                    taskEditSelectedFiles.map((f) => f.id),
-                );
-            }
-        }
 
-        function toggleTaskEditFileSelection(fileId) {
-            let file = window.taskEditState.all.find((f) => f.id === fileId);
-            if (!file) return;
+                    document.getElementById("editTaskId").value = task.id;
+                    document.getElementById("editTaskName").value = task.name;
+                    document.getElementById("editTaskDescription").value =
+                        task.description || "";
+                    document.getElementById("editTaskDepartment").value =
+                        task.department_id || "";
+                    document.getElementById("editTaskCategory").value =
+                        task.category_id || "";
+                    document.getElementById("editTaskPriority").value =
+                        task.priority || "средний";
+                    document.getElementById("editTaskStatus").value = task.status;
+                    document.getElementById("editTaskDeadline").value = task.deadline
+                        ? task.deadline.slice(0, 16)
+                        : "";
+                    document.getElementById("editTaskEstimatedHours").value =
+                        task.estimated_hours || "";
+                    document.getElementById("editTaskActualHours").value =
+                        task.actual_hours || "";
 
-            const index = taskEditSelectedFiles.findIndex((f) => f.id === fileId);
-            if (index === -1) {
-                taskEditSelectedFiles.push(file);
-            } else {
-                taskEditSelectedFiles.splice(index, 1);
-            }
+                    // ===== Исполнитель =====
+                    const form = document.getElementById("editTaskForm");
+                    const userId = task.user_id ?? "";
 
-            const checkbox = document.querySelector(
-                `#fileManagerContent .task-edit-file-checkbox[value="${fileId}"]`,
-            );
-            if (checkbox) {
-                checkbox.checked = index === -1;
-                const card = checkbox.closest(".file-card");
-                if (card) {
-                    if (checkbox.checked) {
-                        card.classList.add("border-green-500", "shadow-md");
-                        card.classList.remove("border-gray-200");
-                    } else {
-                        card.classList.remove("border-green-500", "shadow-md");
-                        card.classList.add("border-gray-200");
+                    let userField = form.querySelector('[name="user_id"]');
+
+                    // если компонент не отдал поле с name="user_id", создаём скрытое
+                    if (!userField) {
+                        userField = document.createElement("input");
+                        userField.type = "hidden";
+                        userField.name = "user_id";
+                        form.appendChild(userField);
                     }
+
+                    // сброс состояния от прошлого открытия модалки
+                    userField.disabled = false;
+                    userField.style.pointerEvents = "";
+                    userField.removeAttribute("tabindex");
+
+                    if (userField.tagName === "SELECT") {
+                        userField
+                            .querySelectorAll("option[data-dynamic]")
+                            .forEach((o) => o.remove());
+
+                        // если исполнителя нет в списке $assignableUsers, добавляем опцию
+                        if (
+                            userId !== "" &&
+                            !userField.querySelector(`option[value="${userId}"]`)
+                        ) {
+                            const opt = new Option(
+                                task.user?.name ?? `Пользователь #${userId}`,
+                                userId,
+                            );
+                            opt.dataset.dynamic = "1";
+                            userField.appendChild(opt);
+                        }
+                    }
+
+                    userField.value = userId;
+                    userField.dispatchEvent(new Event("change", { bubbles: true }));
+
+                    // у личной задачи исполнитель всегда автор: менять нельзя,
+                    // но поле остаётся в форме и уходит в запросе
+                    if (task.is_personal) {
+                        userField.style.pointerEvents = "none";
+                        userField.setAttribute("tabindex", "-1");
+                    }
+                    // =======================
+
+                    taskEditSelectedFiles = task.files?.length ? task.files : [];
+                    window.updateTaskEditSelectedFilesDisplay();
+
+                    document.getElementById("editTaskModal").classList.remove("hidden");
+                    document.body.classList.add("overflow-y-hidden");
+                } catch (error) {
+                    console.error("Ошибка:", error);
+                    showNotification("Ошибка при загрузке задачи", "error");
                 }
             }
-
-            updateTaskEditSelectedCount();
-            console.log(
-                "taskEditSelectedFiles после toggle:",
-                taskEditSelectedFiles.map((f) => f.id),
-            );
-        }
-
-        function updateTaskEditSelectedCount() {
-            const selectedCountSpan = document.getElementById("selectedCount");
-            const confirmCountSpan = document.getElementById("confirmCount");
-            const confirmBtn = document.getElementById("confirmFileSelectionBtn");
-
-            const count = taskEditSelectedFiles.length;
-
-            if (selectedCountSpan) selectedCountSpan.textContent = count;
-            if (confirmCountSpan) confirmCountSpan.textContent = count;
-
-            if (confirmBtn) {
-                if (count === 0) {
-                    confirmBtn.disabled = true;
-                    confirmBtn.classList.add("opacity-50", "cursor-not-allowed");
-                } else {
-                    confirmBtn.disabled = false;
-                    confirmBtn.classList.remove("opacity-50", "cursor-not-allowed");
-                }
-            }
-        }
-
         // ==================== ФУНКЦИИ ДЛЯ ЛИЧНЫХ ЗАДАЧ ====================
 
         // Обрабатываем кнопку "Назад" в браузере

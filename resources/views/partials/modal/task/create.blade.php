@@ -370,6 +370,7 @@
             }
 
             function closeCreateFileManager() {
+                console.log('create.blade.php closeCreateFileManager')
                 const modal = document.getElementById('createFileManagerModal');
                 if (modal) {
                     modal.classList.add('hidden');

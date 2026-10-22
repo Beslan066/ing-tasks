@@ -10,7 +10,19 @@ import '../functions/welcome-page/create-personal-task';
 import { closeTaskViewModal } from '../functions/close-task-view-modal';
 import {closeEditModal} from './../functions/welcome-page/close-edit-modal.js'
 
-import {openPersonalTaskModal,startTask,showRejectModal,sendForReview,closeTaskModal,submitForReview,closeRejectModal,closeTimeModal,submitRejection} from './../functions/welcome-page/personal-task.functions.js'
+import {
+    openPersonalTaskModal,
+    startTask,
+    showRejectModal,
+    sendForReview,
+    closeTaskModal,
+    submitForReview,
+    closeRejectModal,
+    closeTimeModal,
+    submitRejection
+} from './../functions/welcome-page/personal-task.functions.js'
+
+
 window.closeTaskViewModal = closeTaskViewModal;
 window.closeEditModal=closeEditModal;
 window.openPersonalTaskModal=openPersonalTaskModal;
@@ -22,6 +34,7 @@ window.closeTaskModal=closeTaskModal;
 window.closeRejectModal=closeRejectModal;
 window.closeTimeModal=closeTimeModal;
 window.submitRejection=submitRejection;
+
 Object.assign(window, fileHelpers);
 Object.assign(window, welcomeFilters)
 
