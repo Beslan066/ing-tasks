@@ -1,81 +1,78 @@
 <!-- Модальное окно создания отдела -->
-<div id="departmentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4 backdrop-blur-md">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800">Создать новый отдел</h3>
-                <button onclick="closeDepartmentModal()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times"></i>
+<div id="departmentModal"
+     role="dialog" aria-modal="true" aria-labelledby="departmentModalTitle"
+     onclick="if (event.target === this) closeDepartmentModal()"
+     class="fixed inset-0 bg-slate-900/40 hidden items-center justify-center z-50 backdrop-blur-sm p-4">
+
+    <div class="modal-content bg-white rounded-[24px] w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl shadow-slate-900/10
+                scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden max-[500px]:w-[98%] max-[500px]:max-h-[85vh]">
+
+        <!-- Заголовок -->
+        <div class="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-100">
+            <div class="flex justify-between items-center gap-4 px-8 py-6 max-[500px]:px-5 max-[500px]:py-4">
+                <div class="min-w-0">
+                    <h3 id="departmentModalTitle" class="text-[22px] font-semibold text-slate-800 tracking-tight max-[500px]:text-xl">Новый отдел</h3>
+                    <p class="text-[13px] text-slate-400 mt-0.5 max-[500px]:text-[12px]">Заполните информацию об отделе</p>
+                </div>
+                <button type="button" onclick="closeDepartmentModal()" aria-label="Закрыть"
+                        class="shrink-0 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 transition-all duration-200 p-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-200">
+                    <i class="fas fa-times text-sm"></i>
                 </button>
             </div>
-
-            <form id="departmentForm" action="{{ route('departments.store') }}" method="POST">
-                @csrf
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Название отдела</label>
-                        <input type="text"
-                               name="name"
-                               required
-                               class="w-full  border-gray-300 rounded-lg px-4 py-3 border-2 focus:border-green-400 focus:ring-4 focus:ring-green-100 outline-none"
-                               placeholder="Например, Отдел разработки">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Компания</label>
-                        <select name="company_id"
-                                required
-                                class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-white outline-none">
-                            <option value="">Выберите компанию</option>
-                            @foreach($ownedCompanies as $company)
-                                <option value="{{ $company->id }}"
-                                    {{ $currentUser->company_id == $company->id ? 'selected' : '' }}>
-                                    {{ $company->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Руководитель</label>
-                        <select name="supervisor_id"
-                                class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-white outline-none">
-                            <option value="">Не назначен</option>
-                            @foreach($assignableUsers as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="flex items-center space-x-4">
-                        <div class="flex-1">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Статус</label>
-                            <select name="status"
-                                    class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-white outline-none">
-                                <option value="active" selected>Активный</option>
-                                <option value="inactive">Неактивный</option>
-                            </select>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="mt-8 flex justify-end space-x-3 max-[500px]:flex-col-reverse max-[500px]:space-x-0 max-[500px]:space-y-3 max-[500px]:gap-3">
-                    <button type="button"
-                            onclick="closeDepartmentModal()"
-                            class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-                        Отмена
-                    </button>
-                    <!-- <button type="submit"
-                            class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
-                        Создать
-                    </button> -->
-                    <button type="submit"
-                            class="flex-1 md:flex-none text-white px-6 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
-                        Создать
-                    </button>
-                </div>
-            </form>
         </div>
+
+        <!-- Форма -->
+        <form id="departmentForm" action="{{ route('departments.store') }}" method="POST"
+              class="px-8 py-6 space-y-5 max-[500px]:px-5 max-[500px]:py-4">
+            @csrf
+
+            <x-form.input
+                name="name"
+                id="new_department_name"
+                label="Название отдела"
+                placeholder="Например, Отдел разработки"
+                :required="true"
+            />
+
+            <x-form.input-select
+                name="company_id"
+                id="new_department_company"
+                label="Компания"
+                placeholder="Выберите компанию"
+                :required="true"
+                :selected="$currentUser->company_id ?? null"
+                :options="collect($ownedCompanies ?? [])->pluck('name', 'id')->all()"
+            />
+
+            <x-form.input-select
+                name="supervisor_id"
+                id="new_department_supervisor"
+                label="Руководитель"
+                placeholder="Не назначен"
+                :options="collect($assignableUsers ?? [])->pluck('name', 'id')->all()"
+            />
+
+            <x-form.input-select
+                name="status"
+                id="new_department_status"
+                label="Статус"
+                selected="active"
+                :options="[
+                    'active'   => 'Активный',
+                    'inactive' => 'Неактивный',
+                ]"
+            />
+
+            <!-- Кнопки действий -->
+            <div class="flex justify-end items-center gap-3 pt-6 border-t border-slate-100 max-[500px]:justify-center max-[500px]:flex-col-reverse">
+                <x-ui.button type="button" variant="secondary" onclick="closeDepartmentModal()">
+                    Отмена
+                </x-ui.button>
+
+                <x-ui.button type="submit" variant="primary" icon="fas fa-plus">
+                    Создать
+                </x-ui.button>
+            </div>
+        </form>
     </div>
 </div>

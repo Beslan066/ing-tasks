@@ -3068,11 +3068,8 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
 
         // ==================== ОБРАБОТКА URL ДЛЯ ОТКРЫТИЯ МОДАЛКИ ====================
         document.addEventListener('DOMContentLoaded', function() {
-            const openTaskId = {
-                {
-                    $openTaskId ?? 'null'
-                }
-            };
+            // prettier-ignore
+            const openTaskId = {{ $openTaskId ?? 'null' }};
             if (openTaskId) {
                 window.history.pushState({}, '', '/team/tasks');
                 setTimeout(function() {
