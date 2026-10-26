@@ -2317,7 +2317,7 @@
                             <p class="text-xs text-gray-400 mt-1">${formatDate(file.created_at)}</p>
                         </div>
                         <div class="flex justify-center space-x-2 mt-2 pt-2 border-t border-gray-100">
-                            <button type="button" onclick="event.stopPropagation(); downloadTaskFile(${file.id})"
+                            <button type="button" onclick="event.stopPropagation(); window.downloadTaskFile(${file.id})"
                                     class="text-gray-400 hover:text-green-600 p-1" title="Скачать">
                                 <i class="fas fa-download"></i>
                             </button>
@@ -2351,9 +2351,6 @@
             if (confirmCountSpan) confirmCountSpan.textContent = taskSelectedFiles.length;
         }
 
-        function downloadTaskFile(fileId) {
-            window.open(`/file-storage/download/${fileId}`, '_blank');
-        }
 
         function closeFileManager() {
             console.log('main-admin closeFileManager');
