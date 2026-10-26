@@ -1295,9 +1295,6 @@
     ></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            async function downloadTaskFile(fileId) {
-                window.open(`/file-storage/download/${fileId}`, "_blank");
-            }
 
             function closeTaskStorageManager() {
                 console.log(

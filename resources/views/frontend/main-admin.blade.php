@@ -2755,153 +2755,127 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
     @include ('partials.modal.task.show')
 
     <!-- Модальное окно файлового менеджера для редактирования -->
-    <div
-        id="fileManagerModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[60]"
-    >
-        <div
-            class="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl"
-        >
-            <div
-                class="flex justify-between items-center p-6 border-b border-gray-200 bg-white"
-            >
-                <div>
-                    <h3
-                        class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent"
-                    >
-                        Файловое хранилище
-                    </h3>
-                    <p class="text-sm text-gray-500 mt-1">Выберите файлы для прикрепления к задаче</p>
+    <div id="fileManagerModal"
+     role="dialog" aria-modal="true" aria-labelledby="fileManagerTitle"
+     onclick="if (event.target === this) closeFileManager()"
+     class="fixed inset-0 bg-slate-900/40 flex items-center justify-center hidden z-[60] backdrop-blur-sm max-[500px]:p-4">
+
+    <div class="modal-content bg-white rounded-[24px] w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl shadow-slate-900/10
+                max-[500px]:w-[98%] max-[500px]:max-h-[85vh]">
+
+        <!-- Заголовок -->
+        <div class="bg-white border-b border-slate-100">
+            <div class="flex justify-between items-center gap-4 px-8 py-6 max-[500px]:px-5 max-[500px]:py-4">
+                <div class="min-w-0">
+                    <h3 id="fileManagerTitle" class="text-[22px] font-semibold text-slate-800 tracking-tight max-[500px]:text-xl">Файловое хранилище</h3>
+                    <p class="text-[13px] text-slate-400 mt-0.5 max-[500px]:text-[12px]">Выберите файлы для прикрепления к задаче</p>
                 </div>
-                <div class="flex items-center space-x-3">
-                    <span
-                        class="text-sm text-gray-600 bg-green-50 px-3 py-1 rounded-full"
-                    >
+
+                <div class="flex items-center gap-3 shrink-0">
+                    <span class="inline-flex items-center gap-1 text-[12px] font-medium text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full">
                         Выбрано:
-                        <span
-                            id="selectedCount"
-                            class="font-semibold text-green-600"
-                            >0</span
-                        >
+                        <span id="selectedCount" class="font-semibold">0</span>
                     </span>
-                    <button
-                        onclick="closeFileManager()"
-                        class="text-gray-400 hover:text-gray-600 p-2 rounded-xl hover:bg-gray-100 transition-all duration-200"
-                    >
-                        <i class="fas fa-times text-lg"></i>
+
+                    <button type="button" onclick="closeFileManager()" aria-label="Закрыть"
+                            class="text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 transition-all duration-200 p-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-200">
+                        <i class="fas fa-times text-sm"></i>
                     </button>
                 </div>
             </div>
+        </div>
 
-            <div
-                class="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white"
-            >
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <div class="flex-1">
-                        <div class="relative">
-                            <i
-                                class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                            ></i>
-                            <input
-                                type="text"
-                                id="fileManagerSearch"
-                                placeholder="Поиск по названию файла..."
-                                class="w-full pl-10 pr-4 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all duration-200 bg-white"
-                            />
-                        </div>
-                    </div>
-                    <div class="flex space-x-2">
-                        <select
-                            id="fileManagerTypeFilter"
-                            class="px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-sm hover:border-gray-300 transition-all duration-200"
-                        >
-                            <option value="">Все типы</option>
-                            <option value="image">Изображения</option>
-                            <option value="document">Документы</option>
-                            <option value="video">Видео</option>
-                            <option value="audio">Аудио</option>
-                            <option value="archive">Архивы</option>
-                        </select>
-                        <select
-                            id="fileManagerSortBy"
-                            class="px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-sm hover:border-gray-300 transition-all duration-200"
-                        >
-                            <option value="newest">Сначала новые</option>
-                            <option value="oldest">Сначала старые</option>
-                            <option value="name_asc">По имени (А-Я)</option>
-                            <option value="name_desc">По имени (Я-А)</option>
-                            <option value="size_asc">По размеру (↑)</option>
-                            <option value="size_desc">По размеру (↓)</option>
-                        </select>
+        <!-- Поиск и фильтры -->
+        <div class="px-8 py-4 border-b border-slate-100 max-[500px]:px-5">
+            <div class="flex flex-col sm:flex-row gap-3">
+                <div class="flex-1 relative group">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none group-focus-within:text-emerald-500 transition-colors duration-200"></i>
+                    <input type="text" id="fileManagerSearch"
+                           placeholder="Поиск по названию файла..."
+                           class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 sm:flex">
+                    <select id="fileManagerTypeFilter" aria-label="Тип файла"
+                            class="min-w-0 px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 cursor-pointer">
+                        <option value="">Все типы</option>
+                        <option value="image">Изображения</option>
+                        <option value="document">Документы</option>
+                        <option value="video">Видео</option>
+                        <option value="audio">Аудио</option>
+                        <option value="archive">Архивы</option>
+                    </select>
+
+                    <select id="fileManagerSortBy" aria-label="Сортировка"
+                            class="min-w-0 px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 cursor-pointer">
+                        <option value="newest">Сначала новые</option>
+                        <option value="oldest">Сначала старые</option>
+                        <option value="name_asc">По имени (А-Я)</option>
+                        <option value="name_desc">По имени (Я-А)</option>
+                        <option value="size_asc">По размеру (↑)</option>
+                        <option value="size_desc">По размеру (↓)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список файлов и панель предпросмотра -->
+        <div class="flex-1 min-h-0 flex relative">
+            <div id="fileManagerContent"
+                 class="flex-1 overflow-y-auto custom-scrollbar px-8 py-6 max-[500px]:px-5 max-[500px]:py-4">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    <div class="col-span-full text-center py-12 border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+                        <i class="fas fa-spinner fa-spin text-2xl text-slate-300 mb-3"></i>
+                        <p class="text-[13px] text-slate-500 font-medium">Загрузка файлов...</p>
                     </div>
                 </div>
             </div>
 
-            <div class="flex-1 overflow-hidden">
-                <div class="h-full flex">
-                    <div
-                        class="flex-1 overflow-y-auto p-4"
-                        id="fileManagerContent"
-                    >
-                        <div
-                            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
-                        >
-                            <div class="col-span-full text-center py-12">
-                                <i
-                                    class="fas fa-spinner fa-spin text-3xl text-gray-400 mb-4"
-                                ></i>
-                                <p class="text-gray-600">Загрузка файлов...</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        id="fileManagerPreviewPanel"
-                        class="hidden w-96 border-l border-gray-200 bg-gray-50 p-4 overflow-y-auto"
-                    >
-                        <div class="sticky top-0 bg-gray-50 pb-4">
-                            <button
-                                onclick="closeFilePreview()"
-                                class="mb-4 text-gray-400 hover:text-gray-600 flex items-center transition-colors duration-200"
-                            >
-                                <i class="fas fa-arrow-left mr-2"></i> Назад
-                            </button>
-                            <div id="filePreviewContent"></div>
-                        </div>
-                    </div>
+            <!-- Предпросмотр: справа на десктопе, поверх списка на узких экранах -->
+            <div id="fileManagerPreviewPanel"
+                 class="hidden w-96 shrink-0 border-l border-slate-100 bg-slate-50 overflow-y-auto custom-scrollbar px-6 py-6
+                        max-[900px]:absolute max-[900px]:inset-0 max-[900px]:w-full max-[900px]:border-l-0 max-[900px]:z-10">
+                <div class="sticky top-0 z-10 bg-slate-50 pb-4 -mt-1">
+                    <button type="button" onclick="closeFilePreview()"
+                            class="inline-flex items-center px-3 py-1.5 border border-slate-200 rounded-lg text-[12px] font-medium text-slate-600 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-200">
+                        <i class="fas fa-arrow-left mr-1.5 opacity-70"></i>Назад
+                    </button>
                 </div>
+                <div id="filePreviewContent"></div>
             </div>
+        </div>
 
-            <div class="p-4 border-t border-gray-200 bg-white">
-                <div class="flex justify-between items-center">
-                    <div class="text-sm text-gray-600">
-                        <i class="fas fa-hdd mr-1"></i>
-                        Файловое хранилище
-                    </div>
-                    <div class="flex space-x-3">
-                        <button
-                            type="button"
-                            onclick="closeFileManager()"
-                            class="px-5 py-2.5 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-medium transition-all duration-200"
-                        >
-                            Отмена
-                        </button>
-                        <button
-                            type="button"
-                            id="confirmFileSelectionBtn"
-                            onclick="confirmEditFileSelectionForEdit()"
-                            class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <i class="fas fa-check mr-2"></i>Выбрать (<span
-                                id="confirmCount"
-                                >0</span
-                            >)
-                        </button>
-                    </div>
+        <!-- Кнопки действий -->
+        <div class="px-8 py-5 border-t border-slate-100 bg-white max-[500px]:px-5 max-[500px]:py-4">
+            <div class="flex justify-between items-center gap-3 max-[500px]:flex-col-reverse">
+                <p class="text-[12px] text-slate-500 max-[500px]:hidden">
+                    <i class="fas fa-hdd mr-1 opacity-70"></i>Нажмите на файл, чтобы выбрать или снять выбор
+                </p>
+
+                <div class="flex items-center gap-3 max-[500px]:w-full max-[500px]:flex-col-reverse">
+                    <x-ui.button
+                        type="button"
+                        variant="secondary"
+                        onclick="closeFileManager()"
+                    >
+                        Отмена
+                    </x-ui.button>
+
+                    <x-ui.button
+                        type="button"
+                        id="confirmFileSelectionBtn"
+                        variant="primary"
+                        icon="fas fa-check"
+                        class="disabled:opacity-50 disabled:cursor-not-allowed"
+                        onclick="confirmEditFileSelectionForEdit()"
+                    >
+                        Выбрать (<span id="confirmCount">0</span>)
+                    </x-ui.button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
     @include ('partials.modal.task.create')
 
@@ -3094,11 +3068,8 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
 
         // ==================== ОБРАБОТКА URL ДЛЯ ОТКРЫТИЯ МОДАЛКИ ====================
         document.addEventListener('DOMContentLoaded', function() {
-            const openTaskId = {
-                {
-                    $openTaskId ?? 'null'
-                }
-            };
+            // prettier-ignore
+            const openTaskId = {{ $openTaskId ?? 'null' }};
             if (openTaskId) {
                 window.history.pushState({}, '', '/team/tasks');
                 setTimeout(function() {
@@ -3745,9 +3716,6 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
             if (confirmCountSpan) confirmCountSpan.textContent = taskSelectedFiles.length;
         }
 
-        function downloadTaskFile(fileId) {
-            window.open(`/file-storage/download/${fileId}`, '_blank');
-        }
 
         function closeFileManager() {
             console.log('main-admin closeFileManager');

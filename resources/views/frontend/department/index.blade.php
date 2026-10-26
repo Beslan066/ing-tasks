@@ -246,97 +246,10 @@
         </div>
 
     </div>
-    @include('partials.modal.department.create')
-
     <!-- Модальное окно создания отдела -->
-    <div id="departmentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Создать новый отдел</h3>
-                    <button onclick="closeDepartmentModal()" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-
-                <form id="departmentForm" action="{{ route('departments.store') }}" method="POST">
-                    @csrf
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Название отдела</label>
-                            <input type="text"
-                                   name="name"
-                                   required
-                                   class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-1 focus:ring-green-500 outline-none"
-                                   placeholder="Например, Отдел разработки">
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Компания</label>
-                            <select name="company_id"
-                                    required
-                                    class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-1 focus:ring-green-500 bg-white outline-none">
-                                <option value="">Выберите компанию</option>
-                                @foreach($ownedCompanies as $company)
-                                    <option value="{{ $company->id }}"
-                                        {{ $currentUser->company_id == $company->id ? 'selected' : '' }}>
-                                        {{ $company->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Руководитель</label>
-                            <select name="supervisor_id"
-                                    class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-1 focus:ring-green-500 bg-white outline-none">
-                                <option value="">Не назначен</option>
-                                @foreach($assignableUsers as $user)
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="flex items-center space-x-4">
-                            <div class="flex-1">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Статус</label>
-                                <select name="status"
-                                        class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-1 focus:ring-green-500  bg-white outline-none">
-                                    <option value="active" selected>Активный</option>
-                                    <option value="inactive">Неактивный</option>
-                                </select>
-                            </div>
-
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2">
-                                    <input type="checkbox"
-                                           id="enable_email"
-                                           name="enable_email"
-                                           checked
-                                           class="rounded border-gray-300 text-green-600 shadow-sm focus:ring-green-500 focus:border-green-500">
-                                    <label for="enable_email" class="text-sm text-gray-700">Включить почту</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-8 flex justify-end space-x-3">
-                        <button type="button"
-                                onclick="closeDepartmentModal()"
-                                class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-                            Отмена
-                        </button>
-
-                        <button type="button" onclick="submitDepartment(this)"
-                                class="flex-1 md:flex-none text-white px-6 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
-                            Создать
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
+    @include('partials.modal.department.create')
+ <!-- Модальное окно удаления отдела -->
+    @include('partials.modal.department.delete')
 @endsection
 
 @push('scripts')
@@ -427,31 +340,6 @@
             alert(`Сортировка по: ${criteria}. В реальном приложении здесь будет перезагрузка с сортировкой.`);
         }
 
-        // Удаление отдела
-        function deleteDepartment(departmentId) {
-            if (confirm('Вы уверены, что хотите удалить отдел? Все данные (задачи, письма, файлы) будут удалены.')) {
-                fetch(`/departments/${departmentId}/delete`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json',
-                    },
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            showNotification('Ошибка при удалении: ' + data.message,'error');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showNotification('Произошла ошибка при удалении');
-                    });
-            }
-        }
-
         // Редактирование отдела
         function editDepartment(departmentId) {
             // В реальном приложении здесь будет загрузка данных и открытие модального окна редактирования
@@ -465,34 +353,6 @@
             }
         });
 
-        // Обработка отправки формы
-        // document.getElementById('departmentForm').addEventListener('submit', function(e) {
-        //     e.preventDefault();
-
-        //     // Здесь можно добавить валидацию перед отправкой
-        //     const formData = new FormData(this);
-
-        //     fetch(this.action, {
-        //         method: 'POST',
-        //         body: formData,
-        //         headers: {
-        //             'X-CSRF-TOKEN': '{{ csrf_token() }}',
-        //         },
-        //     })
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             if (data.success) {
-        //                 location.reload();
-        //             } else {
-        //                 alert('Ошибка: ' + data.message);
-        //             }
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error);
-        //             alert('Произошла ошибка при создании отдела');
-        //         });
-        // });
-        // v create dep
         function submitDepartment(button) {
             const form = document.getElementById('departmentForm');
             const btn = event.target; // Кнопка, на которую нажали
@@ -546,29 +406,6 @@
                 }
             });
         });
-
-        // Переключение панели фильтров
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const filterToggle = document.getElementById('filterToggle');
-        //     const filtersPanel = document.getElementById('filtersPanel');
-        //     const filterIcon = document.getElementById('filterIcon');
-
-        //     if (filterToggle && filtersPanel) {
-        //         filterToggle.addEventListener('click', function() {
-        //             const isHidden = filtersPanel.classList.contains('hidden');
-
-        //             if (isHidden) {
-        //                 filtersPanel.classList.remove('hidden');
-        //                 filterIcon.style.transform = 'rotate(180deg)';
-        //                 // Анимация появления
-        //                 filtersPanel.style.animation = 'slideDown 0.3s ease';
-        //             } else {
-        //                 filtersPanel.classList.add('hidden');
-        //                 filterIcon.style.transform = 'rotate(0deg)';
-        //             }
-        //         });
-        //     }
-        // });
         document.addEventListener('DOMContentLoaded', function() {
                 const filterToggle = document.getElementById('filterToggle');
                 const dropdown = document.getElementById('filtersPanel');

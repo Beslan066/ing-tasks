@@ -960,6 +960,8 @@
 
     <!-- Модальное окно подтверждения удаления -->
     @include('partials.modal.team.delete-user')
+
+     @include('partials.modal.team.edit-role')
 @endsection
 
 @push('scripts')
@@ -1657,8 +1659,6 @@ ${user.departments && user.departments.length > 0 ?
             window.loadUserDetails = loadUserDetails;
             window.renderUserModal = renderUserModal;
             window.loadUserTasks = loadUserTasks;
-            window.openRoleEditModal = openRoleEditModal;
-            window.closeRoleEditModal = closeRoleEditModal;
             window.saveUserRole = saveUserRole;
 
             console.log('DOMContentLoaded completed successfully');
@@ -1846,153 +1846,6 @@ ${user.departments && user.departments.length > 0 ?
             if (roleSelect) roleSelect.value = '';
             if (deptSelect) deptSelect.value = '';
             updateSubmitButton();
-        }
-
-        // Функция для открытия модального окна изменения роли
-        function openRoleEditModal(userId) {
-            // Проверяем, есть ли уже открытое модальное окно
-            const existingModal = document.getElementById('roleEditModal');
-            if (existingModal) {
-                existingModal.remove();
-            }
-
-            // Показываем индикатор загрузки
-            showNotification('Загрузка данных...','info');
-
-            fetch(`/team/user/${userId}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        const user = data.user;
-
-                        // Создаем модальное окно
-                        const modal = document.createElement('div');
-                        modal.id = 'roleEditModal';
-                        modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4 backdrop-blur-md';
-                        modal.onclick = function (e) {
-                            if (e.target === this) {
-                                closeRoleEditModal();
-                            }
-                        };
-
-                        modal.innerHTML = `
-                    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative animate-fadeIn">
-                        <button onclick="closeRoleEditModal()"
-                                class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors">
-                            <i class="fas fa-times text-xl"></i>
-                        </button>
-
-                        <div class="flex items-center gap-3 mb-4">
-                            <div>
-                                <h3 class="text-xl font-bold text-gray-900">Изменение роли</h3>
-                                <p class="text-sm text-gray-500">Назначьте новую роль пользователю</p>
-                            </div>
-                        </div>
-
-                        <div class="border-t border-gray-200 pt-4 mb-4">
-                            <div class="flex items-center gap-3 mb-4">
-                                ${user.avatar_url ?
-                            `<img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}" class="w-10 h-10 rounded-full object-cover">` :
-                            `<div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
-                                        <span class="text-gray-600 font-bold">${user.name.charAt(0)}</span>
-                                     </div>`
-                        }
-                                <div>
-                                    <p class="font-semibold text-gray-900">${escapeHtml(user.name)}</p>
-                                    <p class="text-sm text-gray-600">${escapeHtml(user.email)}</p>
-                                </div>
-                            </div>
-
-                            <div class="bg-gray-50 rounded-lg p-3 mb-4">
-                                <p class="text-sm text-gray-600">Текущая роль:</p>
-                                <p class="font-medium text-gray-900">
-                                    ${user.role ? escapeHtml(user.role.name) : 'Не назначена'}
-                                </p>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Выберите новую роль
-                                </label>
-                                <select id="roleSelect"
-                                        class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none bg-white focus:green-600 focus:ring-2 focus:ring-green-100 transition">
-                                    <option value="">Без роли</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                            <button onclick="closeRoleEditModal()"
-                                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium">
-                                Отмена
-                            </button>
-                            <button onclick="saveUserRole(${user.id})"
-                                    id="saveRoleBtn"
-                                    class="px-4 py-2 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition duration-200 font-medium flex items-center space-x-2">
-                                <span>Сохранить</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-
-                        document.body.appendChild(modal);
-
-                        // Добавляем анимацию
-                        const modalContent = modal.querySelector('.animate-fadeIn');
-                        if (modalContent) {
-                            modalContent.style.animation = 'fadeIn 0.3s ease-out';
-                        }
-
-                        // Загружаем список ролей
-                        fetch('/team/roles/list', {
-                            headers: {
-                                'Accept': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        })
-                            .then(res => res.json())
-                            .then(rolesData => {
-                                const select = document.getElementById('roleSelect');
-                                if (select && rolesData.success) {
-                                    select.innerHTML = '<option value="">Без роли</option>';
-                                    rolesData.roles.forEach(role => {
-                                        const option = document.createElement('option');
-                                        option.value = role.id;
-                                        option.textContent = role.name;
-                                        if (user.role && user.role.id === role.id) {
-                                            option.selected = true;
-                                        }
-                                        select.appendChild(option);
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error loading roles:', error);
-                                showNotification('Ошибка при загрузке списка ролей','error');
-                            });
-
-                    } else {
-                        showNotification('Ошибка при загрузке данных пользователя','error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showNotification('Ошибка при загрузке данных пользователя','error');
-                });
-        }
-
-
-        // Функция закрытия модального окна изменения роли
-        function closeRoleEditModal() {
-            const modal = document.getElementById('roleEditModal');
-            if (modal) {
-                modal.style.opacity = '0';
-                setTimeout(() => {
-                    if (document.body.contains(modal)) {
-                        modal.remove();
-                    }
-                }, 300);
-            }
         }
 
         // Функция сохранения роли
