@@ -1,130 +1,206 @@
-@extends('layouts.app')
+@extends ('layouts.app')
 
-@section('content')
+@section ('content')
     @php
-        $backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
-        $backgroundImage = auth()->check() ? auth()->user()->background_image : null;
-        $company = auth()->check() ? auth()->user()->company : null;
-        $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // 'list' or 'kanban'
-    @endphp
+$backgroundEnabled = auth()->check() && auth()->user()->background_enabled;
+$backgroundImage = auth()->check() ? auth()->user()->background_image : null;
+$company = auth()->check() ? auth()->user()->company : null;
+$viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // 'list' or 'kanban'
+@endphp
 
     <!-- Страница статистики компании -->
     <div id="company-stats">
-        @if(auth()->user()->isManager() || auth()->user()->isSupervisor())
-            @if($company && $company->license_type === 'basic')
-                @include('partials.subscription')
+        @if (auth()->user()->isManager() || auth()->user()->isSupervisor())
+            @if ($company && $company->license_type === 'basic')
+                @include ('partials.subscription')
             @endif
         @endif
-        <div class="flex flex-col md:flex-row justify-between items-start mb-6 md:mb-8 gap-4">
-
-             <nav class="hidden max-[500px]:block">
-                            <ol class="flex items-center gap-1.5">
-                                <li>
-                                    <a class="inline-flex items-center gap-1.5 text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-500 dark:text-gray-400' }}"
-                                       href="{{ route('welcome') }}">
-                                        Главная
-                                        <svg class="stroke-current" width="17" height="16" viewBox="0 0 17 16" fill="none"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366" stroke="" stroke-width="1.2"
-                                                  stroke-linecap="round" stroke-linejoin="round"></path>
-                                        </svg>
-                                    </a>
-                                </li>
-                                <li class="text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-800 dark:text-white/90' }}" x-text="pageName">Задачи компании</li>
-                            </ol>
-                        </nav>
-        <div class="max-[500px]:hidden">
-
-
-                @if($backgroundEnabled && $backgroundImage)
-                    <h2 class="text-3xl font-bold text-white max-[500px]:text-[26px]">Задачи компании</h2>
+        <div
+            class="flex flex-col md:flex-row justify-between items-start mb-6 md:mb-8 gap-4"
+        >
+            <nav class="hidden max-[500px]:block">
+                <ol class="flex items-center gap-1.5">
+                    <li>
+                        <a
+                            class="inline-flex items-center gap-1.5 text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-500 dark:text-gray-400' }}"
+                            href="{{ route('welcome') }}"
+                        >
+                            Главная
+                            <svg
+                                class="stroke-current"
+                                width="17"
+                                height="16"
+                                viewBox="0 0 17 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366"
+                                    stroke=""
+                                    stroke-width="1.2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                ></path>
+                            </svg>
+                        </a>
+                    </li>
+                    <li
+                        class="text-sm {{ $backgroundEnabled && $backgroundImage ? 'text-white' : 'text-gray-800 dark:text-white/90' }}"
+                        x-text="pageName"
+                    >
+                        Задачи компании
+                    </li>
+                </ol>
+            </nav>
+            <div class="max-[500px]:hidden">
+                @if ($backgroundEnabled && $backgroundImage)
+                    <h2
+                        class="text-3xl font-bold text-white max-[500px]:text-[26px]"
+                    >
+                        Задачи компании
+                    </h2>
                     <p class="text-white text-sm max-[500px]:text-[13px]">Обзор производительности и задач</p>
                 @else
-                    <h2 class="text-3xl font-bold max-[500px]:text-[26px]" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Задачи компании</h2>
+                    <h2
+                        class="text-3xl font-bold max-[500px]:text-[26px]"
+                        style="
+                            background: linear-gradient(
+                                135deg,
+                                #10b981 0%,
+                                #059669 100%
+                            );
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                        "
+                    >
+                        Задачи компании
+                    </h2>
                     <p class="text-gray-700 text-sm max-[500px]:text-[13px]">Обзор производительности и задач</p>
                 @endif
             </div>
 
             <div class="flex flex-wrap gap-2 w-full md:w-auto items-start">
                 <!-- Переключатель режимов отображения -->
-                    @if($backgroundEnabled && $backgroundImage)
-                        <div class="flex rounded-lg overflow-hidden border-none ">
-                            <button onclick="setViewMode('list')"
-                                    id="viewModeListBtn"
-                                    class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
-                                {{ $viewMode === 'list' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700' }}">
-                                <i class="fas fa-list"></i>
-                                <span>Список</span>
-                            </button>
-                            <button onclick="setViewMode('kanban')"
-                                    id="viewModeKanbanBtn"
-                                    class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
-                                {{ $viewMode === 'kanban' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700 ' }}">
-                                <i class="fas fa-columns"></i>
-                                <span>Канбан</span>
-                            </button>
-                        </div>
-                    @else
-                        <div class="flex rounded-lg overflow-hidden border-none ">
-                            <button onclick="setViewMode('list')"
-                                    id="viewModeListBtn"
-                                    class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
-                                {{ $viewMode === 'list' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700' }}">
-                                <i class="fas fa-list"></i>
-                                <span>Список</span>
-                            </button>
-                            <button onclick="setViewMode('kanban')"
-                                    id="viewModeKanbanBtn"
-                                    class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
-                                {{ $viewMode === 'kanban' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700 ' }}">
-                                <i class="fas fa-columns"></i>
-                                <span>Канбан</span>
-                            </button>
-                        </div>
-                   @endif
+                @if ($backgroundEnabled && $backgroundImage)
+                    <div class="flex rounded-lg overflow-hidden border-none">
+                        <button
+                            onclick="setViewMode('list')"
+                            id="viewModeListBtn"
+                            class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
+                                {{ $viewMode === 'list' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700' }}"
+                        >
+                            <i class="fas fa-list"></i>
+                            <span>Список</span>
+                        </button>
+                        <button
+                            onclick="setViewMode('kanban')"
+                            id="viewModeKanbanBtn"
+                            class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
+                                {{ $viewMode === 'kanban' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700 ' }}"
+                        >
+                            <i class="fas fa-columns"></i>
+                            <span>Канбан</span>
+                        </button>
+                    </div>
+                @else
+                    <div class="flex rounded-lg overflow-hidden border-none">
+                        <button
+                            onclick="setViewMode('list')"
+                            id="viewModeListBtn"
+                            class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
+                                {{ $viewMode === 'list' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700' }}"
+                        >
+                            <i class="fas fa-list"></i>
+                            <span>Список</span>
+                        </button>
+                        <button
+                            onclick="setViewMode('kanban')"
+                            id="viewModeKanbanBtn"
+                            class="px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-1
+                                {{ $viewMode === 'kanban' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white' : 'bg-white text-gray-700 ' }}"
+                        >
+                            <i class="fas fa-columns"></i>
+                            <span>Канбан</span>
+                        </button>
+                    </div>
+                @endif
 
-
-                @if($backgroundEnabled && $backgroundImage)
-                    <button id="filterToggle" onclick="toggleFiltersDropdown()"
-                            class="flex-1 md:flex-none bg-transparent/20 border-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 transition text-sm md:text-base">
+                @if ($backgroundEnabled && $backgroundImage)
+                    <button
+                        id="filterToggle"
+                        onclick="toggleFiltersDropdown()"
+                        class="flex-1 md:flex-none bg-transparent/20 border-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 transition text-sm md:text-base"
+                    >
                         <i class="fas fa-filter"></i>
                         <span>Фильтры</span>
-                        <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform"></i>
+                        <i
+                            id="filterIcon"
+                            class="fas fa-chevron-down ml-2 transition-transform"
+                        ></i>
                     </button>
                 @else
-                    <button id="filterToggle" onclick="toggleFiltersDropdown()"
-                            class="flex-1 md:flex-none bg-white border border-gray-300 text-gray-700 px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-50 transition text-sm md:text-base">
+                    <button
+                        id="filterToggle"
+                        onclick="toggleFiltersDropdown()"
+                        class="flex-1 md:flex-none bg-white border border-gray-300 text-gray-700 px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-50 transition text-sm md:text-base"
+                    >
                         <i class="fas fa-filter"></i>
                         <span>Фильтры</span>
-                        <i id="filterIcon" class="fas fa-chevron-down ml-2 transition-transform"></i>
+                        <i
+                            id="filterIcon"
+                            class="fas fa-chevron-down ml-2 transition-transform"
+                        ></i>
                     </button>
                 @endif
 
-               <button id="newTaskBtn" onclick="openTaskModal()"
-                        class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+                <button
+                    id="newTaskBtn"
+                    onclick="openTaskModal()"
+                    class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none"
+                >
                     <i class="fas fa-plus"></i>
                     <span>Новая задача</span>
                 </button>
-
             </div>
         </div>
 
         <!-- Модальное окно улучшения до Премиум -->
-        @include('partials.modal.buy-premium')
+        @include ('partials.modal.buy-premium')
 
         <!-- Фильтры и поиск (список) -->
-        @if($backgroundEnabled && $backgroundImage)
-            <div id="filtersPanel" class="backdrop-blur-md bg-transparent/20 rounded-lg border-gray-200 hidden mb-[20px]">
+        @if ($backgroundEnabled && $backgroundImage)
+            <div
+                id="filtersPanel"
+                class="backdrop-blur-md bg-transparent/20 rounded-lg border-gray-200 hidden mb-[20px]"
+            >
                 <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <form method="GET" action="{{ route('tasks.admin') }}" id="filterForm">
-                        <input type="hidden" name="view_mode" id="filterFormViewMode" value="{{ $viewMode }}">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                    <form
+                        method="GET"
+                        action="{{ route('tasks.admin') }}"
+                        id="filterForm"
+                    >
+                        <input
+                            type="hidden"
+                            name="view_mode"
+                            id="filterFormViewMode"
+                            value="{{ $viewMode }}"
+                        />
+                        <div
+                            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4"
+                        >
                             <!-- Поиск -->
                             <div class="sm:col-span-2 lg:col-span-1">
-                                <label class="block text-sm font-medium text-white mb-1">Поиск</label>
-                                <input type="text" name="search" value="{{ request('search') }}"
-                                       class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10"
-                                       placeholder="Название или описание...">
+                                <label
+                                    class="block text-sm font-medium text-white mb-1"
+                                    >Поиск</label
+                                >
+                                <input
+                                    type="text"
+                                    name="search"
+                                    value="{{ request('search') }}"
+                                    class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10"
+                                    placeholder="Название или описание..."
+                                />
                             </div>
 
                             <!-- Статус -->
@@ -137,13 +213,21 @@
                             />
                             <!-- Исполнитель -->
                             <div>
-                                <label class="block text-sm font-medium text-white mb-1">Исполнитель</label>
-                                <select name="user_id"
-                                        class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                                <label
+                                    class="block text-sm font-medium text-white mb-1"
+                                    >Исполнитель</label
+                                >
+                                <select
+                                    name="user_id"
+                                    class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10"
+                                >
                                     <option value="">Все исполнители</option>
-                                    @foreach($filterData['users'] as $userItem)
-                                        <option class="text-gray-800"
-                                                value="{{ $userItem->id }}" {{ request('user_id') == $userItem->id ? 'selected' : '' }}>
+                                    @foreach ($filterData['users'] as $userItem)
+                                        <option
+                                            class="text-gray-800"
+                                            value="{{ $userItem->id }}"
+                                            {{ request('user_id') == $userItem->id ? 'selected' : '' }}
+                                        >
                                             {{ $userItem->name }}
                                         </option>
                                     @endforeach
@@ -152,13 +236,21 @@
 
                             <!-- Отдел -->
                             <div>
-                                <label class="block text-sm font-medium text-white mb-1">Отдел</label>
-                                <select name="department_id"
-                                        class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                                <label
+                                    class="block text-sm font-medium text-white mb-1"
+                                    >Отдел</label
+                                >
+                                <select
+                                    name="department_id"
+                                    class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10"
+                                >
                                     <option value="">Все отделы</option>
-                                    @foreach($filterData['departments'] as $department)
-                                        <option class="text-gray-800"
-                                                value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
+                                    @foreach ($filterData['departments'] as $department)
+                                        <option
+                                            class="text-gray-800"
+                                            value="{{ $department->id }}"
+                                            {{ request('department_id') == $department->id ? 'selected' : '' }}
+                                        >
                                             {{ $department->name }}
                                         </option>
                                     @endforeach
@@ -167,13 +259,21 @@
 
                             <!-- Приоритет -->
                             <div>
-                                <label class="block text-sm font-medium text-white mb-1">Приоритет</label>
-                                <select name="priority"
-                                        class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                                <label
+                                    class="block text-sm font-medium text-white mb-1"
+                                    >Приоритет</label
+                                >
+                                <select
+                                    name="priority"
+                                    class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10"
+                                >
                                     <option value="">Все приоритеты</option>
-                                    @foreach($filterData['priorities'] as $priority)
-                                        <option class="text-gray-800"
-                                                value="{{ $priority }}" {{ request('priority') == $priority ? 'selected' : '' }}>
+                                    @foreach ($filterData['priorities'] as $priority)
+                                        <option
+                                            class="text-gray-800"
+                                            value="{{ $priority }}"
+                                            {{ request('priority') == $priority ? 'selected' : '' }}
+                                        >
                                             {{ $priority }}
                                         </option>
                                     @endforeach
@@ -182,13 +282,20 @@
 
                             <!-- Категория -->
                             <div>
-                                <label class="block text-sm text-white mb-1">Категория</label>
-                                <select name="category_id"
-                                        class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
+                                <label class="block text-sm text-white mb-1"
+                                    >Категория</label
+                                >
+                                <select
+                                    name="category_id"
+                                    class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10"
+                                >
                                     <option value="">Все категории</option>
-                                    @foreach($filterData['categories'] as $category)
-                                        <option class="text-gray-800"
-                                                value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                    @foreach ($filterData['categories'] as $category)
+                                        <option
+                                            class="text-gray-800"
+                                            value="{{ $category->id }}"
+                                            {{ request('category_id') == $category->id ? 'selected' : '' }}
+                                        >
                                             {{ $category->name }}
                                         </option>
                                     @endforeach
@@ -196,13 +303,25 @@
                             </div>
 
                             <!-- Кнопки фильтра -->
-                            <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                              <button type="button" onclick="window.mainPageFilters.updateViewModeBeforeSubmit()"
-                                        class="text-white px-4 py-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm md:text-base transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+                            <div
+                                class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4"
+                            >
+                                <button
+                                    type="button"
+                                    onclick="
+                                        window.mainPageFilters.updateViewModeBeforeSubmit()
+                                    "
+                                    class="text-white px-4 py-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm md:text-base transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none"
+                                >
                                     Применить фильтры
                                 </button>
-                                <button type="button" onclick="window.mainPageFilters.resetWithCurrentMode()"
-                                        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm md:text-base">
+                                <button
+                                    type="button"
+                                    onclick="
+                                        window.mainPageFilters.resetWithCurrentMode()
+                                    "
+                                    class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm md:text-base"
+                                >
                                     Сбросить
                                 </button>
                             </div>
@@ -211,105 +330,95 @@
                 </div>
             </div>
         @else
-            <div id="filtersPanel" class="bg-white rounded-lg border-gray-200 hidden mb-[20px]">
+            <div
+                id="filtersPanel"
+                class="bg-white rounded-lg border-gray-200 hidden mb-[20px]"
+            >
                 <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <form method="GET" action="{{ route('tasks.admin') }}" id="filterFormList">
-                        <input type="hidden" name="view_mode" value="{{ $viewMode }}">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                    <form
+                        method="GET"
+                        action="{{ route('tasks.admin') }}"
+                        id="filterFormList"
+                    >
+                        <input
+                            type="hidden"
+                            name="view_mode"
+                            value="{{ $viewMode }}"
+                        />
+                        <div
+                            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4"
+                        >
                             <!-- Поиск -->
                             <div class="sm:col-span-2 lg:col-span-1">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
-                                <input type="text" name="search" value="{{ request('search') }}"
-                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white"
-                                       placeholder="Название или описание...">
+                                <label
+                                    class="block text-sm font-medium text-gray-700 mb-1"
+                                    >Поиск</label
+                                >
+                                <input
+                                    type="text"
+                                    name="search"
+                                    value="{{ request('search') }}"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white"
+                                    placeholder="Название или описание..."
+                                />
                             </div>
 
                             <!-- Статус -->
-                            <!-- <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                                <select name="status"
-                                        class="w-full border border-gray-300 rounded-lg appearance-none px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
-                                    <option value="">Все статусы</option>
-                                    @foreach($filterData['statuses'] as $status)
-                                        <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
-                                            {{ $status }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div> -->
-                             <x-form.input-select
+                            <x-form.input-select
                                 name="status"
                                 label="Статус"
                                 :required="false"
                                 :value="request('status')"
                                 :options="collect($filterData['statuses'])->mapWithKeys(fn($status) => [$status => $status])->prepend('Все статусы', '')->toArray()"
                             />
+
                             <!-- Исполнитель -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Исполнитель</label>
-                                <select name="user_id"
-                                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
-                                    <option value="">Все исполнители</option>
-                                    @foreach($filterData['users'] as $userItem)
-                                        <option value="{{ $userItem->id }}" {{ request('user_id') == $userItem->id ? 'selected' : '' }}>
-                                            {{ $userItem->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <x-form.input-select
+                                name="user_id"
+                                label="Исполнитель"
+                                :required="false"
+                                :value="request('user_id')"
+                                :options="collect($filterData['users'])->pluck('name', 'id')->prepend('Все исполнители', '')->toArray()"
+                            />
 
                             <!-- Отдел -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
-                                <select name="department_id"
-                                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-500 bg-white">
-                                    <option value="">Все отделы</option>
-                                    @foreach($filterData['departments'] as $department)
-                                        <option value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
-                                            {{ $department->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <x-form.input-select
+                                name="department_id"
+                                label="Отдел"
+                                :required="false"
+                                :value="request('department_id')"
+                                :options="collect($filterData['departments'])->pluck('name', 'id')->prepend('Все отделы', '')->toArray()"
+                            />
 
                             <!-- Приоритет -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Приоритет</label>
-                                <select name="priority"
-                                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
-                                    <option value="">Все приоритеты</option>
-                                    @foreach($filterData['priorities'] as $priority)
-                                        <option value="{{ $priority }}" {{ request('priority') == $priority ? 'selected' : '' }}>
-                                            {{ $priority }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <x-form.input-select
+                                name="priority"
+                                label="Приоритет"
+                                :required="false"
+                                :value="request('priority')"
+                                :options="collect($filterData['priorities'])->mapWithKeys(fn($priority) => [$priority => $priority])->prepend('Все приоритеты', '')->toArray()"
+                            />
 
                             <!-- Категория -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
-                                <select name="category_id"
-                                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-green-600 bg-white">
-                                    <option value="">Все категории</option>
-                                    @foreach($filterData['categories'] as $category)
-                                        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <x-form.input-select
+                                name="category_id"
+                                label="Категория"
+                                :required="false"
+                                :value="request('category_id')"
+                                :options="collect($filterData['categories'])->pluck('name', 'id')->prepend('Все категории', '')->toArray()"
+                            />
 
                             <!-- Кнопки фильтра -->
-                            <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                                  <button type="button" onclick="window.mainPageFilters.updateViewModeBeforeSubmit()"
-                                        class="text-white px-4 py-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm md:text-base transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+                            <div
+                                class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4"
+                            >
+                                 <x-ui.button variant="primary" onclick="window.mainPageFilters.updateViewModeBeforeSubmit()">
                                     Применить фильтры
-                                </button>
-                                <button type="button" onclick="window.mainPageFilters.resetWithCurrentMode()"
-                                        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-center text-sm md:text-base">
+                                </x-ui.button>
+
+                                <x-ui.button type="submit" variant="secondary"  onclick="window.mainPageFilters.resetWithCurrentMode()">
                                     Сбросить
-                                </button>
+                                </x-ui.button>
                             </div>
                         </div>
                     </form>
@@ -317,217 +426,437 @@
             </div>
         @endif
 
-        <div id="statisticCardContainer" class="{{ $viewMode === 'kanban' ? 'hidden' : '' }}">
-    @include('partials.main.statistic-card')
-</div>
+        <div
+            id="statisticCardContainer"
+            class="{{ $viewMode === 'kanban' ? 'hidden' : '' }}"
+        >
+            @include ('partials.main.statistic-card')
+        </div>
 
-            <!-- Режим отображения: Список -->
-            <div id="listViewContainer" class="{{ $viewMode === 'list' ? '' : 'hidden' }}">
-                @if($backgroundEnabled && $backgroundImage)
-                    <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
-                            <div class="text-gray-500 text-sm md:text-base">
-                                Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
-                            </div>
-
-                            <div class="w-full sm:w-auto">
-
-                                <select id="sortSelect"
-                                        class="w-full sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20">
-                                    <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
-                                    <option class="text-gray-800" value="created_at_asc">Старые сначала</option>
-                                    <option class="text-gray-800" value="deadline_asc">Ближайший дедлайн</option>
-                                    <option class="text-gray-800" value="deadline_desc">Дальний дедлайн</option>
-                                    <option class="text-gray-800" value="priority_desc">Высокий приоритет</option>
-                                    <option class="text-gray-800" value="name_asc">По названию (А-Я)</option>
-                                </select>
-                            </div>
+        <!-- Режим отображения: Список -->
+        <div
+            id="listViewContainer"
+            class="{{ $viewMode === 'list' ? '' : 'hidden' }}"
+        >
+            @if ($backgroundEnabled && $backgroundImage)
+                <div
+                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6"
+                >
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3"
+                    >
+                        <div class="text-gray-500 text-sm md:text-base">
+                            Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
                         </div>
 
-                        <div class="overflow-x-auto -mx-4 md:mx-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-                            <div class="inline-block min-w-full align-middle max-[500px]:min-w-[unset] w-full">
-                                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                                    <table class="min-w-full hidden md:table">
-                                        <thead class="bg-transparent/20">
+                        <div class="w-full sm:w-auto">
+                            <select
+                                id="sortSelect"
+                                class="w-full sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20"
+                            >
+                                <option
+                                    class="text-gray-800"
+                                    value="created_at_desc"
+                                >
+                                    Новые сначала
+                                </option>
+                                <option
+                                    class="text-gray-800"
+                                    value="created_at_asc"
+                                >
+                                    Старые сначала
+                                </option>
+                                <option
+                                    class="text-gray-800"
+                                    value="deadline_asc"
+                                >
+                                    Ближайший дедлайн
+                                </option>
+                                <option
+                                    class="text-gray-800"
+                                    value="deadline_desc"
+                                >
+                                    Дальний дедлайн
+                                </option>
+                                <option
+                                    class="text-gray-800"
+                                    value="priority_desc"
+                                >
+                                    Высокий приоритет
+                                </option>
+                                <option class="text-gray-800" value="name_asc">
+                                    По названию (А-Я)
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        class="overflow-x-auto -mx-4 md:mx-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                    >
+                        <div
+                            class="inline-block min-w-full align-middle max-[500px]:min-w-[unset] w-full"
+                        >
+                            <div
+                                class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
+                            >
+                                <table class="min-w-full hidden md:table">
+                                    <thead class="bg-transparent/20">
                                         <tr class="border-none">
-                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Задача</th>
-                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
-                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Исполнитель</th>
-                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Отдел</th>
-                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Приоритет</th>
-                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Автор</th>
-                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Дедлайн</th>
-                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
+                                            <th
+                                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Задача
+                                            </th>
+                                            <th
+                                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Статус
+                                            </th>
+                                            <th
+                                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Исполнитель
+                                            </th>
+                                            <th
+                                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Отдел
+                                            </th>
+                                            <th
+                                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Приоритет
+                                            </th>
+                                            <th
+                                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Автор
+                                            </th>
+                                            <th
+                                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Дедлайн
+                                            </th>
+                                            <th
+                                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Действия
+                                            </th>
                                         </tr>
-                                        </thead>
-                                        <tbody class="bg-transparent/10">
-                                        @forelse($tasks as $task)
-                                            <tr class="hover:bg-gray-50 transition text-white hover:text-gray-900 @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif">
-                                                <td class="px-3 py-4 cursor-pointer hover:text-gray-900">
-                                                    <div class="flex items-start">
-                                                        <div class="ml-2 hover:text-gray-900">
-                                                            <div class="text-sm font-medium flex items-center flex-wrap gap-1">
-                                                                <a href="/team/tasks/{{ $task->id }}"
-                                                                   onclick="openTaskViewModal({{ $task->id }}); return false;">
-                                                                    <span class="truncate max-w-[250px]">{{ $task->name }}</span>
+                                    </thead>
+                                    <tbody class="bg-transparent/10">
+                                        @forelse ($tasks as $task)
+                                            <tr
+                                                class="hover:bg-gray-50 transition text-white hover:text-gray-900 @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif"
+                                            >
+                                                <td
+                                                    class="px-3 py-4 cursor-pointer hover:text-gray-900"
+                                                >
+                                                    <div
+                                                        class="flex items-start"
+                                                    >
+                                                        <div
+                                                            class="ml-2 hover:text-gray-900"
+                                                        >
+                                                            <div
+                                                                class="text-sm font-medium flex items-center flex-wrap gap-1"
+                                                            >
+                                                                <a
+                                                                    href="/team/tasks/{{ $task->id }}"
+                                                                    onclick="openTaskViewModal({{ $task->id }}); return false;"
+                                                                >
+                                                                    <span
+                                                                        class="truncate max-w-[250px]"
+                                                                        >{{ $task->name }}</span
+                                                                    >
                                                                 </a>
-                                                                @if($task->trashed())
-                                                                    <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap">
-                                                            <i class="fas fa-trash mr-1"></i>Удалена
-                                                        </span>
+                                                                @if ($task->trashed())
+                                                                    <span
+                                                                        class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-trash mr-1"
+                                                                        ></i
+                                                                        >Удалена
+                                                                    </span>
                                                                 @endif
                                                             </div>
-                                                            <div class="flex flex-wrap gap-1 mt-2">
-                                                                @if($task->category)
-                                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white">
-                                                            {{ $task->category->name }}
-                                                        </span>
+                                                            <div
+                                                                class="flex flex-wrap gap-1 mt-2"
+                                                            >
+                                                                @if ($task->category)
+                                                                    <span
+                                                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white"
+                                                                    >
+                                                                        {{ $task->category->name }}
+                                                                    </span>
                                                                 @endif
-                                                                @if($task->rejections_count > 0)
-                                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
-                                                                          title="Количество отказов: {{ $task->rejections_count }}">
-                                                            <i class="fas fa-user-slash mr-1"></i>
-                                                            {{ $task->rejections_count }}
-                                                        </span>
+                                                                @if ($task->rejections_count > 0)
+                                                                    <span
+                                                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                                                                        title="Количество отказов: {{ $task->rejections_count }}"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-user-slash mr-1"
+                                                                        ></i>
+                                                                        {{ $task->rejections_count }}
+                                                                    </span>
                                                                 @endif
-                                                                @if($task->trashed() && $task->deletedBy)
-                                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                                                                          title="Удалил: {{ $task->deletedBy->name }}">
-                                                            <i class="fas fa-user-times mr-1"></i>
-                                                            Удалил: {{ $task->deletedBy->name }}
-                                                        </span>
+                                                                @if ($task->trashed() && $task->deletedBy)
+                                                                    <span
+                                                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                                                        title="Удалил: {{ $task->deletedBy->name }}"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-user-times mr-1"
+                                                                        ></i>
+                                                                        Удалил: {{ $task->deletedBy->name }}
+                                                                    </span>
                                                                 @endif
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td class="px-3 py-4 cursor-pointer whitespace-nowrap" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                                    @if($task->trashed())
-                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Удалена</span>
+                                                <td
+                                                    class="px-3 py-4 cursor-pointer whitespace-nowrap"
+                                                    onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})"
+                                                >
+                                                    @if ($task->trashed())
+                                                        <span
+                                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800"
+                                                            >Удалена</span
+                                                        >
                                                     @else
-                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                        <span
+                                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                                 {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
                                                 {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
                                                 {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
                                                 {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
-                                                {{ $task->status }}
-                                            </span>
+                                                {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}"
+                                                        >
+                                                            {{ $task->status }}
+                                                        </span>
                                                     @endif
                                                 </td>
-                                                <td class="px-3 py-4 cursor-pointer" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                                    @if($task->user)
-                                                        <div class="flex items-center">
-                                                            <div class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium">
+                                                <td
+                                                    class="px-3 py-4 cursor-pointer"
+                                                    onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})"
+                                                >
+                                                    @if ($task->user)
+                                                        <div
+                                                            class="flex items-center"
+                                                        >
+                                                            <div
+                                                                class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium"
+                                                            >
                                                                 {{ substr($task->user->name, 0, 2) }}
                                                             </div>
                                                             <div class="ml-2">
-                                                                <div class="text-sm font-medium truncate max-w-[100px]">{{ $task->user->name }}</div>
-                                                                <div class="text-xs text-gray-500 truncate max-w-[100px]">{{ $task->user->email }}</div>
+                                                                <div
+                                                                    class="text-sm font-medium truncate max-w-[100px]"
+                                                                >
+                                                                    {{ $task->user->name }}
+                                                                </div>
+                                                                <div
+                                                                    class="text-xs text-gray-500 truncate max-w-[100px]"
+                                                                >
+                                                                    {{ $task->user->email }}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     @else
-                                                        <span class="text-sm text-gray-500">Не назначен</span>
+                                                        <span
+                                                            class="text-sm text-gray-500"
+                                                            >Не назначен</span
+                                                        >
                                                     @endif
                                                 </td>
-                                                <td class="px-3 py-4 cursor-pointer whitespace-nowrap text-sm text-gray-500" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                                <td
+                                                    class="px-3 py-4 cursor-pointer whitespace-nowrap text-sm text-gray-500"
+                                                    onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})"
+                                                >
                                                     {{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : 'Без отдела') }}
                                                 </td>
-                                                <td class="px-3 py-4 cursor-pointer whitespace-nowrap" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                                <td
+                                                    class="px-3 py-4 cursor-pointer whitespace-nowrap"
+                                                    onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})"
+                                                >
                                                     @php
-                                                        $prioritySignals = [
-                                                            'низкий' => ['level' => 1, 'color' => 'green', 'bg' => 'bg-green-50', 'border' => 'border-green-200', 'filled' => 'bg-green-500', 'empty' => 'bg-green-200', 'text' => 'text-green-700'],
-                                                            'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
-                                                            'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
-                                                            'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
-                                                        ];
-                                                        $signal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
-                                                    @endphp
-                                                    @if(!$task->trashed())
-                                                        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $signal['bg'] }} border {{ $signal['border'] }}">
-                                                            <div class="flex items-end gap-[3px] h-5">
-                                                                <div class="w-1.5 rounded-sm {{ $signal['level'] >= 1 ? $signal['filled'] : $signal['empty'] }} h-2"></div>
-                                                                <div class="w-1.5 rounded-sm {{ $signal['level'] >= 2 ? $signal['filled'] : $signal['empty'] }} h-3"></div>
-                                                                <div class="w-1.5 rounded-sm {{ $signal['level'] >= 3 ? $signal['filled'] : $signal['empty'] }} h-4"></div>
-                                                                <div class="w-1.5 rounded-sm {{ $signal['level'] >= 4 ? $signal['filled'] : $signal['empty'] }} h-5"></div>
+                                        $prioritySignals = [
+                                        'низкий' => ['level' => 1, 'color' => 'green', 'bg' => 'bg-green-50', 'border' => 'border-green-200', 'filled' => 'bg-green-500', 'empty' => 'bg-green-200', 'text' => 'text-green-700'],
+                                        'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
+                                        'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
+                                        'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
+                                        ];
+                                        $signal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
+                                        @endphp
+                                                    @if (!$task->trashed())
+                                                        <div
+                                                            class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $signal['bg'] }} border {{ $signal['border'] }}"
+                                                        >
+                                                            <div
+                                                                class="flex items-end gap-[3px] h-5"
+                                                            >
+                                                                <div
+                                                                    class="w-1.5 rounded-sm {{ $signal['level'] >= 1 ? $signal['filled'] : $signal['empty'] }} h-2"
+                                                                ></div>
+                                                                <div
+                                                                    class="w-1.5 rounded-sm {{ $signal['level'] >= 2 ? $signal['filled'] : $signal['empty'] }} h-3"
+                                                                ></div>
+                                                                <div
+                                                                    class="w-1.5 rounded-sm {{ $signal['level'] >= 3 ? $signal['filled'] : $signal['empty'] }} h-4"
+                                                                ></div>
+                                                                <div
+                                                                    class="w-1.5 rounded-sm {{ $signal['level'] >= 4 ? $signal['filled'] : $signal['empty'] }} h-5"
+                                                                ></div>
                                                             </div>
-                                                            <span class="text-xs font-medium {{ $signal['text'] }}">{{ ucfirst($task->priority) }}</span>
+                                                            <span
+                                                                class="text-xs font-medium {{ $signal['text'] }}"
+                                                                >{{ ucfirst($task->priority) }}</span
+                                                            >
                                                         </div>
                                                     @else
-                                                        <span class="text-sm text-gray-400">—</span>
+                                                        <span
+                                                            class="text-sm text-gray-400"
+                                                            >—</span
+                                                        >
                                                     @endif
                                                 </td>
-                                                <td class="px-3 py-4 cursor-pointer whitespace-nowrap" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                                    @if($task->author)
-                                                        <div class="text-sm font-medium truncate max-w-[100px]">{{ $task->author->name }}</div>
+                                                <td
+                                                    class="px-3 py-4 cursor-pointer whitespace-nowrap"
+                                                    onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})"
+                                                >
+                                                    @if ($task->author)
+                                                        <div
+                                                            class="text-sm font-medium truncate max-w-[100px]"
+                                                        >
+                                                            {{ $task->author->name }}
+                                                        </div>
                                                     @else
-                                                        <span class="text-sm">Нет автора</span>
+                                                        <span class="text-sm"
+                                                            >Нет автора</span
+                                                        >
                                                     @endif
                                                 </td>
-                                                <td class="px-3 py-4 cursor-pointer" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
-                                                    @if($task->deadline && !$task->trashed())
-                                                        <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }} text-sm">
+                                                <td
+                                                    class="px-3 py-4 cursor-pointer"
+                                                    onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})"
+                                                >
+                                                    @if ($task->deadline && !$task->trashed())
+                                                        <div
+                                                            class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }} text-sm"
+                                                        >
                                                             {{ $task->deadline->format('d.m.Y H:i') }}
                                                         </div>
-                                                        <div class="text-xs {{ $task->isOverdue() ? 'text-red-500' : 'text-gray-400' }}">
+                                                        <div
+                                                            class="text-xs {{ $task->isOverdue() ? 'text-red-500' : 'text-gray-400' }}"
+                                                        >
                                                             {{ $task->getTimeRemaining() }}
                                                         </div>
                                                     @else
-                                                        <span class="text-gray-400 text-sm">—</span>
+                                                        <span
+                                                            class="text-gray-400 text-sm"
+                                                            >—</span
+                                                        >
                                                     @endif
                                                 </td>
-                                                <td class="px-3 py-4 whitespace-nowrap">
-                                                    @if($task->trashed())
-                                                        <span class="text-gray-400 text-sm">Действия недоступны</span>
+                                                <td
+                                                    class="px-3 py-4 whitespace-nowrap"
+                                                >
+                                                    @if ($task->trashed())
+                                                        <span
+                                                            class="text-gray-400 text-sm"
+                                                            >Действия
+                                                            недоступны</span
+                                                        >
                                                     @else
-                                                        <div class="relative action-buttons">
+                                                        <div
+                                                            class="relative action-buttons"
+                                                        >
                                                             <!-- Кнопка с тремя точками -->
-                                                            <button onclick="window.toggleDropdown(event, {{ $task->id }})"
-                                                                    class="text-white hover:text-gray-300 p-1 transition-colors"
-                                                                    title="Действия">
-                                                                <i class="fas fa-ellipsis-v text-lg"></i>
+                                                            <button
+                                                                onclick="window.toggleDropdown(event, {{ $task->id }})"
+                                                                class="text-white hover:text-gray-300 p-1 transition-colors"
+                                                                title="Действия"
+                                                            >
+                                                                <i
+                                                                    class="fas fa-ellipsis-v text-lg"
+                                                                ></i>
                                                             </button>
 
                                                             <!-- Выпадающее меню -->
-                                                            <div id="dropdown-{{ $task->id }}"
-                                                                 class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
-                                                                <div class="py-1">
-                                                                    <button onclick="openEditModal({{ $task->id }})"
-                                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                                                                        <i class="fa-solid fa-file-pen text-yellow-600 w-4"></i>
+                                                            <div
+                                                                id="dropdown-{{ $task->id }}"
+                                                                class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden"
+                                                            >
+                                                                <div
+                                                                    class="py-1"
+                                                                >
+                                                                    <button
+                                                                        onclick="openEditModal({{ $task->id }})"
+                                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                    >
+                                                                        <i
+                                                                            class="fa-solid fa-file-pen text-yellow-600 w-4"
+                                                                        ></i>
                                                                         Редактировать
                                                                     </button>
 
-                                                                    <button onclick="openCreateSubtaskModal({{ $task->id }})"
-                                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                                                                        <i class="fa-solid fa-list text-blue-600 w-4"></i>
+                                                                    <button
+                                                                        onclick="openCreateSubtaskModal({{ $task->id }})"
+                                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                    >
+                                                                        <i
+                                                                            class="fa-solid fa-list text-blue-600 w-4"
+                                                                        ></i>
                                                                         Подзадача
                                                                     </button>
 
-                                                                    @if($task->status === 'на проверке')
-                                                                        <button onclick="returnToWork({{ $task->id }})"
-                                                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                                                                            <i class="fas fa-redo text-orange-600 w-4"></i>
-                                                                            Вернуть на доработку
+                                                                    @if ($task->status === 'на проверке')
+                                                                        <button
+                                                                            onclick="returnToWork({{ $task->id }})"
+                                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-redo text-orange-600 w-4"
+                                                                            ></i>
+                                                                            Вернуть
+                                                                            на
+                                                                            доработку
                                                                         </button>
                                                                     @endif
 
-                                                                    <button onclick="archiveTask({{ $task->id }})"
-                                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                                                                        <i class="fas fa-archive text-yellow-600 w-4"></i>
+                                                                    <button
+                                                                        onclick="archiveTask({{ $task->id }})"
+                                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-archive text-yellow-600 w-4"
+                                                                        ></i>
                                                                         В архив
                                                                     </button>
 
-                                                                    @if($task->author_id === Auth::id())
-                                                                        <button onclick="openDeleteModal({{ $task->id }})"
-                                                                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-t border-gray-100">
-                                                                            <i class="fa-solid fa-trash w-4"></i>
+                                                                    @if ($task->author_id === Auth::id())
+                                                                        <button
+                                                                            onclick="openDeleteModal({{ $task->id }})"
+                                                                            class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-t border-gray-100"
+                                                                        >
+                                                                            <i
+                                                                                class="fa-solid fa-trash w-4"
+                                                                            ></i>
                                                                             Удалить
                                                                         </button>
                                                                     @else
-                                                                        <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2 border-t border-gray-100"
-                                                                                disabled title="Можно удалять только свои задачи">
-                                                                            <i class="fa-solid fa-trash w-4"></i>
+                                                                        <button
+                                                                            class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2 border-t border-gray-100"
+                                                                            disabled
+                                                                            title="Можно удалять только свои задачи"
+                                                                        >
+                                                                            <i
+                                                                                class="fa-solid fa-trash w-4"
+                                                                            ></i>
                                                                             Удалить
                                                                         </button>
                                                                     @endif
@@ -539,351 +868,748 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">Задачи не найдены</td>
+                                                <td
+                                                    colspan="8"
+                                                    class="px-6 py-4 text-center text-sm text-gray-500"
+                                                >
+                                                    Задачи не найдены
+                                                </td>
                                             </tr>
                                         @endforelse
-                                        </tbody>
-                                    </table>
+                                    </tbody>
+                                </table>
 
-                                    <!-- Мобильный вид таблицы (карточки) -->
-                                    <div class="md:hidden space-y-3 p-4">
-                                        @forelse($tasks as $task)
-                                            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm cursor-pointer hover:shadow-md transition @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif"
-                                                 onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})">
-                                                <div class="flex justify-between items-start mb-3">
-                                                    <div class="flex-1">
-                                                        <div class="flex items-center flex-wrap gap-2 mb-1">
-                                                            <h3 class="font-semibold text-gray-900 truncate max-[450px]:!whitespace-normal max-[450px]:!overflow-visible max-[500px]:!text-wrap">{{ $task->name }}</h3>
-                                                            @if($task->trashed())
-                                                                <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full"><i class="fas fa-trash mr-1"></i>Удалена</span>
-                                                            @endif
-                                                        </div>
-                                                        <div class="text-sm text-gray-600 mb-2 line-clamp-2 max-[500px]:!hidden">{{ $task->description }}</div>
-                                                    </div>
-                                                    <div class="relative action-buttons-mobile">
-                                                        @if(!$task->trashed())
-                                                            <!-- Кнопка с тремя точками для мобильной версии -->
-                                                            <button onclick="window.toggleDropdown(event, {{ $task->id }})"
-                                                                    class="text-gray-600 hover:text-gray-800 p-1 transition-colors"
-                                                                    title="Действия">
-                                                                <i class="fas fa-ellipsis-v text-lg"></i>
-                                                            </button>
-
-                                                            <!-- Выпадающее меню для мобильной версии -->
-                                                            <div id="dropdown-{{ $task->id }}"
-                                                                 class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
-                                                                <div class="py-1">
-                                                                    <button onclick="openEditModal({{ $task->id }})"
-                                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                                                                        <i class="fa-solid fa-file-pen text-yellow-600 w-4"></i>
-                                                                        Редактировать
-                                                                    </button>
-
-                                                                    <button onclick="openCreateSubtaskModal({{ $task->id }})"
-                                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                                                                        <i class="fa-solid fa-list text-blue-600 w-4"></i>
-                                                                        Подзадача
-                                                                    </button>
-
-                                                                    @if($task->status === 'на проверке')
-                                                                        <button onclick="returnToWork({{ $task->id }})"
-                                                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                                                                            <i class="fas fa-redo text-orange-600 w-4"></i>
-                                                                            Вернуть на доработку
-                                                                        </button>
-                                                                    @endif
-
-                                                                    @if($task->author_id === Auth::id())
-                                                                        <button onclick="openDeleteModal({{ $task->id }})"
-                                                                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-t border-gray-100">
-                                                                            <i class="fa-solid fa-trash w-4"></i>
-                                                                            Удалить
-                                                                        </button>
-                                                                    @else
-                                                                        <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2 border-t border-gray-100"
-                                                                                disabled title="Можно удалять только свои задачи">
-                                                                            <i class="fa-solid fa-trash w-4"></i>
-                                                                            Удалить
-                                                                        </button>
-                                                                    @endif
-                                                                </div>
-                                                            </div>
+                                <!-- Мобильный вид таблицы (карточки) -->
+                                <div class="md:hidden space-y-3 p-4">
+                                    @forelse ($tasks as $task)
+                                        <div
+                                            class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm cursor-pointer hover:shadow-md transition @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif"
+                                            onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})"
+                                        >
+                                            <div
+                                                class="flex justify-between items-start mb-3"
+                                            >
+                                                <div class="flex-1">
+                                                    <div
+                                                        class="flex items-center flex-wrap gap-2 mb-1"
+                                                    >
+                                                        <h3
+                                                            class="font-semibold text-gray-900 truncate max-[450px]:!whitespace-normal max-[450px]:!overflow-visible max-[500px]:!text-wrap"
+                                                        >
+                                                            {{ $task->name }}
+                                                        </h3>
+                                                        @if ($task->trashed())
+                                                            <span
+                                                                class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full"
+                                                                ><i
+                                                                    class="fas fa-trash mr-1"
+                                                                ></i
+                                                                >Удалена</span
+                                                            >
                                                         @endif
+                                                    </div>
+                                                    <div
+                                                        class="text-sm text-gray-600 mb-2 line-clamp-2 max-[500px]:!hidden"
+                                                    >
+                                                        {{ $task->description }}
                                                     </div>
                                                 </div>
-                                                <div class="space-y-2">
-                                                    <div class="flex items-center gap-6 max-[500px]:hidden">
-                                                        <span class="text-sm text-gray-600">Статус:</span>
-                                                        @if($task->trashed())
-                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Удалена</span>
-                                                        @else
-                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                    {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
-                                                    {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
-                                                    {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                                    {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                                    {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
-                                                    {{ $task->status }}
-                                                </span>
-                                                        @endif
-                                                    </div>
-                                                    <div class="flex items-center gap-2 max-[500px]:hidden">
-                                                        <span class="text-sm text-gray-600">Исполнитель:</span>
-                                                        @if($task->user)
-                                                            <div class="flex items-center">
-                                                                <div class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium mr-2">{{ substr($task->user->name, 0, 2) }}</div>
-                                                                <span class="text-sm font-medium">{{ $task->user->name }}</span>
+                                                <div
+                                                    class="relative action-buttons-mobile"
+                                                >
+                                                    @if (!$task->trashed())
+                                                        <!-- Кнопка с тремя точками для мобильной версии -->
+                                                        <button
+                                                            onclick="window.toggleDropdown(event, {{ $task->id }})"
+                                                            class="text-gray-600 hover:text-gray-800 p-1 transition-colors"
+                                                            title="Действия"
+                                                        >
+                                                            <i
+                                                                class="fas fa-ellipsis-v text-lg"
+                                                            ></i>
+                                                        </button>
+
+                                                        <!-- Выпадающее меню для мобильной версии -->
+                                                        <div
+                                                            id="dropdown-{{ $task->id }}"
+                                                            class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden"
+                                                        >
+                                                            <div class="py-1">
+                                                                <button
+                                                                    onclick="openEditModal({{ $task->id }})"
+                                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                >
+                                                                    <i
+                                                                        class="fa-solid fa-file-pen text-yellow-600 w-4"
+                                                                    ></i>
+                                                                    Редактировать
+                                                                </button>
+
+                                                                <button
+                                                                    onclick="openCreateSubtaskModal({{ $task->id }})"
+                                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                >
+                                                                    <i
+                                                                        class="fa-solid fa-list text-blue-600 w-4"
+                                                                    ></i>
+                                                                    Подзадача
+                                                                </button>
+
+                                                                @if ($task->status === 'на проверке')
+                                                                    <button
+                                                                        onclick="returnToWork({{ $task->id }})"
+                                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-redo text-orange-600 w-4"
+                                                                        ></i>
+                                                                        Вернуть
+                                                                        на
+                                                                        доработку
+                                                                    </button>
+                                                                @endif
+
+                                                                @if ($task->author_id === Auth::id())
+                                                                    <button
+                                                                        onclick="openDeleteModal({{ $task->id }})"
+                                                                        class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-t border-gray-100"
+                                                                    >
+                                                                        <i
+                                                                            class="fa-solid fa-trash w-4"
+                                                                        ></i>
+                                                                        Удалить
+                                                                    </button>
+                                                                @else
+                                                                    <button
+                                                                        class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2 border-t border-gray-100"
+                                                                        disabled
+                                                                        title="Можно удалять только свои задачи"
+                                                                    >
+                                                                        <i
+                                                                            class="fa-solid fa-trash w-4"
+                                                                        ></i>
+                                                                        Удалить
+                                                                    </button>
+                                                                @endif
                                                             </div>
-                                                        @else
-                                                            <span class="text-sm text-gray-500">Не назначен</span>
-                                                        @endif
-                                                    </div>
-                                                    <div class="grid grid-cols-2 gap-2 max-[500px]:grid-cols-1">
-                                                        <div class="flex items-center gap-2">
-                                                            <span class="text-sm text-gray-600">Отдел:</span>
-                                                            <span class="text-sm">{{ $task->department->name ?? '—' }}</span>
-                                                        </div>
-                                                        @php
-                                                            $priorityStyles = [
-                                                                'низкий' => ['level' => 1, 'color' => 'gray', 'bg' => 'bg-gray-50', 'border' => 'border-gray-200', 'filled' => 'bg-gray-500', 'empty' => 'bg-gray-200', 'text' => 'text-gray-700'],
-                                                                'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
-                                                                'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
-                                                                'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
-                                                            ];
-                                                            $style = $priorityStyles[$task->priority] ?? $priorityStyles['средний'];
-                                                        @endphp
-                                                        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $style['bg'] }} border {{ $style['border'] }}">
-                                                            <div class="flex items-end gap-[3px] h-5">
-                                                                <div class="w-1.5 rounded-sm {{ $style['level'] >= 1 ? $style['filled'] : $style['empty'] }} h-2"></div>
-                                                                <div class="w-1.5 rounded-sm {{ $style['level'] >= 2 ? $style['filled'] : $style['empty'] }} h-3"></div>
-                                                                <div class="w-1.5 rounded-sm {{ $style['level'] >= 3 ? $style['filled'] : $style['empty'] }} h-4"></div>
-                                                                <div class="w-1.5 rounded-sm {{ $style['level'] >= 4 ? $style['filled'] : $style['empty'] }} h-5"></div>
-                                                            </div>
-                                                            <span class="text-xs font-medium {{ $style['text'] }}">{{ ucfirst($task->priority) }}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="grid grid-cols-2 gap-2 max-[500px]:grid-cols-1">
-                                                        <div class="flex items-center gap-2">
-                                                            <span class="text-sm text-gray-600">Автор:</span>
-                                                            <span class="text-sm truncate">{{ $task->author->name ?? '—' }}</span>
-                                                        </div>
-                                                        <div class="flex items-center gap-2">
-                                                            <span class="text-sm text-gray-600">Дедлайн:</span>
-                                                            @if($task->deadline && !$task->trashed())
-                                                                <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }}">
-                                                                    <div class="text-sm">{{ $task->deadline->format('d.m.Y') }}</div>
-                                                                    <div class="text-xs {{ $task->isOverdue() ? 'text-red-500' : 'text-gray-400' }}">
-                                                                        {{ $task->getTimeRemaining() }}
-                                                                    </div>
-                                                                </div>
-                                                            @else
-                                                                <span class="text-gray-400 text-sm">—</span>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                    <div class="flex flex-wrap gap-1 pt-2 border-t max-[500px]:!hidden">
-                                                        @if($task->category)
-                                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{{ $task->category->name }}</span>
-                                                        @endif
-                                                        @if($task->rejections_count > 0)
-                                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800" title="Количество отказов: {{ $task->rejections_count }}">
-                                                    <i class="fas fa-user-slash mr-1"></i>{{ $task->rejections_count }}
-                                                </span>
-                                                        @endif
-                                                        @if($task->trashed() && $task->deletedBy)
-                                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800" title="Удалил: {{ $task->deletedBy->name }}">
-                                                    <i class="fas fa-user-times mr-1"></i>Удалил: {{ $task->deletedBy->name }}
-                                                </span>
-                                                        @endif
-                                                    </div>
-                                                    @if(!$task->trashed() && $task->status === 'на проверке')
-                                                        <div class="pt-2 border-t">
-                                                            <button onclick="returnToWork({{ $task->id }})" class="w-full bg-orange-100 text-orange-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-200 transition flex items-center justify-center space-x-2">
-                                                                <i class="fas fa-redo"></i><span>Вернуть на доработку</span>
-                                                            </button>
                                                         </div>
                                                     @endif
                                                 </div>
                                             </div>
-                                        @empty
-                                            <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
-                                                <i class="fas fa-tasks text-gray-300 text-4xl mb-3"></i>
-                                                <p class="text-gray-500">Задачи не найдены</p>
+                                            <div class="space-y-2">
+                                                <div
+                                                    class="flex items-center gap-6 max-[500px]:hidden"
+                                                >
+                                                    <span
+                                                        class="text-sm text-gray-600"
+                                                        >Статус:</span
+                                                    >
+                                                    @if ($task->trashed())
+                                                        <span
+                                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800"
+                                                            >Удалена</span
+                                                        >
+                                                    @else
+                                                        <span
+                                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                    {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
+                                                    {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
+                                                    {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                                    {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
+                                                    {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}"
+                                                        >
+                                                            {{ $task->status }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                <div
+                                                    class="flex items-center gap-2 max-[500px]:hidden"
+                                                >
+                                                    <span
+                                                        class="text-sm text-gray-600"
+                                                        >Исполнитель:</span
+                                                    >
+                                                    @if ($task->user)
+                                                        <div
+                                                            class="flex items-center"
+                                                        >
+                                                            <div
+                                                                class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium mr-2"
+                                                            >
+                                                                {{ substr($task->user->name, 0, 2) }}
+                                                            </div>
+                                                            <span
+                                                                class="text-sm font-medium"
+                                                                >{{ $task->user->name }}</span
+                                                            >
+                                                        </div>
+                                                    @else
+                                                        <span
+                                                            class="text-sm text-gray-500"
+                                                            >Не назначен</span
+                                                        >
+                                                    @endif
+                                                </div>
+                                                <div
+                                                    class="grid grid-cols-2 gap-2 max-[500px]:grid-cols-1"
+                                                >
+                                                    <div
+                                                        class="flex items-center gap-2"
+                                                    >
+                                                        <span
+                                                            class="text-sm text-gray-600"
+                                                            >Отдел:</span
+                                                        >
+                                                        <span
+                                                            class="text-sm"
+                                                            >{{ $task->department->name ?? '—' }}</span
+                                                        >
+                                                    </div>
+                                                    @php
+                                        $priorityStyles = [
+                                        'низкий' => ['level' => 1, 'color' => 'gray', 'bg' => 'bg-gray-50', 'border' => 'border-gray-200', 'filled' => 'bg-gray-500', 'empty' => 'bg-gray-200', 'text' => 'text-gray-700'],
+                                        'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
+                                        'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
+                                        'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
+                                        ];
+                                        $style = $priorityStyles[$task->priority] ?? $priorityStyles['средний'];
+                                        @endphp
+                                                    <div
+                                                        class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $style['bg'] }} border {{ $style['border'] }}"
+                                                    >
+                                                        <div
+                                                            class="flex items-end gap-[3px] h-5"
+                                                        >
+                                                            <div
+                                                                class="w-1.5 rounded-sm {{ $style['level'] >= 1 ? $style['filled'] : $style['empty'] }} h-2"
+                                                            ></div>
+                                                            <div
+                                                                class="w-1.5 rounded-sm {{ $style['level'] >= 2 ? $style['filled'] : $style['empty'] }} h-3"
+                                                            ></div>
+                                                            <div
+                                                                class="w-1.5 rounded-sm {{ $style['level'] >= 3 ? $style['filled'] : $style['empty'] }} h-4"
+                                                            ></div>
+                                                            <div
+                                                                class="w-1.5 rounded-sm {{ $style['level'] >= 4 ? $style['filled'] : $style['empty'] }} h-5"
+                                                            ></div>
+                                                        </div>
+                                                        <span
+                                                            class="text-xs font-medium {{ $style['text'] }}"
+                                                            >{{ ucfirst($task->priority) }}</span
+                                                        >
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="grid grid-cols-2 gap-2 max-[500px]:grid-cols-1"
+                                                >
+                                                    <div
+                                                        class="flex items-center gap-2"
+                                                    >
+                                                        <span
+                                                            class="text-sm text-gray-600"
+                                                            >Автор:</span
+                                                        >
+                                                        <span
+                                                            class="text-sm truncate"
+                                                            >{{ $task->author->name ?? '—' }}</span
+                                                        >
+                                                    </div>
+                                                    <div
+                                                        class="flex items-center gap-2"
+                                                    >
+                                                        <span
+                                                            class="text-sm text-gray-600"
+                                                            >Дедлайн:</span
+                                                        >
+                                                        @if ($task->deadline && !$task->trashed())
+                                                            <div
+                                                                class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }}"
+                                                            >
+                                                                <div
+                                                                    class="text-sm"
+                                                                >
+                                                                    {{ $task->deadline->format('d.m.Y') }}
+                                                                </div>
+                                                                <div
+                                                                    class="text-xs {{ $task->isOverdue() ? 'text-red-500' : 'text-gray-400' }}"
+                                                                >
+                                                                    {{ $task->getTimeRemaining() }}
+                                                                </div>
+                                                            </div>
+                                                        @else
+                                                            <span
+                                                                class="text-gray-400 text-sm"
+                                                                >—</span
+                                                            >
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="flex flex-wrap gap-1 pt-2 border-t max-[500px]:!hidden"
+                                                >
+                                                    @if ($task->category)
+                                                        <span
+                                                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                                            >{{ $task->category->name }}</span
+                                                        >
+                                                    @endif
+                                                    @if ($task->rejections_count > 0)
+                                                        <span
+                                                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                                                            title="Количество отказов: {{ $task->rejections_count }}"
+                                                        >
+                                                            <i
+                                                                class="fas fa-user-slash mr-1"
+                                                            ></i
+                                                            >{{ $task->rejections_count }}
+                                                        </span>
+                                                    @endif
+                                                    @if ($task->trashed() && $task->deletedBy)
+                                                        <span
+                                                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                                            title="Удалил: {{ $task->deletedBy->name }}"
+                                                        >
+                                                            <i
+                                                                class="fas fa-user-times mr-1"
+                                                            ></i
+                                                            >Удалил: {{ $task->deletedBy->name }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                @if (!$task->trashed() && $task->status === 'на проверке')
+                                                    <div class="pt-2 border-t">
+                                                        <button
+                                                            onclick="returnToWork({{ $task->id }})"
+                                                            class="w-full bg-orange-100 text-orange-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-200 transition flex items-center justify-center space-x-2"
+                                                        >
+                                                            <i
+                                                                class="fas fa-redo"
+                                                            ></i
+                                                            ><span
+                                                                >Вернуть на
+                                                                доработку</span
+                                                            >
+                                                        </button>
+                                                    </div>
+                                                @endif
                                             </div>
-                                        @endforelse
-                                    </div>
+                                        </div>
+                                    @empty
+                                        <div
+                                            class="bg-white border border-gray-200 rounded-lg p-8 text-center"
+                                        >
+                                            <i
+                                                class="fas fa-tasks text-gray-300 text-4xl mb-3"
+                                            ></i>
+                                            <p class="text-gray-500">Задачи не найдены</p>
+                                        </div>
+                                    @endforelse
                                 </div>
                             </div>
                         </div>
                     </div>
-                    @if($tasks->hasPages())
-                        <div class="mt-4 md:mt-6">{{ $tasks->links('vendor.pagination.tailwind') }}</div>
-                    @endif
-                @else
-                    <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
-                            <div class="text-gray-500 text-sm md:text-base">Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач</div>
-                            <div class="w-full sm:w-auto">
-                                <select id="sortSelect" class="w-full sm:w-48 border border-gray-200 rounded-lg pr-1 px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base">
-                                    <option value="created_at_desc">Новые сначала</option>
-                                    <option value="created_at_asc">Старые сначала</option>
-                                    <option value="deadline_asc">Ближайший дедлайн</option>
-                                    <option value="deadline_desc">Дальний дедлайн</option>
-                                    <option value="priority_desc">Высокий приоритет</option>
-                                    <option value="name_asc">По названию (А-Я)</option>
-                                </select>
-                            </div>
+                </div>
+                @if ($tasks->hasPages())
+                    <div class="mt-4 md:mt-6">
+                        {{ $tasks->links('vendor.pagination.tailwind') }}
+                    </div>
+                @endif
+            @else
+                <div
+                    class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6"
+                >
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3"
+                    >
+                        <div class="text-gray-500 text-sm md:text-base">
+                            Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
                         </div>
-                        <div class="overflow-x-auto -mx-4 md:mx-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-                            <div class="inline-block min-w-full align-middle max-[500px]:min-w-0 max-[500px]:w-full">
-                                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                                    <div class="hidden md:block">
-                                        <table class="min-w-full divide-y divide-gray-300">
-                                            <thead class="bg-gray-50">
+                        <div class="w-full sm:w-auto">
+                            <select
+                                id="sortSelect"
+                                class="w-full sm:w-48 border border-gray-200 rounded-lg pr-1 px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base"
+                            >
+                                <option value="created_at_desc">
+                                    Новые сначала
+                                </option>
+                                <option value="created_at_asc">
+                                    Старые сначала
+                                </option>
+                                <option value="deadline_asc">
+                                    Ближайший дедлайн
+                                </option>
+                                <option value="deadline_desc">
+                                    Дальний дедлайн
+                                </option>
+                                <option value="priority_desc">
+                                    Высокий приоритет
+                                </option>
+                                <option value="name_asc">
+                                    По названию (А-Я)
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div
+                        class="overflow-x-auto -mx-4 md:mx-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                    >
+                        <div
+                            class="inline-block min-w-full align-middle max-[500px]:min-w-0 max-[500px]:w-full"
+                        >
+                            <div
+                                class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
+                            >
+                                <div class="hidden md:block">
+                                    <table
+                                        class="min-w-full divide-y divide-gray-300"
+                                    >
+                                        <thead class="bg-gray-50">
                                             <tr>
-                                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Задача</th>
-                                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
-                                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Исполнитель</th>
-                                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Отдел</th>
-                                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Приоритет</th>
-                                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Автор</th>
-                                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Дедлайн</th>
-                                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
+                                                <th
+                                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                >
+                                                    Задача
+                                                </th>
+                                                <th
+                                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                >
+                                                    Статус
+                                                </th>
+                                                <th
+                                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                >
+                                                    Исполнитель
+                                                </th>
+                                                <th
+                                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                >
+                                                    Отдел
+                                                </th>
+                                                <th
+                                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                >
+                                                    Приоритет
+                                                </th>
+                                                <th
+                                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                >
+                                                    Автор
+                                                </th>
+                                                <th
+                                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                >
+                                                    Дедлайн
+                                                </th>
+                                                <th
+                                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                >
+                                                    Действия
+                                                </th>
                                             </tr>
-                                            </thead>
-                                            <tbody class="bg-white divide-y divide-gray-200">
-                                            @forelse($tasks as $task)
-                                                <tr class="hover:bg-gray-50 transition @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif">
+                                        </thead>
+                                        <tbody
+                                            class="bg-white divide-y divide-gray-200"
+                                        >
+                                            @forelse ($tasks as $task)
+                                                <tr
+                                                    class="hover:bg-gray-50 transition @if($task->trashed()) bg-red-50 border-l-4 border-red-400 @endif"
+                                                >
                                                     <td class="px-3 py-4">
-                                                        <div class="flex items-start cursor-pointer" onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})">
+                                                        <div
+                                                            class="flex items-start cursor-pointer"
+                                                            onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})"
+                                                        >
                                                             <div class="ml-2">
-                                                                <div class="text-sm font-medium text-gray-900 flex items-center flex-wrap gap-1">
-                                                                    <span class="truncate max-w-[150px]">{{ $task->name }}</span>
-                                                                    @if($task->trashed())<span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap"><i class="fas fa-trash mr-1"></i>Удалена</span>@endif
+                                                                <div
+                                                                    class="text-sm font-medium text-gray-900 flex items-center flex-wrap gap-1"
+                                                                >
+                                                                    <span
+                                                                        class="truncate max-w-[150px]"
+                                                                        >{{ $task->name }}</span
+                                                                    >
+                                                                    @if ($task->trashed())
+                                                                        <span
+                                                                            class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap"
+                                                                            ><i
+                                                                                class="fas fa-trash mr-1"
+                                                                            ></i
+                                                                            >Удалена</span
+                                                                        >
+                                                                    @endif
                                                                 </div>
-                                                                <div class="text-xs text-gray-500 truncate max-w-[200px] mt-1">{{ $task->description }}</div>
-                                                                <div class="flex flex-wrap gap-1 mt-2">
-                                                                    @if($task->category)<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white">{{ $task->category->name }}</span>@endif
-                                                                    @if($task->rejections_count > 0)<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800" title="Количество отказов: {{ $task->rejections_count }}"><i class="fas fa-user-slash mr-1"></i>{{ $task->rejections_count }}</span>@endif
-                                                                    @if($task->trashed() && $task->deletedBy)<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800" title="Удалил: {{ $task->deletedBy->name }}"><i class="fas fa-user-times mr-1"></i>Удалил: {{ $task->deletedBy->name }}</span>@endif
+                                                                <div
+                                                                    class="text-xs text-gray-500 truncate max-w-[200px] mt-1"
+                                                                >
+                                                                    {{ $task->description }}
+                                                                </div>
+                                                                <div
+                                                                    class="flex flex-wrap gap-1 mt-2"
+                                                                >
+                                                                    @if ($task->category)
+                                                                        <span
+                                                                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white"
+                                                                            >{{ $task->category->name }}</span
+                                                                        >
+                                                                    @endif
+                                                                    @if ($task->rejections_count > 0)
+                                                                        <span
+                                                                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                                                                            title="Количество отказов: {{ $task->rejections_count }}"
+                                                                            ><i
+                                                                                class="fas fa-user-slash mr-1"
+                                                                            ></i
+                                                                            >{{ $task->rejections_count }}</span
+                                                                        >
+                                                                    @endif
+                                                                    @if ($task->trashed() && $task->deletedBy)
+                                                                        <span
+                                                                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                                                            title="Удалил: {{ $task->deletedBy->name }}"
+                                                                            ><i
+                                                                                class="fas fa-user-times mr-1"
+                                                                            ></i
+                                                                            >Удалил: {{ $task->deletedBy->name }}</span
+                                                                        >
+                                                                    @endif
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td class="px-3 py-4 whitespace-nowrap">
-                                                        @if($task->trashed())
-                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Удалена</span>
+                                                    <td
+                                                        class="px-3 py-4 whitespace-nowrap"
+                                                    >
+                                                        @if ($task->trashed())
+                                                            <span
+                                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800"
+                                                                >Удалена</span
+                                                            >
                                                         @else
-                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                            <span
+                                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                                     {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }}
                                                     {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }}
                                                     {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }}
                                                     {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }}
-                                                    {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">
-                                                    {{ $task->status }}
-                                                </span>
+                                                    {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}"
+                                                            >
+                                                                {{ $task->status }}
+                                                            </span>
                                                         @endif
                                                     </td>
                                                     <td class="px-3 py-4">
-                                                        @if($task->user)
-                                                            <div class="flex items-center">
-                                                                <div class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium">{{ substr($task->user->name, 0, 2) }}</div>
-                                                                <div class="ml-2"><div class="text-sm font-medium text-gray-900 truncate max-w-[100px]">{{ $task->user->name }}</div><div class="text-xs text-gray-500 truncate max-w-[100px]">{{ $task->user->email }}</div></div>
-                                                            </div>
-                                                        @else
-                                                            <span class="text-sm text-gray-500">Не назначен</span>
-                                                        @endif
-                                                    </td>
-                                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : 'Без отдела') }}</td>
-                                                    <td class="px-3 py-4 whitespace-nowrap">
-                                                        @if(!$task->trashed())
-                                                            @php
-                                                                $priorityStyles = [
-                                                                    'низкий' => ['level' => 1, 'color' => 'gray', 'bg' => 'bg-gray-50', 'border' => 'border-gray-200', 'filled' => 'bg-gray-500', 'empty' => 'bg-gray-200', 'text' => 'text-gray-700'],
-                                                                    'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
-                                                                    'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
-                                                                    'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
-                                                                ];
-                                                                $style = $priorityStyles[$task->priority] ?? $priorityStyles['средний'];
-                                                            @endphp
-                                                            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $style['bg'] }} border {{ $style['border'] }}">
-                                                                <div class="flex items-end gap-[3px] h-5">
-                                                                    <div class="w-1.5 rounded-sm {{ $style['level'] >= 1 ? $style['filled'] : $style['empty'] }} h-2"></div>
-                                                                    <div class="w-1.5 rounded-sm {{ $style['level'] >= 2 ? $style['filled'] : $style['empty'] }} h-3"></div>
-                                                                    <div class="w-1.5 rounded-sm {{ $style['level'] >= 3 ? $style['filled'] : $style['empty'] }} h-4"></div>
-                                                                    <div class="w-1.5 rounded-sm {{ $style['level'] >= 4 ? $style['filled'] : $style['empty'] }} h-5"></div>
+                                                        @if ($task->user)
+                                                            <div
+                                                                class="flex items-center"
+                                                            >
+                                                                <div
+                                                                    class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium"
+                                                                >
+                                                                    {{ substr($task->user->name, 0, 2) }}
                                                                 </div>
-                                                                <span class="text-xs font-medium {{ $style['text'] }}">{{ ucfirst($task->priority) }}</span>
+                                                                <div
+                                                                    class="ml-2"
+                                                                >
+                                                                    <div
+                                                                        class="text-sm font-medium text-gray-900 truncate max-w-[100px]"
+                                                                    >
+                                                                        {{ $task->user->name }}
+                                                                    </div>
+                                                                    <div
+                                                                        class="text-xs text-gray-500 truncate max-w-[100px]"
+                                                                    >
+                                                                        {{ $task->user->email }}
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         @else
-                                                            <span class="text-sm text-gray-400">—</span>
+                                                            <span
+                                                                class="text-sm text-gray-500"
+                                                                >Не
+                                                                назначен</span
+                                                            >
                                                         @endif
                                                     </td>
-                                                    <td class="px-3 py-4 whitespace-nowrap">@if($task->author)<div class="text-sm font-medium text-gray-900 truncate max-w-[100px]">{{ $task->author->name }}</div>@else<span class="text-sm text-gray-500">Нет автора</span>@endif</td>
+                                                    <td
+                                                        class="px-3 py-4 whitespace-nowrap text-sm text-gray-500"
+                                                    >
+                                                        {{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : 'Без отдела') }}
+                                                    </td>
+                                                    <td
+                                                        class="px-3 py-4 whitespace-nowrap"
+                                                    >
+                                                        @if (!$task->trashed())
+                                                            @php
+                                            $priorityStyles = [
+                                            'низкий' => ['level' => 1, 'color' => 'gray', 'bg' => 'bg-gray-50', 'border' => 'border-gray-200', 'filled' => 'bg-gray-500', 'empty' => 'bg-gray-200', 'text' => 'text-gray-700'],
+                                            'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
+                                            'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
+                                            'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
+                                            ];
+                                            $style = $priorityStyles[$task->priority] ?? $priorityStyles['средний'];
+                                            @endphp
+                                                            <div
+                                                                class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $style['bg'] }} border {{ $style['border'] }}"
+                                                            >
+                                                                <div
+                                                                    class="flex items-end gap-[3px] h-5"
+                                                                >
+                                                                    <div
+                                                                        class="w-1.5 rounded-sm {{ $style['level'] >= 1 ? $style['filled'] : $style['empty'] }} h-2"
+                                                                    ></div>
+                                                                    <div
+                                                                        class="w-1.5 rounded-sm {{ $style['level'] >= 2 ? $style['filled'] : $style['empty'] }} h-3"
+                                                                    ></div>
+                                                                    <div
+                                                                        class="w-1.5 rounded-sm {{ $style['level'] >= 3 ? $style['filled'] : $style['empty'] }} h-4"
+                                                                    ></div>
+                                                                    <div
+                                                                        class="w-1.5 rounded-sm {{ $style['level'] >= 4 ? $style['filled'] : $style['empty'] }} h-5"
+                                                                    ></div>
+                                                                </div>
+                                                                <span
+                                                                    class="text-xs font-medium {{ $style['text'] }}"
+                                                                    >{{ ucfirst($task->priority) }}</span
+                                                                >
+                                                            </div>
+                                                        @else
+                                                            <span
+                                                                class="text-sm text-gray-400"
+                                                                >—</span
+                                                            >
+                                                        @endif
+                                                    </td>
+                                                    <td
+                                                        class="px-3 py-4 whitespace-nowrap"
+                                                    >
+                                                        @if ($task->author)
+                                                            <div
+                                                                class="text-sm font-medium text-gray-900 truncate max-w-[100px]"
+                                                            >
+                                                                {{ $task->author->name }}
+                                                            </div>
+                                                        @else
+                                                            <span
+                                                                class="text-sm text-gray-500"
+                                                                >Нет
+                                                                автора</span
+                                                            >
+                                                        @endif
+                                                    </td>
                                                     <td class="px-3 py-4">
-                                                        @if($task->deadline && !$task->trashed())
-                                                            <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }} text-sm">
+                                                        @if ($task->deadline && !$task->trashed())
+                                                            <div
+                                                                class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }} text-sm"
+                                                            >
                                                                 {{ $task->deadline->format('d.m.Y H:i') }}
                                                             </div>
-                                                            <div class="text-xs {{ $task->isOverdue() ? 'text-red-500' : 'text-gray-400' }}">
+                                                            <div
+                                                                class="text-xs {{ $task->isOverdue() ? 'text-red-500' : 'text-gray-400' }}"
+                                                            >
                                                                 {{ $task->getTimeRemaining() }}
                                                             </div>
                                                         @else
-                                                            <span class="text-gray-400 text-sm">—</span>
+                                                            <span
+                                                                class="text-gray-400 text-sm"
+                                                                >—</span
+                                                            >
                                                         @endif
                                                     </td>
-                                                    <td class="px-3 py-4 whitespace-nowrap">
-                                                        @if($task->trashed())
-                                                            <span class="text-gray-400 text-sm">Действия недоступны</span>
+                                                    <td
+                                                        class="px-3 py-4 whitespace-nowrap"
+                                                    >
+                                                        @if ($task->trashed())
+                                                            <span
+                                                                class="text-gray-400 text-sm"
+                                                                >Действия
+                                                                недоступны</span
+                                                            >
                                                         @else
-                                                            <div class="relative action-buttons">
+                                                            <div
+                                                                class="relative action-buttons"
+                                                            >
                                                                 <!-- Кнопка с тремя точками -->
-                                                                <button onclick="window.toggleDropdown(event, {{ $task->id }})"
-                                                                        class="text-gray-600 hover:text-gray-800 p-1 transition-colors"
-                                                                        title="Действия">
-                                                                    <i class="fas fa-ellipsis-v text-lg"></i>
+                                                                <button
+                                                                    onclick="window.toggleDropdown(event, {{ $task->id }})"
+                                                                    class="text-gray-600 hover:text-gray-800 p-1 transition-colors"
+                                                                    title="Действия"
+                                                                >
+                                                                    <i
+                                                                        class="fas fa-ellipsis-v text-lg"
+                                                                    ></i>
                                                                 </button>
 
                                                                 <!-- Выпадающее меню -->
-                                                                <div id="dropdown-{{ $task->id }}"
-                                                                     class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
-                                                                    <div class="py-1">
-                                                                        <button onclick="openEditModal({{ $task->id }})"
-                                                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                                                                            <i class="fa-solid fa-file-pen text-yellow-600 w-4"></i>
+                                                                <div
+                                                                    id="dropdown-{{ $task->id }}"
+                                                                    class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden"
+                                                                >
+                                                                    <div
+                                                                        class="py-1"
+                                                                    >
+                                                                        <button
+                                                                            onclick="openEditModal({{ $task->id }})"
+                                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                        >
+                                                                            <i
+                                                                                class="fa-solid fa-file-pen text-yellow-600 w-4"
+                                                                            ></i>
                                                                             Редактировать
                                                                         </button>
 
-                                                                        <button onclick="openCreateSubtaskModal({{ $task->id }})"
-                                                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                                                                            <i class="fa-solid fa-list text-blue-600 w-4"></i>
+                                                                        <button
+                                                                            onclick="openCreateSubtaskModal({{ $task->id }})"
+                                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                        >
+                                                                            <i
+                                                                                class="fa-solid fa-list text-blue-600 w-4"
+                                                                            ></i>
                                                                             Подзадача
                                                                         </button>
 
-                                                                        @if($task->status === 'на проверке')
-                                                                            <button onclick="returnToWork({{ $task->id }})"
-                                                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                                                                                <i class="fas fa-redo text-orange-600 w-4"></i>
-                                                                                Вернуть на доработку
+                                                                        @if ($task->status === 'на проверке')
+                                                                            <button
+                                                                                onclick="returnToWork({{ $task->id }})"
+                                                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                            >
+                                                                                <i
+                                                                                    class="fas fa-redo text-orange-600 w-4"
+                                                                                ></i>
+                                                                                Вернуть
+                                                                                на
+                                                                                доработку
                                                                             </button>
                                                                         @endif
 
-                                                                        <button onclick="archiveTask({{ $task->id }})"
-                                                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                                                                            <i class="fas fa-archive text-yellow-600 w-4"></i>
-                                                                            В архив
+                                                                        <button
+                                                                            onclick="archiveTask({{ $task->id }})"
+                                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-archive text-yellow-600 w-4"
+                                                                            ></i>
+                                                                            В
+                                                                            архив
                                                                         </button>
 
-                                                                        @if($task->author_id === Auth::id())
-                                                                            <button onclick="openDeleteModal({{ $task->id }})"
-                                                                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-t border-gray-100">
-                                                                                <i class="fa-solid fa-trash w-4"></i>
+                                                                        @if ($task->author_id === Auth::id())
+                                                                            <button
+                                                                                onclick="openDeleteModal({{ $task->id }})"
+                                                                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-t border-gray-100"
+                                                                            >
+                                                                                <i
+                                                                                    class="fa-solid fa-trash w-4"
+                                                                                ></i>
                                                                                 Удалить
                                                                             </button>
                                                                         @else
-                                                                            <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2 border-t border-gray-100"
-                                                                                    disabled title="Можно удалять только свои задачи">
-                                                                                <i class="fa-solid fa-trash w-4"></i>
+                                                                            <button
+                                                                                class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2 border-t border-gray-100"
+                                                                                disabled
+                                                                                title="Можно удалять только свои задачи"
+                                                                            >
+                                                                                <i
+                                                                                    class="fa-solid fa-trash w-4"
+                                                                                ></i>
                                                                                 Удалить
                                                                             </button>
                                                                         @endif
@@ -894,276 +1620,585 @@
                                                     </td>
                                                 </tr>
                                             @empty
-                                                <tr><td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">Задачи не найдены</td></tr>
+                                                <tr>
+                                                    <td
+                                                        colspan="8"
+                                                        class="px-6 py-4 text-center text-sm text-gray-500"
+                                                    >
+                                                        Задачи не найдены
+                                                    </td>
+                                                </tr>
                                             @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="md:hidden space-y-3 p-4">
-                                        @forelse($tasks as $task)
-                                            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif" onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})">
-                                                <div class="flex justify-between items-start mb-3">
-                                                    <div class="flex-1">
-                                                        <div class="flex items-center flex-wrap gap-2 mb-1"><h3 class="font-semibold text-gray-900 truncate max-[450px]:!whitespace-normal max-[450px]:!overflow-visible max-[500px]:!text-wrap">{{ $task->name }}</h3>@if($task->trashed())<span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full"><i class="fas fa-trash mr-1"></i>Удалена</span>@endif</div>
-                                                        <div class="text-sm text-gray-600 mb-2 line-clamp-2 max-[500px]:hidden">{{ $task->description }}</div>
-                                                    </div>
-                                                    <div class="relative action-buttons-mobile">
-                                                        @if(!$task->trashed())
-                                                            <!-- Кнопка с тремя точками для мобильной версии -->
-                                                            <button onclick="window.toggleDropdown(event, {{ $task->id }})"
-                                                                    class="text-gray-600 hover:text-gray-800 p-1 transition-colors"
-                                                                    title="Действия">
-                                                                <i class="fas fa-ellipsis-v text-lg"></i>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="md:hidden space-y-3 p-4">
+                                    @forelse ($tasks as $task)
+                                    <div
+                                        class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif"
+                                        onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})"
+                                    >
+                                        <div
+                                            class="flex justify-between items-start mb-3"
+                                        >
+                                            <div class="flex-1">
+                                                <div
+                                                    class="flex items-center flex-wrap gap-2 mb-1"
+                                                >
+                                                    <h3
+                                                        class="font-semibold text-gray-900 truncate max-[450px]:!whitespace-normal max-[450px]:!overflow-visible max-[500px]:!text-wrap"
+                                                    >
+                                                        {{ $task->name }}
+                                                    </h3>
+                                                    @if ($task->trashed())
+                                                        <span
+                                                            class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full"
+                                                            ><i
+                                                                class="fas fa-trash mr-1"
+                                                            ></i
+                                                            >Удалена</span
+                                                        >
+                                                    @endif
+                                                </div>
+                                                <div
+                                                    class="text-sm text-gray-600 mb-2 line-clamp-2 max-[500px]:hidden"
+                                                >
+                                                    {{ $task->description }}
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="relative action-buttons-mobile"
+                                            >
+                                                @if (!$task->trashed())
+                                                    <!-- Кнопка с тремя точками для мобильной версии -->
+                                                    <button
+                                                        onclick="window.toggleDropdown(event, {{ $task->id }})"
+                                                        class="text-gray-600 hover:text-gray-800 p-1 transition-colors"
+                                                        title="Действия"
+                                                    >
+                                                        <i
+                                                            class="fas fa-ellipsis-v text-lg"
+                                                        ></i>
+                                                    </button>
+
+                                                    <!-- Выпадающее меню для мобильной версии -->
+                                                    <div
+                                                        id="dropdown-{{ $task->id }}"
+                                                        class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden"
+                                                    >
+                                                        <div class="py-1">
+                                                            <button
+                                                                onclick="openEditModal({{ $task->id }})"
+                                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                            >
+                                                                <i
+                                                                    class="fa-solid fa-file-pen text-yellow-600 w-4"
+                                                                ></i>
+                                                                Редактировать
                                                             </button>
 
-                                                            <!-- Выпадающее меню для мобильной версии -->
-                                                            <div id="dropdown-{{ $task->id }}"
-                                                                 class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
-                                                                <div class="py-1">
-                                                                    <button onclick="openEditModal({{ $task->id }})"
-                                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                                                                        <i class="fa-solid fa-file-pen text-yellow-600 w-4"></i>
-                                                                        Редактировать
-                                                                    </button>
+                                                            <button
+                                                                onclick="openCreateSubtaskModal({{ $task->id }})"
+                                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                            >
+                                                                <i
+                                                                    class="fa-solid fa-list text-blue-600 w-4"
+                                                                ></i>
+                                                                Подзадача
+                                                            </button>
 
-                                                                    <button onclick="openCreateSubtaskModal({{ $task->id }})"
-                                                                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                                                                        <i class="fa-solid fa-list text-blue-600 w-4"></i>
-                                                                        Подзадача
-                                                                    </button>
+                                                            @if ($task->status === 'на проверке')
+                                                                <button
+                                                                    onclick="returnToWork({{ $task->id }})"
+                                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                >
+                                                                    <i
+                                                                        class="fas fa-redo text-orange-600 w-4"
+                                                                    ></i>
+                                                                    Вернуть на
+                                                                    доработку
+                                                                </button>
+                                                            @endif
 
-                                                                    @if($task->status === 'на проверке')
-                                                                        <button onclick="returnToWork({{ $task->id }})"
-                                                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                                                                            <i class="fas fa-redo text-orange-600 w-4"></i>
-                                                                            Вернуть на доработку
-                                                                        </button>
-                                                                    @endif
-
-                                                                    @if($task->author_id === Auth::id())
-                                                                        <button onclick="openDeleteModal({{ $task->id }})"
-                                                                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-t border-gray-100">
-                                                                            <i class="fa-solid fa-trash w-4"></i>
-                                                                            Удалить
-                                                                        </button>
-                                                                    @else
-                                                                        <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2 border-t border-gray-100"
-                                                                                disabled title="Можно удалять только свои задачи">
-                                                                            <i class="fa-solid fa-trash w-4"></i>
-                                                                            Удалить
-                                                                        </button>
-                                                                    @endif
-                                                                </div>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                <div class="space-y-2">
-                                                    <div class="flex items-center max-[500px]:hidden"><span class="text-sm text-gray-600 w-20">Статус:</span>@if($task->trashed())<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Удалена</span>@else<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }} {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }} {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }} {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }} {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}">{{ $task->status }}</span>@endif</div>
-                                                    <div class="flex items-center max-[500px]:gap-1 max-[500px]:hidden"><span class="text-sm text-gray-600 w-20 max-[500px]:w-auto">Исполнитель:</span>@if($task->user)<div class="flex items-center"><div class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium mr-2">{{ substr($task->user->name, 0, 2) }}</div><span class="text-sm font-medium">{{ $task->user->name }}</span></div>@else<span class="text-sm text-gray-500">Не назначен</span>@endif</div>
-                                                    <div class="grid grid-cols-2 gap-2 max-[450px]:grid-cols-1">
-                                                        <div class="flex items-center">
-                                                            <span class="text-sm text-gray-600 w-16">Отдел:</span>
-                                                            <span class="text-sm">{{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : '—') }}</span>
-                                                        </div>
-                                                        @php
-                                                            $priorityStyles = [
-                                                                'низкий' => ['level' => 1, 'color' => 'gray', 'bg' => 'bg-gray-50', 'border' => 'border-gray-200', 'filled' => 'bg-gray-500', 'empty' => 'bg-gray-200', 'text' => 'text-gray-700'],
-                                                                'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
-                                                                'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
-                                                                'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
-                                                            ];
-                                                            $style = $priorityStyles[$task->priority] ?? $priorityStyles['средний'];
-                                                        @endphp
-                                                        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $style['bg'] }} border {{ $style['border'] }}">
-                                                            <div class="flex items-end gap-[3px] h-5">
-                                                                <div class="w-1.5 rounded-sm {{ $style['level'] >= 1 ? $style['filled'] : $style['empty'] }} h-2"></div>
-                                                                <div class="w-1.5 rounded-sm {{ $style['level'] >= 2 ? $style['filled'] : $style['empty'] }} h-3"></div>
-                                                                <div class="w-1.5 rounded-sm {{ $style['level'] >= 3 ? $style['filled'] : $style['empty'] }} h-4"></div>
-                                                                <div class="w-1.5 rounded-sm {{ $style['level'] >= 4 ? $style['filled'] : $style['empty'] }} h-5"></div>
-                                                            </div>
-                                                            <span class="text-xs font-medium {{ $style['text'] }}">{{ ucfirst($task->priority) }}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="grid grid-cols-2 gap-2 max-[450px]:grid-cols-1">
-                                                        <div class="flex items-center">
-                                                            <span class="text-sm text-gray-600 w-16">Автор:</span>
-                                                            <span class="text-sm truncate">{{ $task->author->name ?? '—' }}</span>
-                                                        </div>
-                                                        <div class="flex items-center max-[500px]:gap-2">
-                                                            <span class="text-sm text-gray-600 w-16 max-[500px]:w-auto">Дедлайн:</span>
-                                                            @if($task->deadline && !$task->trashed())
-                                                                <div class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }}">
-                                                                    <div class="text-sm">{{ $task->deadline->format('d.m.Y') }}</div>
-                                                                    <div class="text-xs {{ $task->isOverdue() ? 'text-red-500' : 'text-gray-400' }}">
-                                                                        {{ $task->getTimeRemaining() }}
-                                                                    </div>
-                                                                </div>
+                                                            @if ($task->author_id === Auth::id())
+                                                                <button
+                                                                    onclick="openDeleteModal({{ $task->id }})"
+                                                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-t border-gray-100"
+                                                                >
+                                                                    <i
+                                                                        class="fa-solid fa-trash w-4"
+                                                                    ></i>
+                                                                    Удалить
+                                                                </button>
                                                             @else
-                                                                <span class="text-gray-400 text-sm">—</span>
+                                                                <button
+                                                                    class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2 border-t border-gray-100"
+                                                                    disabled
+                                                                    title="Можно удалять только свои задачи"
+                                                                >
+                                                                    <i
+                                                                        class="fa-solid fa-trash w-4"
+                                                                    ></i>
+                                                                    Удалить
+                                                                </button>
                                                             @endif
                                                         </div>
                                                     </div>
-                                                    <div class="flex flex-wrap gap-1 pt-2 border-t max-[500px]:!hidden">@if($task->category)<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white">{{ $task->category->name }}</span>@endif@if($task->rejections_count > 0)<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800" title="Количество отказов: {{ $task->rejections_count }}"><i class="fas fa-user-slash mr-1"></i>{{ $task->rejections_count }}</span>@endif@if($task->trashed() && $task->deletedBy)<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800" title="Удалил: {{ $task->deletedBy->name }}"><i class="fas fa-user-times mr-1"></i>Удалил: {{ $task->deletedBy->name }}</span>@endif</div>
-                                                    @if(!$task->trashed() && $task->status === 'на проверке')<div class="pt-2 border-t"><button onclick="returnToWork({{ $task->id }})" class="w-full bg-orange-100 text-orange-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-200 transition flex items-center justify-center space-x-2"><i class="fas fa-redo"></i><span>Вернуть на доработку</span></button></div>@endif
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <div
+                                                class="flex items-center max-[500px]:hidden"
+                                            >
+                                                <span
+                                                    class="text-sm text-gray-600 w-20"
+                                                    >Статус:</span
+                                                >
+                                                @if ($task->trashed())
+                                                    <span
+                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800"
+                                                        >Удалена</span
+                                                    >
+                                                @else
+                                                    <span
+                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }} {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }} {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }} {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }} {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}"
+                                                        >{{ $task->status }}</span
+                                                    >
+                                                @endif
+                                            </div>
+                                            <div
+                                                class="flex items-center max-[500px]:gap-1 max-[500px]:hidden"
+                                            >
+                                                <span
+                                                    class="text-sm text-gray-600 w-20 max-[500px]:w-auto"
+                                                    >Исполнитель:</span
+                                                >
+                                                @if ($task->user)
+                                                    <div
+                                                        class="flex items-center"
+                                                    >
+                                                        <div
+                                                            class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium mr-2"
+                                                        >
+                                                            {{ substr($task->user->name, 0, 2) }}
+                                                        </div>
+                                                        <span
+                                                            class="text-sm font-medium"
+                                                            >{{ $task->user->name }}</span
+                                                        >
+                                                    </div>
+                                                @else
+                                                    <span
+                                                        class="text-sm text-gray-500"
+                                                        >Не назначен</span
+                                                    >
+                                                @endif
+                                            </div>
+                                            <div
+                                                class="grid grid-cols-2 gap-2 max-[450px]:grid-cols-1"
+                                            >
+                                                <div class="flex items-center">
+                                                    <span
+                                                        class="text-sm text-gray-600 w-16"
+                                                        >Отдел:</span
+                                                    >
+                                                    <span
+                                                        class="text-sm"
+                                                        >{{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : '—') }}</span
+                                                    >
+                                                </div>
+                                                @php
+                                        $priorityStyles = [
+                                        'низкий' => ['level' => 1, 'color' => 'gray', 'bg' => 'bg-gray-50', 'border' => 'border-gray-200', 'filled' => 'bg-gray-500', 'empty' => 'bg-gray-200', 'text' => 'text-gray-700'],
+                                        'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
+                                        'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
+                                        'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
+                                        ];
+                                        $style = $priorityStyles[$task->priority] ?? $priorityStyles['средний'];
+                                        @endphp
+                                                <div
+                                                    class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $style['bg'] }} border {{ $style['border'] }}"
+                                                >
+                                                    <div
+                                                        class="flex items-end gap-[3px] h-5"
+                                                    >
+                                                        <div
+                                                            class="w-1.5 rounded-sm {{ $style['level'] >= 1 ? $style['filled'] : $style['empty'] }} h-2"
+                                                        ></div>
+                                                        <div
+                                                            class="w-1.5 rounded-sm {{ $style['level'] >= 2 ? $style['filled'] : $style['empty'] }} h-3"
+                                                        ></div>
+                                                        <div
+                                                            class="w-1.5 rounded-sm {{ $style['level'] >= 3 ? $style['filled'] : $style['empty'] }} h-4"
+                                                        ></div>
+                                                        <div
+                                                            class="w-1.5 rounded-sm {{ $style['level'] >= 4 ? $style['filled'] : $style['empty'] }} h-5"
+                                                        ></div>
+                                                    </div>
+                                                    <span
+                                                        class="text-xs font-medium {{ $style['text'] }}"
+                                                        >{{ ucfirst($task->priority) }}</span
+                                                    >
                                                 </div>
                                             </div>
-                                        @empty
-                                            <div class="bg-white border border-gray-200 rounded-lg p-8 text-center"><i class="fas fa-tasks text-gray-300 text-4xl mb-3"></i><p class="text-gray-500">Задачи не найдены</p></div>
-                                        @endforelse
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @if($tasks->hasPages())<div class="mt-4 md:mt-6">{{ $tasks->links('vendor.pagination.tailwind') }}</div>@endif
-                    </div>
-                @endif
+                                            <div
+                                                class="grid grid-cols-2 gap-2 max-[450px]:grid-cols-1"
+                                            >
+                                                <div class="flex items-center">
+                                                    <span
+                                                        class="text-sm text-gray-600 w-16"
+                                                        >Автор:</span
+                                                    >
+                                                    <span
+                                                        class="text-sm truncate"
+                                                        >{{ $task->author->name ?? '—' }}</span
+                                                    >
+                                                </div>
+                                                <div
+                                                    class="flex items-center max-[500px]:gap-2"
+                                                >
+                                                    <span
+                                                        class="text-sm text-gray-600 w-16 max-[500px]:w-auto"
+                                                        >Дедлайн:</span
+                                                    >
+                                                    @if ($task->deadline && !$task->trashed())
+                                                        <div
+                                                            class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }}"
+                                                        >
+                                                            <div
+                                                                class="text-sm"
+                                                            >
+                                                                {{ $task->deadline->format('d.m.Y') }}
+                                                            </div>
+                                                            <div
+                                                                class="text-xs {{ $task->isOverdue() ? 'text-red-500' : 'text-gray-400' }}"
+                                                            >
+                                                                {{ $task->getTimeRemaining() }}
+                                                            </div>
+                                                        </div>
+                                                    @else
+                                                        <span
+                                                            class="text-gray-400 text-sm"
+                                                            >—</span
+                                                        >
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="flex flex-wrap gap-1 pt-2 border-t max-[500px]:!hidden"
+                                            >
+                                                @if ($task->category)
+                                                    <span
+                                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white"
+                                                        >{{ $task->category->name }}</span
+                                                    >
+                                                @endif
+                                                @if($task->rejections_count >
+                                                0)<span
+                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                                                    title="Количество отказов: {{ $task->rejections_count }}"
+                                                    ><i
+                                                        class="fas fa-user-slash mr-1"
+                                                    ></i
+                                                    >{{ $task->rejections_count }}</span
+                                                >
+
+            @endif
+            @if($task->trashed() && $task->deletedBy)<span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                title="Удалил: {{ $task->deletedBy->name }}"
+                ><i class="fas fa-user-times mr-1"></i
+                >Удалил: {{ $task->deletedBy->name }}</span
+            >
+            @endif
+        </div>
+        @if (!$task->trashed() && $task->status === 'на проверке')
+            <div class="pt-2 border-t">
+                <button
+                    onclick="returnToWork({{ $task->id }})"
+                    class="w-full bg-orange-100 text-orange-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-200 transition flex items-center justify-center space-x-2"
+                >
+                    <i class="fas fa-redo"></i><span>Вернуть на доработку</span>
+                </button>
             </div>
+        @endif
+    </div>
+    </div>
+    @empty
+    <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
+        <i class="fas fa-tasks text-gray-300 text-4xl mb-3"></i>
+        <p class="text-gray-500">Задачи не найдены</p>
+    </div>
+    @endforelse
+    </div>
+    </div>
+    </div>
+    </div>
+    @if ($tasks->hasPages())
+        <div class="mt-4 md:mt-6">
+            {{ $tasks->links('vendor.pagination.tailwind') }}
+        </div>
+    @endif
+    </div>
+    @endif
+    </div>
 
-        <!-- Режим отображения: Канбан -->
-        <div id="kanbanViewContainer" class="{{ $viewMode === 'kanban' ? '' : 'hidden' }}">
-            @php
-                // Группируем задачи по статусам для канбана
-                $statusMap = [
-                    'просрочена' => 'Просроченные',
-                    'назначена' => 'Новые',
-                    'в работе' => 'В работе',
-                    'на проверке' => 'На проверке',
-                    'выполнена' => 'Завершено'
-                ];
-                $statusKeys = ['просрочена', 'назначена', 'в работе', 'на проверке', 'выполнена'];
-                $statusDataValues = [
-                    'просрочена' => 'overdue',
-                    'назначена' => 'new',
-                    'в работе' => 'in-progress',
-                    'на проверке' => 'review',
-                    'выполнена' => 'done'
-                ];
+    <!-- Режим отображения: Канбан -->
+    <div
+        id="kanbanViewContainer"
+        class="{{ $viewMode === 'kanban' ? '' : 'hidden' }}"
+    >
+        @php
+        // Группируем задачи по статусам для канбана
+        $statusMap = [
+        'просрочена' => 'Просроченные',
+        'назначена' => 'Новые',
+        'в работе' => 'В работе',
+        'на проверке' => 'На проверке',
+        'выполнена' => 'Завершено'
+        ];
+        $statusKeys = ['просрочена', 'назначена', 'в работе', 'на проверке', 'выполнена'];
+        $statusDataValues = [
+        'просрочена' => 'overdue',
+        'назначена' => 'new',
+        'в работе' => 'in-progress',
+        'на проверке' => 'review',
+        'выполнена' => 'done'
+        ];
 
-                // Получаем просроченные задачи
-                $overdueTasks = $tasks->filter(function($task) {
-                    return $task->status === 'просрочена';
-                });
+        // Получаем просроченные задачи
+        $overdueTasks = $tasks->filter(function($task) {
+        return $task->status === 'просрочена';
+        });
 
-                $tasksByStatusForKanban = [
-                    'просрочена' => $overdueTasks,
-                    'назначена' => $tasks->where('status', 'назначена'),
-                    'в работе' => $tasks->where('status', 'в работе'),
-                    'на проверке' => $tasks->where('status', 'на проверке'),
-                    'выполнена' => $tasks->where('status', 'выполнена')
-                ];
+        $tasksByStatusForKanban = [
+        'просрочена' => $overdueTasks,
+        'назначена' => $tasks->where('status', 'назначена'),
+        'в работе' => $tasks->where('status', 'в работе'),
+        'на проверке' => $tasks->where('status', 'на проверке'),
+        'выполнена' => $tasks->where('status', 'выполнена')
+        ];
 
-                // Массив стилей для приоритетов
-                $prioritySignals = [
-                    'низкий' => ['level' => 1, 'color' => 'green', 'bg' => 'bg-green-50', 'border' => 'border-green-200', 'filled' => 'bg-green-500', 'empty' => 'bg-green-200', 'text' => 'text-green-700'],
-                    'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
-                    'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
-                    'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
-                ];
-            @endphp
+        // Массив стилей для приоритетов
+        $prioritySignals = [
+        'низкий' => ['level' => 1, 'color' => 'green', 'bg' => 'bg-green-50', 'border' => 'border-green-200', 'filled' => 'bg-green-500', 'empty' => 'bg-green-200', 'text' => 'text-green-700'],
+        'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
+        'высокий' => ['level' => 3, 'color' => 'orange', 'bg' => 'bg-orange-50', 'border' => 'border-orange-200', 'filled' => 'bg-orange-500', 'empty' => 'bg-orange-100', 'text' => 'text-orange-700'],
+        'критический' => ['level' => 4, 'color' => 'red', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'filled' => 'bg-red-500', 'empty' => 'bg-red-100', 'text' => 'text-red-700'],
+        ];
+        @endphp
 
-            @if($backgroundEnabled && $backgroundImage)
-                <div class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
-                        <div class="text-gray-500 text-sm md:text-base">
-                            Всего задач: {{ $tasks->total() }}
-                        </div>
-                        <div class="w-full sm:w-auto flex items-center">
-                            <select id="sortSelectKanban"
-                                    class="w-full sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20 max-[500px]:basis-1/2">
-                                <option class="text-gray-800" value="created_at_desc">Новые сначала</option>
-                                <option class="text-gray-800" value="created_at_asc">Старые сначала</option>
-                                <option class="text-gray-800" value="deadline_asc">Ближайший дедлайн</option>
-                                <option class="text-gray-800" value="priority_desc">Высокий приоритет</option>
-                                <option class="text-gray-800" value="name_asc">По названию (А-Я)</option>
-                            </select>
-                        </div>
+        @if ($backgroundEnabled && $backgroundImage)
+            <div
+                class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6"
+            >
+                <div
+                    class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3"
+                >
+                    <div class="text-gray-500 text-sm md:text-base">
+                        Всего задач: {{ $tasks->total() }}
                     </div>
+                    <div class="w-full sm:w-auto flex items-center">
+                        <select
+                            id="sortSelectKanban"
+                            class="w-full sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20 max-[500px]:basis-1/2"
+                        >
+                            <option
+                                class="text-gray-800"
+                                value="created_at_desc"
+                            >
+                                Новые сначала
+                            </option>
+                            <option
+                                class="text-gray-800"
+                                value="created_at_asc"
+                            >
+                                Старые сначала
+                            </option>
+                            <option class="text-gray-800" value="deadline_asc">
+                                Ближайший дедлайн
+                            </option>
+                            <option class="text-gray-800" value="priority_desc">
+                                Высокий приоритет
+                            </option>
+                            <option class="text-gray-800" value="name_asc">
+                                По названию (А-Я)
+                            </option>
+                        </select>
+                    </div>
+                </div>
 
-                    <!-- Канбан доска -->
-                     <div class="swx-v overflow-hidden w-full">
-                    <div class="swx-v-wrapper flex lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-[500px]:gap-0">
-                        @foreach($statusKeys as $statusKey)
-                            <div class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
-                                 data-status="{{ $statusDataValues[$statusKey] }}"
-                                 ondragover="dragOver.call(this, event)"
-                                 ondragleave="dragLeave.call(this, event)"
-                                 ondrop="drop.call(this, event)">
-
-                                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title backdrop-blur-md bg-transparent/20">
-                                    <h3 class="font-semibold text-white text-sm">{{ $statusMap[$statusKey] }}</h3>
-                                    <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $tasksByStatusForKanban[$statusKey]->count() }}</span>
+                <!-- Канбан доска -->
+                <div class="swx-v overflow-hidden w-full">
+                    <div
+                        class="swx-v-wrapper flex lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-[500px]:gap-0"
+                    >
+                        @foreach ($statusKeys as $statusKey)
+                            <div
+                                class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
+                                data-status="{{ $statusDataValues[$statusKey] }}"
+                                ondragover="dragOver.call(this, event)"
+                                ondragleave="dragLeave.call(this, event)"
+                                ondrop="drop.call(this, event)"
+                            >
+                                <div
+                                    class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title backdrop-blur-md bg-transparent/20"
+                                >
+                                    <h3
+                                        class="font-semibold text-white text-sm"
+                                    >
+                                        {{ $statusMap[$statusKey] }}
+                                    </h3>
+                                    <span
+                                        class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count"
+                                        >{{ $tasksByStatusForKanban[$statusKey]->count() }}</span
+                                    >
                                 </div>
 
                                 <div class="space-y-3 task-container">
-                                    @forelse($tasksByStatusForKanban[$statusKey] as $task)
+                                    @forelse ($tasksByStatusForKanban[$statusKey] as $task)
                                         @php
-                                            $prioritySignal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
-                                        @endphp
+                            $prioritySignal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
+                            @endphp
 
                                         {{-- Карточка задачи --}}
-                                        <div class="task-card bg-white p-3 rounded-lg shadow cursor-move flex flex-col justify-between {{ $statusKey === 'просрочена' ? 'border-l-4 border-red-500 bg-red-50' : '' }}"
-                                             draggable="true"
-                                             data-task="{{ $task->id }}"
-                                             data-priority="{{ $task->priority ?? 'medium' }}"
-                                             data-deadline="{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') : '' }}"
-                                             data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
-                                             data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
-                                             data-author-id="{{ $task->author_id }}"
-                                             ondragstart="dragStart.call(this, event)"
-                                             ondragend="dragEnd.call(this, event)">
-
-                                            <div class="flex justify-between items-start mb-2">
-                                                <a href="/team/tasks/{{ $task->id }}"
-                                                   onclick="openTaskViewModal({{ $task->id }}); return false;"
-                                                   class="flex-1 mr-2">
-                                                    <h4 class="font-medium text-sm cursor-pointer hover:text-blue-600 line-clamp-2 {{ $statusKey === 'просрочена' ? 'text-red-600' : '' }}">{{ $task->name }}</h4>
+                                        <div
+                                            class="task-card bg-white p-3 rounded-lg shadow cursor-move flex flex-col justify-between {{ $statusKey === 'просрочена' ? 'border-l-4 border-red-500 bg-red-50' : '' }}"
+                                            draggable="true"
+                                            data-task="{{ $task->id }}"
+                                            data-priority="{{ $task->priority ?? 'medium' }}"
+                                            data-deadline="{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') : '' }}"
+                                            data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                                            data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
+                                            data-author-id="{{ $task->author_id }}"
+                                            ondragstart="
+                                                dragStart.call(this, event)
+                                            "
+                                            ondragend="
+                                                dragEnd.call(this, event)
+                                            "
+                                        >
+                                            <div
+                                                class="flex justify-between items-start mb-2"
+                                            >
+                                                <a
+                                                    href="/team/tasks/{{ $task->id }}"
+                                                    onclick="openTaskViewModal({{ $task->id }}); return false;"
+                                                    class="flex-1 mr-2"
+                                                >
+                                                    <h4
+                                                        class="font-medium text-sm cursor-pointer hover:text-blue-600 line-clamp-2 {{ $statusKey === 'просрочена' ? 'text-red-600' : '' }}"
+                                                    >
+                                                        {{ $task->name }}
+                                                    </h4>
                                                 </a>
-                                                <div class="flex items-center space-x-1 flex-shrink-0">
+                                                <div
+                                                    class="flex items-center space-x-1 flex-shrink-0"
+                                                >
                                                     <div class="relative">
-                                                        <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
-                                                            <i class="fas fa-ellipsis-v text-xs"></i>
+                                                        <button
+                                                            onclick="window.toggleTaskMenu(event, {{ $task->id }})"
+                                                            class="text-gray-500 hover:text-gray-700 p-1"
+                                                            title="Действия"
+                                                        >
+                                                            <i
+                                                                class="fas fa-ellipsis-v text-xs"
+                                                            ></i>
                                                         </button>
-                                                        <div id="taskMenu-{{ $task->id }}" class="task-menu hidden absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-xl border z-50">
+                                                        <div
+                                                            id="taskMenu-{{ $task->id }}"
+                                                            class="task-menu hidden absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-xl border z-50"
+                                                        >
                                                             <div class="py-1">
-                                                                @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                                    <button onclick="openEditModal({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                        <i class="fas fa-edit mr-2 text-blue-500 text-xs"></i> Редактировать
+                                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                    <button
+                                                                        onclick="openEditModal({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-edit mr-2 text-blue-500 text-xs"
+                                                                        ></i>
+                                                                        Редактировать
                                                                     </button>
                                                                 @endif
-                                                                @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                                        <button onclick="openCreateSubtaskModal({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                            <i class="fas fa-list mr-2 text-blue-500 text-xs"></i> Подзадача
-                                                                        </button>
-                                                                @endif
-                                                                    <!-- КНОПКА АРХИВАЦИИ -->
-                                                                    @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                                        <button onclick="archiveTask({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                            <i class="fas fa-archive mr-2 text-yellow-500 text-xs"></i> В архив
-                                                                        </button>
-                                                                    @endif
-                                                                @if($statusKey === 'назначена')
-                                                                    <button onclick="startTask({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                        <i class="fas fa-play mr-2 text-green-500 text-xs"></i> Начать
+                                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                    <button
+                                                                        onclick="openCreateSubtaskModal({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-list mr-2 text-blue-500 text-xs"
+                                                                        ></i>
+                                                                        Подзадача
                                                                     </button>
                                                                 @endif
-                                                                @if($statusKey === 'в работе')
-                                                                    <button onclick="sendForReview({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                        <i class="fas fa-check-circle mr-2 text-green-500 text-xs"></i> На проверку
+                                                                <!-- КНОПКА АРХИВАЦИИ -->
+                                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                    <button
+                                                                        onclick="archiveTask({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-archive mr-2 text-yellow-500 text-xs"
+                                                                        ></i>
+                                                                        В архив
+                                                                    </button>
+                                                                @endif
+                                                                @if ($statusKey === 'назначена')
+                                                                    <button
+                                                                        onclick="startTask({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-play mr-2 text-green-500 text-xs"
+                                                                        ></i>
+                                                                        Начать
+                                                                    </button>
+                                                                @endif
+                                                                @if ($statusKey === 'в работе')
+                                                                    <button
+                                                                        onclick="sendForReview({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-check-circle mr-2 text-green-500 text-xs"
+                                                                        ></i>
+                                                                        На
+                                                                        проверку
                                                                     </button>
                                                                 @endif
 
-                                                                @if($statusKey === 'на проверке' && auth()->user()->isLeader())
-                                                                    <button onclick="approveTask({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                        <i class="fas fa-check-double mr-2 text-green-500 text-xs"></i> Одобрить
+                                                                @if ($statusKey === 'на проверке' && auth()->user()->isLeader())
+                                                                    <button
+                                                                        onclick="approveTask({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-check-double mr-2 text-green-500 text-xs"
+                                                                        ></i>
+                                                                        Одобрить
                                                                     </button>
-                                                                    <button onclick="returnTaskToWork({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                        <i class="fas fa-redo mr-2 text-orange-500 text-xs"></i> На доработку
+                                                                    <button
+                                                                        onclick="returnTaskToWork({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-redo mr-2 text-orange-500 text-xs"
+                                                                        ></i>
+                                                                        На
+                                                                        доработку
                                                                     </button>
                                                                 @endif
-                                                                @if($statusKey !== 'выполнена' && $statusKey !== 'просрочена')
-                                                                    <button onclick="showRejectModal({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-gray-100 flex items-center">
-                                                                        <i class="fas fa-times-circle mr-2 text-xs"></i> Отказаться
+                                                                @if ($statusKey !== 'выполнена' && $statusKey !== 'просрочена')
+                                                                    <button
+                                                                        onclick="showRejectModal({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-times-circle mr-2 text-xs"
+                                                                        ></i>
+                                                                        Отказаться
                                                                     </button>
                                                                 @endif
                                                             </div>
@@ -1172,50 +2207,97 @@
                                                 </div>
                                             </div>
 
-                                            @if($task->files_count > 0)
-                                                <div class="mb-2 flex items-center text-xs text-gray-500">
-                                                    <i class="fas fa-paperclip mr-1 text-xs"></i>
-                                                    <span>{{ $task->files_count }}</span>
+                                            @if ($task->files_count > 0)
+                                                <div
+                                                    class="mb-2 flex items-center text-xs text-gray-500"
+                                                >
+                                                    <i
+                                                        class="fas fa-paperclip mr-1 text-xs"
+                                                    ></i>
+                                                    <span
+                                                        >{{ $task->files_count }}</span
+                                                    >
                                                 </div>
                                             @endif
 
-                                            @if($task->deadline)
+                                            @if ($task->deadline)
                                                 <div class="mb-2">
-                                                    <div class="flex items-center text-xs {{ $statusKey === 'просрочена' ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
-                                                        <i class="fas fa-clock mr-1 text-xs"></i>
+                                                    <div
+                                                        class="flex items-center text-xs {{ $statusKey === 'просрочена' ? 'text-red-600 font-semibold' : 'text-gray-500' }}"
+                                                    >
+                                                        <i
+                                                            class="fas fa-clock mr-1 text-xs"
+                                                        ></i>
                                                         {{ \Carbon\Carbon::parse($task->deadline)->format('d.m.Y H:i') }}
-                                                        @if($statusKey === 'просрочена')
-                                                            <span class="ml-1">(Просрочено)</span>
+                                                        @if ($statusKey === 'просрочена')
+                                                            <span class="ml-1"
+                                                                >(Просрочено)</span
+                                                            >
                                                         @endif
                                                     </div>
                                                 </div>
                                             @endif
 
-                                            <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-100">
-                                                <div class="flex flex-wrap gap-1">
-                <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-                      class="text-xs px-1.5 py-0.5 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
+                                            <div
+                                                class="flex justify-between items-center mt-2 pt-2 border-t border-gray-100"
+                                            >
+                                                <div
+                                                    class="flex flex-wrap gap-1"
+                                                >
+                                                    <span
+                                                        style="
+                                                            background: linear-gradient(
+                                                                180deg,
+                                                                #1a1f2e 0%,
+                                                                #161b28 100%
+                                                            );
+                                                        "
+                                                        class="text-xs px-1.5 py-0.5 rounded text-white"
+                                                        >{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span
+                                                    >
 
                                                     {{-- Индикатор приоритета --}}
-                                                    <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md {{ $prioritySignal['bg'] }} border {{ $prioritySignal['border'] }}">
-                                                        <div class="flex items-end gap-[2px] h-3">
-                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 1 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1"></div>
-                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 2 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1.5"></div>
-                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 3 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2"></div>
-                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 4 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2.5"></div>
+                                                    <div
+                                                        class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md {{ $prioritySignal['bg'] }} border {{ $prioritySignal['border'] }}"
+                                                    >
+                                                        <div
+                                                            class="flex items-end gap-[2px] h-3"
+                                                        >
+                                                            <div
+                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 1 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1"
+                                                            ></div>
+                                                            <div
+                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 2 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1.5"
+                                                            ></div>
+                                                            <div
+                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 3 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2"
+                                                            ></div>
+                                                            <div
+                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 4 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2.5"
+                                                            ></div>
                                                         </div>
-                                                        <span class="text-xs font-medium {{ $prioritySignal['text'] }}">{{ ucfirst($task->priority) }}</span>
+                                                        <span
+                                                            class="text-xs font-medium {{ $prioritySignal['text'] }}"
+                                                            >{{ ucfirst($task->priority) }}</span
+                                                        >
                                                     </div>
 
-                                                    @if($task->category)
-                                                        <span class="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded">{{ mb_substr($task->category->name, 0, 10) }}</span>
+                                                    @if ($task->category)
+                                                        <span
+                                                            class="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded"
+                                                            >{{ mb_substr($task->category->name, 0, 10) }}</span
+                                                        >
                                                     @endif
                                                 </div>
 
                                                 {{-- Иконка ИСПОЛНИТЕЛЯ (используем те же методы, что в модальном окне) --}}
-                                                <div class="flex items-center space-x-1">
-                                                    <div class="w-5 h-5 rounded-full {{ $task->user ? $task->user->getAvatarColor() : 'bg-gray-300' }} flex items-center justify-center text-white text-[10px] font-medium"
-                                                         title="{{ $task->user?->name ?? 'Не назначен' }}">
+                                                <div
+                                                    class="flex items-center space-x-1"
+                                                >
+                                                    <div
+                                                        class="w-5 h-5 rounded-full {{ $task->user ? $task->user->getAvatarColor() : 'bg-gray-300' }} flex items-center justify-center text-white text-[10px] font-medium"
+                                                        title="{{ $task->user?->name ?? 'Не назначен' }}"
+                                                    >
                                                         {{ $task->user ? $task->user->getInitials() : '?' }}
                                                     </div>
                                                 </div>
@@ -1228,115 +2310,222 @@
                             </div>
                         @endforeach
                     </div>
-                    <div class="swiper-pagination flex justify-center pt-5 px-0 !bottom-2 min-[501px]:hidden"></div>
-                       </div>
+                    <div
+                        class="swiper-pagination flex justify-center pt-5 px-0 !bottom-2 min-[501px]:hidden"
+                    ></div>
                 </div>
-            @else
-                <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
-                        <div class="text-gray-500 text-sm md:text-base">
-                            Всего задач: {{ $tasks->total() }}
-                        </div>
-
-                        <div class="w-full sm:w-auto flex items-center">
-                            <select id="sortSelectKanban"
-                                    class="w-full sm:w-48 border-none rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base  max-[500px]:basis-1/2">
-                                <option value="created_at_desc">Новые сначала</option>
-                                <option value="created_at_asc">Старые сначала</option>
-                                <option value="deadline_asc">Ближайший дедлайн</option>
-                                <option value="priority_desc">Высокий приоритет</option>
-                                <option value="name_asc">По названию (А-Я)</option>
-                            </select>
-                        </div>
+            </div>
+        @else
+            <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
+                <div
+                    class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3"
+                >
+                    <div class="text-gray-500 text-sm md:text-base">
+                        Всего задач: {{ $tasks->total() }}
                     </div>
 
-                    <!-- Канбан доска -->
-                <div class="swx-v overflow-hidden w-full">
-                    <div class="swx-v-wrapper flex lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-[500px]:gap-0">
-                        @foreach($statusKeys as $statusKey)
-                            <div class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
-                                 data-status="{{ $statusDataValues[$statusKey] }}"
-                                 ondragover="dragOver.call(this, event)"
-                                 ondragleave="dragLeave.call(this, event)"
-                                 ondrop="drop.call(this, event)">
+                    <div class="w-full sm:w-auto flex items-center">
+                        <select
+                            id="sortSelectKanban"
+                            class="w-full sm:w-48 border-none rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base max-[500px]:basis-1/2"
+                        >
+                            <option value="created_at_desc">
+                                Новые сначала
+                            </option>
+                            <option value="created_at_asc">
+                                Старые сначала
+                            </option>
+                            <option value="deadline_asc">
+                                Ближайший дедлайн
+                            </option>
+                            <option value="priority_desc">
+                                Высокий приоритет
+                            </option>
+                            <option value="name_asc">По названию (А-Я)</option>
+                        </select>
+                    </div>
+                </div>
 
+                <!-- Канбан доска -->
+                <div class="swx-v overflow-hidden w-full">
+                    <div
+                        class="swx-v-wrapper flex lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-[500px]:gap-0"
+                    >
+                        @foreach ($statusKeys as $statusKey)
+                            <div
+                                class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
+                                data-status="{{ $statusDataValues[$statusKey] }}"
+                                ondragover="dragOver.call(this, event)"
+                                ondragleave="dragLeave.call(this, event)"
+                                ondrop="drop.call(this, event)"
+                            >
                                 {{-- Заголовок колонки с красным фоном для просроченных --}}
-                                <div class="flex justify-between items-center mb-4 border-none rounded-lg p-2 {{ $statusKey === 'просрочена' ? 'bg-red-600' : '' }}" style=" background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);">
-                                    <h3 class="font-semibold text-white text-sm">{{ $statusMap[$statusKey] }}</h3>
-                                    <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count">{{ $tasksByStatusForKanban[$statusKey]->count() }}</span>
+                                <div
+                                    class="flex justify-between items-center mb-4 border-none rounded-lg p-2 {{ $statusKey === 'просрочена' ? 'bg-red-600' : '' }}"
+                                    style="
+                                        background: linear-gradient(
+                                            180deg,
+                                            #1a1f2e 0%,
+                                            #161b28 100%
+                                        );
+                                    "
+                                >
+                                    <h3
+                                        class="font-semibold text-white text-sm"
+                                    >
+                                        {{ $statusMap[$statusKey] }}
+                                    </h3>
+                                    <span
+                                        class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count"
+                                        >{{ $tasksByStatusForKanban[$statusKey]->count() }}</span
+                                    >
                                 </div>
 
                                 <div class="space-y-3 task-container">
-                                    @forelse($tasksByStatusForKanban[$statusKey] as $task)
+                                    @forelse ($tasksByStatusForKanban[$statusKey] as $task)
                                         @php
-                                            $prioritySignal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
-                                        @endphp
+                            $prioritySignal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
+                            @endphp
 
                                         {{-- Карточка задачи --}}
-                                        <div class="task-card bg-white p-3 rounded-lg shadow cursor-move flex flex-col justify-between {{ $statusKey === 'просрочена' ? 'border-l-4 border-red-500 bg-red-50' : '' }}"
-                                             draggable="true"
-                                             data-task="{{ $task->id }}"
-                                             data-priority="{{ $task->priority ?? 'medium' }}"
-                                             data-deadline="{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') : '' }}"
-                                             data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
-                                             data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
-                                             data-author-id="{{ $task->author_id }}"
-                                             ondragstart="dragStart.call(this, event)"
-                                             ondragend="dragEnd.call(this, event)">
-
-                                            <div class="flex justify-between items-start mb-2">
-                                                <a href="/team/tasks/{{ $task->id }}"
-                                                   onclick="openTaskViewModal({{ $task->id }}); return false;"
-                                                   class="flex-1 mr-2">
-                                                    <h4 class="font-medium text-sm cursor-pointer hover:text-blue-600 line-clamp-2 {{ $statusKey === 'просрочена' ? 'text-red-600' : '' }}">{{ $task->name }}</h4>
+                                        <div
+                                            class="task-card bg-white p-3 rounded-lg shadow cursor-move flex flex-col justify-between {{ $statusKey === 'просрочена' ? 'border-l-4 border-red-500 bg-red-50' : '' }}"
+                                            draggable="true"
+                                            data-task="{{ $task->id }}"
+                                            data-priority="{{ $task->priority ?? 'medium' }}"
+                                            data-deadline="{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') : '' }}"
+                                            data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                                            data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
+                                            data-author-id="{{ $task->author_id }}"
+                                            ondragstart="
+                                                dragStart.call(this, event)
+                                            "
+                                            ondragend="
+                                                dragEnd.call(this, event)
+                                            "
+                                        >
+                                            <div
+                                                class="flex justify-between items-start mb-2"
+                                            >
+                                                <a
+                                                    href="/team/tasks/{{ $task->id }}"
+                                                    onclick="openTaskViewModal({{ $task->id }}); return false;"
+                                                    class="flex-1 mr-2"
+                                                >
+                                                    <h4
+                                                        class="font-medium text-sm cursor-pointer hover:text-blue-600 line-clamp-2 {{ $statusKey === 'просрочена' ? 'text-red-600' : '' }}"
+                                                    >
+                                                        {{ $task->name }}
+                                                    </h4>
                                                 </a>
-                                                <div class="flex items-center space-x-1 flex-shrink-0">
+                                                <div
+                                                    class="flex items-center space-x-1 flex-shrink-0"
+                                                >
                                                     <div class="relative">
-                                                        <button onclick="toggleTaskMenu(event, {{ $task->id }})" class="text-gray-500 hover:text-gray-700 p-1" title="Действия">
-                                                            <i class="fas fa-ellipsis-v text-xs"></i>
+                                                        <button
+                                                            onclick="window.toggleTaskMenu(event, {{ $task->id }})"
+                                                            class="text-gray-500 hover:text-gray-700 p-1"
+                                                            title="Действия"
+                                                        >
+                                                            <i
+                                                                class="fas fa-ellipsis-v text-xs"
+                                                            ></i>
                                                         </button>
-                                                        <div id="taskMenu-{{ $task->id }}" class="task-menu hidden absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-xl border z-50">
+                                                        <div
+                                                            id="taskMenu-{{ $task->id }}"
+                                                            class="task-menu hidden absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-xl border z-50"
+                                                        >
                                                             <div class="py-1">
-                                                                @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                                    <button onclick="openEditModal({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                        <i class="fas fa-edit mr-2 text-blue-500 text-xs"></i> Редактировать
+                                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                    <button
+                                                                        onclick="openEditModal({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-edit mr-2 text-blue-500 text-xs"
+                                                                        ></i>
+                                                                        Редактировать
                                                                     </button>
                                                                 @endif
 
-                                                                @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                                    <button onclick="openCreateSubtaskModal({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                        <i class="fas fa-list mr-2 text-blue-500 text-xs"></i> Подзадача
+                                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                    <button
+                                                                        onclick="openCreateSubtaskModal({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-list mr-2 text-blue-500 text-xs"
+                                                                        ></i>
+                                                                        Подзадача
                                                                     </button>
                                                                 @endif
 
                                                                 <!-- КНОПКА АРХИВАЦИИ -->
-                                                                @if($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                                    <button onclick="archiveTask({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                        <i class="fas fa-archive mr-2 text-yellow-500 text-xs"></i> В архив
+                                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                    <button
+                                                                        onclick="archiveTask({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-archive mr-2 text-yellow-500 text-xs"
+                                                                        ></i>
+                                                                        В архив
                                                                     </button>
                                                                 @endif
 
-                                                                @if($statusKey === 'назначена')
-                                                                    <button onclick="startTask({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                        <i class="fas fa-play mr-2 text-green-500 text-xs"></i> Начать
+                                                                @if ($statusKey === 'назначена')
+                                                                    <button
+                                                                        onclick="startTask({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-play mr-2 text-green-500 text-xs"
+                                                                        ></i>
+                                                                        Начать
                                                                     </button>
                                                                 @endif
-                                                                @if($statusKey === 'в работе')
-                                                                    <button onclick="sendForReview({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                        <i class="fas fa-check-circle mr-2 text-green-500 text-xs"></i> На проверку
+                                                                @if ($statusKey === 'в работе')
+                                                                    <button
+                                                                        onclick="sendForReview({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-check-circle mr-2 text-green-500 text-xs"
+                                                                        ></i>
+                                                                        На
+                                                                        проверку
                                                                     </button>
                                                                 @endif
-                                                                @if($statusKey === 'на проверке' && auth()->user()->isLeader())
-                                                                    <button onclick="approveTask({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                        <i class="fas fa-check-double mr-2 text-green-500 text-xs"></i> Одобрить
+                                                                @if ($statusKey === 'на проверке' && auth()->user()->isLeader())
+                                                                    <button
+                                                                        onclick="approveTask({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-check-double mr-2 text-green-500 text-xs"
+                                                                        ></i>
+                                                                        Одобрить
                                                                     </button>
-                                                                    <button onclick="returnTaskToWork({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center">
-                                                                        <i class="fas fa-redo mr-2 text-orange-500 text-xs"></i> На доработку
+                                                                    <button
+                                                                        onclick="returnTaskToWork({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-redo mr-2 text-orange-500 text-xs"
+                                                                        ></i>
+                                                                        На
+                                                                        доработку
                                                                     </button>
                                                                 @endif
-                                                                @if($statusKey !== 'выполнена' && $statusKey !== 'просрочена')
-                                                                    <button onclick="showRejectModal({{ $task->id }})" class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-gray-100 flex items-center">
-                                                                        <i class="fas fa-times-circle mr-2 text-xs"></i> Отказаться
+                                                                @if ($statusKey !== 'выполнена' && $statusKey !== 'просрочена')
+                                                                    <button
+                                                                        onclick="showRejectModal({{ $task->id }})"
+                                                                        class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-gray-100 flex items-center"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-times-circle mr-2 text-xs"
+                                                                        ></i>
+                                                                        Отказаться
                                                                     </button>
                                                                 @endif
                                                             </div>
@@ -1345,50 +2534,97 @@
                                                 </div>
                                             </div>
 
-                                            @if($task->files_count > 0)
-                                                <div class="mb-2 flex items-center text-xs text-gray-500">
-                                                    <i class="fas fa-paperclip mr-1 text-xs"></i>
-                                                    <span>{{ $task->files_count }}</span>
+                                            @if ($task->files_count > 0)
+                                                <div
+                                                    class="mb-2 flex items-center text-xs text-gray-500"
+                                                >
+                                                    <i
+                                                        class="fas fa-paperclip mr-1 text-xs"
+                                                    ></i>
+                                                    <span
+                                                        >{{ $task->files_count }}</span
+                                                    >
                                                 </div>
                                             @endif
 
-                                            @if($task->deadline)
+                                            @if ($task->deadline)
                                                 <div class="mb-2">
-                                                    <div class="flex items-center text-xs {{ $statusKey === 'просрочена' ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
-                                                        <i class="fas fa-clock mr-1 text-xs"></i>
+                                                    <div
+                                                        class="flex items-center text-xs {{ $statusKey === 'просрочена' ? 'text-red-600 font-semibold' : 'text-gray-500' }}"
+                                                    >
+                                                        <i
+                                                            class="fas fa-clock mr-1 text-xs"
+                                                        ></i>
                                                         {{ \Carbon\Carbon::parse($task->deadline)->format('d.m.Y H:i') }}
-                                                        @if($statusKey === 'просрочена')
-                                                            <span class="ml-1">(Просрочено)</span>
+                                                        @if ($statusKey === 'просрочена')
+                                                            <span class="ml-1"
+                                                                >(Просрочено)</span
+                                                            >
                                                         @endif
                                                     </div>
                                                 </div>
                                             @endif
 
-                                            <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-100">
-                                                <div class="flex flex-wrap gap-1">
-                <span style="background: linear-gradient(180deg, #1a1f2e 0%, #161b28 100%);"
-                      class="text-xs px-1.5 py-0.5 rounded text-white">{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span>
+                                            <div
+                                                class="flex justify-between items-center mt-2 pt-2 border-t border-gray-100"
+                                            >
+                                                <div
+                                                    class="flex flex-wrap gap-1"
+                                                >
+                                                    <span
+                                                        style="
+                                                            background: linear-gradient(
+                                                                180deg,
+                                                                #1a1f2e 0%,
+                                                                #161b28 100%
+                                                            );
+                                                        "
+                                                        class="text-xs px-1.5 py-0.5 rounded text-white"
+                                                        >{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span
+                                                    >
 
                                                     {{-- Индикатор приоритета --}}
-                                                    <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md {{ $prioritySignal['bg'] }} border {{ $prioritySignal['border'] }}">
-                                                        <div class="flex items-end gap-[2px] h-3">
-                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 1 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1"></div>
-                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 2 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1.5"></div>
-                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 3 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2"></div>
-                                                            <div class="w-1 rounded-sm {{ $prioritySignal['level'] >= 4 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2.5"></div>
+                                                    <div
+                                                        class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md {{ $prioritySignal['bg'] }} border {{ $prioritySignal['border'] }}"
+                                                    >
+                                                        <div
+                                                            class="flex items-end gap-[2px] h-3"
+                                                        >
+                                                            <div
+                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 1 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1"
+                                                            ></div>
+                                                            <div
+                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 2 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1.5"
+                                                            ></div>
+                                                            <div
+                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 3 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2"
+                                                            ></div>
+                                                            <div
+                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 4 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2.5"
+                                                            ></div>
                                                         </div>
-                                                        <span class="text-xs font-medium {{ $prioritySignal['text'] }}">{{ ucfirst($task->priority) }}</span>
+                                                        <span
+                                                            class="text-xs font-medium {{ $prioritySignal['text'] }}"
+                                                            >{{ ucfirst($task->priority) }}</span
+                                                        >
                                                     </div>
 
-                                                    @if($task->category)
-                                                        <span class="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded">{{ mb_substr($task->category->name, 0, 10) }}</span>
+                                                    @if ($task->category)
+                                                        <span
+                                                            class="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded"
+                                                            >{{ mb_substr($task->category->name, 0, 10) }}</span
+                                                        >
                                                     @endif
                                                 </div>
 
                                                 {{-- Иконка ИСПОЛНИТЕЛЯ (используем те же методы, что в модальном окне) --}}
-                                                <div class="flex items-center space-x-1">
-                                                    <div class="w-5 h-5 rounded-full {{ $task->user ? $task->user->getAvatarColor() : 'bg-gray-300' }} flex items-center justify-center text-white text-[10px] font-medium"
-                                                         title="{{ $task->user?->name ?? 'Не назначен' }}">
+                                                <div
+                                                    class="flex items-center space-x-1"
+                                                >
+                                                    <div
+                                                        class="w-5 h-5 rounded-full {{ $task->user ? $task->user->getAvatarColor() : 'bg-gray-300' }} flex items-center justify-center text-white text-[10px] font-medium"
+                                                        title="{{ $task->user?->name ?? 'Не назначен' }}"
+                                                    >
                                                         {{ $task->user ? $task->user->getInitials() : '?' }}
                                                     </div>
                                                 </div>
@@ -1401,34 +2637,52 @@
                             </div>
                         @endforeach
                     </div>
-                    <div class="swiper-pagination flex justify-center pt-5 px-0 !bottom-2 min-[501px]:hidden"></div>
-</div>
+                    <div
+                        class="swiper-pagination flex justify-center pt-5 px-0 !bottom-2 min-[501px]:hidden"
+                    ></div>
                 </div>
-            @endif
-        </div>
+            </div>
+        @endif
+    </div>
     </div>
 
     <!-- Модальное окно подтверждения архивации -->
-    @include('partials.modal.task.confirm-archive')
+    @include ('partials.modal.task.confirm-archive')
 
     <!-- Модальное окно подтверждения восстановления -->
-    <div id="confirmRestoreModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[100] backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0" id="confirmRestoreModalContent">
+    <div
+        id="confirmRestoreModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[100] backdrop-blur-sm"
+    >
+        <div
+            class="bg-white rounded-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0"
+            id="confirmRestoreModalContent"
+        >
             <div class="p-6">
                 <div class="flex items-center justify-center mb-4">
-                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-trash-restore text-3xl text-green-600"></i>
+                    <div
+                        class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center"
+                    >
+                        <i
+                            class="fas fa-trash-restore text-3xl text-green-600"
+                        ></i>
                     </div>
                 </div>
-                <h3 class="text-xl font-bold text-center text-gray-800 mb-2">Восстановление задачи</h3>
-                <p class="text-gray-600 text-center mb-6">
-                    Задача будет восстановлена и появится на доске. Продолжить?
-                </p>
+                <h3 class="text-xl font-bold text-center text-gray-800 mb-2">
+                    Восстановление задачи
+                </h3>
+                <p class="text-gray-600 text-center mb-6">Задача будет восстановлена и появится на доске. Продолжить?</p>
                 <div class="flex space-x-3">
-                    <button onclick="closeConfirmRestoreModal()" class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition font-medium">
+                    <button
+                        onclick="closeConfirmRestoreModal()"
+                        class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition font-medium"
+                    >
                         Отмена
                     </button>
-                    <button onclick="confirmRestore()" class="flex-1 px-4 py-2.5 bg-green-500 text-white rounded-xl hover:bg-green-600 transition font-medium">
+                    <button
+                        onclick="confirmRestore()"
+                        class="flex-1 px-4 py-2.5 bg-green-500 text-white rounded-xl hover:bg-green-600 transition font-medium"
+                    >
                         <i class="fas fa-check mr-2"></i>Восстановить
                     </button>
                 </div>
@@ -1437,35 +2691,51 @@
     </div>
 
     <!-- Модальное окно подтверждения полного удаления -->
-    <div id="confirmForceDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[100] backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0" id="confirmForceDeleteModalContent">
+    <div
+        id="confirmForceDeleteModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[100] backdrop-blur-sm"
+    >
+        <div
+            class="bg-white rounded-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0"
+            id="confirmForceDeleteModalContent"
+        >
             <div class="p-6">
                 <div class="flex items-center justify-center mb-4">
-                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-exclamation-triangle text-3xl text-red-600"></i>
+                    <div
+                        class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center"
+                    >
+                        <i
+                            class="fas fa-exclamation-triangle text-3xl text-red-600"
+                        ></i>
                     </div>
                 </div>
-                <h3 class="text-xl font-bold text-center text-gray-800 mb-2">Удаление задачи</h3>
-                <p class="text-gray-600 text-center mb-4">
-                    Вы действительно хотите удалить эту задачу <span class="font-bold text-red-600">НАВСЕГДА</span>?
-                </p>
+                <h3 class="text-xl font-bold text-center text-gray-800 mb-2">
+                    Удаление задачи
+                </h3>
+                <p class="text-gray-600 text-center mb-4">Вы действительно хотите удалить эту задачу <span class="font-bold text-red-600">НАВСЕГДА</span>?</p>
                 <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
                     <div class="flex">
                         <div class="flex-shrink-0">
-                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                            <i
+                                class="fas fa-exclamation-circle text-red-400"
+                            ></i>
                         </div>
                         <div class="ml-3">
-                            <p class="text-sm text-red-700">
-                                Это действие невозможно отменить. Задача и все связанные с ней данные будут удалены безвозвратно.
-                            </p>
+                            <p class="text-sm text-red-700">Это действие невозможно отменить. Задача и все связанные с ней данные будут удалены безвозвратно.</p>
                         </div>
                     </div>
                 </div>
                 <div class="flex space-x-3">
-                    <button onclick="closeConfirmForceDeleteModal()" class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition font-medium">
+                    <button
+                        onclick="closeConfirmForceDeleteModal()"
+                        class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition font-medium"
+                    >
                         Отмена
                     </button>
-                    <button onclick="confirmForceDelete()" class="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-xl hover:bg-red-600 transition font-medium">
+                    <button
+                        onclick="confirmForceDelete()"
+                        class="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-xl hover:bg-red-600 transition font-medium"
+                    >
                         <i class="fas fa-trash-alt mr-2"></i>Удалить навсегда
                     </button>
                 </div>
@@ -1474,50 +2744,77 @@
     </div>
 
     <!-- Модальное окно редактирования задачи -->
-    @include('partials.modal.task.edit-modal')
+    @include ('partials.modal.task.edit-modal')
 
     <!-- Модальное окно возврата на доработку -->
-    @include('partials.modal.task.return-to-work')
+    @include ('partials.modal.task.return-to-work')
 
     <!-- Модальное окно удаления задачи -->
-    @include('partials.modal.task.delete-modal')
+    @include ('partials.modal.task.delete-modal')
 
-    @include('partials.modal.task.show')
+    @include ('partials.modal.task.show')
 
     <!-- Модальное окно файлового менеджера для редактирования -->
-    <div id="fileManagerModal"
-         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[60]">
-        <div class="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
-            <div class="flex justify-between items-center p-6 border-b border-gray-200 bg-white">
+    <div
+        id="fileManagerModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[60]"
+    >
+        <div
+            class="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl"
+        >
+            <div
+                class="flex justify-between items-center p-6 border-b border-gray-200 bg-white"
+            >
                 <div>
-                    <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Файловое хранилище</h3>
+                    <h3
+                        class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent"
+                    >
+                        Файловое хранилище
+                    </h3>
                     <p class="text-sm text-gray-500 mt-1">Выберите файлы для прикрепления к задаче</p>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <span class="text-sm text-gray-600 bg-green-50 px-3 py-1 rounded-full">
-                        Выбрано: <span id="selectedCount" class="font-semibold text-green-600">0</span>
+                    <span
+                        class="text-sm text-gray-600 bg-green-50 px-3 py-1 rounded-full"
+                    >
+                        Выбрано:
+                        <span
+                            id="selectedCount"
+                            class="font-semibold text-green-600"
+                            >0</span
+                        >
                     </span>
-                    <button onclick="closeFileManager()"
-                            class="text-gray-400 hover:text-gray-600 p-2 rounded-xl hover:bg-gray-100 transition-all duration-200">
+                    <button
+                        onclick="closeFileManager()"
+                        class="text-gray-400 hover:text-gray-600 p-2 rounded-xl hover:bg-gray-100 transition-all duration-200"
+                    >
                         <i class="fas fa-times text-lg"></i>
                     </button>
                 </div>
             </div>
 
-            <div class="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+            <div
+                class="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white"
+            >
                 <div class="flex flex-col sm:flex-row gap-3">
                     <div class="flex-1">
                         <div class="relative">
-                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                            <input type="text"
-                                   id="fileManagerSearch"
-                                   placeholder="Поиск по названию файла..."
-                                   class="w-full pl-10 pr-4 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all duration-200 bg-white">
+                            <i
+                                class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                            ></i>
+                            <input
+                                type="text"
+                                id="fileManagerSearch"
+                                placeholder="Поиск по названию файла..."
+                                class="w-full pl-10 pr-4 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all duration-200 bg-white"
+                            />
                         </div>
                     </div>
                     <div class="flex space-x-2">
-                        <select id="fileManagerTypeFilter"
-                                class="px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-sm hover:border-gray-300 transition-all duration-200">
+                        <select
+                            id="fileManagerTypeFilter"
+                            class="px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-sm hover:border-gray-300 transition-all duration-200"
+                        >
                             <option value="">Все типы</option>
                             <option value="image">Изображения</option>
                             <option value="document">Документы</option>
@@ -1525,8 +2822,10 @@
                             <option value="audio">Аудио</option>
                             <option value="archive">Архивы</option>
                         </select>
-                        <select id="fileManagerSortBy"
-                                class="px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-sm hover:border-gray-300 transition-all duration-200">
+                        <select
+                            id="fileManagerSortBy"
+                            class="px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-sm hover:border-gray-300 transition-all duration-200"
+                        >
                             <option value="newest">Сначала новые</option>
                             <option value="oldest">Сначала старые</option>
                             <option value="name_asc">По имени (А-Я)</option>
@@ -1540,20 +2839,31 @@
 
             <div class="flex-1 overflow-hidden">
                 <div class="h-full flex">
-                    <div class="flex-1 overflow-y-auto p-4" id="fileManagerContent">
-                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    <div
+                        class="flex-1 overflow-y-auto p-4"
+                        id="fileManagerContent"
+                    >
+                        <div
+                            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+                        >
                             <div class="col-span-full text-center py-12">
-                                <i class="fas fa-spinner fa-spin text-3xl text-gray-400 mb-4"></i>
+                                <i
+                                    class="fas fa-spinner fa-spin text-3xl text-gray-400 mb-4"
+                                ></i>
                                 <p class="text-gray-600">Загрузка файлов...</p>
                             </div>
                         </div>
                     </div>
 
-                    <div id="fileManagerPreviewPanel"
-                         class="hidden w-96 border-l border-gray-200 bg-gray-50 p-4 overflow-y-auto">
+                    <div
+                        id="fileManagerPreviewPanel"
+                        class="hidden w-96 border-l border-gray-200 bg-gray-50 p-4 overflow-y-auto"
+                    >
                         <div class="sticky top-0 bg-gray-50 pb-4">
-                            <button onclick="closeFilePreview()"
-                                    class="mb-4 text-gray-400 hover:text-gray-600 flex items-center transition-colors duration-200">
+                            <button
+                                onclick="closeFilePreview()"
+                                class="mb-4 text-gray-400 hover:text-gray-600 flex items-center transition-colors duration-200"
+                            >
                                 <i class="fas fa-arrow-left mr-2"></i> Назад
                             </button>
                             <div id="filePreviewContent"></div>
@@ -1569,13 +2879,23 @@
                         Файловое хранилище
                     </div>
                     <div class="flex space-x-3">
-                        <button type="button" onclick="closeFileManager()"
-                                class="px-5 py-2.5 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-medium transition-all duration-200">
+                        <button
+                            type="button"
+                            onclick="closeFileManager()"
+                            class="px-5 py-2.5 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-medium transition-all duration-200"
+                        >
                             Отмена
                         </button>
-                        <button type="button" id="confirmFileSelectionBtn" onclick="confirmEditFileSelectionForEdit()"
-                                class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fas fa-check mr-2"></i>Выбрать (<span id="confirmCount">0</span>)
+                        <button
+                            type="button"
+                            id="confirmFileSelectionBtn"
+                            onclick="confirmEditFileSelectionForEdit()"
+                            class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <i class="fas fa-check mr-2"></i>Выбрать (<span
+                                id="confirmCount"
+                                >0</span
+                            >)
                         </button>
                     </div>
                 </div>
@@ -1583,36 +2903,84 @@
         </div>
     </div>
 
-    @include('partials.modal.task.create')
+    @include ('partials.modal.task.create')
 
     <!-- Модальное окно отказа от задачи -->
-    <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 max-[500px]:p-6">
+    <div
+        id="rejectModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 max-[500px]:p-6"
+    >
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-4">Отказ от задачи</h3>
             <p class="text-gray-600 mb-4">Пожалуйста, укажите причину отказа от задачи:</p>
-            <textarea id="rejectReason" placeholder="Причина отказа..." class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 h-24 resize-none"></textarea>
+            <textarea
+                id="rejectReason"
+                placeholder="Причина отказа..."
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 h-24 resize-none"
+            ></textarea>
             <div class="flex space-x-3">
-                <button onclick="submitRejection()" class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">Подтвердить отказ</button>
-                <button onclick="closeRejectModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Отмена</button>
+                <button
+                    onclick="submitRejection()"
+                    class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700"
+                >
+                    Подтвердить отказ
+                </button>
+                <button
+                    onclick="closeRejectModal()"
+                    class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+                >
+                    Отмена
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Модальное окно для указания времени при отправке на проверку -->
-    <div id="timeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div
+        id="timeModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
+    >
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-4">Отправка на проверку</h3>
             <p class="text-gray-600 mb-4">Укажите фактическое время работы над задачей:</p>
-            <input type="number" id="actualHours" step="0.5" min="0" placeholder="Часы" class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4">
+            <input
+                type="number"
+                id="actualHours"
+                step="0.5"
+                min="0"
+                placeholder="Часы"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4"
+            />
             <div class="flex space-x-3">
-                <button onclick="submitForReview()" class="flex-1 text-white py-2 rounded-lg" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">Отправить на проверку</button>
-                <button onclick="closeTimeModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Отмена</button>
+                <button
+                    onclick="submitForReview()"
+                    class="flex-1 text-white py-2 rounded-lg"
+                    style="
+                        background: linear-gradient(
+                            135deg,
+                            #10b981 0%,
+                            #059669 100%
+                        );
+                        -webkit-text-fill-color: white;
+                    "
+                >
+                    Отправить на проверку
+                </button>
+                <button
+                    onclick="closeTimeModal()"
+                    class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+                >
+                    Отмена
+                </button>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@dragdroptouch/drag-drop-touch@latest/dist/drag-drop-touch.esm.min.js" type="module"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@dragdroptouch/drag-drop-touch@latest/dist/drag-drop-touch.esm.min.js"
+        type="module"
+    ></script>
 
     <script>
         // ==================== ПЕРЕМЕННЫЕ ====================
@@ -1626,35 +2994,40 @@
         let taskSelectedFiles = [];
         let taskAllFiles = [];
 
-        // ==================== ФУНКЦИИ ДЛЯ МЕНЮ С ТРЕМЯ ТОЧКАМИ ====================
-        function toggleTaskMenu(event, taskId) {
-            event.stopPropagation();
-            document.querySelectorAll('.task-menu').forEach(menu => {
-                if (menu.id !== `taskMenu-${taskId}`) menu.classList.add('hidden');
-            });
-            const menu = document.getElementById(`taskMenu-${taskId}`);
-            if (menu) menu.classList.toggle('hidden');
-        }
-
-        document.addEventListener('click', function(event) {
-            if (!event.target.closest('.task-menu') && !event.target.closest('[onclick*="toggleTaskMenu"]')) {
-                document.querySelectorAll('.task-menu').forEach(menu => menu.classList.add('hidden'));
-            }
-        });
 
         // ==================== СОРТИРОВКА ====================
         // Обновите обработчики сортировки
-        document.getElementById('sortSelect')?.addEventListener('change', function () {
+        document.getElementById('sortSelect')?.addEventListener('change', function() {
             const value = this.value;
             let sort, order;
             switch (value) {
-                case 'created_at_desc': sort = 'created_at'; order = 'desc'; break;
-                case 'created_at_asc': sort = 'created_at'; order = 'asc'; break;
-                case 'deadline_asc': sort = 'deadline'; order = 'asc'; break;
-                case 'deadline_desc': sort = 'deadline'; order = 'desc'; break;
-                case 'priority_desc': sort = 'priority'; order = 'desc'; break;
-                case 'name_asc': sort = 'name'; order = 'asc'; break;
-                default: sort = 'created_at'; order = 'desc';
+                case 'created_at_desc':
+                    sort = 'created_at';
+                    order = 'desc';
+                    break;
+                case 'created_at_asc':
+                    sort = 'created_at';
+                    order = 'asc';
+                    break;
+                case 'deadline_asc':
+                    sort = 'deadline';
+                    order = 'asc';
+                    break;
+                case 'deadline_desc':
+                    sort = 'deadline';
+                    order = 'desc';
+                    break;
+                case 'priority_desc':
+                    sort = 'priority';
+                    order = 'desc';
+                    break;
+                case 'name_asc':
+                    sort = 'name';
+                    order = 'asc';
+                    break;
+                default:
+                    sort = 'created_at';
+                    order = 'desc';
             }
             const url = new URL(window.location.href);
             url.searchParams.set('sort', sort);
@@ -1667,16 +3040,33 @@
             window.location.href = url.toString();
         });
 
-        document.getElementById('sortSelectKanban')?.addEventListener('change', function () {
+        document.getElementById('sortSelectKanban')?.addEventListener('change', function() {
             const value = this.value;
             let sort, order;
             switch (value) {
-                case 'created_at_desc': sort = 'created_at'; order = 'desc'; break;
-                case 'created_at_asc': sort = 'created_at'; order = 'asc'; break;
-                case 'deadline_asc': sort = 'deadline'; order = 'asc'; break;
-                case 'priority_desc': sort = 'priority'; order = 'desc'; break;
-                case 'name_asc': sort = 'name'; order = 'asc'; break;
-                default: sort = 'created_at'; order = 'desc';
+                case 'created_at_desc':
+                    sort = 'created_at';
+                    order = 'desc';
+                    break;
+                case 'created_at_asc':
+                    sort = 'created_at';
+                    order = 'asc';
+                    break;
+                case 'deadline_asc':
+                    sort = 'deadline';
+                    order = 'asc';
+                    break;
+                case 'priority_desc':
+                    sort = 'priority';
+                    order = 'desc';
+                    break;
+                case 'name_asc':
+                    sort = 'name';
+                    order = 'asc';
+                    break;
+                default:
+                    sort = 'created_at';
+                    order = 'desc';
             }
             const url = new URL(window.location.href);
             url.searchParams.set('sort', sort);
@@ -1685,7 +3075,7 @@
             window.location.href = url.toString();
         });
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const sort = urlParams.get('sort') || 'created_at';
             const order = urlParams.get('order') || 'desc';
@@ -1704,7 +3094,11 @@
 
         // ==================== ОБРАБОТКА URL ДЛЯ ОТКРЫТИЯ МОДАЛКИ ====================
         document.addEventListener('DOMContentLoaded', function() {
-            const openTaskId = {{ $openTaskId ?? 'null' }};
+            const openTaskId = {
+                {
+                    $openTaskId ?? 'null'
+                }
+            };
             if (openTaskId) {
                 window.history.pushState({}, '', '/team/tasks');
                 setTimeout(function() {
@@ -1739,27 +3133,27 @@
                     if (departmentSelect) {
                         departmentSelect.innerHTML = '<option value="">Выберите отдел</option>';
                         @foreach($filterData['departments'] as $department)
-                            departmentSelect.innerHTML += `<option value="{{ $department->id }}">{{ $department->name }}</option>`;
+                        departmentSelect.innerHTML += `<option value="{{ $department->id }}">{{ $department->name }}</option>`;
                         @endforeach
-                            departmentSelect.value = task.department_id || '';
+                        departmentSelect.value = task.department_id || '';
                     }
 
                     const categorySelect = document.getElementById('editTaskCategory');
                     if (categorySelect) {
                         categorySelect.innerHTML = '<option value="">Без категории</option>';
                         @foreach($filterData['categories'] as $category)
-                            categorySelect.innerHTML += `<option value="{{ $category->id }}">{{ $category->name }}</option>`;
+                        categorySelect.innerHTML += `<option value="{{ $category->id }}">{{ $category->name }}</option>`;
                         @endforeach
-                            categorySelect.value = task.category_id || '';
+                        categorySelect.value = task.category_id || '';
                     }
 
                     const userSelect = document.getElementById('editTaskUser');
                     if (userSelect) {
                         userSelect.innerHTML = '<option value="">Не назначен</option>';
                         @foreach($filterData['users'] as $userItem)
-                            userSelect.innerHTML += `<option value="{{ $userItem->id }}">{{ $userItem->name }}</option>`;
+                        userSelect.innerHTML += `<option value="{{ $userItem->id }}">{{ $userItem->name }}</option>`;
                         @endforeach
-                            userSelect.value = task.user_id || '';
+                        userSelect.value = task.user_id || '';
                     }
 
                     document.getElementById('editTaskPriority').value = task.priority || 'средний';
@@ -1799,7 +3193,7 @@
             currentTaskId = null;
             editSelectedFiles = [];
             editTempSelectedFiles = [];
-             document.body.classList.remove('overflow-y-hidden')
+            document.body.classList.remove('overflow-y-hidden')
         }
 
         function updateEditSelectedFilesDisplay() {
@@ -1811,10 +3205,10 @@
 
             if (editSelectedFiles.length === 0) {
                 container.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
-                <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
-                <p class="text-sm text-gray-500">Файлы не выбраны</p>
-                <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
-            </div>`;
+                    <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
+                    <p class="text-sm text-gray-500">Файлы не выбраны</p>
+                    <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
+                </div>`;
                 if (fileCounter) fileCounter.classList.add('hidden');
             } else {
                 let html = '';
@@ -1822,19 +3216,19 @@
                     const fileIcon = getFileIcon(file.extension);
                     const fileType = getFileTypeClass(file.extension);
                     html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <div class="flex items-center space-x-3 flex-1">
-                        <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
-                            <span class="text-lg">${fileIcon}</span>
+                        <div class="flex items-center space-x-3 flex-1">
+                            <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
+                                <span class="text-lg">${fileIcon}</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-800">${escapeHtml(file.name)}</p>
+                                <span class="text-xs text-gray-500">${formatFileSize(file.size)}</span>
+                            </div>
                         </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-800">${escapeHtml(file.name)}</p>
-                            <span class="text-xs text-gray-500">${formatFileSize(file.size)}</span>
-                        </div>
-                    </div>
-                    <button onclick="removeEditSelectedFile(${file.id})" class="text-red-500 hover:text-red-700 p-1">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>`;
+                        <button onclick="removeEditSelectedFile(${file.id})" class="text-red-500 hover:text-red-700 p-1">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>`;
                 });
                 container.innerHTML = html;
                 if (fileCount) fileCount.textContent = editSelectedFiles.length;
@@ -1876,9 +3270,9 @@
             const contentDiv = document.getElementById('fileManagerContent');
             if (!contentDiv) return;
             contentDiv.innerHTML = `<div class="col-span-full text-center py-12">
-                <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
-                <p class="text-gray-500 mt-2">Загрузка файлов...</p>
-            </div>`;
+                    <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
+                    <p class="text-gray-500 mt-2">Загрузка файлов...</p>
+                </div>`;
 
             try {
                 const response = await fetch('/tasks/file-storage/get-files', {
@@ -1895,9 +3289,9 @@
             } catch (error) {
                 console.error('Ошибка загрузки файлов:', error);
                 contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">
-            <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
-            <p>Ошибка загрузки файлов</p>
-            </div>`;
+                <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
+                <p>Ошибка загрузки файлов</p>
+                </div>`;
             }
         }
 
@@ -1906,9 +3300,9 @@
             if (!contentDiv) return;
             if (!files || files.length === 0) {
                 contentDiv.innerHTML = `<div class="col-span-full text-center py-12">
-            <i class="fas fa-folder-open text-3xl text-gray-300 mb-2"></i>
-            <p class="text-gray-500">Нет файлов в хранилище</p>
-            </div>`;
+                <i class="fas fa-folder-open text-3xl text-gray-300 mb-2"></i>
+                <p class="text-gray-500">Нет файлов в хранилище</p>
+                </div>`;
                 return;
             }
 
@@ -1919,28 +3313,28 @@
                 const fileType = getFileTypeClass(file.extension);
 
                 html += `
-            <div class="file-card bg-white border-2 ${isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200'} rounded-lg p-3 transition-all duration-200 hover:shadow-md cursor-pointer"
-                 onclick="toggleEditFileSelection(${file.id})">
-                <div class="flex justify-between items-start mb-2">
-                    <div class="w-5 h-5 rounded ${isSelected ? 'bg-green-500' : 'border-2 border-gray-300'} flex items-center justify-center">
-                        ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                <div class="file-card bg-white border-2 ${isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200'} rounded-lg p-3 transition-all duration-200 hover:shadow-md cursor-pointer"
+                     onclick="toggleEditFileSelection(${file.id})">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="w-5 h-5 rounded ${isSelected ? 'bg-green-500' : 'border-2 border-gray-300'} flex items-center justify-center">
+                            ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                        </div>
+                        <button type="button"
+                                onclick="event.stopPropagation(); downloadEditFile(${file.id})"
+                                class="text-gray-400 hover:text-green-600 p-1 transition-colors"
+                                title="Скачать">
+                            <i class="fas fa-download"></i>
+                        </button>
                     </div>
-                    <button type="button"
-                            onclick="event.stopPropagation(); downloadEditFile(${file.id})"
-                            class="text-gray-400 hover:text-green-600 p-1 transition-colors"
-                            title="Скачать">
-                        <i class="fas fa-download"></i>
-                    </button>
-                </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
-                        <img src="/storage/${file.path}" alt="${escapeHtml(file.name)}" class="w-full h-full object-cover">
+                    <div class="text-center">
+                        <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
+                            <img src="/storage/${file.path}" alt="${escapeHtml(file.name)}" class="w-full h-full object-cover">
+                        </div>
+                        <p class="text-sm font-medium text-gray-800 truncate" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</p>
+                        <p class="text-xs text-gray-500 mt-1">${formatFileSize(file.size)}</p>
+                        <p class="text-xs text-gray-400">${formatDate(file.created_at)}</p>
                     </div>
-                    <p class="text-sm font-medium text-gray-800 truncate" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</p>
-                    <p class="text-xs text-gray-500 mt-1">${formatFileSize(file.size)}</p>
-                    <p class="text-xs text-gray-400">${formatDate(file.created_at)}</p>
-                </div>
-            </div>`;
+                </div>`;
             });
             html += '</div>';
             contentDiv.innerHTML = html;
@@ -2009,7 +3403,7 @@
             }
         }
 
-        window.confirmEditFileSelectionForEdit = function () {
+        window.confirmEditFileSelectionForEdit = function() {
             console.log('confirmFromMainAdmin')
             editSelectedFiles = [...editTempSelectedFiles];
             updateEditSelectedFilesDisplay();
@@ -2073,7 +3467,7 @@
 
 
         // ==================== ФУНКЦИИ ДЛЯ ЗАГРУЗКИ НОВЫХ ФАЙЛОВ ====================
-        document.getElementById('editUploadNewFilesInput')?.addEventListener('change', function (e) {
+        document.getElementById('editUploadNewFilesInput')?.addEventListener('change', function(e) {
             const container = document.getElementById('editUploadFilesContainer');
             const list = document.getElementById('editUploadFilesList');
             if (!container) return;
@@ -2084,9 +3478,9 @@
                     const div = document.createElement('div');
                     div.className = 'flex items-center justify-between p-2 bg-gray-50 rounded';
                     div.innerHTML = `
-                    <span class="text-sm truncate">${escapeHtml(file.name)}</span>
-                    <button type="button" onclick="removeEditUploadedFile(${index})" class="text-red-500">✕</button>
-                `;
+                        <span class="text-sm truncate">${escapeHtml(file.name)}</span>
+                        <button type="button" onclick="removeEditUploadedFile(${index})" class="text-red-500">✕</button>
+                    `;
                     container.appendChild(div);
                 });
             } else if (list) {
@@ -2106,7 +3500,7 @@
         }
 
         // ==================== СОХРАНЕНИЕ РЕДАКТИРОВАНИЯ ====================
-        document.getElementById('editTaskForm')?.addEventListener('submit', async function (e) {
+        document.getElementById('editTaskForm')?.addEventListener('submit', async function(e) {
             e.preventDefault();
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn?.innerHTML;
@@ -2184,10 +3578,10 @@
 
             if (taskSelectedFiles.length === 0) {
                 container.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
-                    <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
-                    <p class="text-sm text-gray-500">Файлы не выбраны</p>
-                    <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
-                </div>`;
+                        <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
+                        <p class="text-sm text-gray-500">Файлы не выбраны</p>
+                        <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
+                    </div>`;
                 if (fileCounter) fileCounter.classList.add('hidden');
             } else {
                 let html = '';
@@ -2195,19 +3589,19 @@
                     const fileIcon = getFileIcon(file.extension);
                     const fileType = getFileTypeClass(file.extension);
                     html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
-                                <span class="text-lg">${fileIcon}</span>
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
+                                    <span class="text-lg">${fileIcon}</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800">${escapeHtml(file.name)}</p>
+                                    <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                                </div>
                             </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-800">${escapeHtml(file.name)}</p>
-                                <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                            </div>
-                        </div>
-                        <button onclick="removeTaskSelectedFile(${file.id})" class="text-red-500 hover:text-red-700 p-1">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>`;
+                            <button onclick="removeTaskSelectedFile(${file.id})" class="text-red-500 hover:text-red-700 p-1">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>`;
                 });
                 container.innerHTML = html;
                 if (fileCount) fileCount.textContent = taskSelectedFiles.length;
@@ -2302,27 +3696,27 @@
                 const fileIcon = getFileIcon(file.extension);
                 const fileType = getFileTypeClass(file.extension);
                 html += `
-                    <div class="file-card bg-white border ${isSelected ? 'border-green-500 shadow-md' : 'border-gray-200'} rounded-lg p-3 cursor-pointer" onclick="toggleTaskFileSelection(${file.id})">
-                        <div class="flex justify-end mb-2">
-                            <div class="w-5 h-5 rounded border ${isSelected ? 'bg-green-500 border-green-500' : 'border-gray-300'} flex items-center justify-center">
-                                ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                        <div class="file-card bg-white border ${isSelected ? 'border-green-500 shadow-md' : 'border-gray-200'} rounded-lg p-3 cursor-pointer" onclick="toggleTaskFileSelection(${file.id})">
+                            <div class="flex justify-end mb-2">
+                                <div class="w-5 h-5 rounded border ${isSelected ? 'bg-green-500 border-green-500' : 'border-gray-300'} flex items-center justify-center">
+                                    ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                                </div>
                             </div>
-                        </div>
-                        <div class="text-center">
-                            <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
-                                <span class="text-2xl">${fileIcon}</span>
+                            <div class="text-center">
+                                <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
+                                    <span class="text-2xl">${fileIcon}</span>
+                                </div>
+                                <p class="text-sm font-medium truncate">${escapeHtml(file.name)}</p>
+                                <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                                <p class="text-xs text-gray-400 mt-1">${formatDate(file.created_at)}</p>
                             </div>
-                            <p class="text-sm font-medium truncate">${escapeHtml(file.name)}</p>
-                            <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                            <p class="text-xs text-gray-400 mt-1">${formatDate(file.created_at)}</p>
-                        </div>
-                        <div class="flex justify-center space-x-2 mt-2 pt-2 border-t border-gray-100">
-                            <button type="button" onclick="event.stopPropagation(); downloadTaskFile(${file.id})"
-                                    class="text-gray-400 hover:text-green-600 p-1" title="Скачать">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                    </div>`;
+                            <div class="flex justify-center space-x-2 mt-2 pt-2 border-t border-gray-100">
+                                <button type="button" onclick="event.stopPropagation(); downloadTaskFile(${file.id})"
+                                        class="text-gray-400 hover:text-green-600 p-1" title="Скачать">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>`;
             });
             html += '</div>';
             contentDiv.innerHTML = html;
@@ -2434,7 +3828,9 @@
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({comment})
+                    body: JSON.stringify({
+                        comment
+                    })
                 });
 
                 const result = await response.json();
@@ -2486,7 +3882,9 @@
                 const response = await fetch(`/tasks/${currentDeleteTaskId}/delete`, {
                     method: 'POST',
                     body: formData,
-                    headers: { 'Accept': 'application/json' }
+                    headers: {
+                        'Accept': 'application/json'
+                    }
                 });
 
                 if (response.status === 404) throw new Error('Маршрут не найден. Проверьте URL.');
@@ -2528,7 +3926,10 @@
             window.taskId = taskId;
 
             const newUrl = `/team/tasks/${taskId}`;
-            window.history.pushState({ taskId: taskId, modalOpen: true }, '', newUrl);
+            window.history.pushState({
+                taskId: taskId,
+                modalOpen: true
+            }, '', newUrl);
 
             content.innerHTML = `<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i><p class="text-gray-500 mt-2">Загрузка задачи...</p></div>`;
             modal.style.backdropFilter = 'blur(10px)';
@@ -2578,7 +3979,9 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({ status: 'в работе' })
+                    body: JSON.stringify({
+                        status: 'в работе'
+                    })
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -2613,7 +4016,10 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({ status: 'на проверке', actual_hours: actualHours })
+                    body: JSON.stringify({
+                        status: 'на проверке',
+                        actual_hours: actualHours
+                    })
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -2637,7 +4043,9 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({ status: 'выполнена' })
+                    body: JSON.stringify({
+                        status: 'выполнена'
+                    })
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -2661,7 +4069,9 @@
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
-                        body: JSON.stringify({ status: 'в работе' })
+                        body: JSON.stringify({
+                            status: 'в работе'
+                        })
                     });
                     const data = await response.json();
                     if (data.success) {
@@ -2697,7 +4107,9 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({ reason })
+                    body: JSON.stringify({
+                        reason
+                    })
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -2842,7 +4254,9 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({ status: newStatus })
+                    body: JSON.stringify({
+                        status: newStatus
+                    })
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -2895,7 +4309,7 @@
 
 
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             initDragAndDrop();
 
             // Swiper для мобильных устройств
@@ -2949,62 +4363,61 @@
         });
     </script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("test1");
+            if (window.DragDropTouch) {
+                window.DragDropTouch._HOLD_DELAY = 150;
+                console.log("Полифил успешно найден и настроен!", 1);
+            } else {
+                console.log("drag not found — полифил всё еще не загрузился.");
+            }
 
- <script>
-document.addEventListener('DOMContentLoaded', () => {
-console.log('test1')
-    if (window.DragDropTouch) {
-        window.DragDropTouch._HOLD_DELAY = 150;
-        console.log('Полифил успешно найден и настроен!',1);
-    } else {
-        console.log('drag not found — полифил всё еще не загрузился.');
-    }
+            if (window.innerWidth > 500) return;
 
+            const sliderElement = document.querySelector(".swx-v");
 
-    if (window.innerWidth > 500) return;
+            if (sliderElement) {
+                window.mySwiper = new Swiper(".swx-v", {
+                    wrapperClass: "swx-v-wrapper",
+                    slideClass: "board-column",
+                    centeredSlides: true,
+                    centeredSlidesBounds: true,
+                    slidesPerView: "auto",
+                    spaceBetween: 10,
+                    loop: false,
 
-    const sliderElement = document.querySelector('.swx-v');
+                    /* УДАЛЕНО / ЗАКОММЕНТИРОВАНО: */
+                    /* noSwiping: true, */
+                    /* noSwipingClass: 'task-card', */
 
-
-    if (sliderElement) {
-      window.mySwiper = new Swiper('.swx-v', {
-    wrapperClass: 'swx-v-wrapper',
-    slideClass: 'board-column',
-    centeredSlides: true,
-    centeredSlidesBounds: true,
-    slidesPerView: 'auto',
-    spaceBetween: 10,
-    loop: false,
-
-    /* УДАЛЕНО / ЗАКОММЕНТИРОВАНО: */
-    /* noSwiping: true, */
-    /* noSwipingClass: 'task-card', */
-
-    observer: true,
-    observeParents: true,
-    watchSlidesProgress: true,
-     touchStartPreventDefault: false,
-     pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-        bulletClass: 'swiper-pagination-bullet bg-gray-400 opacity-50 mx-1 inline-block rounded-full w-2 h-2',
-        bulletActiveClass: '!bg-[#22c55e] !opacity-100 w-4 rounded-lg transition-all duration-300'
-    },
-});
-        console.log('Swiper успешно запущен для мобильного экрана!');
-    }
-});
-console.log('test2')
-</script>
-    @push('scripts')
-    @vite('resources/js/pages/main-admin.page.js')
+                    observer: true,
+                    observeParents: true,
+                    watchSlidesProgress: true,
+                    touchStartPreventDefault: false,
+                    pagination: {
+                        el: ".swiper-pagination",
+                        clickable: true,
+                        bulletClass:
+                            "swiper-pagination-bullet bg-gray-400 opacity-50 mx-1 inline-block rounded-full w-2 h-2",
+                        bulletActiveClass:
+                            "!bg-[#22c55e] !opacity-100 w-4 rounded-lg transition-all duration-300",
+                    },
+                });
+                console.log("Swiper успешно запущен для мобильного экрана!");
+            }
+        });
+        console.log("test2");
+    </script>
+    @push ('scripts')
+        @vite ('resources/js/pages/main-admin.page.js')
         <script>
             function copyTaskLink() {
                 const taskId = window.currentTaskId;
                 if (!taskId) return;
-                const url = window.location.origin + '/team/tasks/' + taskId;
+                const url = window.location.origin + "/team/tasks/" + taskId;
                 navigator.clipboard.writeText(url);
-                showNotification('Ссылка скопирована', 'success');
+                showNotification("Ссылка скопирована", "success");
             }
 
             function printTask() {
@@ -3019,44 +4432,43 @@ console.log('test2')
             // ==================== АРХИВАЦИЯ С МОДАЛЬНЫМ ОКНОМ ====================
             function archiveTask(taskId) {
                 pendingArchiveTaskId = taskId;
-                const modal = document.getElementById('confirmArchiveModal');
-                const modalContent = document.getElementById('confirmArchiveModalContent');
+                const modal = document.getElementById("confirmArchiveModal");
+                const modalContent = document.getElementById("confirmArchiveModalContent");
 
                 if (modal) {
-                    modal.classList.remove('hidden');
+                    modal.classList.remove("hidden");
                     setTimeout(() => {
-                        modalContent.classList.remove('scale-95', 'opacity-0');
-                        modalContent.classList.add('scale-100', 'opacity-100');
+                        modalContent.classList.remove("scale-95", "opacity-0");
+                        modalContent.classList.add("scale-100", "opacity-100");
                     }, 10);
                 }
             }
 
-
             // ==================== ВОССТАНОВЛЕНИЕ С МОДАЛЬНЫМ ОКНОМ ====================
             function restoreTask(taskId) {
                 pendingRestoreTaskId = taskId;
-                const modal = document.getElementById('confirmRestoreModal');
-                const modalContent = document.getElementById('confirmRestoreModalContent');
+                const modal = document.getElementById("confirmRestoreModal");
+                const modalContent = document.getElementById("confirmRestoreModalContent");
 
                 if (modal) {
-                    modal.classList.remove('hidden');
+                    modal.classList.remove("hidden");
                     setTimeout(() => {
-                        modalContent.classList.remove('scale-95', 'opacity-0');
-                        modalContent.classList.add('scale-100', 'opacity-100');
+                        modalContent.classList.remove("scale-95", "opacity-0");
+                        modalContent.classList.add("scale-100", "opacity-100");
                     }, 10);
                 }
             }
 
             function closeConfirmRestoreModal() {
-                const modal = document.getElementById('confirmRestoreModal');
-                const modalContent = document.getElementById('confirmRestoreModalContent');
+                const modal = document.getElementById("confirmRestoreModal");
+                const modalContent = document.getElementById("confirmRestoreModalContent");
 
                 if (modal) {
-                    modalContent.classList.remove('scale-100', 'opacity-100');
-                    modalContent.classList.add('scale-95', 'opacity-0');
+                    modalContent.classList.remove("scale-100", "opacity-100");
+                    modalContent.classList.add("scale-95", "opacity-0");
 
                     setTimeout(() => {
-                        modal.classList.add('hidden');
+                        modal.classList.add("hidden");
                         pendingRestoreTaskId = null;
                     }, 300);
                 }
@@ -3065,34 +4477,39 @@ console.log('test2')
             async function confirmRestore() {
                 if (!pendingRestoreTaskId) return;
 
-                const confirmBtn = document.querySelector('#confirmRestoreModal .bg-green-500');
+                const confirmBtn = document.querySelector(
+                    "#confirmRestoreModal .bg-green-500",
+                );
                 const originalText = confirmBtn.innerHTML;
-                confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Восстановление...';
+                confirmBtn.innerHTML =
+                    '<i class="fas fa-spinner fa-spin mr-2"></i>Восстановление...';
                 confirmBtn.disabled = true;
 
                 try {
                     const response = await fetch(`/tasks/${pendingRestoreTaskId}/restore`, {
-                        method: 'PATCH',
+                        method: "PATCH",
                         headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
-                            'Accept': 'application/json'
-                        }
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN":
+                                document.querySelector('meta[name="csrf-token"]')
+                                    ?.content || "{{ csrf_token() }}",
+                            Accept: "application/json",
+                        },
                     });
 
                     const data = await response.json();
 
                     if (data.success) {
-                        showNotification(data.message, 'success');
+                        showNotification(data.message, "success");
                         closeConfirmRestoreModal();
                         setTimeout(() => location.reload(), 1500);
                     } else {
-                        showNotification(data.message, 'error');
+                        showNotification(data.message, "error");
                         closeConfirmRestoreModal();
                     }
                 } catch (error) {
-                    console.error('Ошибка:', error);
-                    showNotification('Ошибка при восстановлении задачи', 'error');
+                    console.error("Ошибка:", error);
+                    showNotification("Ошибка при восстановлении задачи", "error");
                     closeConfirmRestoreModal();
                 } finally {
                     confirmBtn.innerHTML = originalText;
@@ -3103,28 +4520,32 @@ console.log('test2')
             // ==================== ПОЛНОЕ УДАЛЕНИЕ С МОДАЛЬНЫМ ОКНОМ ====================
             function forceDeleteTask(taskId) {
                 pendingForceDeleteTaskId = taskId;
-                const modal = document.getElementById('confirmForceDeleteModal');
-                const modalContent = document.getElementById('confirmForceDeleteModalContent');
+                const modal = document.getElementById("confirmForceDeleteModal");
+                const modalContent = document.getElementById(
+                    "confirmForceDeleteModalContent",
+                );
 
                 if (modal) {
-                    modal.classList.remove('hidden');
+                    modal.classList.remove("hidden");
                     setTimeout(() => {
-                        modalContent.classList.remove('scale-95', 'opacity-0');
-                        modalContent.classList.add('scale-100', 'opacity-100');
+                        modalContent.classList.remove("scale-95", "opacity-0");
+                        modalContent.classList.add("scale-100", "opacity-100");
                     }, 10);
                 }
             }
 
             function closeConfirmForceDeleteModal() {
-                const modal = document.getElementById('confirmForceDeleteModal');
-                const modalContent = document.getElementById('confirmForceDeleteModalContent');
+                const modal = document.getElementById("confirmForceDeleteModal");
+                const modalContent = document.getElementById(
+                    "confirmForceDeleteModalContent",
+                );
 
                 if (modal) {
-                    modalContent.classList.remove('scale-100', 'opacity-100');
-                    modalContent.classList.add('scale-95', 'opacity-0');
+                    modalContent.classList.remove("scale-100", "opacity-100");
+                    modalContent.classList.add("scale-95", "opacity-0");
 
                     setTimeout(() => {
-                        modal.classList.add('hidden');
+                        modal.classList.add("hidden");
                         pendingForceDeleteTaskId = null;
                     }, 300);
                 }
@@ -3133,34 +4554,42 @@ console.log('test2')
             async function confirmForceDelete() {
                 if (!pendingForceDeleteTaskId) return;
 
-                const confirmBtn = document.querySelector('#confirmForceDeleteModal .bg-red-500');
+                const confirmBtn = document.querySelector(
+                    "#confirmForceDeleteModal .bg-red-500",
+                );
                 const originalText = confirmBtn.innerHTML;
-                confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Удаление...';
+                confirmBtn.innerHTML =
+                    '<i class="fas fa-spinner fa-spin mr-2"></i>Удаление...';
                 confirmBtn.disabled = true;
 
                 try {
-                    const response = await fetch(`/tasks/${pendingForceDeleteTaskId}/force-delete`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
-                            'Accept': 'application/json'
-                        }
-                    });
+                    const response = await fetch(
+                        `/tasks/${pendingForceDeleteTaskId}/force-delete`,
+                        {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN":
+                                    document.querySelector('meta[name="csrf-token"]')
+                                        ?.content || "{{ csrf_token() }}",
+                                Accept: "application/json",
+                            },
+                        },
+                    );
 
                     const data = await response.json();
 
                     if (data.success) {
-                        showNotification(data.message, 'success');
+                        showNotification(data.message, "success");
                         closeConfirmForceDeleteModal();
                         setTimeout(() => location.reload(), 1500);
                     } else {
-                        showNotification(data.message, 'error');
+                        showNotification(data.message, "error");
                         closeConfirmForceDeleteModal();
                     }
                 } catch (error) {
-                    console.error('Ошибка:', error);
-                    showNotification('Ошибка при удалении задачи', 'error');
+                    console.error("Ошибка:", error);
+                    showNotification("Ошибка при удалении задачи", "error");
                     closeConfirmForceDeleteModal();
                 } finally {
                     confirmBtn.innerHTML = originalText;
@@ -3169,15 +4598,16 @@ console.log('test2')
             }
 
             // Закрытие модальных окон по клику на фон
-            document.addEventListener('click', function(e) {
-                if (e.target.id === 'confirmArchiveModal') closeConfirmArchiveModal();
-                if (e.target.id === 'confirmRestoreModal') closeConfirmRestoreModal();
-                if (e.target.id === 'confirmForceDeleteModal') closeConfirmForceDeleteModal();
+            document.addEventListener("click", function (e) {
+                if (e.target.id === "confirmArchiveModal") closeConfirmArchiveModal();
+                if (e.target.id === "confirmRestoreModal") closeConfirmRestoreModal();
+                if (e.target.id === "confirmForceDeleteModal")
+                    closeConfirmForceDeleteModal();
             });
 
             // Закрытие по Escape
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
+            document.addEventListener("keydown", function (e) {
+                if (e.key === "Escape") {
                     closeConfirmArchiveModal();
                     closeConfirmRestoreModal();
                     closeConfirmForceDeleteModal();
@@ -3185,10 +4615,13 @@ console.log('test2')
             });
 
             // Закрывать меню при клике вне его
-            document.addEventListener('click', function(event) {
-                document.querySelectorAll('[id^="dropdown-"]').forEach(dropdown => {
-                    if (!dropdown.contains(event.target) && !event.target.closest('[onclick*="toggleDropdown"]')) {
-                        dropdown.classList.add('hidden');
+            document.addEventListener("click", function (event) {
+                document.querySelectorAll('[id^="dropdown-"]').forEach((dropdown) => {
+                    if (
+                        !dropdown.contains(event.target) &&
+                        !event.target.closest('[onclick*="toggleDropdown"]')
+                    ) {
+                        dropdown.classList.add("hidden");
                     }
                 });
             });
@@ -3196,58 +4629,77 @@ console.log('test2')
     @endpush
 
     <style>
-
         .task-card {
             transition: all 0.2s ease-in-out;
         }
+
         .task-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
+
         .board-column {
             min-height: 600px;
         }
-        @media(max-width:500px) {
+
+        @media (max-width: 500px) {
             .board-column {
                 min-height: auto;
             }
         }
+
         .tab-button {
             border-color: transparent;
             color: #6b7280;
         }
+
         .tab-button:hover {
             color: #374151;
             border-color: #d1d5db;
         }
+
         .tab-button.active {
             border-color: #10b981;
             color: #10b981;
         }
+
         .tab-content {
             display: none;
         }
+
         .tab-content.active {
             display: block;
             animation: fadeIn 0.3s ease-out;
         }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .file-card {
             transition: all 0.2s ease;
         }
+
         .file-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
+
         .file-upload-area.drag-over {
             border-color: #10b981;
             background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
             transform: scale(0.98);
         }
-         .modal-content {
+
+        .modal-content {
             animation: fadeIn 0.3s ease-out;
             scrollbar-width: none;
             -ms-overflow-style: none;
@@ -3256,56 +4708,68 @@ console.log('test2')
         .modal-content::-webkit-scrollbar {
             display: none;
         }
+
         .task-menu {
             animation: fadeIn 0.15s ease-out;
         }
+
         .board-column.drag-over {
             background-color: rgba(229, 231, 235, 0.5) !important;
             border-radius: 0.5rem;
             transition: all 0.2s ease;
         }
+
         .board-column.drag-over-active {
             background-color: rgba(16, 185, 129, 0.2) !important;
             border: 2px dashed #10b981;
         }
+
         .line-clamp-2 {
             overflow: hidden;
             display: -webkit-box;
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 2;
         }
+
         .truncate {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+
         .rejection-item {
             background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
             border-left: 4px solid #ef4444;
             transition: all 0.2s ease;
         }
+
         .rejection-item:hover {
             transform: translateX(4px);
             box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
         }
+
         @media (max-width: 500px) {
             .board-column {
                 flex-shrink: 0 !important;
                 width: 87% !important;
                 max-width: 87% !important;
             }
+
             .board-column:first-child,
             .board-column:last-child {
                 width: 92% !important;
                 max-width: 92% !important;
             }
-            .task-card, .task-card * {
+
+            .task-card,
+            .task-card * {
                 touch-action: pan-x pan-y !important;
                 -webkit-user-select: none !important;
                 user-select: none !important;
                 -webkit-touch-callout: none !important;
             }
         }
+
         .sw-v-wrapper {
             display: flex;
             width: 100%;
@@ -3315,7 +4779,5 @@ console.log('test2')
             transition-property: transform;
             box-sizing: content-box;
         }
-
-
     </style>
 @endsection
