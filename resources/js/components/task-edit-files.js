@@ -7,7 +7,6 @@ window.taskEditState = window.taskEditState || {
 };
 const state = window.taskEditState;
 
-
 function applyCardState(checkbox, selected) {
     checkbox.checked = selected;
     const card = checkbox.closest(".file-card");
@@ -16,7 +15,6 @@ function applyCardState(checkbox, selected) {
     card.classList.toggle("shadow-md", selected);
     card.classList.toggle("border-gray-200", !selected);
 }
-
 
 export function updateEditSelectedFilesDisplay() {
     const container = document.getElementById("editSelectedFilesContainer");
@@ -74,7 +72,6 @@ export function clearTaskEditSelectedFiles() {
         updateEditSelectedFilesDisplay();
     }
 }
-
 
 export async function openTaskStorageManager() {
     const modal = document.getElementById("fileManagerModal");
@@ -183,7 +180,6 @@ export function renderTaskEditFiles(files) {
     updateTaskEditSelectedCount();
 }
 
-
 export function toggleTaskEditFileSelection(fileId) {
     fileId = Number(fileId);
 
@@ -223,7 +219,6 @@ export function updateTaskEditSelectedCount() {
         confirmBtn.classList.toggle("cursor-not-allowed", n === 0);
     }
 }
-
 export function confirmEditFileSelectionForEdit() {
     state.selected = [...state.temp];
     updateEditSelectedFilesDisplay();
@@ -248,6 +243,7 @@ Object.assign(window, {
     updateEditSelectedFilesDisplay,
     removeEditSelectedFile,
     clearTaskEditSelectedFiles,
+    clearEditSelectedFiles:clearTaskEditSelectedFiles,
     // старые имена
     openTaskEditFileManager: openTaskStorageManager,
     removeTaskEditSelectedFile: removeEditSelectedFile,

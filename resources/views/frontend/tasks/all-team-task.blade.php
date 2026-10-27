@@ -28,10 +28,10 @@
                         </nav>
             <div class="max-[500px]:hidden">
                 @if($backgroundEnabled && $backgroundImage)
-                    <h2 class="text-3xl font-bold text-white">Все задачи</h2>
+                    <h2 class="text-3xl font-bold text-white">Все задачи компании</h2>
                     <p class="text-white text-sm">Архив всех ваших задач</p>
                 @else
-                    <h2 class="text-3xl font-bold text-[#16a34a]">Все задачи</h2>
+                    <h2 class="text-3xl font-bold text-[#16a34a]">Все задачи компании</h2>
                     <p class="text-gray-700 text-sm">Архив всех ваших задач</p>
                 @endif
             </div>
@@ -422,7 +422,9 @@
 
     @include('partials.modal.task.show')
 
-
+    @include('partials.modal.task.edit-modal')
+ <!-- Модальное окно файлового менеджера -->
+    @include('partials.modal.task.task-files-edit-modal')
     <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 max-[500px]:p-6">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 class="text-lg font-semibold mb-4">Отказ от задачи</h3>
@@ -469,11 +471,6 @@
         let currentTaskId = null;
         let currentRows = [];
 
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', function () {
-            updateVisibleCount();
-        });
-
         // Переключение панели фильтров
         function toggleFilters() {
             const panel = document.getElementById('filtersPanel');
@@ -489,7 +486,6 @@
                 icon.classList.add('fa-chevron-down');
             }
         }
-
         // Применить фильтры
         function applyFilters() {
             const status = document.getElementById('statusFilter').value;
@@ -610,11 +606,6 @@
                     break;
             }
             sortTasks();
-        }
-
-        function updateVisibleCount() {
-            const visible = document.querySelectorAll('.task-row:not([style*="display: none"])').length;
-            document.getElementById('visibleCount').textContent = visible;
         }
 
         // Открыть модальное окно просмотра задачи
@@ -939,6 +930,290 @@
                 closeTaskViewModal('/team/all-tasks');
             }
         });
+    </script>
+    <script>
+          // ==================== ФУНКЦИИ ДЛЯ РЕДАКТИРОВАНИЯ ====================
+        let currentEditTaskId = null;
+        async function openEditModal(taskId) {
+            currentEditTaskId = taskId;
+            taskEditSelectedFiles = [];
+
+            try {
+                const response = await fetch(`/tasks/${taskId}/get`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const task = data.task;
+
+                    const currentUserId = {{ auth()->id() }};
+                    const isLeader = {{ auth()->user()->isLeader() ? 'true' : 'false' }};
+
+                    if (task.author_id !== currentUserId && !isLeader) {
+                        showNotification('Вы не можете редактировать эту задачу. Редактировать может только автор задачи или руководитель.','error');
+                        return;
+                    }
+
+                    document.getElementById('editTaskId').value = task.id;
+                    document.getElementById('editTaskName').value = task.name;
+                    document.getElementById('editTaskDescription').value = task.description || '';
+                    document.getElementById('editTaskDepartment').value = task.department_id || '';
+                    document.getElementById('editTaskCategory').value = task.category_id || '';
+                    document.getElementById('editTaskUser').value = task.user_id || '';
+                    document.getElementById('editTaskPriority').value = task.priority || 'средний';
+                    document.getElementById('editTaskStatus').value = task.status;
+                    document.getElementById('editTaskDeadline').value = task.deadline ? task.deadline.slice(0, 16) : '';
+                    document.getElementById('editTaskEstimatedHours').value = task.estimated_hours || '';
+                    document.getElementById('editTaskActualHours').value = task.actual_hours || '';
+
+                    if (task.files && task.files.length > 0) {
+                        window.taskEditState.selected = task.files;
+                        console.log('Загружены файлы задачи11:',  window.taskEditState.selected.map(f => f.id));
+                        window.updateTaskEditSelectedFilesDisplay();
+                    } else {
+                        window.updateTaskEditSelectedFilesDisplay();
+                    }
+
+                    document.getElementById('editTaskModal').classList.remove('hidden');
+                } else {
+                    showNotification(data.message || 'Ошибка при загрузке задачи','error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('Ошибка при загрузке данных задачи','error');
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editTaskModal').classList.add('hidden');
+            document.getElementById('editTaskForm').reset();
+            currentEditTaskId = null;
+            taskEditSelectedFiles = [];
+            document.getElementById('editUploadNewFilesInput').value = '';
+            document.getElementById('editUploadFilesList').classList.add('hidden');
+        }
+    </script>
+    <script>
+         async function openEditFileManager() {
+            console.log('openEditModal')
+            const modal = document.getElementById('fileManagerModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+                window.taskEditState.temp = [...window.taskEditState.selected];
+                await loadEditFiles();
+            }
+        }
+
+        async function loadEditFiles() {
+            const contentDiv = document.getElementById('fileManagerContent');
+            if (!contentDiv) return;
+            contentDiv.innerHTML = `<div class="col-span-full text-center py-12">
+                    <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
+                    <p class="text-gray-500 mt-2">Загрузка файло1111в...</p>
+                </div>`;
+console.log('1')
+            try {
+                console.log('2')
+                const response = await fetch('/tasks/file-storage/get-files', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    }
+                });
+                console.log('3')
+                if (!response.ok) throw new Error('Ошибка загрузки');
+                console.log('4')
+                window.taskEditState.all = await response.json();
+                console.log('5')
+                window.window.taskEditState.all = window.taskEditState.all;
+                renderEditFileManagerFiles(window.taskEditState.all);
+                initEditFileManagerFilters();
+            } catch (error) {
+                console.error('Ошибка загрузки файлов:', error);
+                contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">
+                <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
+                <p>Ошибка загрузки файлов</p>
+                </div>`;
+            }
+        }
+
+        function renderEditFileManagerFiles(files) {
+            const contentDiv = document.getElementById('fileManagerContent');
+            if (!contentDiv) return;
+            if (!files || files.length === 0) {
+                contentDiv.innerHTML = `<div class="col-span-full text-center py-12">
+                <i class="fas fa-folder-open text-3xl text-gray-300 mb-2"></i>
+                <p class="text-gray-500">Нет файлов в хранилище</p>
+                </div>`;
+                return;
+            }
+
+            let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
+            files.forEach(file => {
+                const isSelected = window.taskEditState.selected.some(f => f.id === file.id);
+                const fileIcon = getFileIcon(file.extension);
+                const fileType = getFileTypeClass(file.extension);
+
+                html += `
+                <div class="file-card bg-white border-2 ${isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200'} rounded-lg p-3 transition-all duration-200 hover:shadow-md cursor-pointer"
+                     onclick="toggleEditFileSelection(${file.id})">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="w-5 h-5 rounded ${isSelected ? 'bg-green-500' : 'border-2 border-gray-300'} flex items-center justify-center">
+                            ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                        </div>
+                        <button type="button"
+                                onclick="event.stopPropagation(); downloadEditFile(${file.id})"
+                                class="text-gray-400 hover:text-green-600 p-1 transition-colors"
+                                title="Скачать">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
+                            <img src="/storage/${file.path}" alt="${escapeHtml(file.name)}" class="w-full h-full object-cover">
+                        </div>
+                        <p class="text-sm font-medium text-gray-800 truncate" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</p>
+                        <p class="text-xs text-gray-500 mt-1">${formatFileSize(file.size)}</p>
+                        <p class="text-xs text-gray-400">${formatDate(file.created_at)}</p>
+                    </div>
+                </div>`;
+            });
+            html += '</div>';
+            contentDiv.innerHTML = html;
+
+            updateEditFileManagerUI();
+        }
+
+        function toggleEditFileSelection(fileId) {
+            const file = window.taskEditState.all.find(f => f.id === fileId);
+            if (!file) return;
+
+            const index = window.taskEditState.temp.findIndex(f => f.id === fileId);
+            if (index === -1) {
+                window.taskEditState.temp.push(file);
+            } else {
+                window.taskEditState.temp.splice(index, 1);
+            }
+
+            const fileCards = document.querySelectorAll('#fileManagerContent .file-card');
+            fileCards.forEach(card => {
+                const onclickAttr = card.getAttribute('onclick');
+                if (onclickAttr && onclickAttr.includes(fileId.toString())) {
+                    const isSelected = window.taskEditState.temp.some(f => f.id === fileId);
+                    if (isSelected) {
+                        card.classList.add('border-green-500', 'bg-green-50');
+                        card.classList.remove('border-gray-200');
+                        const checkDiv = card.querySelector('.w-5.h-5');
+                        if (checkDiv) {
+                            checkDiv.classList.add('bg-green-500');
+                            checkDiv.classList.remove('border-2', 'border-gray-300');
+                            checkDiv.innerHTML = '<i class="fas fa-check text-white text-xs"></i>';
+                        }
+                    } else {
+                        card.classList.remove('border-green-500', 'bg-green-50');
+                        card.classList.add('border-gray-200');
+                        const checkDiv = card.querySelector('.w-5.h-5');
+                        if (checkDiv) {
+                            checkDiv.classList.remove('bg-green-500');
+                            checkDiv.classList.add('border-2', 'border-gray-300');
+                            checkDiv.innerHTML = '';
+                        }
+                    }
+                }
+            });
+
+            updateEditFileManagerUI();
+        }
+
+        function updateEditFileManagerUI() {
+            const selectedCount = document.getElementById('selectedCount');
+            const confirmCount = document.getElementById('confirmCount');
+            const confirmBtn = document.getElementById('confirmFileSelectionBtn');
+
+            const count = window.taskEditState.temp.length;
+
+            if (selectedCount) selectedCount.textContent = count;
+            if (confirmCount) confirmCount.textContent = count;
+
+            if (confirmBtn) {
+                confirmBtn.disabled = (count === 0);
+                if (count === 0) {
+                    confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+
+        window.confirmEditFileSelectionForEdit = function() {
+            console.log('confirmFromMainAdmin')
+            window.taskEditState.selected = [...window.taskEditState.temp];
+            updateEditSelectedFilesDisplay();
+
+            const fileManagerModal = document.getElementById('fileManagerModal');
+            if (fileManagerModal) {
+                fileManagerModal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+
+            showNotification(`Выбрано ${window.taskEditState.selected.length} файлов`, 'success');
+        };
+
+        function initEditFileManagerFilters() {
+            const searchInput = document.getElementById('fileManagerSearch');
+            const typeFilter = document.getElementById('fileManagerTypeFilter');
+            const sortBy = document.getElementById('fileManagerSortBy');
+
+            const filter = () => {
+                if (!window.taskEditState.all) return;
+                let filtered = [...window.taskEditState.all];
+                const searchTerm = searchInput?.value.toLowerCase() || '';
+                if (searchTerm) filtered = filtered.filter(f => f.name.toLowerCase().includes(searchTerm));
+                if (typeFilter && typeFilter.value) {
+                    const type = typeFilter.value;
+                    if (type === 'image') filtered = filtered.filter(f => ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(f.extension?.toLowerCase()));
+                    else if (type === 'document') filtered = filtered.filter(f => ['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(f.extension?.toLowerCase()));
+                    else if (type === 'video') filtered = filtered.filter(f => ['mp4', 'avi', 'mov', 'mkv', 'webm'].includes(f.extension?.toLowerCase()));
+                    else if (type === 'audio') filtered = filtered.filter(f => ['mp3', 'wav', 'ogg', 'flac', 'm4a'].includes(f.extension?.toLowerCase()));
+                    else if (type === 'archive') filtered = filtered.filter(f => ['zip', 'rar', '7z', 'tar', 'gz'].includes(f.extension?.toLowerCase()));
+                }
+                if (sortBy && sortBy.value) {
+                    const sort = sortBy.value;
+                    if (sort === 'newest') filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    else if (sort === 'oldest') filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                    else if (sort === 'name_asc') filtered.sort((a, b) => a.name.localeCompare(b.name));
+                    else if (sort === 'name_desc') filtered.sort((a, b) => b.name.localeCompare(a.name));
+                    else if (sort === 'size_asc') filtered.sort((a, b) => (a.size || 0) - (b.size || 0));
+                    else if (sort === 'size_desc') filtered.sort((a, b) => (b.size || 0) - (a.size || 0));
+                }
+                renderEditFileManagerFiles(filtered);
+            };
+
+            if (searchInput) {
+                searchInput.removeEventListener('input', filter);
+                searchInput.addEventListener('input', filter);
+            }
+            if (typeFilter) {
+                typeFilter.removeEventListener('change', filter);
+                typeFilter.addEventListener('change', filter);
+            }
+            if (sortBy) {
+                sortBy.removeEventListener('change', filter);
+                sortBy.addEventListener('change', filter);
+            }
+        }
+
+        function downloadEditFile(fileId) {
+            window.open(`/file-storage/download/${fileId}`, '_blank');
+        }
     </script>
 @endpush
 

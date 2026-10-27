@@ -39,6 +39,7 @@
             class="px-8 py-6 space-y-7 max-[500px]:px-5 max-[500px]:py-4"
         >
             @csrf
+             <input type="hidden" name="task_id" id="editTaskId">
             <input
                 type="hidden"
                 name="selected_file_ids"

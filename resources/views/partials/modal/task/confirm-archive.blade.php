@@ -97,7 +97,19 @@
              confirmBtn.disabled = false;
          }
      }
+function archiveTask(taskId) {
+                pendingArchiveTaskId = taskId;
+                const modal = document.getElementById("confirmArchiveModal");
+                const modalContent = document.getElementById("confirmArchiveModalContent");
 
+                if (modal) {
+                    modal.classList.remove("hidden");
+                    setTimeout(() => {
+                        modalContent.classList.remove("scale-95", "opacity-0");
+                        modalContent.classList.add("scale-100", "opacity-100");
+                    }, 10);
+                }
+            }
      function closeConfirmArchiveModal() {
          console.log('confirm-archive.blade.php closeConfirmArchiveModal')
          const modal = document.getElementById('confirmArchiveModal');
