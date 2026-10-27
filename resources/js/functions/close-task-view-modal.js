@@ -10,5 +10,6 @@
             if (content) {
                 content.innerHTML = `<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i><p class="text-gray-500 mt-2">Загрузка задачи...</p></div>`;
             }
+             document.body.classList.remove('overflow-y-hidden')
             window.history.pushState({}, '', url);
         }
