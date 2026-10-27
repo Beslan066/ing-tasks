@@ -19,7 +19,8 @@ import {
     submitForReview,
     closeRejectModal,
     closeTimeModal,
-    submitRejection
+    submitRejection,
+    approveTask
 } from './../functions/welcome-page/personal-task.functions.js'
 
 
@@ -34,7 +35,7 @@ window.closeTaskModal=closeTaskModal;
 window.closeRejectModal=closeRejectModal;
 window.closeTimeModal=closeTimeModal;
 window.submitRejection=submitRejection;
-
+window.approveTask=approveTask;
 Object.assign(window, fileHelpers);
 Object.assign(window, welcomeFilters)
 

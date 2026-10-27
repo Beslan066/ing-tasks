@@ -78,7 +78,7 @@
 
         <div class="flex space-x-4 w-full md:w-auto">
             <x-ui.button
-                class="flex-1 px-3 py-2 md:px-6 md:py-2"
+                class="flex-1 px-3 py-2 md:px-6 md:py-2 text-[16px]"
                 variant="action"
                 icon="fas fa-plus"
                 onclick="window.openPersonalTaskModal()"
@@ -1042,6 +1042,15 @@
                                                         В архив
                                                     </button>
                                                 @endif
+                                                <button
+                                                    onclick="window.approveTask({{ $task->id }})"
+                                                    class="w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-gray-100 flex items-center"
+                                                >
+                                                    <i
+                                                        class="fas fa-check-circle mr-2"
+                                                    ></i>
+                                                    Завершить
+                                                </button>
                                                 <button
                                                     onclick="window.showRejectModal({{ $task->id }})"
                                                     class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"

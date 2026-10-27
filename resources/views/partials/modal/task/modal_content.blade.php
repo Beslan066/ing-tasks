@@ -234,7 +234,7 @@
                     <x-ui.button
                         variant="action"
                         icon="fas fa-check"
-                        onclick="startTask({{ $task->id }})"
+                        onclick="approveTask({{ $task->id }})"
                         class="col-span-3 max-[1250px]:col-span-2 max-[800px]:col-span-4">
                         Завершить
                     </x-ui.button>

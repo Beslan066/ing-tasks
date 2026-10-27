@@ -906,7 +906,30 @@
                 alert('Ошибка при отказе от задачи');
             }
         }
-
+ async function approveTask(taskId) {
+            try {
+                const response = await fetch(`/tasks/${taskId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        status: 'выполнена'
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showNotification('Задача одобрена и завершена!', 'success');
+                    location.reload();
+                } else {
+                    showNotification(data.message || 'Ошибка при одобрении задачи', 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('Ошибка при одобрении задачи', 'error');
+            }
+        }
         function closeTimeModal() {
             document.getElementById('timeModal').classList.add('hidden');
             document.getElementById('actualHours').value = '';
