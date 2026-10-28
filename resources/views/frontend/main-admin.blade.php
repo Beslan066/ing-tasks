@@ -412,11 +412,22 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                             <div
                                 class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4"
                             >
-                                 <x-ui.button variant="primary" onclick="window.mainPageFilters.updateViewModeBeforeSubmit()">
+                                <x-ui.button
+                                    variant="primary"
+                                    onclick="
+                                        window.mainPageFilters.updateViewModeBeforeSubmit()
+                                    "
+                                >
                                     Применить фильтры
                                 </x-ui.button>
 
-                                <x-ui.button type="submit" variant="secondary"  onclick="window.mainPageFilters.resetWithCurrentMode()">
+                                <x-ui.button
+                                    type="submit"
+                                    variant="secondary"
+                                    onclick="
+                                        window.mainPageFilters.resetWithCurrentMode()
+                                    "
+                                >
                                     Сбросить
                                 </x-ui.button>
                             </div>
@@ -1634,181 +1645,184 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                                 </div>
                                 <div class="md:hidden space-y-3 p-4">
                                     @forelse ($tasks as $task)
-                                    <div
-                                        class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif"
-                                        onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})"
-                                    >
                                         <div
-                                            class="flex justify-between items-start mb-3"
+                                            class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif"
+                                            onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})"
                                         >
-                                            <div class="flex-1">
-                                                <div
-                                                    class="flex items-center flex-wrap gap-2 mb-1"
-                                                >
-                                                    <h3
-                                                        class="font-semibold text-gray-900 truncate max-[450px]:!whitespace-normal max-[450px]:!overflow-visible max-[500px]:!text-wrap"
+                                            <div
+                                                class="flex justify-between items-start mb-3"
+                                            >
+                                                <div class="flex-1">
+                                                    <div
+                                                        class="flex items-center flex-wrap gap-2 mb-1"
                                                     >
-                                                        {{ $task->name }}
-                                                    </h3>
+                                                        <h3
+                                                            class="font-semibold text-gray-900 truncate max-[450px]:!whitespace-normal max-[450px]:!overflow-visible max-[500px]:!text-wrap"
+                                                        >
+                                                            {{ $task->name }}
+                                                        </h3>
+                                                        @if ($task->trashed())
+                                                            <span
+                                                                class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full"
+                                                                ><i
+                                                                    class="fas fa-trash mr-1"
+                                                                ></i
+                                                                >Удалена</span
+                                                            >
+                                                        @endif
+                                                    </div>
+                                                    <div
+                                                        class="text-sm text-gray-600 mb-2 line-clamp-2 max-[500px]:hidden"
+                                                    >
+                                                        {{ $task->description }}
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="relative action-buttons-mobile"
+                                                >
+                                                    @if (!$task->trashed())
+                                                        <!-- Кнопка с тремя точками для мобильной версии -->
+                                                        <button
+                                                            onclick="window.toggleDropdown(event, {{ $task->id }})"
+                                                            class="text-gray-600 hover:text-gray-800 p-1 transition-colors"
+                                                            title="Действия"
+                                                        >
+                                                            <i
+                                                                class="fas fa-ellipsis-v text-lg"
+                                                            ></i>
+                                                        </button>
+
+                                                        <!-- Выпадающее меню для мобильной версии -->
+                                                        <div
+                                                            id="dropdown-{{ $task->id }}"
+                                                            class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden"
+                                                        >
+                                                            <div class="py-1">
+                                                                <button
+                                                                    onclick="openEditModal({{ $task->id }})"
+                                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                >
+                                                                    <i
+                                                                        class="fa-solid fa-file-pen text-yellow-600 w-4"
+                                                                    ></i>
+                                                                    Редактировать
+                                                                </button>
+
+                                                                <button
+                                                                    onclick="openCreateSubtaskModal({{ $task->id }})"
+                                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                >
+                                                                    <i
+                                                                        class="fa-solid fa-list text-blue-600 w-4"
+                                                                    ></i>
+                                                                    Подзадача
+                                                                </button>
+
+                                                                @if ($task->status === 'на проверке')
+                                                                    <button
+                                                                        onclick="returnToWork({{ $task->id }})"
+                                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                    >
+                                                                        <i
+                                                                            class="fas fa-redo text-orange-600 w-4"
+                                                                        ></i>
+                                                                        Вернуть
+                                                                        на
+                                                                        доработку
+                                                                    </button>
+                                                                @endif
+
+                                                                @if ($task->author_id === Auth::id())
+                                                                    <button
+                                                                        onclick="openDeleteModal({{ $task->id }})"
+                                                                        class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-t border-gray-100"
+                                                                    >
+                                                                        <i
+                                                                            class="fa-solid fa-trash w-4"
+                                                                        ></i>
+                                                                        Удалить
+                                                                    </button>
+                                                                @else
+                                                                    <button
+                                                                        class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2 border-t border-gray-100"
+                                                                        disabled
+                                                                        title="Можно удалять только свои задачи"
+                                                                    >
+                                                                        <i
+                                                                            class="fa-solid fa-trash w-4"
+                                                                        ></i>
+                                                                        Удалить
+                                                                    </button>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="space-y-2">
+                                                <div
+                                                    class="flex items-center max-[500px]:hidden"
+                                                >
+                                                    <span
+                                                        class="text-sm text-gray-600 w-20"
+                                                        >Статус:</span
+                                                    >
                                                     @if ($task->trashed())
                                                         <span
-                                                            class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full"
-                                                            ><i
-                                                                class="fas fa-trash mr-1"
-                                                            ></i
+                                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800"
                                                             >Удалена</span
+                                                        >
+                                                    @else
+                                                        <span
+                                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }} {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }} {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }} {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }} {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}"
+                                                            >{{ $task->status }}</span
                                                         >
                                                     @endif
                                                 </div>
                                                 <div
-                                                    class="text-sm text-gray-600 mb-2 line-clamp-2 max-[500px]:hidden"
+                                                    class="flex items-center max-[500px]:gap-1 max-[500px]:hidden"
                                                 >
-                                                    {{ $task->description }}
-                                                </div>
-                                            </div>
-                                            <div
-                                                class="relative action-buttons-mobile"
-                                            >
-                                                @if (!$task->trashed())
-                                                    <!-- Кнопка с тремя точками для мобильной версии -->
-                                                    <button
-                                                        onclick="window.toggleDropdown(event, {{ $task->id }})"
-                                                        class="text-gray-600 hover:text-gray-800 p-1 transition-colors"
-                                                        title="Действия"
+                                                    <span
+                                                        class="text-sm text-gray-600 w-20 max-[500px]:w-auto"
+                                                        >Исполнитель:</span
                                                     >
-                                                        <i
-                                                            class="fas fa-ellipsis-v text-lg"
-                                                        ></i>
-                                                    </button>
-
-                                                    <!-- Выпадающее меню для мобильной версии -->
-                                                    <div
-                                                        id="dropdown-{{ $task->id }}"
-                                                        class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden"
-                                                    >
-                                                        <div class="py-1">
-                                                            <button
-                                                                onclick="openEditModal({{ $task->id }})"
-                                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                    @if ($task->user)
+                                                        <div
+                                                            class="flex items-center"
+                                                        >
+                                                            <div
+                                                                class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium mr-2"
                                                             >
-                                                                <i
-                                                                    class="fa-solid fa-file-pen text-yellow-600 w-4"
-                                                                ></i>
-                                                                Редактировать
-                                                            </button>
-
-                                                            <button
-                                                                onclick="openCreateSubtaskModal({{ $task->id }})"
-                                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                                                                {{ substr($task->user->name, 0, 2) }}
+                                                            </div>
+                                                            <span
+                                                                class="text-sm font-medium"
+                                                                >{{ $task->user->name }}</span
                                                             >
-                                                                <i
-                                                                    class="fa-solid fa-list text-blue-600 w-4"
-                                                                ></i>
-                                                                Подзадача
-                                                            </button>
-
-                                                            @if ($task->status === 'на проверке')
-                                                                <button
-                                                                    onclick="returnToWork({{ $task->id }})"
-                                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
-                                                                >
-                                                                    <i
-                                                                        class="fas fa-redo text-orange-600 w-4"
-                                                                    ></i>
-                                                                    Вернуть на
-                                                                    доработку
-                                                                </button>
-                                                            @endif
-
-                                                            @if ($task->author_id === Auth::id())
-                                                                <button
-                                                                    onclick="openDeleteModal({{ $task->id }})"
-                                                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-t border-gray-100"
-                                                                >
-                                                                    <i
-                                                                        class="fa-solid fa-trash w-4"
-                                                                    ></i>
-                                                                    Удалить
-                                                                </button>
-                                                            @else
-                                                                <button
-                                                                    class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2 border-t border-gray-100"
-                                                                    disabled
-                                                                    title="Можно удалять только свои задачи"
-                                                                >
-                                                                    <i
-                                                                        class="fa-solid fa-trash w-4"
-                                                                    ></i>
-                                                                    Удалить
-                                                                </button>
-                                                            @endif
                                                         </div>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="space-y-2">
-                                            <div
-                                                class="flex items-center max-[500px]:hidden"
-                                            >
-                                                <span
-                                                    class="text-sm text-gray-600 w-20"
-                                                    >Статус:</span
+                                                    @else
+                                                        <span
+                                                            class="text-sm text-gray-500"
+                                                            >Не назначен</span
+                                                        >
+                                                    @endif
+                                                </div>
+                                                <div
+                                                    class="grid grid-cols-2 gap-2 max-[450px]:grid-cols-1"
                                                 >
-                                                @if ($task->trashed())
-                                                    <span
-                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800"
-                                                        >Удалена</span
-                                                    >
-                                                @else
-                                                    <span
-                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $task->status === 'выполнена' ? 'bg-green-100 text-green-800' : '' }} {{ $task->status === 'в работе' ? 'bg-blue-100 text-blue-800' : '' }} {{ $task->status === 'не назначена' ? 'bg-yellow-100 text-yellow-800' : '' }} {{ $task->status === 'просрочена' ? 'bg-red-100 text-red-800' : '' }} {{ $task->status === 'на проверке' ? 'bg-orange-100 text-orange-800' : '' }}"
-                                                        >{{ $task->status }}</span
-                                                    >
-                                                @endif
-                                            </div>
-                                            <div
-                                                class="flex items-center max-[500px]:gap-1 max-[500px]:hidden"
-                                            >
-                                                <span
-                                                    class="text-sm text-gray-600 w-20 max-[500px]:w-auto"
-                                                    >Исполнитель:</span
-                                                >
-                                                @if ($task->user)
                                                     <div
                                                         class="flex items-center"
                                                     >
-                                                        <div
-                                                            class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium mr-2"
-                                                        >
-                                                            {{ substr($task->user->name, 0, 2) }}
-                                                        </div>
                                                         <span
-                                                            class="text-sm font-medium"
-                                                            >{{ $task->user->name }}</span
+                                                            class="text-sm text-gray-600 w-16"
+                                                            >Отдел:</span
+                                                        >
+                                                        <span
+                                                            class="text-sm"
+                                                            >{{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : '—') }}</span
                                                         >
                                                     </div>
-                                                @else
-                                                    <span
-                                                        class="text-sm text-gray-500"
-                                                        >Не назначен</span
-                                                    >
-                                                @endif
-                                            </div>
-                                            <div
-                                                class="grid grid-cols-2 gap-2 max-[450px]:grid-cols-1"
-                                            >
-                                                <div class="flex items-center">
-                                                    <span
-                                                        class="text-sm text-gray-600 w-16"
-                                                        >Отдел:</span
-                                                    >
-                                                    <span
-                                                        class="text-sm"
-                                                        >{{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : '—') }}</span
-                                                    >
-                                                </div>
-                                                @php
+                                                    @php
                                         $priorityStyles = [
                                         'низкий' => ['level' => 1, 'color' => 'gray', 'bg' => 'bg-gray-50', 'border' => 'border-gray-200', 'filled' => 'bg-gray-500', 'empty' => 'bg-gray-200', 'text' => 'text-gray-700'],
                                         'средний' => ['level' => 2, 'color' => 'blue', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'filled' => 'bg-blue-500', 'empty' => 'bg-blue-100', 'text' => 'text-blue-700'],
@@ -1817,139 +1831,155 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                                         ];
                                         $style = $priorityStyles[$task->priority] ?? $priorityStyles['средний'];
                                         @endphp
-                                                <div
-                                                    class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $style['bg'] }} border {{ $style['border'] }}"
-                                                >
                                                     <div
-                                                        class="flex items-end gap-[3px] h-5"
+                                                        class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md {{ $style['bg'] }} border {{ $style['border'] }}"
                                                     >
                                                         <div
-                                                            class="w-1.5 rounded-sm {{ $style['level'] >= 1 ? $style['filled'] : $style['empty'] }} h-2"
-                                                        ></div>
-                                                        <div
-                                                            class="w-1.5 rounded-sm {{ $style['level'] >= 2 ? $style['filled'] : $style['empty'] }} h-3"
-                                                        ></div>
-                                                        <div
-                                                            class="w-1.5 rounded-sm {{ $style['level'] >= 3 ? $style['filled'] : $style['empty'] }} h-4"
-                                                        ></div>
-                                                        <div
-                                                            class="w-1.5 rounded-sm {{ $style['level'] >= 4 ? $style['filled'] : $style['empty'] }} h-5"
-                                                        ></div>
-                                                    </div>
-                                                    <span
-                                                        class="text-xs font-medium {{ $style['text'] }}"
-                                                        >{{ ucfirst($task->priority) }}</span
-                                                    >
-                                                </div>
-                                            </div>
-                                            <div
-                                                class="grid grid-cols-2 gap-2 max-[450px]:grid-cols-1"
-                                            >
-                                                <div class="flex items-center">
-                                                    <span
-                                                        class="text-sm text-gray-600 w-16"
-                                                        >Автор:</span
-                                                    >
-                                                    <span
-                                                        class="text-sm truncate"
-                                                        >{{ $task->author->name ?? '—' }}</span
-                                                    >
-                                                </div>
-                                                <div
-                                                    class="flex items-center max-[500px]:gap-2"
-                                                >
-                                                    <span
-                                                        class="text-sm text-gray-600 w-16 max-[500px]:w-auto"
-                                                        >Дедлайн:</span
-                                                    >
-                                                    @if ($task->deadline && !$task->trashed())
-                                                        <div
-                                                            class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }}"
+                                                            class="flex items-end gap-[3px] h-5"
                                                         >
                                                             <div
-                                                                class="text-sm"
-                                                            >
-                                                                {{ $task->deadline->format('d.m.Y') }}
-                                                            </div>
+                                                                class="w-1.5 rounded-sm {{ $style['level'] >= 1 ? $style['filled'] : $style['empty'] }} h-2"
+                                                            ></div>
                                                             <div
-                                                                class="text-xs {{ $task->isOverdue() ? 'text-red-500' : 'text-gray-400' }}"
-                                                            >
-                                                                {{ $task->getTimeRemaining() }}
-                                                            </div>
+                                                                class="w-1.5 rounded-sm {{ $style['level'] >= 2 ? $style['filled'] : $style['empty'] }} h-3"
+                                                            ></div>
+                                                            <div
+                                                                class="w-1.5 rounded-sm {{ $style['level'] >= 3 ? $style['filled'] : $style['empty'] }} h-4"
+                                                            ></div>
+                                                            <div
+                                                                class="w-1.5 rounded-sm {{ $style['level'] >= 4 ? $style['filled'] : $style['empty'] }} h-5"
+                                                            ></div>
                                                         </div>
-                                                    @else
                                                         <span
-                                                            class="text-gray-400 text-sm"
-                                                            >—</span
+                                                            class="text-xs font-medium {{ $style['text'] }}"
+                                                            >{{ ucfirst($task->priority) }}</span
+                                                        >
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="grid grid-cols-2 gap-2 max-[450px]:grid-cols-1"
+                                                >
+                                                    <div
+                                                        class="flex items-center"
+                                                    >
+                                                        <span
+                                                            class="text-sm text-gray-600 w-16"
+                                                            >Автор:</span
+                                                        >
+                                                        <span
+                                                            class="text-sm truncate"
+                                                            >{{ $task->author->name ?? '—' }}</span
+                                                        >
+                                                    </div>
+                                                    <div
+                                                        class="flex items-center max-[500px]:gap-2"
+                                                    >
+                                                        <span
+                                                            class="text-sm text-gray-600 w-16 max-[500px]:w-auto"
+                                                            >Дедлайн:</span
+                                                        >
+                                                        @if ($task->deadline && !$task->trashed())
+                                                            <div
+                                                                class="{{ $task->isOverdue() ? 'text-red-600 font-semibold' : '' }}"
+                                                            >
+                                                                <div
+                                                                    class="text-sm"
+                                                                >
+                                                                    {{ $task->deadline->format('d.m.Y') }}
+                                                                </div>
+                                                                <div
+                                                                    class="text-xs {{ $task->isOverdue() ? 'text-red-500' : 'text-gray-400' }}"
+                                                                >
+                                                                    {{ $task->getTimeRemaining() }}
+                                                                </div>
+                                                            </div>
+                                                        @else
+                                                            <span
+                                                                class="text-gray-400 text-sm"
+                                                                >—</span
+                                                            >
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="flex flex-wrap gap-1 pt-2 border-t max-[500px]:!hidden"
+                                                >
+                                                    @if ($task->category)
+                                                        <span
+                                                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white"
+                                                            >{{ $task->category->name }}</span
+                                                        >
+                                                    @endif
+                                                    @if ($task->rejections_count >
+                                        0)
+                                                        <span
+                                                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                                                            title="Количество отказов: {{ $task->rejections_count }}"
+                                                            ><i
+                                                                class="fas fa-user-slash mr-1"
+                                                            ></i
+                                                            >{{ $task->rejections_count }}</span
+                                                        >
+
+                                                    @endif
+                                                    @if ($task->trashed() && $task->deletedBy)
+                                                        <span
+                                                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                                                            title="Удалил: {{ $task->deletedBy->name }}"
+                                                            ><i
+                                                                class="fas fa-user-times mr-1"
+                                                            ></i
+                                                            >Удалил: {{ $task->deletedBy->name }}</span
                                                         >
                                                     @endif
                                                 </div>
-                                            </div>
-                                            <div
-                                                class="flex flex-wrap gap-1 pt-2 border-t max-[500px]:!hidden"
-                                            >
-                                                @if ($task->category)
-                                                    <span
-                                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[{{$task->category->color}}] text-white"
-                                                        >{{ $task->category->name }}</span
-                                                    >
+                                                @if (!$task->trashed() && $task->status === 'на проверке')
+                                                    <div class="pt-2 border-t">
+                                                        <button
+                                                            onclick="returnToWork({{ $task->id }})"
+                                                            class="w-full bg-orange-100 text-orange-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-200 transition flex items-center justify-center space-x-2"
+                                                        >
+                                                            <i
+                                                                class="fas fa-redo"
+                                                            ></i
+                                                            ><span
+                                                                >Вернуть на
+                                                                доработку</span
+                                                            >
+                                                        </button>
+                                                    </div>
                                                 @endif
-                                                @if($task->rejections_count >
-                                                0)<span
-                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
-                                                    title="Количество отказов: {{ $task->rejections_count }}"
-                                                    ><i
-                                                        class="fas fa-user-slash mr-1"
-                                                    ></i
-                                                    >{{ $task->rejections_count }}</span
-                                                >
-
-            @endif
-            @if($task->trashed() && $task->deletedBy)<span
-                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                title="Удалил: {{ $task->deletedBy->name }}"
-                ><i class="fas fa-user-times mr-1"></i
-                >Удалил: {{ $task->deletedBy->name }}</span
-            >
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div
+                                            class="bg-white border border-gray-200 rounded-lg p-8 text-center"
+                                        >
+                                            <i
+                                                class="fas fa-tasks text-gray-300 text-4xl mb-3"
+                                            ></i>
+                                            <p class="text-gray-500">Задачи не найдены</p>
+                                        </div>
+                                    @endforelse
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if ($tasks->hasPages())
+                        <div class="mt-4 md:mt-6">
+                            {{ $tasks->links('vendor.pagination.tailwind') }}
+                        </div>
+                    @endif
+                </div>
             @endif
         </div>
-        @if (!$task->trashed() && $task->status === 'на проверке')
-            <div class="pt-2 border-t">
-                <button
-                    onclick="returnToWork({{ $task->id }})"
-                    class="w-full bg-orange-100 text-orange-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-200 transition flex items-center justify-center space-x-2"
-                >
-                    <i class="fas fa-redo"></i><span>Вернуть на доработку</span>
-                </button>
-            </div>
-        @endif
-    </div>
-    </div>
-    @empty
-    <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
-        <i class="fas fa-tasks text-gray-300 text-4xl mb-3"></i>
-        <p class="text-gray-500">Задачи не найдены</p>
-    </div>
-    @endforelse
-    </div>
-    </div>
-    </div>
-    </div>
-    @if ($tasks->hasPages())
-        <div class="mt-4 md:mt-6">
-            {{ $tasks->links('vendor.pagination.tailwind') }}
-        </div>
-    @endif
-    </div>
-    @endif
-    </div>
 
-    <!-- Режим отображения: Канбан -->
-    <div
-        id="kanbanViewContainer"
-        class="{{ $viewMode === 'kanban' ? '' : 'hidden' }}"
-    >
-        @php
+        <!-- Режим отображения: Канбан -->
+        <div
+            id="kanbanViewContainer"
+            class="{{ $viewMode === 'kanban' ? '' : 'hidden' }}"
+        >
+            @php
         // Группируем задачи по статусам для канбана
         $statusMap = [
         'просрочена' => 'Просроченные',
@@ -1989,661 +2019,679 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
         ];
         @endphp
 
-        @if ($backgroundEnabled && $backgroundImage)
-            <div
-                class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6"
-            >
+            @if ($backgroundEnabled && $backgroundImage)
                 <div
-                    class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3"
+                    class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md p-4 md:p-6"
                 >
-                    <div class="text-gray-500 text-sm md:text-base">
-                        Всего задач: {{ $tasks->total() }}
-                    </div>
-                    <div class="w-full sm:w-auto flex items-center">
-                        <select
-                            id="sortSelectKanban"
-                            class="w-full sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20 max-[500px]:basis-1/2"
-                        >
-                            <option
-                                class="text-gray-800"
-                                value="created_at_desc"
-                            >
-                                Новые сначала
-                            </option>
-                            <option
-                                class="text-gray-800"
-                                value="created_at_asc"
-                            >
-                                Старые сначала
-                            </option>
-                            <option class="text-gray-800" value="deadline_asc">
-                                Ближайший дедлайн
-                            </option>
-                            <option class="text-gray-800" value="priority_desc">
-                                Высокий приоритет
-                            </option>
-                            <option class="text-gray-800" value="name_asc">
-                                По названию (А-Я)
-                            </option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Канбан доска -->
-                <div class="swx-v overflow-hidden w-full">
                     <div
-                        class="swx-v-wrapper flex lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-[500px]:gap-0"
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3"
                     >
-                        @foreach ($statusKeys as $statusKey)
-                            <div
-                                class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
-                                data-status="{{ $statusDataValues[$statusKey] }}"
-                                ondragover="dragOver.call(this, event)"
-                                ondragleave="dragLeave.call(this, event)"
-                                ondrop="drop.call(this, event)"
+                        <div class="text-gray-500 text-sm md:text-base">
+                            Всего задач: {{ $tasks->total() }}
+                        </div>
+                        <div class="w-full sm:w-auto flex items-center">
+                            <select
+                                id="sortSelectKanban"
+                                class="w-full sm:w-48 border-none rounded-lg px-3 py-2 text-white focus:outline-none backdrop-blur-md bg-transparent/20 max-[500px]:basis-1/2"
                             >
-                                <div
-                                    class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title backdrop-blur-md bg-transparent/20"
+                                <option
+                                    class="text-gray-800"
+                                    value="created_at_desc"
                                 >
-                                    <h3
-                                        class="font-semibold text-white text-sm"
-                                    >
-                                        {{ $statusMap[$statusKey] }}
-                                    </h3>
-                                    <span
-                                        class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count"
-                                        >{{ $tasksByStatusForKanban[$statusKey]->count() }}</span
-                                    >
-                                </div>
+                                    Новые сначала
+                                </option>
+                                <option
+                                    class="text-gray-800"
+                                    value="created_at_asc"
+                                >
+                                    Старые сначала
+                                </option>
+                                <option
+                                    class="text-gray-800"
+                                    value="deadline_asc"
+                                >
+                                    Ближайший дедлайн
+                                </option>
+                                <option
+                                    class="text-gray-800"
+                                    value="priority_desc"
+                                >
+                                    Высокий приоритет
+                                </option>
+                                <option class="text-gray-800" value="name_asc">
+                                    По названию (А-Я)
+                                </option>
+                            </select>
+                        </div>
+                    </div>
 
-                                <div class="space-y-3 task-container">
-                                    @forelse ($tasksByStatusForKanban[$statusKey] as $task)
-                                        @php
+                    <!-- Канбан доска -->
+                    <div class="swx-v overflow-hidden w-full">
+                        <div
+                            class="swx-v-wrapper flex lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-[500px]:gap-0"
+                        >
+                            @foreach ($statusKeys as $statusKey)
+                                <div
+                                    class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
+                                    data-status="{{ $statusDataValues[$statusKey] }}"
+                                    ondragover="dragOver.call(this, event)"
+                                    ondragleave="dragLeave.call(this, event)"
+                                    ondrop="drop.call(this, event)"
+                                >
+                                    <div
+                                        class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title backdrop-blur-md bg-transparent/20"
+                                    >
+                                        <h3
+                                            class="font-semibold text-white text-sm"
+                                        >
+                                            {{ $statusMap[$statusKey] }}
+                                        </h3>
+                                        <span
+                                            class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count"
+                                            >{{ $tasksByStatusForKanban[$statusKey]->count() }}</span
+                                        >
+                                    </div>
+
+                                    <div class="space-y-3 task-container">
+                                        @forelse ($tasksByStatusForKanban[$statusKey] as $task)
+                                            @php
                             $prioritySignal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
                             @endphp
 
-                                        {{-- Карточка задачи --}}
-                                        <div
-                                            class="task-card bg-white p-3 rounded-lg shadow cursor-move flex flex-col justify-between {{ $statusKey === 'просрочена' ? 'border-l-4 border-red-500 bg-red-50' : '' }}"
-                                            draggable="true"
-                                            data-task="{{ $task->id }}"
-                                            data-priority="{{ $task->priority ?? 'medium' }}"
-                                            data-deadline="{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') : '' }}"
-                                            data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
-                                            data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
-                                            data-author-id="{{ $task->author_id }}"
-                                            ondragstart="
-                                                dragStart.call(this, event)
-                                            "
-                                            ondragend="
-                                                dragEnd.call(this, event)
-                                            "
-                                        >
+                                            {{-- Карточка задачи --}}
                                             <div
-                                                class="flex justify-between items-start mb-2"
+                                                class="task-card bg-white p-3 rounded-lg shadow cursor-move flex flex-col justify-between {{ $statusKey === 'просрочена' ? 'border-l-4 border-red-500 bg-red-50' : '' }}"
+                                                draggable="true"
+                                                data-task="{{ $task->id }}"
+                                                data-priority="{{ $task->priority ?? 'medium' }}"
+                                                data-deadline="{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') : '' }}"
+                                                data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                                                data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
+                                                data-author-id="{{ $task->author_id }}"
+                                                ondragstart="
+                                                    dragStart.call(this, event)
+                                                "
+                                                ondragend="
+                                                    dragEnd.call(this, event)
+                                                "
                                             >
-                                                <a
-                                                    href="/team/tasks/{{ $task->id }}"
-                                                    onclick="openTaskViewModal({{ $task->id }}); return false;"
-                                                    class="flex-1 mr-2"
-                                                >
-                                                    <h4
-                                                        class="font-medium text-sm cursor-pointer hover:text-blue-600 line-clamp-2 {{ $statusKey === 'просрочена' ? 'text-red-600' : '' }}"
-                                                    >
-                                                        {{ $task->name }}
-                                                    </h4>
-                                                </a>
                                                 <div
-                                                    class="flex items-center space-x-1 flex-shrink-0"
+                                                    class="flex justify-between items-start mb-2"
                                                 >
-                                                    <div class="relative">
-                                                        <button
-                                                            onclick="window.toggleTaskMenu(event, {{ $task->id }})"
-                                                            class="text-gray-500 hover:text-gray-700 p-1"
-                                                            title="Действия"
+                                                    <a
+                                                        href="/team/tasks/{{ $task->id }}"
+                                                        onclick="openTaskViewModal({{ $task->id }}); return false;"
+                                                        class="flex-1 mr-2"
+                                                    >
+                                                        <h4
+                                                            class="font-medium text-sm cursor-pointer hover:text-blue-600 line-clamp-2 {{ $statusKey === 'просрочена' ? 'text-red-600' : '' }}"
                                                         >
-                                                            <i
-                                                                class="fas fa-ellipsis-v text-xs"
-                                                            ></i>
-                                                        </button>
-                                                        <div
-                                                            id="taskMenu-{{ $task->id }}"
-                                                            class="task-menu hidden absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-xl border z-50"
-                                                        >
-                                                            <div class="py-1">
-                                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                                    <button
-                                                                        onclick="openEditModal({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-edit mr-2 text-blue-500 text-xs"
-                                                                        ></i>
-                                                                        Редактировать
-                                                                    </button>
-                                                                @endif
-                                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                                    <button
-                                                                        onclick="openCreateSubtaskModal({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-list mr-2 text-blue-500 text-xs"
-                                                                        ></i>
-                                                                        Подзадача
-                                                                    </button>
-                                                                @endif
-                                                                <!-- КНОПКА АРХИВАЦИИ -->
-                                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                                    <button
-                                                                        onclick="archiveTask({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-archive mr-2 text-yellow-500 text-xs"
-                                                                        ></i>
-                                                                        В архив
-                                                                    </button>
-                                                                @endif
-                                                                @if ($statusKey === 'назначена')
-                                                                    <button
-                                                                        onclick="startTask({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-play mr-2 text-green-500 text-xs"
-                                                                        ></i>
-                                                                        Начать
-                                                                    </button>
-                                                                @endif
-                                                                @if ($statusKey === 'в работе')
-                                                                    <button
-                                                                        onclick="sendForReview({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-check-circle mr-2 text-green-500 text-xs"
-                                                                        ></i>
-                                                                        На
-                                                                        проверку
-                                                                    </button>
-                                                                @endif
+                                                            {{ $task->name }}
+                                                        </h4>
+                                                    </a>
+                                                    <div
+                                                        class="flex items-center space-x-1 flex-shrink-0"
+                                                    >
+                                                        <div class="relative">
+                                                            <button
+                                                                onclick="window.toggleTaskMenu(event, {{ $task->id }})"
+                                                                class="text-gray-500 hover:text-gray-700 p-1"
+                                                                title="Действия"
+                                                            >
+                                                                <i
+                                                                    class="fas fa-ellipsis-v text-xs"
+                                                                ></i>
+                                                            </button>
+                                                            <div
+                                                                id="taskMenu-{{ $task->id }}"
+                                                                class="task-menu hidden absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-xl border z-50"
+                                                            >
+                                                                <div
+                                                                    class="py-1"
+                                                                >
+                                                                    @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                        <button
+                                                                            onclick="openEditModal({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-edit mr-2 text-blue-500 text-xs"
+                                                                            ></i>
+                                                                            Редактировать
+                                                                        </button>
+                                                                    @endif
+                                                                    @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                        <button
+                                                                            onclick="openCreateSubtaskModal({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-list mr-2 text-blue-500 text-xs"
+                                                                            ></i>
+                                                                            Подзадача
+                                                                        </button>
+                                                                    @endif
+                                                                    <!-- КНОПКА АРХИВАЦИИ -->
+                                                                    @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                        <button
+                                                                            onclick="archiveTask({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-archive mr-2 text-yellow-500 text-xs"
+                                                                            ></i>
+                                                                            В
+                                                                            архив
+                                                                        </button>
+                                                                    @endif
+                                                                    @if ($statusKey === 'назначена')
+                                                                        <button
+                                                                            onclick="startTask({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-play mr-2 text-green-500 text-xs"
+                                                                            ></i>
+                                                                            Начать
+                                                                        </button>
+                                                                    @endif
+                                                                    @if ($statusKey === 'в работе')
+                                                                        <button
+                                                                            onclick="sendForReview({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-check-circle mr-2 text-green-500 text-xs"
+                                                                            ></i>
+                                                                            На
+                                                                            проверку
+                                                                        </button>
+                                                                    @endif
 
-                                                                @if ($statusKey === 'на проверке' && auth()->user()->isLeader())
-                                                                    <button
-                                                                        onclick="approveTask({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-check-double mr-2 text-green-500 text-xs"
-                                                                        ></i>
-                                                                        Одобрить
-                                                                    </button>
-                                                                    <button
-                                                                        onclick="returnTaskToWork({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-redo mr-2 text-orange-500 text-xs"
-                                                                        ></i>
-                                                                        На
-                                                                        доработку
-                                                                    </button>
-                                                                @endif
-                                                                @if ($statusKey !== 'выполнена' && $statusKey !== 'просрочена')
-                                                                    <button
-                                                                        onclick="showRejectModal({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-times-circle mr-2 text-xs"
-                                                                        ></i>
-                                                                        Отказаться
-                                                                    </button>
-                                                                @endif
+                                                                    @if ($statusKey === 'на проверке' && auth()->user()->isLeader())
+                                                                        <button
+                                                                            onclick="approveTask({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-check-double mr-2 text-green-500 text-xs"
+                                                                            ></i>
+                                                                            Одобрить
+                                                                        </button>
+                                                                        <button
+                                                                            onclick="returnTaskToWork({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-redo mr-2 text-orange-500 text-xs"
+                                                                            ></i>
+                                                                            На
+                                                                            доработку
+                                                                        </button>
+                                                                    @endif
+                                                                    @if ($statusKey !== 'выполнена' && $statusKey !== 'просрочена')
+                                                                        <button
+                                                                            onclick="showRejectModal({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-times-circle mr-2 text-xs"
+                                                                            ></i>
+                                                                            Отказаться
+                                                                        </button>
+                                                                    @endif
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            @if ($task->files_count > 0)
-                                                <div
-                                                    class="mb-2 flex items-center text-xs text-gray-500"
-                                                >
-                                                    <i
-                                                        class="fas fa-paperclip mr-1 text-xs"
-                                                    ></i>
-                                                    <span
-                                                        >{{ $task->files_count }}</span
-                                                    >
-                                                </div>
-                                            @endif
-
-                                            @if ($task->deadline)
-                                                <div class="mb-2">
+                                                @if ($task->files_count > 0)
                                                     <div
-                                                        class="flex items-center text-xs {{ $statusKey === 'просрочена' ? 'text-red-600 font-semibold' : 'text-gray-500' }}"
+                                                        class="mb-2 flex items-center text-xs text-gray-500"
                                                     >
                                                         <i
-                                                            class="fas fa-clock mr-1 text-xs"
+                                                            class="fas fa-paperclip mr-1 text-xs"
                                                         ></i>
-                                                        {{ \Carbon\Carbon::parse($task->deadline)->format('d.m.Y H:i') }}
-                                                        @if ($statusKey === 'просрочена')
-                                                            <span class="ml-1"
-                                                                >(Просрочено)</span
+                                                        <span
+                                                            >{{ $task->files_count }}</span
+                                                        >
+                                                    </div>
+                                                @endif
+
+                                                @if ($task->deadline)
+                                                    <div class="mb-2">
+                                                        <div
+                                                            class="flex items-center text-xs {{ $statusKey === 'просрочена' ? 'text-red-600 font-semibold' : 'text-gray-500' }}"
+                                                        >
+                                                            <i
+                                                                class="fas fa-clock mr-1 text-xs"
+                                                            ></i>
+                                                            {{ \Carbon\Carbon::parse($task->deadline)->format('d.m.Y H:i') }}
+                                                            @if ($statusKey === 'просрочена')
+                                                                <span
+                                                                    class="ml-1"
+                                                                    >(Просрочено)</span
+                                                                >
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                @endif
+
+                                                <div
+                                                    class="flex justify-between items-center mt-2 pt-2 border-t border-gray-100"
+                                                >
+                                                    <div
+                                                        class="flex flex-wrap gap-1"
+                                                    >
+                                                        <span
+                                                            style="
+                                                                background: linear-gradient(
+                                                                    180deg,
+                                                                    #1a1f2e 0%,
+                                                                    #161b28 100%
+                                                                );
+                                                            "
+                                                            class="text-xs px-1.5 py-0.5 rounded text-white"
+                                                            >{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span
+                                                        >
+
+                                                        {{-- Индикатор приоритета --}}
+                                                        <div
+                                                            class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md {{ $prioritySignal['bg'] }} border {{ $prioritySignal['border'] }}"
+                                                        >
+                                                            <div
+                                                                class="flex items-end gap-[2px] h-3"
+                                                            >
+                                                                <div
+                                                                    class="w-1 rounded-sm {{ $prioritySignal['level'] >= 1 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1"
+                                                                ></div>
+                                                                <div
+                                                                    class="w-1 rounded-sm {{ $prioritySignal['level'] >= 2 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1.5"
+                                                                ></div>
+                                                                <div
+                                                                    class="w-1 rounded-sm {{ $prioritySignal['level'] >= 3 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2"
+                                                                ></div>
+                                                                <div
+                                                                    class="w-1 rounded-sm {{ $prioritySignal['level'] >= 4 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2.5"
+                                                                ></div>
+                                                            </div>
+                                                            <span
+                                                                class="text-xs font-medium {{ $prioritySignal['text'] }}"
+                                                                >{{ ucfirst($task->priority) }}</span
+                                                            >
+                                                        </div>
+
+                                                        @if ($task->category)
+                                                            <span
+                                                                class="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded"
+                                                                >{{ mb_substr($task->category->name, 0, 10) }}</span
                                                             >
                                                         @endif
                                                     </div>
-                                                </div>
-                                            @endif
 
-                                            <div
-                                                class="flex justify-between items-center mt-2 pt-2 border-t border-gray-100"
-                                            >
-                                                <div
-                                                    class="flex flex-wrap gap-1"
-                                                >
-                                                    <span
-                                                        style="
-                                                            background: linear-gradient(
-                                                                180deg,
-                                                                #1a1f2e 0%,
-                                                                #161b28 100%
-                                                            );
-                                                        "
-                                                        class="text-xs px-1.5 py-0.5 rounded text-white"
-                                                        >{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span
-                                                    >
-
-                                                    {{-- Индикатор приоритета --}}
+                                                    {{-- Иконка ИСПОЛНИТЕЛЯ (используем те же методы, что в модальном окне) --}}
                                                     <div
-                                                        class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md {{ $prioritySignal['bg'] }} border {{ $prioritySignal['border'] }}"
+                                                        class="flex items-center space-x-1"
                                                     >
                                                         <div
-                                                            class="flex items-end gap-[2px] h-3"
+                                                            class="w-5 h-5 rounded-full {{ $task->user ? $task->user->getAvatarColor() : 'bg-gray-300' }} flex items-center justify-center text-white text-[10px] font-medium"
+                                                            title="{{ $task->user?->name ?? 'Не назначен' }}"
                                                         >
-                                                            <div
-                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 1 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1"
-                                                            ></div>
-                                                            <div
-                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 2 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1.5"
-                                                            ></div>
-                                                            <div
-                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 3 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2"
-                                                            ></div>
-                                                            <div
-                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 4 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2.5"
-                                                            ></div>
+                                                            {{ $task->user ? $task->user->getInitials() : '?' }}
                                                         </div>
-                                                        <span
-                                                            class="text-xs font-medium {{ $prioritySignal['text'] }}"
-                                                            >{{ ucfirst($task->priority) }}</span
-                                                        >
-                                                    </div>
-
-                                                    @if ($task->category)
-                                                        <span
-                                                            class="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded"
-                                                            >{{ mb_substr($task->category->name, 0, 10) }}</span
-                                                        >
-                                                    @endif
-                                                </div>
-
-                                                {{-- Иконка ИСПОЛНИТЕЛЯ (используем те же методы, что в модальном окне) --}}
-                                                <div
-                                                    class="flex items-center space-x-1"
-                                                >
-                                                    <div
-                                                        class="w-5 h-5 rounded-full {{ $task->user ? $task->user->getAvatarColor() : 'bg-gray-300' }} flex items-center justify-center text-white text-[10px] font-medium"
-                                                        title="{{ $task->user?->name ?? 'Не назначен' }}"
-                                                    >
-                                                        {{ $task->user ? $task->user->getInitials() : '?' }}
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    @empty
-                                        {{-- Пустая колонка - ничего не выводим --}}
-                                    @endforelse
+                                        @empty
+                                            {{-- Пустая колонка - ничего не выводим --}}
+                                        @endforelse
+                                    </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        </div>
+                        <div
+                            class="swiper-pagination flex justify-center pt-5 px-0 !bottom-2 min-[501px]:hidden"
+                        ></div>
                     </div>
-                    <div
-                        class="swiper-pagination flex justify-center pt-5 px-0 !bottom-2 min-[501px]:hidden"
-                    ></div>
                 </div>
-            </div>
-        @else
-            <div class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6">
+            @else
                 <div
-                    class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3"
+                    class="bg-white rounded-lg shadow-sm md:shadow-md p-4 md:p-6"
                 >
-                    <div class="text-gray-500 text-sm md:text-base">
-                        Всего задач: {{ $tasks->total() }}
-                    </div>
-
-                    <div class="w-full sm:w-auto flex items-center">
-                        <select
-                            id="sortSelectKanban"
-                            class="w-full sm:w-48 border-none rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base max-[500px]:basis-1/2"
-                        >
-                            <option value="created_at_desc">
-                                Новые сначала
-                            </option>
-                            <option value="created_at_asc">
-                                Старые сначала
-                            </option>
-                            <option value="deadline_asc">
-                                Ближайший дедлайн
-                            </option>
-                            <option value="priority_desc">
-                                Высокий приоритет
-                            </option>
-                            <option value="name_asc">По названию (А-Я)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Канбан доска -->
-                <div class="swx-v overflow-hidden w-full">
                     <div
-                        class="swx-v-wrapper flex lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-[500px]:gap-0"
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3"
                     >
-                        @foreach ($statusKeys as $statusKey)
-                            <div
-                                class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
-                                data-status="{{ $statusDataValues[$statusKey] }}"
-                                ondragover="dragOver.call(this, event)"
-                                ondragleave="dragLeave.call(this, event)"
-                                ondrop="drop.call(this, event)"
-                            >
-                                {{-- Заголовок колонки с красным фоном для просроченных --}}
-                                <div
-                                    class="flex justify-between items-center mb-4 border-none rounded-lg p-2 {{ $statusKey === 'просрочена' ? 'bg-red-600' : '' }}"
-                                    style="
-                                        background: linear-gradient(
-                                            180deg,
-                                            #1a1f2e 0%,
-                                            #161b28 100%
-                                        );
-                                    "
-                                >
-                                    <h3
-                                        class="font-semibold text-white text-sm"
-                                    >
-                                        {{ $statusMap[$statusKey] }}
-                                    </h3>
-                                    <span
-                                        class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count"
-                                        >{{ $tasksByStatusForKanban[$statusKey]->count() }}</span
-                                    >
-                                </div>
+                        <div class="text-gray-500 text-sm md:text-base">
+                            Всего задач: {{ $tasks->total() }}
+                        </div>
 
-                                <div class="space-y-3 task-container">
-                                    @forelse ($tasksByStatusForKanban[$statusKey] as $task)
-                                        @php
+                        <div class="w-full sm:w-auto flex items-center">
+                            <select
+                                id="sortSelectKanban"
+                                class="w-full sm:w-48 border-none rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-green-600 text-sm md:text-base max-[500px]:basis-1/2"
+                            >
+                                <option value="created_at_desc">
+                                    Новые сначала
+                                </option>
+                                <option value="created_at_asc">
+                                    Старые сначала
+                                </option>
+                                <option value="deadline_asc">
+                                    Ближайший дедлайн
+                                </option>
+                                <option value="priority_desc">
+                                    Высокий приоритет
+                                </option>
+                                <option value="name_asc">
+                                    По названию (А-Я)
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Канбан доска -->
+                    <div class="swx-v overflow-hidden w-full">
+                        <div
+                            class="swx-v-wrapper flex lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-[500px]:gap-0"
+                        >
+                            @foreach ($statusKeys as $statusKey)
+                                <div
+                                    class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
+                                    data-status="{{ $statusDataValues[$statusKey] }}"
+                                    ondragover="dragOver.call(this, event)"
+                                    ondragleave="dragLeave.call(this, event)"
+                                    ondrop="drop.call(this, event)"
+                                >
+                                    {{-- Заголовок колонки с красным фоном для просроченных --}}
+                                    <div
+                                        class="flex justify-between items-center mb-4 border-none rounded-lg p-2 {{ $statusKey === 'просрочена' ? 'bg-red-600' : '' }}"
+                                        style="
+                                            background: linear-gradient(
+                                                180deg,
+                                                #1a1f2e 0%,
+                                                #161b28 100%
+                                            );
+                                        "
+                                    >
+                                        <h3
+                                            class="font-semibold text-white text-sm"
+                                        >
+                                            {{ $statusMap[$statusKey] }}
+                                        </h3>
+                                        <span
+                                            class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded stat-count"
+                                            >{{ $tasksByStatusForKanban[$statusKey]->count() }}</span
+                                        >
+                                    </div>
+
+                                    <div class="space-y-3 task-container">
+                                        @forelse ($tasksByStatusForKanban[$statusKey] as $task)
+                                            @php
                             $prioritySignal = $prioritySignals[$task->priority] ?? $prioritySignals['средний'];
                             @endphp
 
-                                        {{-- Карточка задачи --}}
-                                        <div
-                                            class="task-card bg-white p-3 rounded-lg shadow cursor-move flex flex-col justify-between {{ $statusKey === 'просрочена' ? 'border-l-4 border-red-500 bg-red-50' : '' }}"
-                                            draggable="true"
-                                            data-task="{{ $task->id }}"
-                                            data-priority="{{ $task->priority ?? 'medium' }}"
-                                            data-deadline="{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') : '' }}"
-                                            data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
-                                            data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
-                                            data-author-id="{{ $task->author_id }}"
-                                            ondragstart="
-                                                dragStart.call(this, event)
-                                            "
-                                            ondragend="
-                                                dragEnd.call(this, event)
-                                            "
-                                        >
+                                            {{-- Карточка задачи --}}
                                             <div
-                                                class="flex justify-between items-start mb-2"
+                                                class="task-card bg-white p-3 rounded-lg shadow cursor-move flex flex-col justify-between {{ $statusKey === 'просрочена' ? 'border-l-4 border-red-500 bg-red-50' : '' }}"
+                                                draggable="true"
+                                                data-task="{{ $task->id }}"
+                                                data-priority="{{ $task->priority ?? 'medium' }}"
+                                                data-deadline="{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') : '' }}"
+                                                data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
+                                                data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
+                                                data-author-id="{{ $task->author_id }}"
+                                                ondragstart="
+                                                    dragStart.call(this, event)
+                                                "
+                                                ondragend="
+                                                    dragEnd.call(this, event)
+                                                "
                                             >
-                                                <a
-                                                    href="/team/tasks/{{ $task->id }}"
-                                                    onclick="openTaskViewModal({{ $task->id }}); return false;"
-                                                    class="flex-1 mr-2"
-                                                >
-                                                    <h4
-                                                        class="font-medium text-sm cursor-pointer hover:text-blue-600 line-clamp-2 {{ $statusKey === 'просрочена' ? 'text-red-600' : '' }}"
-                                                    >
-                                                        {{ $task->name }}
-                                                    </h4>
-                                                </a>
                                                 <div
-                                                    class="flex items-center space-x-1 flex-shrink-0"
+                                                    class="flex justify-between items-start mb-2"
                                                 >
-                                                    <div class="relative">
-                                                        <button
-                                                            onclick="window.toggleTaskMenu(event, {{ $task->id }})"
-                                                            class="text-gray-500 hover:text-gray-700 p-1"
-                                                            title="Действия"
+                                                    <a
+                                                        href="/team/tasks/{{ $task->id }}"
+                                                        onclick="openTaskViewModal({{ $task->id }}); return false;"
+                                                        class="flex-1 mr-2"
+                                                    >
+                                                        <h4
+                                                            class="font-medium text-sm cursor-pointer hover:text-blue-600 line-clamp-2 {{ $statusKey === 'просрочена' ? 'text-red-600' : '' }}"
                                                         >
-                                                            <i
-                                                                class="fas fa-ellipsis-v text-xs"
-                                                            ></i>
-                                                        </button>
-                                                        <div
-                                                            id="taskMenu-{{ $task->id }}"
-                                                            class="task-menu hidden absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-xl border z-50"
-                                                        >
-                                                            <div class="py-1">
-                                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                                    <button
-                                                                        onclick="openEditModal({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-edit mr-2 text-blue-500 text-xs"
-                                                                        ></i>
-                                                                        Редактировать
-                                                                    </button>
-                                                                @endif
+                                                            {{ $task->name }}
+                                                        </h4>
+                                                    </a>
+                                                    <div
+                                                        class="flex items-center space-x-1 flex-shrink-0"
+                                                    >
+                                                        <div class="relative">
+                                                            <button
+                                                                onclick="window.toggleTaskMenu(event, {{ $task->id }})"
+                                                                class="text-gray-500 hover:text-gray-700 p-1"
+                                                                title="Действия"
+                                                            >
+                                                                <i
+                                                                    class="fas fa-ellipsis-v text-xs"
+                                                                ></i>
+                                                            </button>
+                                                            <div
+                                                                id="taskMenu-{{ $task->id }}"
+                                                                class="task-menu hidden absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-xl border z-50"
+                                                            >
+                                                                <div
+                                                                    class="py-1"
+                                                                >
+                                                                    @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                        <button
+                                                                            onclick="openEditModal({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-edit mr-2 text-blue-500 text-xs"
+                                                                            ></i>
+                                                                            Редактировать
+                                                                        </button>
+                                                                    @endif
 
-                                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                                    <button
-                                                                        onclick="openCreateSubtaskModal({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-list mr-2 text-blue-500 text-xs"
-                                                                        ></i>
-                                                                        Подзадача
-                                                                    </button>
-                                                                @endif
+                                                                    @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                        <button
+                                                                            onclick="openCreateSubtaskModal({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-list mr-2 text-blue-500 text-xs"
+                                                                            ></i>
+                                                                            Подзадача
+                                                                        </button>
+                                                                    @endif
 
-                                                                <!-- КНОПКА АРХИВАЦИИ -->
-                                                                @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
-                                                                    <button
-                                                                        onclick="archiveTask({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-archive mr-2 text-yellow-500 text-xs"
-                                                                        ></i>
-                                                                        В архив
-                                                                    </button>
-                                                                @endif
+                                                                    <!-- КНОПКА АРХИВАЦИИ -->
+                                                                    @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
+                                                                        <button
+                                                                            onclick="archiveTask({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-archive mr-2 text-yellow-500 text-xs"
+                                                                            ></i>
+                                                                            В
+                                                                            архив
+                                                                        </button>
+                                                                    @endif
 
-                                                                @if ($statusKey === 'назначена')
-                                                                    <button
-                                                                        onclick="startTask({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-play mr-2 text-green-500 text-xs"
-                                                                        ></i>
-                                                                        Начать
-                                                                    </button>
-                                                                @endif
-                                                                @if ($statusKey === 'в работе')
-                                                                    <button
-                                                                        onclick="sendForReview({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-check-circle mr-2 text-green-500 text-xs"
-                                                                        ></i>
-                                                                        На
-                                                                        проверку
-                                                                    </button>
-                                                                @endif
-                                                                @if ($statusKey === 'на проверке' && auth()->user()->isLeader())
-                                                                    <button
-                                                                        onclick="approveTask({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-check-double mr-2 text-green-500 text-xs"
-                                                                        ></i>
-                                                                        Одобрить
-                                                                    </button>
-                                                                    <button
-                                                                        onclick="returnTaskToWork({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-redo mr-2 text-orange-500 text-xs"
-                                                                        ></i>
-                                                                        На
-                                                                        доработку
-                                                                    </button>
-                                                                @endif
-                                                                @if ($statusKey !== 'выполнена' && $statusKey !== 'просрочена')
-                                                                    <button
-                                                                        onclick="showRejectModal({{ $task->id }})"
-                                                                        class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-gray-100 flex items-center"
-                                                                    >
-                                                                        <i
-                                                                            class="fas fa-times-circle mr-2 text-xs"
-                                                                        ></i>
-                                                                        Отказаться
-                                                                    </button>
-                                                                @endif
+                                                                    @if ($statusKey === 'назначена')
+                                                                        <button
+                                                                            onclick="startTask({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-play mr-2 text-green-500 text-xs"
+                                                                            ></i>
+                                                                            Начать
+                                                                        </button>
+                                                                    @endif
+                                                                    @if ($statusKey === 'в работе')
+                                                                        <button
+                                                                            onclick="sendForReview({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-check-circle mr-2 text-green-500 text-xs"
+                                                                            ></i>
+                                                                            На
+                                                                            проверку
+                                                                        </button>
+                                                                    @endif
+                                                                    @if ($statusKey === 'на проверке' && auth()->user()->isLeader())
+                                                                        <button
+                                                                            onclick="approveTask({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-check-double mr-2 text-green-500 text-xs"
+                                                                            ></i>
+                                                                            Одобрить
+                                                                        </button>
+                                                                        <button
+                                                                            onclick="returnTaskToWork({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-redo mr-2 text-orange-500 text-xs"
+                                                                            ></i>
+                                                                            На
+                                                                            доработку
+                                                                        </button>
+                                                                    @endif
+                                                                    @if ($statusKey !== 'выполнена' && $statusKey !== 'просрочена')
+                                                                        <button
+                                                                            onclick="showRejectModal({{ $task->id }})"
+                                                                            class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-gray-100 flex items-center"
+                                                                        >
+                                                                            <i
+                                                                                class="fas fa-times-circle mr-2 text-xs"
+                                                                            ></i>
+                                                                            Отказаться
+                                                                        </button>
+                                                                    @endif
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            @if ($task->files_count > 0)
-                                                <div
-                                                    class="mb-2 flex items-center text-xs text-gray-500"
-                                                >
-                                                    <i
-                                                        class="fas fa-paperclip mr-1 text-xs"
-                                                    ></i>
-                                                    <span
-                                                        >{{ $task->files_count }}</span
-                                                    >
-                                                </div>
-                                            @endif
-
-                                            @if ($task->deadline)
-                                                <div class="mb-2">
+                                                @if ($task->files_count > 0)
                                                     <div
-                                                        class="flex items-center text-xs {{ $statusKey === 'просрочена' ? 'text-red-600 font-semibold' : 'text-gray-500' }}"
+                                                        class="mb-2 flex items-center text-xs text-gray-500"
                                                     >
                                                         <i
-                                                            class="fas fa-clock mr-1 text-xs"
+                                                            class="fas fa-paperclip mr-1 text-xs"
                                                         ></i>
-                                                        {{ \Carbon\Carbon::parse($task->deadline)->format('d.m.Y H:i') }}
-                                                        @if ($statusKey === 'просрочена')
-                                                            <span class="ml-1"
-                                                                >(Просрочено)</span
+                                                        <span
+                                                            >{{ $task->files_count }}</span
+                                                        >
+                                                    </div>
+                                                @endif
+
+                                                @if ($task->deadline)
+                                                    <div class="mb-2">
+                                                        <div
+                                                            class="flex items-center text-xs {{ $statusKey === 'просрочена' ? 'text-red-600 font-semibold' : 'text-gray-500' }}"
+                                                        >
+                                                            <i
+                                                                class="fas fa-clock mr-1 text-xs"
+                                                            ></i>
+                                                            {{ \Carbon\Carbon::parse($task->deadline)->format('d.m.Y H:i') }}
+                                                            @if ($statusKey === 'просрочена')
+                                                                <span
+                                                                    class="ml-1"
+                                                                    >(Просрочено)</span
+                                                                >
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                @endif
+
+                                                <div
+                                                    class="flex justify-between items-center mt-2 pt-2 border-t border-gray-100"
+                                                >
+                                                    <div
+                                                        class="flex flex-wrap gap-1"
+                                                    >
+                                                        <span
+                                                            style="
+                                                                background: linear-gradient(
+                                                                    180deg,
+                                                                    #1a1f2e 0%,
+                                                                    #161b28 100%
+                                                                );
+                                                            "
+                                                            class="text-xs px-1.5 py-0.5 rounded text-white"
+                                                            >{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span
+                                                        >
+
+                                                        {{-- Индикатор приоритета --}}
+                                                        <div
+                                                            class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md {{ $prioritySignal['bg'] }} border {{ $prioritySignal['border'] }}"
+                                                        >
+                                                            <div
+                                                                class="flex items-end gap-[2px] h-3"
+                                                            >
+                                                                <div
+                                                                    class="w-1 rounded-sm {{ $prioritySignal['level'] >= 1 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1"
+                                                                ></div>
+                                                                <div
+                                                                    class="w-1 rounded-sm {{ $prioritySignal['level'] >= 2 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1.5"
+                                                                ></div>
+                                                                <div
+                                                                    class="w-1 rounded-sm {{ $prioritySignal['level'] >= 3 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2"
+                                                                ></div>
+                                                                <div
+                                                                    class="w-1 rounded-sm {{ $prioritySignal['level'] >= 4 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2.5"
+                                                                ></div>
+                                                            </div>
+                                                            <span
+                                                                class="text-xs font-medium {{ $prioritySignal['text'] }}"
+                                                                >{{ ucfirst($task->priority) }}</span
+                                                            >
+                                                        </div>
+
+                                                        @if ($task->category)
+                                                            <span
+                                                                class="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded"
+                                                                >{{ mb_substr($task->category->name, 0, 10) }}</span
                                                             >
                                                         @endif
                                                     </div>
-                                                </div>
-                                            @endif
 
-                                            <div
-                                                class="flex justify-between items-center mt-2 pt-2 border-t border-gray-100"
-                                            >
-                                                <div
-                                                    class="flex flex-wrap gap-1"
-                                                >
-                                                    <span
-                                                        style="
-                                                            background: linear-gradient(
-                                                                180deg,
-                                                                #1a1f2e 0%,
-                                                                #161b28 100%
-                                                            );
-                                                        "
-                                                        class="text-xs px-1.5 py-0.5 rounded text-white"
-                                                        >{{ $task->department->name ?? ($task->is_personal ? 'Личная' : 'Без отдела') }}</span
-                                                    >
-
-                                                    {{-- Индикатор приоритета --}}
+                                                    {{-- Иконка ИСПОЛНИТЕЛЯ (используем те же методы, что в модальном окне) --}}
                                                     <div
-                                                        class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md {{ $prioritySignal['bg'] }} border {{ $prioritySignal['border'] }}"
+                                                        class="flex items-center space-x-1"
                                                     >
                                                         <div
-                                                            class="flex items-end gap-[2px] h-3"
+                                                            class="w-5 h-5 rounded-full {{ $task->user ? $task->user->getAvatarColor() : 'bg-gray-300' }} flex items-center justify-center text-white text-[10px] font-medium"
+                                                            title="{{ $task->user?->name ?? 'Не назначен' }}"
                                                         >
-                                                            <div
-                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 1 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1"
-                                                            ></div>
-                                                            <div
-                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 2 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-1.5"
-                                                            ></div>
-                                                            <div
-                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 3 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2"
-                                                            ></div>
-                                                            <div
-                                                                class="w-1 rounded-sm {{ $prioritySignal['level'] >= 4 ? $prioritySignal['filled'] : $prioritySignal['empty'] }} h-2.5"
-                                                            ></div>
+                                                            {{ $task->user ? $task->user->getInitials() : '?' }}
                                                         </div>
-                                                        <span
-                                                            class="text-xs font-medium {{ $prioritySignal['text'] }}"
-                                                            >{{ ucfirst($task->priority) }}</span
-                                                        >
-                                                    </div>
-
-                                                    @if ($task->category)
-                                                        <span
-                                                            class="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded"
-                                                            >{{ mb_substr($task->category->name, 0, 10) }}</span
-                                                        >
-                                                    @endif
-                                                </div>
-
-                                                {{-- Иконка ИСПОЛНИТЕЛЯ (используем те же методы, что в модальном окне) --}}
-                                                <div
-                                                    class="flex items-center space-x-1"
-                                                >
-                                                    <div
-                                                        class="w-5 h-5 rounded-full {{ $task->user ? $task->user->getAvatarColor() : 'bg-gray-300' }} flex items-center justify-center text-white text-[10px] font-medium"
-                                                        title="{{ $task->user?->name ?? 'Не назначен' }}"
-                                                    >
-                                                        {{ $task->user ? $task->user->getInitials() : '?' }}
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    @empty
-                                        {{-- Пустая колонка - ничего не выводим --}}
-                                    @endforelse
+                                        @empty
+                                            {{-- Пустая колонка - ничего не выводим --}}
+                                        @endforelse
+                                    </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        </div>
+                        <div
+                            class="swiper-pagination flex justify-center pt-5 px-0 !bottom-2 min-[501px]:hidden"
+                        ></div>
                     </div>
-                    <div
-                        class="swiper-pagination flex justify-center pt-5 px-0 !bottom-2 min-[501px]:hidden"
-                    ></div>
                 </div>
-            </div>
-        @endif
-    </div>
+            @endif
+        </div>
     </div>
 
     <!-- Модальное окно подтверждения архивации -->
@@ -2755,127 +2803,176 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
     @include ('partials.modal.task.show')
 
     <!-- Модальное окно файлового менеджера для редактирования -->
-    <div id="fileManagerModal"
-     role="dialog" aria-modal="true" aria-labelledby="fileManagerTitle"
-     onclick="if (event.target === this) closeFileManager()"
-     class="fixed inset-0 bg-slate-900/40 flex items-center justify-center hidden z-[60] backdrop-blur-sm max-[500px]:p-4">
+    <div
+        id="fileManagerModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="fileManagerTitle"
+        onclick="if (event.target === this) closeTaskStorageManager();"
+        class="fixed inset-0 bg-slate-900/40 flex items-center justify-center hidden z-[60] backdrop-blur-sm max-[500px]:p-4"
+    >
+        <div
+            class="modal-content bg-white rounded-[24px] w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl shadow-slate-900/10 max-[500px]:w-[98%] max-[500px]:max-h-[85vh]"
+        >
+            <!-- Заголовок -->
+            <div class="bg-white border-b border-slate-100">
+                <div
+                    class="flex justify-between items-center gap-4 px-8 py-6 max-[500px]:px-5 max-[500px]:py-4"
+                >
+                    <div class="min-w-0">
+                        <h3
+                            id="fileManagerTitle"
+                            class="text-[22px] font-semibold text-slate-800 tracking-tight max-[500px]:text-xl"
+                        >
+                            Файловое хранилище
+                        </h3>
+                        <p class="text-[13px] text-slate-400 mt-0.5 max-[500px]:text-[12px]">Выберите файлы для прикрепления к задаче</p>
+                    </div>
 
-    <div class="modal-content bg-white rounded-[24px] w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl shadow-slate-900/10
-                max-[500px]:w-[98%] max-[500px]:max-h-[85vh]">
+                    <div class="flex items-center gap-3 shrink-0">
+                        <span
+                            class="inline-flex items-center gap-1 text-[12px] font-medium text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full"
+                        >
+                            Выбрано:
+                            <span id="selectedCount" class="font-semibold"
+                                >0</span
+                            >
+                        </span>
 
-        <!-- Заголовок -->
-        <div class="bg-white border-b border-slate-100">
-            <div class="flex justify-between items-center gap-4 px-8 py-6 max-[500px]:px-5 max-[500px]:py-4">
-                <div class="min-w-0">
-                    <h3 id="fileManagerTitle" class="text-[22px] font-semibold text-slate-800 tracking-tight max-[500px]:text-xl">Файловое хранилище</h3>
-                    <p class="text-[13px] text-slate-400 mt-0.5 max-[500px]:text-[12px]">Выберите файлы для прикрепления к задаче</p>
-                </div>
-
-                <div class="flex items-center gap-3 shrink-0">
-                    <span class="inline-flex items-center gap-1 text-[12px] font-medium text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full">
-                        Выбрано:
-                        <span id="selectedCount" class="font-semibold">0</span>
-                    </span>
-
-                    <button type="button" onclick="closeFileManager()" aria-label="Закрыть"
-                            class="text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 transition-all duration-200 p-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-200">
-                        <i class="fas fa-times text-sm"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Поиск и фильтры -->
-        <div class="px-8 py-4 border-b border-slate-100 max-[500px]:px-5">
-            <div class="flex flex-col sm:flex-row gap-3">
-                <div class="flex-1 relative group">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none group-focus-within:text-emerald-500 transition-colors duration-200"></i>
-                    <input type="text" id="fileManagerSearch"
-                           placeholder="Поиск по названию файла..."
-                           class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 sm:flex">
-                    <select id="fileManagerTypeFilter" aria-label="Тип файла"
-                            class="min-w-0 px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 cursor-pointer">
-                        <option value="">Все типы</option>
-                        <option value="image">Изображения</option>
-                        <option value="document">Документы</option>
-                        <option value="video">Видео</option>
-                        <option value="audio">Аудио</option>
-                        <option value="archive">Архивы</option>
-                    </select>
-
-                    <select id="fileManagerSortBy" aria-label="Сортировка"
-                            class="min-w-0 px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 cursor-pointer">
-                        <option value="newest">Сначала новые</option>
-                        <option value="oldest">Сначала старые</option>
-                        <option value="name_asc">По имени (А-Я)</option>
-                        <option value="name_desc">По имени (Я-А)</option>
-                        <option value="size_asc">По размеру (↑)</option>
-                        <option value="size_desc">По размеру (↓)</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- Список файлов и панель предпросмотра -->
-        <div class="flex-1 min-h-0 flex relative">
-            <div id="fileManagerContent"
-                 class="flex-1 overflow-y-auto custom-scrollbar px-8 py-6 max-[500px]:px-5 max-[500px]:py-4">
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                    <div class="col-span-full text-center py-12 border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
-                        <i class="fas fa-spinner fa-spin text-2xl text-slate-300 mb-3"></i>
-                        <p class="text-[13px] text-slate-500 font-medium">Загрузка файлов...</p>
+                        <button
+                            type="button"
+                            onclick="closeTaskStorageManager()"
+                            aria-label="Закрыть"
+                            class="text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 transition-all duration-200 p-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-200"
+                        >
+                            <i class="fas fa-times text-sm"></i>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Предпросмотр: справа на десктопе, поверх списка на узких экранах -->
-            <div id="fileManagerPreviewPanel"
-                 class="hidden w-96 shrink-0 border-l border-slate-100 bg-slate-50 overflow-y-auto custom-scrollbar px-6 py-6
-                        max-[900px]:absolute max-[900px]:inset-0 max-[900px]:w-full max-[900px]:border-l-0 max-[900px]:z-10">
-                <div class="sticky top-0 z-10 bg-slate-50 pb-4 -mt-1">
-                    <button type="button" onclick="closeFilePreview()"
-                            class="inline-flex items-center px-3 py-1.5 border border-slate-200 rounded-lg text-[12px] font-medium text-slate-600 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-200">
-                        <i class="fas fa-arrow-left mr-1.5 opacity-70"></i>Назад
-                    </button>
+            <!-- Поиск и фильтры -->
+            <div class="px-8 py-4 border-b border-slate-100 max-[500px]:px-5">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="flex-1 relative group">
+                        <i
+                            class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none group-focus-within:text-emerald-500 transition-colors duration-200"
+                        ></i>
+                        <input
+                            type="text"
+                            id="fileManagerSearch"
+                            placeholder="Поиск по названию файла..."
+                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 placeholder-slate-400 text-sm hover:border-slate-300"
+                        />
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 sm:flex">
+                        <select
+                            id="fileManagerTypeFilter"
+                            aria-label="Тип файла"
+                            class="min-w-0 px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 cursor-pointer"
+                        >
+                            <option value="">Все типы</option>
+                            <option value="image">Изображения</option>
+                            <option value="document">Документы</option>
+                            <option value="video">Видео</option>
+                            <option value="audio">Аудио</option>
+                            <option value="archive">Архивы</option>
+                        </select>
+
+                        <select
+                            id="fileManagerSortBy"
+                            aria-label="Сортировка"
+                            class="min-w-0 px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 cursor-pointer"
+                        >
+                            <option value="newest">Сначала новые</option>
+                            <option value="oldest">Сначала старые</option>
+                            <option value="name_asc">По имени (А-Я)</option>
+                            <option value="name_desc">По имени (Я-А)</option>
+                            <option value="size_asc">По размеру (↑)</option>
+                            <option value="size_desc">По размеру (↓)</option>
+                        </select>
+                    </div>
                 </div>
-                <div id="filePreviewContent"></div>
             </div>
-        </div>
 
-        <!-- Кнопки действий -->
-        <div class="px-8 py-5 border-t border-slate-100 bg-white max-[500px]:px-5 max-[500px]:py-4">
-            <div class="flex justify-between items-center gap-3 max-[500px]:flex-col-reverse">
-                <p class="text-[12px] text-slate-500 max-[500px]:hidden">
-                    <i class="fas fa-hdd mr-1 opacity-70"></i>Нажмите на файл, чтобы выбрать или снять выбор
-                </p>
-
-                <div class="flex items-center gap-3 max-[500px]:w-full max-[500px]:flex-col-reverse">
-                    <x-ui.button
-                        type="button"
-                        variant="secondary"
-                        onclick="closeFileManager()"
+            <!-- Список файлов и панель предпросмотра -->
+            <div class="flex-1 min-h-0 flex relative">
+                <div
+                    id="fileManagerContent"
+                    class="flex-1 overflow-y-auto custom-scrollbar px-8 py-6 max-[500px]:px-5 max-[500px]:py-4"
+                >
+                    <div
+                        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
                     >
-                        Отмена
-                    </x-ui.button>
+                        <div
+                            class="col-span-full text-center py-12 border border-dashed border-slate-200 rounded-xl bg-slate-50/50"
+                        >
+                            <i
+                                class="fas fa-spinner fa-spin text-2xl text-slate-300 mb-3"
+                            ></i>
+                            <p class="text-[13px] text-slate-500 font-medium">Загрузка файлов...</p>
+                        </div>
+                    </div>
+                </div>
 
-                    <x-ui.button
-                        type="button"
-                        id="confirmFileSelectionBtn"
-                        variant="primary"
-                        icon="fas fa-check"
-                        class="disabled:opacity-50 disabled:cursor-not-allowed"
-                        onclick="confirmEditFileSelectionForEdit()"
+                <!-- Предпросмотр: справа на десктопе, поверх списка на узких экранах -->
+                <div
+                    id="fileManagerPreviewPanel"
+                    class="hidden w-96 shrink-0 border-l border-slate-100 bg-slate-50 overflow-y-auto custom-scrollbar px-6 py-6 max-[900px]:absolute max-[900px]:inset-0 max-[900px]:w-full max-[900px]:border-l-0 max-[900px]:z-10"
+                >
+                    <div class="sticky top-0 z-10 bg-slate-50 pb-4 -mt-1">
+                        <button
+                            type="button"
+                            onclick="closeFilePreview()"
+                            class="inline-flex items-center px-3 py-1.5 border border-slate-200 rounded-lg text-[12px] font-medium text-slate-600 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                        >
+                            <i class="fas fa-arrow-left mr-1.5 opacity-70"></i
+                            >Назад
+                        </button>
+                    </div>
+                    <div id="filePreviewContent"></div>
+                </div>
+            </div>
+
+            <!-- Кнопки действий -->
+            <div
+                class="px-8 py-5 border-t border-slate-100 bg-white max-[500px]:px-5 max-[500px]:py-4"
+            >
+                <div
+                    class="flex justify-between items-center gap-3 max-[500px]:flex-col-reverse"
+                >
+                    <p class="text-[12px] text-slate-500 max-[500px]:hidden">
+                        <i class="fas fa-hdd mr-1 opacity-70"></i>Нажмите на
+                        файл, чтобы выбрать или снять выбор
+                    </p>
+
+                    <div
+                        class="flex items-center gap-3 max-[500px]:w-full max-[500px]:flex-col-reverse"
                     >
-                        Выбрать (<span id="confirmCount">0</span>)
-                    </x-ui.button>
+                        <x-ui.button
+                            type="button"
+                            variant="secondary"
+                            onclick="closeTaskStorageManager()"
+                        >
+                            Отмена
+                        </x-ui.button>
+
+                        <x-ui.button
+                            type="button"
+                            id="confirmFileSelectionBtn"
+                            variant="primary"
+                            icon="fas fa-check"
+                            class="disabled:opacity-50 disabled:cursor-not-allowed"
+                            onclick="confirmEditFileSelectionForEdit()"
+                        >
+                            Выбрать (<span id="confirmCount">0</span>)
+                        </x-ui.button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
     @include ('partials.modal.task.create')
 
@@ -3081,7 +3178,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
         // ==================== ФУНКЦИИ ДЛЯ РЕДАКТИРОВАНИЯ ЗАДАЧИ ====================
         async function openEditModal(taskId) {
             currentTaskId = taskId;
-            editSelectedFiles = [];
+            window.taskEditState.selected = [];
 
             try {
                 const response = await fetch(`/tasks/${taskId}/get`, {
@@ -3134,9 +3231,9 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                     document.getElementById('editTaskActualHours').value = task.actual_hours || '';
 
                     if (task.files && task.files.length > 0) {
-                        editSelectedFiles = task.files;
+                        window.taskEditState.selected = task.files;
                     } else {
-                        editSelectedFiles = [];
+                        window.taskEditState.selected = [];
                     }
                     updateEditSelectedFilesDisplay();
 
@@ -3162,194 +3259,56 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
             document.getElementById('editUploadNewFilesInput').value = '';
             document.getElementById('editUploadFilesList').classList.add('hidden');
             currentTaskId = null;
-            editSelectedFiles = [];
-            editTempSelectedFiles = [];
+            window.taskEditState.selected = [];
+            window.taskEditState.temp = [];
             document.body.classList.remove('overflow-y-hidden')
         }
 
-        function updateEditSelectedFilesDisplay() {
-            const container = document.getElementById('editSelectedFilesContainer');
-            const fileCounter = document.getElementById('editFileCounter');
-            const fileCount = document.getElementById('editFileCount');
-
-            if (!container) return;
-
-            if (editSelectedFiles.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
-                    <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
-                    <p class="text-sm text-gray-500">Файлы не выбраны</p>
-                    <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
-                </div>`;
-                if (fileCounter) fileCounter.classList.add('hidden');
-            } else {
-                let html = '';
-                editSelectedFiles.forEach(file => {
-                    const fileIcon = getFileIcon(file.extension);
-                    const fileType = getFileTypeClass(file.extension);
-                    html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <div class="flex items-center space-x-3 flex-1">
-                            <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
-                                <span class="text-lg">${fileIcon}</span>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm font-medium text-gray-800">${escapeHtml(file.name)}</p>
-                                <span class="text-xs text-gray-500">${formatFileSize(file.size)}</span>
-                            </div>
-                        </div>
-                        <button onclick="removeEditSelectedFile(${file.id})" class="text-red-500 hover:text-red-700 p-1">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>`;
-                });
-                container.innerHTML = html;
-                if (fileCount) fileCount.textContent = editSelectedFiles.length;
-                if (fileCounter) fileCounter.classList.remove('hidden');
-            }
-        }
-
-        function removeEditSelectedFile(fileId) {
-            editSelectedFiles = editSelectedFiles.filter(f => f.id !== fileId);
-            updateEditSelectedFilesDisplay();
-            showNotification('Файл удален', 'info');
-        }
-
-        function clearEditSelectedFiles() {
-            if (editSelectedFiles.length === 0) {
-                showNotification('Нет файлов для очистки', 'info');
-                return;
-            }
-            if (confirm('Удалить все выбранные файлы?')) {
-                editSelectedFiles = [];
-                updateEditSelectedFilesDisplay();
-                showNotification('Все файлы удалены', 'success');
-            }
-        }
-
-
         // ==================== ФАЙЛОВЫЙ МЕНЕДЖЕР ДЛЯ РЕДАКТИРОВАНИЯ ====================
-        async function openEditFileManager() {
-            const modal = document.getElementById('fileManagerModal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
-                editTempSelectedFiles = [...editSelectedFiles];
-                await loadEditFiles();
-            }
-        }
-
-        async function loadEditFiles() {
-            const contentDiv = document.getElementById('fileManagerContent');
-            if (!contentDiv) return;
-            contentDiv.innerHTML = `<div class="col-span-full text-center py-12">
-                    <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
-                    <p class="text-gray-500 mt-2">Загрузка файлов...</p>
-                </div>`;
-
-            try {
-                const response = await fetch('/tasks/file-storage/get-files', {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                    }
-                });
-                if (!response.ok) throw new Error('Ошибка загрузки');
-                editAllFiles = await response.json();
-                window.editAllFiles = editAllFiles;
-                renderEditFileManagerFiles(editAllFiles);
-                initEditFileManagerFilters();
-            } catch (error) {
-                console.error('Ошибка загрузки файлов:', error);
-                contentDiv.innerHTML = `<div class="col-span-full text-center py-12 text-red-600">
-                <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
-                <p>Ошибка загрузки файлов</p>
-                </div>`;
-            }
-        }
 
         function renderEditFileManagerFiles(files) {
             const contentDiv = document.getElementById('fileManagerContent');
             if (!contentDiv) return;
             if (!files || files.length === 0) {
                 contentDiv.innerHTML = `<div class="col-span-full text-center py-12">
-                <i class="fas fa-folder-open text-3xl text-gray-300 mb-2"></i>
-                <p class="text-gray-500">Нет файлов в хранилище</p>
-                </div>`;
+                    <i class="fas fa-folder-open text-3xl text-gray-300 mb-2"></i>
+                    <p class="text-gray-500">Нет файлов в хранилище</p>
+                    </div>`;
                 return;
             }
 
             let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
             files.forEach(file => {
-                const isSelected = editTempSelectedFiles.some(f => f.id === file.id);
+                const isSelected = window.taskEditState.temp.some(f => f.id === file.id);
                 const fileIcon = getFileIcon(file.extension);
                 const fileType = getFileTypeClass(file.extension);
 
                 html += `
-                <div class="file-card bg-white border-2 ${isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200'} rounded-lg p-3 transition-all duration-200 hover:shadow-md cursor-pointer"
-                     onclick="toggleEditFileSelection(${file.id})">
-                    <div class="flex justify-between items-start mb-2">
-                        <div class="w-5 h-5 rounded ${isSelected ? 'bg-green-500' : 'border-2 border-gray-300'} flex items-center justify-center">
-                            ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                    <div class="file-card bg-white border-2 ${isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200'} rounded-lg p-3 transition-all duration-200 hover:shadow-md cursor-pointer"
+                         onclick="toggleTaskEditFileSelection(${file.id})">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="w-5 h-5 rounded ${isSelected ? 'bg-green-500' : 'border-2 border-gray-300'} flex items-center justify-center">
+                                ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                            </div>
+                            <button type="button"
+                                    onclick="event.stopPropagation(); downloadEditFile(${file.id})"
+                                    class="text-gray-400 hover:text-green-600 p-1 transition-colors"
+                                    title="Скачать">
+                                <i class="fas fa-download"></i>
+                            </button>
                         </div>
-                        <button type="button"
-                                onclick="event.stopPropagation(); downloadEditFile(${file.id})"
-                                class="text-gray-400 hover:text-green-600 p-1 transition-colors"
-                                title="Скачать">
-                            <i class="fas fa-download"></i>
-                        </button>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
-                            <img src="/storage/${file.path}" alt="${escapeHtml(file.name)}" class="w-full h-full object-cover">
+                        <div class="text-center">
+                            <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
+                                <img src="/storage/${file.path}" alt="${escapeHtml(file.name)}" class="w-full h-full object-cover">
+                            </div>
+                            <p class="text-sm font-medium text-gray-800 truncate" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</p>
+                            <p class="text-xs text-gray-500 mt-1">${formatFileSize(file.size)}</p>
+                            <p class="text-xs text-gray-400">${formatDate(file.created_at)}</p>
                         </div>
-                        <p class="text-sm font-medium text-gray-800 truncate" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</p>
-                        <p class="text-xs text-gray-500 mt-1">${formatFileSize(file.size)}</p>
-                        <p class="text-xs text-gray-400">${formatDate(file.created_at)}</p>
-                    </div>
-                </div>`;
+                    </div>`;
             });
             html += '</div>';
             contentDiv.innerHTML = html;
-
-            updateEditFileManagerUI();
-        }
-
-        function toggleEditFileSelection(fileId) {
-            const file = editAllFiles.find(f => f.id === fileId);
-            if (!file) return;
-
-            const index = editTempSelectedFiles.findIndex(f => f.id === fileId);
-            if (index === -1) {
-                editTempSelectedFiles.push(file);
-            } else {
-                editTempSelectedFiles.splice(index, 1);
-            }
-
-            const fileCards = document.querySelectorAll('#fileManagerContent .file-card');
-            fileCards.forEach(card => {
-                const onclickAttr = card.getAttribute('onclick');
-                if (onclickAttr && onclickAttr.includes(fileId.toString())) {
-                    const isSelected = editTempSelectedFiles.some(f => f.id === fileId);
-                    if (isSelected) {
-                        card.classList.add('border-green-500', 'bg-green-50');
-                        card.classList.remove('border-gray-200');
-                        const checkDiv = card.querySelector('.w-5.h-5');
-                        if (checkDiv) {
-                            checkDiv.classList.add('bg-green-500');
-                            checkDiv.classList.remove('border-2', 'border-gray-300');
-                            checkDiv.innerHTML = '<i class="fas fa-check text-white text-xs"></i>';
-                        }
-                    } else {
-                        card.classList.remove('border-green-500', 'bg-green-50');
-                        card.classList.add('border-gray-200');
-                        const checkDiv = card.querySelector('.w-5.h-5');
-                        if (checkDiv) {
-                            checkDiv.classList.remove('bg-green-500');
-                            checkDiv.classList.add('border-2', 'border-gray-300');
-                            checkDiv.innerHTML = '';
-                        }
-                    }
-                }
-            });
 
             updateEditFileManagerUI();
         }
@@ -3359,7 +3318,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
             const confirmCount = document.getElementById('confirmCount');
             const confirmBtn = document.getElementById('confirmFileSelectionBtn');
 
-            const count = editTempSelectedFiles.length;
+            const count = window.taskEditState.temp.length;
 
             if (selectedCount) selectedCount.textContent = count;
             if (confirmCount) confirmCount.textContent = count;
@@ -3376,7 +3335,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
 
         window.confirmEditFileSelectionForEdit = function() {
             console.log('confirmFromMainAdmin')
-            editSelectedFiles = [...editTempSelectedFiles];
+            window.taskEditState.selected = [...window.taskEditState.temp];
             updateEditSelectedFilesDisplay();
 
             const fileManagerModal = document.getElementById('fileManagerModal');
@@ -3385,7 +3344,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                 document.body.classList.remove('overflow-hidden');
             }
 
-            showNotification(`Выбрано ${editSelectedFiles.length} файлов`, 'success');
+            showNotification(`Выбрано ${window.taskEditState.selected.length} файлов`, 'success');
         };
 
         function initEditFileManagerFilters() {
@@ -3394,8 +3353,8 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
             const sortBy = document.getElementById('fileManagerSortBy');
 
             const filter = () => {
-                if (!editAllFiles) return;
-                let filtered = [...editAllFiles];
+                if (!window.taskEditState.all) return;
+                let filtered = [...window.taskEditState.all];
                 const searchTerm = searchInput?.value.toLowerCase() || '';
                 if (searchTerm) filtered = filtered.filter(f => f.name.toLowerCase().includes(searchTerm));
                 if (typeFilter && typeFilter.value) {
@@ -3449,9 +3408,9 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                     const div = document.createElement('div');
                     div.className = 'flex items-center justify-between p-2 bg-gray-50 rounded';
                     div.innerHTML = `
-                        <span class="text-sm truncate">${escapeHtml(file.name)}</span>
-                        <button type="button" onclick="removeEditUploadedFile(${index})" class="text-red-500">✕</button>
-                    `;
+                            <span class="text-sm truncate">${escapeHtml(file.name)}</span>
+                            <button type="button" onclick="removeEditUploadedFile(${index})" class="text-red-500">✕</button>
+                        `;
                     container.appendChild(div);
                 });
             } else if (list) {
@@ -3481,7 +3440,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
             }
             try {
                 const formData = new FormData(this);
-                const selectedFileIds = editSelectedFiles.map(f => f.id);
+                const selectedFileIds = window.taskEditState.selected.map(f => f.id);
                 formData.append('selected_files', JSON.stringify(selectedFileIds));
 
                 const newFiles = document.getElementById('editUploadNewFilesInput');
@@ -3549,10 +3508,10 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
 
             if (taskSelectedFiles.length === 0) {
                 container.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
-                        <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
-                        <p class="text-sm text-gray-500">Файлы не выбраны</p>
-                        <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
-                    </div>`;
+                            <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
+                            <p class="text-sm text-gray-500">Файлы не выбраны</p>
+                            <p class="text-xs text-gray-400 mt-1">Нажмите "Открыть хранилище" для выбора</p>
+                        </div>`;
                 if (fileCounter) fileCounter.classList.add('hidden');
             } else {
                 let html = '';
@@ -3560,19 +3519,19 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                     const fileIcon = getFileIcon(file.extension);
                     const fileType = getFileTypeClass(file.extension);
                     html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
-                                    <span class="text-lg">${fileIcon}</span>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 ${fileType.bg} rounded flex items-center justify-center">
+                                        <span class="text-lg">${fileIcon}</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-800">${escapeHtml(file.name)}</p>
+                                        <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-800">${escapeHtml(file.name)}</p>
-                                    <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                                </div>
-                            </div>
-                            <button onclick="removeTaskSelectedFile(${file.id})" class="text-red-500 hover:text-red-700 p-1">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>`;
+                                <button onclick="removeTaskSelectedFile(${file.id})" class="text-red-500 hover:text-red-700 p-1">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>`;
                 });
                 container.innerHTML = html;
                 if (fileCount) fileCount.textContent = taskSelectedFiles.length;
@@ -3667,27 +3626,27 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                 const fileIcon = getFileIcon(file.extension);
                 const fileType = getFileTypeClass(file.extension);
                 html += `
-                        <div class="file-card bg-white border ${isSelected ? 'border-green-500 shadow-md' : 'border-gray-200'} rounded-lg p-3 cursor-pointer" onclick="toggleTaskFileSelection(${file.id})">
-                            <div class="flex justify-end mb-2">
-                                <div class="w-5 h-5 rounded border ${isSelected ? 'bg-green-500 border-green-500' : 'border-gray-300'} flex items-center justify-center">
-                                    ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                            <div class="file-card bg-white border ${isSelected ? 'border-green-500 shadow-md' : 'border-gray-200'} rounded-lg p-3 cursor-pointer" onclick="toggleTaskFileSelection(${file.id})">
+                                <div class="flex justify-end mb-2">
+                                    <div class="w-5 h-5 rounded border ${isSelected ? 'bg-green-500 border-green-500' : 'border-gray-300'} flex items-center justify-center">
+                                        ${isSelected ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="text-center">
-                                <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
-                                    <span class="text-2xl">${fileIcon}</span>
+                                <div class="text-center">
+                                    <div class="w-16 h-16 ${fileType.bg} rounded-lg flex items-center justify-center mx-auto mb-2">
+                                        <span class="text-2xl">${fileIcon}</span>
+                                    </div>
+                                    <p class="text-sm font-medium truncate">${escapeHtml(file.name)}</p>
+                                    <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                                    <p class="text-xs text-gray-400 mt-1">${formatDate(file.created_at)}</p>
                                 </div>
-                                <p class="text-sm font-medium truncate">${escapeHtml(file.name)}</p>
-                                <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                                <p class="text-xs text-gray-400 mt-1">${formatDate(file.created_at)}</p>
-                            </div>
-                            <div class="flex justify-center space-x-2 mt-2 pt-2 border-t border-gray-100">
-                                <button type="button" onclick="event.stopPropagation(); downloadTaskFile(${file.id})"
-                                        class="text-gray-400 hover:text-green-600 p-1" title="Скачать">
-                                    <i class="fas fa-download"></i>
-                                </button>
-                            </div>
-                        </div>`;
+                                <div class="flex justify-center space-x-2 mt-2 pt-2 border-t border-gray-100">
+                                    <button type="button" onclick="event.stopPropagation(); downloadTaskFile(${file.id})"
+                                            class="text-gray-400 hover:text-green-600 p-1" title="Скачать">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>`;
             });
             html += '</div>';
             contentDiv.innerHTML = html;
@@ -3731,11 +3690,11 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
             const isCreateModalVisible = document.getElementById('taskModal') && !document.getElementById('taskModal').classList.contains('hidden');
 
             if (isEditModalVisible) {
-                if (editTempSelectedFiles.length === 0) {
+                if (window.taskEditState.temp.length === 0) {
                     showNotification('Пожалуйста, выберите хотя бы один файл', 'warning');
                     return;
                 }
-                editSelectedFiles = [...editTempSelectedFiles];
+                window.taskEditState.selected = [...window.taskEditState.temp];
                 updateEditSelectedFilesDisplay();
                 closeFileManager();
             } else if (isCreateModalVisible) {
@@ -4393,24 +4352,9 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
             }
 
             // Переменные для хранения ID задачи
-            let pendingArchiveTaskId = null;
             let pendingRestoreTaskId = null;
             let pendingForceDeleteTaskId = null;
 
-            // ==================== АРХИВАЦИЯ С МОДАЛЬНЫМ ОКНОМ ====================
-            function archiveTask(taskId) {
-                pendingArchiveTaskId = taskId;
-                const modal = document.getElementById("confirmArchiveModal");
-                const modalContent = document.getElementById("confirmArchiveModalContent");
-
-                if (modal) {
-                    modal.classList.remove("hidden");
-                    setTimeout(() => {
-                        modalContent.classList.remove("scale-95", "opacity-0");
-                        modalContent.classList.add("scale-100", "opacity-100");
-                    }, 10);
-                }
-            }
 
             // ==================== ВОССТАНОВЛЕНИЕ С МОДАЛЬНЫМ ОКНОМ ====================
             function restoreTask(taskId) {

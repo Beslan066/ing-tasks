@@ -8,6 +8,7 @@ window.taskEditState = window.taskEditState || {
 const state = window.taskEditState;
 
 function applyCardState(checkbox, selected) {
+    console.log("task-edit-files.js applyCardState");
     checkbox.checked = selected;
     const card = checkbox.closest(".file-card");
     if (!card) return;
@@ -17,6 +18,7 @@ function applyCardState(checkbox, selected) {
 }
 
 export function updateEditSelectedFilesDisplay() {
+    console.log('task-edit-files.js updateEditSelectedFilesDisplay')
     const container = document.getElementById("editSelectedFilesContainer");
     const fileCounter = document.getElementById("editFileCounter");
     const fileCount = document.getElementById("editFileCount");
@@ -58,6 +60,7 @@ export function updateEditSelectedFilesDisplay() {
 }
 
 export function removeEditSelectedFile(fileId) {
+     console.log('task-edit-files.js removeEditSelectedFile')
     state.selected = state.selected.filter(
         (f) => Number(f.id) !== Number(fileId),
     );
@@ -66,6 +69,7 @@ export function removeEditSelectedFile(fileId) {
 }
 
 export function clearTaskEditSelectedFiles() {
+         console.log('task-edit-files.js clearTaskEditSelectedFiles')
     if (state.selected.length === 0) return;
     if (confirm(`Удалить все выбранные файлы (${state.selected.length})?`)) {
         state.selected = [];
@@ -74,6 +78,7 @@ export function clearTaskEditSelectedFiles() {
 }
 
 export async function openTaskStorageManager() {
+    console.log('task-edit-files.js openTaskStorageManager')
     const modal = document.getElementById("fileManagerModal");
     if (!modal) return;
 
@@ -84,12 +89,14 @@ export async function openTaskStorageManager() {
 }
 
 export function closeTaskStorageManager() {
+    console.log('task-edit-files.js closeTaskStorageManager')
     const modal = document.getElementById("fileManagerModal");
     if (modal) modal.classList.add("hidden");
     document.body.classList.remove("overflow-hidden");
 }
 
 export async function loadTaskEditFiles() {
+    console.log('task-edit-files.js loadTaskEditFiles')
     const contentDiv = document.getElementById("fileManagerContent");
     if (!contentDiv) return;
     contentDiv.innerHTML = `<div class="col-span-full text-center py-12">Загрузка...</div>`;
@@ -181,6 +188,7 @@ export function renderTaskEditFiles(files) {
 }
 
 export function toggleTaskEditFileSelection(fileId) {
+     console.log('task-edit-files.js toggleTaskEditFileSelection')
     fileId = Number(fileId);
 
     const file = state.all.find((f) => Number(f.id) === fileId);
@@ -200,11 +208,13 @@ export function toggleTaskEditFileSelection(fileId) {
 }
 
 export function handleTaskEditCheckboxChange(e) {
+    console.log('task-edit-files.js handleTaskEditCheckboxChange')
     e.stopPropagation();
     toggleTaskEditFileSelection(e.target.value);
 }
 
 export function updateTaskEditSelectedCount() {
+        console.log('task-edit-files.js updateTaskEditSelectedCount')
     const n = state.temp.length;
     const selectedCountSpan = document.getElementById("selectedCount");
     const confirmCountSpan = document.getElementById("confirmCount");
@@ -220,6 +230,7 @@ export function updateTaskEditSelectedCount() {
     }
 }
 export function confirmEditFileSelectionForEdit() {
+     console.log('task-edit-files.js confirmEditFileSelectionForEdit')
     state.selected = [...state.temp];
     updateEditSelectedFilesDisplay();
     closeTaskStorageManager();
@@ -243,7 +254,7 @@ Object.assign(window, {
     updateEditSelectedFilesDisplay,
     removeEditSelectedFile,
     clearTaskEditSelectedFiles,
-    clearEditSelectedFiles:clearTaskEditSelectedFiles,
+    clearEditSelectedFiles: clearTaskEditSelectedFiles,
     // старые имена
     openTaskEditFileManager: openTaskStorageManager,
     removeTaskEditSelectedFile: removeEditSelectedFile,

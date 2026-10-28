@@ -1,5 +1,6 @@
 import * as fileHelpers from './../helpers/helpers.js';
-import '../components/task-create-files';
+import '../components/task-create-files.js';
+import '../components/task-edit-files.js';
 import {closeTaskViewModal}from '../functions/close-task-view-modal';
 import {setViewMode} from '../functions/main-admin-page/setViewMode'
 import {toggleFiltersDropdown} from '../functions/main-admin-page/toggleFiltersDropdown'

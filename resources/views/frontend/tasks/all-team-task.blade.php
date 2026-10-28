@@ -906,7 +906,7 @@
                 alert('Ошибка при отказе от задачи');
             }
         }
- async function approveTask(taskId) {
+        async function approveTask(taskId) {
             try {
                 const response = await fetch(`/tasks/${taskId}/status`, {
                     method: 'PATCH',
