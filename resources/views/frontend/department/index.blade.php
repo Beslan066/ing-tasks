@@ -254,187 +254,175 @@
 
 @push('scripts')
     <script>
-        // Открытие/закрытие модального окна
-        function openDepartmentModal() {
-            document.getElementById('departmentModal').classList.remove('hidden');
-            document.getElementById('departmentModal').classList.add('flex');
-            document.body.classList.add('overflow-hidden');
+
+function openDepartmentModal() {
+    const modal = document.getElementById('departmentModal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.classList.add('overflow-hidden');
+}
+
+function closeDepartmentModal() {
+    const modal = document.getElementById('departmentModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.classList.remove('overflow-hidden');
+
+    const form = document.getElementById('departmentForm');
+    if (form) form.reset();
+}
+
+document.addEventListener('click', (e) => {
+    const insideMenuContainer = e.target.closest('.card-menu-container');
+    if (!insideMenuContainer) {
+        closeAllDepartmentMenus();
+    }
+});
+
+function toggleDepartmentMenu(button, departmentId) {
+    const currentContainer = button.closest('.card-menu-container');
+    if (!currentContainer) return;
+
+    const menu = button.nextElementSibling;
+    if (!menu) return;
+
+    const isCurrentlyHidden = menu.classList.contains('hidden');
+    closeAllDepartmentMenus(menu);
+    menu.classList.toggle('hidden', !isCurrentlyHidden);
+}
+
+function closeAllDepartmentMenus(exceptMenu = null) {
+   document.querySelectorAll('.card-menu-container > .js-dept-menu').forEach(menu => {
+        if (menu !== exceptMenu) {
+            menu.classList.add('hidden');
         }
+    });
+}
 
-        function closeDepartmentModal() {
-            document.getElementById('departmentModal').classList.add('hidden');
-            document.getElementById('departmentModal').classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
-            document.getElementById('departmentForm').reset();
-        }
 
-        // Переключение меню отдела
-        function toggleDepartmentMenu(button, departmentId) {
-            const menu = button.nextElementSibling;
-            const isHidden = menu.classList.contains('hidden');
-
-            // Закрыть все другие меню
-            document.querySelectorAll('.relative > div:last-child').forEach(m => {
-                if (m !== menu) {
-                    m.classList.add('hidden');
-                }
-            });
-
-            // Переключить текущее меню
-            if (isHidden) {
-                menu.classList.remove('hidden');
-            } else {
-                menu.classList.add('hidden');
-            }
-
-            // Закрыть меню при клике вне его
-            if (isHidden) {
-                const closeMenu = (e) => {
-                    if (!menu.contains(e.target) && !button.contains(e.target)) {
-                        menu.classList.add('hidden');
-                        document.removeEventListener('click', closeMenu);
-                    }
-                };
-                setTimeout(() => {
-                    document.addEventListener('click', closeMenu);
-                }, 10);
-            }
-        }
-
-        // Поиск отделов
-        let searchTimeout;
-        document.getElementById('departmentSearch').addEventListener('input', function(e) {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                const searchTerm = e.target.value.toLowerCase();
-                const cards = document.querySelectorAll('.department-card');
-
-                cards.forEach(card => {
-                    const name = card.getAttribute('data-name');
-                    if (name.includes(searchTerm)) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            }, 300);
-        });
-
-        // Фильтрация отделов
-        function filterDepartments(status) {
+let searchTimeout;
+const deptSearchInput = document.getElementById('departmentSearch');
+if (deptSearchInput) {
+    deptSearchInput.addEventListener('input', function(e) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const searchTerm = e.target.value.toLowerCase();
             const cards = document.querySelectorAll('.department-card');
 
             cards.forEach(card => {
-                const cardStatus = card.getAttribute('data-status');
-
-                if (status === 'all' || cardStatus === status) {
+                const name = card.getAttribute('data-name') || '';
+                if (name.toLowerCase().includes(searchTerm)) {
                     card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
                 }
             });
-        }
+        }, 300);
+    });
+}
 
-        // Сортировка отделов (заглушка - в реальности нужно перезагружать страницу)
-        function sortDepartments(criteria) {
-            alert(`Сортировка по: ${criteria}. В реальном приложении здесь будет перезагрузка с сортировкой.`);
-        }
 
-        // Редактирование отдела
-        function editDepartment(departmentId) {
-            // В реальном приложении здесь будет загрузка данных и открытие модального окна редактирования
-            window.location.href = `/departments/${departmentId}/edit`;
-        }
+function filterDepartments(status) {
+    const cards = document.querySelectorAll('.department-card');
 
-        // Закрытие модального окна при клике вне его
-        document.getElementById('departmentModal').addEventListener('click', function(e) {
+    cards.forEach(card => {
+        const cardStatus = card.getAttribute('data-status');
+
+        if (status === 'all' || cardStatus === status) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+
+function sortDepartments(criteria) {
+    alert(`Сортировка по: ${criteria}. В реальном приложении здесь будет перезагрузка с сортировкой.`);
+}
+
+
+function editDepartment(departmentId) {
+    window.location.href = `/departments/${departmentId}/edit`;
+}
+
+
+function submitDepartment(button) {
+    const form = document.getElementById('departmentForm');
+    if (!form) return;
+
+    button.disabled = true;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Создание...';
+
+    fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const container = document.getElementById('departments-container');
+            if (container && data.html) {
+                container.insertAdjacentHTML('afterbegin', data.html);
+            }
+            closeDepartmentModal();
+            form.reset();
+            location.reload();
+        } else {
+            showNotification(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Ошибка при отправке данных', 'error');
+    })
+    .finally(() => {
+        button.disabled = false;
+        button.innerHTML = originalText;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('departmentModal');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
             if (e.target === this) {
                 closeDepartmentModal();
             }
         });
+    }
 
-        function submitDepartment(button) {
-            const form = document.getElementById('departmentForm');
-            const btn = event.target; // Кнопка, на которую нажали
+    const filterToggle = document.getElementById('filterToggle');
+    const dropdown = document.getElementById('filtersPanel');
+    const chevron = document.getElementById('filterIcon');
 
-            button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Создание...';
+    if (dropdown && chevron && filterToggle) {
+        filterToggle.addEventListener('click', () => {
+            if (dropdown.classList.contains('hidden')) {
+                dropdown.classList.remove('hidden', 'fade-out-x');
+                dropdown.classList.add('fade-in-x');
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                dropdown.classList.remove('fade-in-x');
+                dropdown.classList.add('fade-out-x');
+                chevron.style.transform = 'rotate(0deg)';
 
-            fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Находим контейнер, где лежат все карточки
-                     const container = document.getElementById('departments-container');
-                    if (container) {
-                        container.insertAdjacentHTML('afterbegin', data.html);
+                setTimeout(() => {
+                    if (dropdown.classList.contains('fade-out-x')) {
+                        dropdown.classList.add('hidden');
                     }
-                    // Вставляем полученный от сервера HTML в начало списка
-
-                    closeDepartmentModal();
-                    form.reset();
-                    location.reload();
-                } else {
-                    showNotification(data.message,'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Ошибка при отправке данных','error');
-            })
-            .finally(() => {
-                button.disabled = false;
-                button.innerHTML = 'Создать';
-            });
-        }
-
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Закрыть меню при клике вне
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.relative > button') && !e.target.closest('.relative > div:last-child')) {
-                    document.querySelectorAll('.relative > div:last-child').forEach(menu => {
-                        menu.classList.add('hidden');
-                    });
-                }
-            });
+                }, 200);
+            }
         });
-        document.addEventListener('DOMContentLoaded', function() {
-                const filterToggle = document.getElementById('filterToggle');
-                const dropdown = document.getElementById('filtersPanel');
-                const chevron = document.getElementById('filterIcon');
-
-                if (!dropdown || !chevron||!filterToggle) return;
-
-
-                filterToggle.addEventListener('click', ()=> {
-                if (dropdown.classList.contains('hidden')) {
-                    dropdown.classList.remove('hidden');
-                    dropdown.classList.remove('fade-out-x');
-                    dropdown.classList.add('fade-in-x');
-                    chevron.style.transform = 'rotate(180deg)';
-                    console.log('if')
-                } else {
-                    console.log('else')
-                    dropdown.classList.remove('fade-in-x');
-                    dropdown.classList.add('fade-out-x');
-                    chevron.style.transform = 'rotate(0deg)';
-
-                    setTimeout(() => {
-                        if (dropdown.classList.contains('fade-out-x')) {
-                            dropdown.classList.add('hidden');
-                        }
-                    }, 200);
-                }
-                })
-        })
+    }
+});
     </script>
 @endpush
 

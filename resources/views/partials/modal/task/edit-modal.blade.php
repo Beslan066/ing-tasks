@@ -39,6 +39,7 @@
             class="px-8 py-6 space-y-7 max-[500px]:px-5 max-[500px]:py-4"
         >
             @csrf
+             <input type="hidden" name="task_id" id="editTaskId">
             <input
                 type="hidden"
                 name="selected_file_ids"
@@ -227,7 +228,7 @@
                         <div class="flex space-x-2">
                             <button
                                 type="button"
-                                onclick="openEditFileManager()"
+                                onclick="openTaskEditFileManager()"
                                 class="inline-flex items-center px-3 py-1.5 border border-slate-200 rounded-lg text-[12px] font-medium text-slate-600 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
                             >
                                 <i

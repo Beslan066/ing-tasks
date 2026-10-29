@@ -9,13 +9,13 @@
     $baseClasses = 'transition-all duration-200 focus:outline-none max-[500px]:w-full flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed';
 
     $variants = [
-        'primary' => 'px-5 py-2.5 rounded-xl text-[13px] font-medium bg-emerald-500 hover:bg-emerald-600 text-white focus:ring-4 focus:ring-emerald-500/20 shadow-sm hover:shadow-md',
-        'danger' => 'px-5 py-2.5 rounded-xl text-[13px] font-medium bg-rose-500 hover:bg-rose-600 text-white focus:ring-4 focus:ring-rose-500/20 shadow-sm hover:shadow-md',
-        'secondary' => 'px-5 py-2.5 rounded-xl text-[13px] font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-50 focus:ring-2 focus:ring-slate-200',
-        'action' => 'px-3 py-2.5 rounded-xl text-[13px] font-semibold text-white bg-emerald-500 hover:bg-emerald-600 shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30',
-        'danger-outline' => 'px-3 py-2.5 rounded-xl text-[13px] font-semibold bg-white border-2 border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300',
+        'primary' => 'px-5 py-2.5 rounded-xl text-[14px] font-medium bg-emerald-500 hover:bg-emerald-600 text-white focus:ring-4 focus:ring-emerald-500/20 shadow-sm hover:shadow-md',
+        'danger' => 'px-5 py-2.5 rounded-xl text-[14px] font-medium bg-rose-500 hover:bg-rose-600 text-white focus:ring-4 focus:ring-rose-500/20 shadow-sm hover:shadow-md',
+        'secondary' => 'px-5 py-2.5 rounded-xl text-[14px] font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-50 focus:ring-2 focus:ring-slate-200',
+        'action' => 'px-3 py-2.5 rounded-xl text-[14px] font-semibold text-white bg-emerald-500 hover:bg-emerald-600 shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30',
+        'danger-outline' => 'px-3 py-2.5 rounded-xl text-[14px] font-semibold bg-white border-2 border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300',
         'ghost' => 'px-3 py-2 rounded-lg text-[12px] font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100',
-        'outline' => 'px-5 py-2.5 rounded-xl text-[13px] font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300',
+        'outline' => 'px-5 py-2.5 rounded-xl text-[14px] font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300',
     ];
 
     $iconSizes = [

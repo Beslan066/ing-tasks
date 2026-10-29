@@ -14,19 +14,19 @@ export function buildTaskMenu(taskId, status, canManage) {
     const start   = menuItem(`startTask(${taskId})`, 'fa-play', 'text-green-500', 'Начать');
     const review  = menuItem(`sendForReview(${taskId})`, 'fa-check-circle', 'text-green-500', 'Отправить на проверку');
     const reject  = menuItem(`showRejectModal(${taskId})`, 'fa-times-circle', '', 'Отказаться', 'text-red-600');
-    const edit = menuItem(`openEditModal(${taskId})`, 'fa-edit', 'text-blue-500', 'Редактировать');
-    const archive = menuItem(`archiveTask(${taskId})`, 'fa-archive', 'text-yellow-500', 'В архив');
-    let actions;
+    const approve = menuItem(`approveTask(${taskId})`, 'fa-check-circle', 'text-blue-500', 'Завершить');
+
+    let actions = '';
     switch (status) {
         case 'назначена':
-            actions = edit+archive+subtask + start + reject;
+            actions = subtask + start + reject;
             break;
         case 'в работе':
         case 'просрочена':
-            actions =review + reject;
+            actions = review + reject;
             break;
         case 'на проверке':
-            actions = reject;
+            actions = approve + reject;
             break;
         default:
             actions = reject;
