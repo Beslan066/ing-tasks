@@ -468,6 +468,7 @@
 @push('scripts')
  @vite('resources/js/pages/all-team-tasks.page.js')
     <script>
+        window.redirectUrl="/team/all-tasks";
         let currentTaskId = null;
         let currentRows = [];
 

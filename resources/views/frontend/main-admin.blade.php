@@ -3054,6 +3054,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
     ></script>
 
     <script>
+         window.redirectUrl="/team/tasks";
         // ==================== ПЕРЕМЕННЫЕ ====================
         let currentTaskId = null;
         let editSelectedFiles = [];
