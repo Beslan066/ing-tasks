@@ -2371,76 +2371,6 @@ media-src https://meet.jit.si https:;
 
     // ==================== ПРОСМОТР ЗАДАЧИ ====================
 
-    // Открыть модальное окно просмотра задачи
-    async function openTaskViewModal(taskId) {
-        console.log('openTaskViewModal2')
-        const modal = document.getElementById('taskViewModal');
-        const content = document.getElementById('taskModalContent');
-
-        if (!modal || !content) {
-            console.error('Модальное окно не найдено');
-            return;
-        }
-
-        // Сохраняем ID задачи
-        window.currentTaskId = taskId;
-        window.taskId = taskId;
-
-        // МЕНЯЕМ URL БЕЗ ПЕРЕЗАГРУЗКИ СТРАНИЦЫ
-        const newUrl = `/tasks/${taskId}`;
-        window.history.pushState({taskId: taskId, modalOpen: true}, '', newUrl);
-
-        // Показываем загрузчик
-        content.innerHTML = `
-        <div class="text-center py-8">
-            <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
-            <p class="text-gray-500 mt-2">Загрузка задачи...</p>
-        </div>
-    `;
-
-        // Показываем модальное окно
-        modal.style.backdropFilter = 'blur(10px)';
-        modal.classList.remove('hidden');
-
-        try {
-            // ПРАВИЛЬНЫЙ URL - без /view и без /page
-            const response = await fetch(`/tasks/${taskId}`, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'text/html'
-                }
-            });
-
-            const html = await response.text();
-
-            // ВСЕГДА показываем полученный HTML, даже если статус не 200
-            content.innerHTML = html;
-
-            // Если статус не OK, логгируем но не показываем ошибку
-            if (!response.ok) {
-                console.warn(`HTTP status: ${response.status} - отображаем сообщение от сервера`);
-            }
-setDefaultTab()
-        } catch (error) {
-            console.error('Сетевая ошибка:', error);
-            // Эта ошибка возникает только при проблемах с сетью (нет интернета и т.д.)
-            content.innerHTML = `
-            <div class="text-center py-8">
-                <i class="fas fa-wifi text-3xl text-red-400"></i>
-                <p class="text-gray-500 mt-2">Ошибка сети</p>
-                <p class="text-sm text-gray-400 mt-1">${error.message}</p>
-                <button onclick="openTaskViewModal(${taskId})"
-                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
-                    <i class="fas fa-sync-alt mr-2"></i>Повторить
-                </button>
-            </div>
-        `;
-        }finally {
-            document.body.classList.add('overflow-y-hidden')
-        }
-    }
-
     function setDefaultTab() {
 
             console.log('def tab')
@@ -2509,26 +2439,26 @@ setDefaultTab()
         }
     });
 
-    // Закрытие по клику на фон
-    document.addEventListener('click', function (e) {
-        const modal = document.getElementById('taskViewModal');
-        if (e.target === modal) {
-            closeTaskViewModal('/team/tasks');
-        }
-    });
+    // // Закрытие по клику на фон
+    // document.addEventListener('click', function (e) {
+    //     const modal = document.getElementById('taskViewModal');
+    //     if (e.target === modal) {
+    //         closeTaskViewModal('/team/tasks');
+    //     }
+    // });
 
     // При загрузке страницы проверяем URL и открываем модалку если нужно
-    document.addEventListener('DOMContentLoaded', function () {
-        const match = window.location.pathname.match(/\/tasks\/(\d+)/);
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     const match = window.location.pathname.match(/\/tasks\/(\d+)/);
 
-        if (match && !window.location.pathname.includes('/page/')) {
-            const taskId = match[1];
-            // Открываем модальное окно с задачей
-            setTimeout(function () {
-                openTaskViewModal(taskId);
-            }, 100);
-        }
-    });
+    //     if (match && !window.location.pathname.includes('/page/')) {
+    //         const taskId = match[1];
+    //         // Открываем модальное окно с задачей
+    //         setTimeout(function () {
+    //             openTaskViewModal(taskId,{urlPrefix:'/hh4'});
+    //         }, 100);
+    //     }
+    // });
 
     // При загрузке страницы проверяем, не открыта ли прямая ссылка
     document.addEventListener('DOMContentLoaded', function () {

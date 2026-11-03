@@ -283,7 +283,7 @@
                                     <td class="px-6 py-4">
                                         <div class="text-sm font-medium ">
                                             <a href="/team/tasks/{{ $task->id }}"
-                                               onclick="openTaskViewModal({{ $task->id }}); return false;">
+                                               onclick="window.openTaskViewModal({{ $task->id }},{urlPrefix:'/all-tasks'}); return false;">
                                                 {{ $task->name }}
                                             </a>
                                         </div>
@@ -314,7 +314,7 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 text-sm font-medium max-[500px]:flex max-[500px]:justify-center max-[500px]:items-center">
-                                        <button onclick="openTaskViewModal({{ $task->id }})"
+                                        <button onclick="window.openTaskViewModal({{ $task->id }},{urlPrefix:'/all-tasks'})"
                                             class="text-green-600 hover:text-green-900 mr-3 max-[500px]:mr-0">
                                             <i class="fas fa-eye"></i>
                                         </button>
@@ -370,7 +370,7 @@
                                     data-created-at="{{ $task->created_at->timestamp }}">
                                     <td class="px-6 py-4">
                                         <div class="text-sm font-medium text-gray-900">
-                                            <a href="javascript:void(0)" onclick="openTaskViewModal({{ $task->id }})"
+                                            <a href="javascript:void(0)" onclick="window.openTaskViewModal({{ $task->id }},{urlPrefix:'/all-tasks'})"
                                                 class="hover:text-blue-600">
                                                 {{ $task->name }}
                                             </a>
@@ -403,7 +403,7 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 text-sm font-medium max-[500px]:text-center">
-                                        <button onclick="openTaskViewModal({{ $task->id }})"
+                                        <button onclick="window.openTaskViewModal({{ $task->id }},{urlPrefix:'/all-tasks'})"
                                             class="text-green-600 hover:text-green-900 mr-3">
                                             <i class="fas fa-eye"></i>
                                         </button>
@@ -559,71 +559,6 @@
                 }
         }
 
-        // ==================== ФУНКЦИЯ ДЛЯ ОТКРЫТИЯ МОДАЛЬНОГО ОКНА ====================
-        // Открыть модальное окно просмотра задачи - эта функция уже написана в app.blade.php
-    //     async function openTaskViewModal(taskId) {
-    //         console.log('openTaskViewModal all-tasks.blade')
-    //         const modal = document.getElementById('taskViewModal');
-    //         const content = document.getElementById('taskModalContent');
-
-    //         if (!modal || !content) {
-    //             console.error('Модальное окно не найдено');
-    //             return;
-    //         }
-
-    //         // Сохраняем ID задачи и текущий URL для возврата
-    //         window.currentTaskId = taskId;
-    //         window.taskId = taskId;
-    //         window.returnUrl = window.location.pathname; // запоминаем текущую страницу
-
-    //         // МЕНЯЕМ URL БЕЗ ПЕРЕЗАГРУЗКИ СТРАНИЦЫ
-    //         const newUrl = `/team/tasks/${taskId}`;
-    //         window.history.pushState({ taskId: taskId, modalOpen: true, returnUrl: window.returnUrl }, '', newUrl);
-
-    //         // Показываем загрузчик
-    //         content.innerHTML = `
-    //     <div class="text-center py-8">
-    //         <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
-    //         <p class="text-gray-500 mt-2">Загрузка задачи...</p>
-    //     </div>
-    // `;
-
-    //         // Показываем модальное окно
-    //         modal.style.backdropFilter = 'blur(10px)';
-    //         modal.classList.remove('hidden');
-
-    //         try {
-    //             const response = await fetch(`/tasks/${taskId}`, {
-    //                 method: 'GET',
-    //                 headers: {
-    //                     'X-Requested-With': 'XMLHttpRequest',
-    //                     'Accept': 'text/html'
-    //                 }
-    //             });
-
-    //             if (!response.ok) {
-    //                 throw new Error(`HTTP error! status: ${response.status}`);
-    //             }
-
-    //             const html = await response.text();
-    //             content.innerHTML = html;
-
-    //         } catch (error) {
-    //             console.error('Ошибка:', error);
-    //             content.innerHTML = `
-    //         <div class="text-center py-8">
-    //             <i class="fas fa-exclamation-triangle text-3xl text-red-400"></i>
-    //             <p class="text-gray-500 mt-2">Не удалось загрузить задачу</p>
-    //             <p class="text-sm text-gray-400 mt-1">${error.message}</p>
-    //             <button onclick="openTaskViewModal(${taskId})"
-    //                     class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
-    //                 <i class="fas fa-sync-alt mr-2"></i>Повторить
-    //             </button>
-    //         </div>
-    //     `;
-    //         }
-    //     }
-
         // Обрабатываем кнопку "Назад" в браузере
         window.addEventListener('popstate', function(event) {
             const modal = document.getElementById('taskViewModal');
@@ -655,16 +590,29 @@
 
         // При загрузке страницы проверяем URL и открываем модалку если нужно
         document.addEventListener('DOMContentLoaded', function() {
-            const match = window.location.pathname.match(/\/tasks\/(\d+)/);
+    console.log('ОБРАБОТКА URL ДЛЯ ОТКРЫТИЯ МОДАЛКИ (ALL TASKS)');
 
-            if (match && !window.location.pathname.includes('/page/')) {
-                const taskId = match[1];
-                // Открываем модальное окно с задачей
-                setTimeout(function() {
-                    openTaskViewModal(taskId);
-                }, 100);
+    // Blade подставит сюда ID задачи или null
+    const openTaskId = {{ $openTaskId ?? 'null' }};
+
+    if (openTaskId) {
+        // Подменяем URL на красивый /all-tasks/tasks/ID для строки браузера
+        window.history.pushState({
+            taskId: openTaskId,
+            modalOpen: true,
+            returnUrl: '/all-tasks'
+        }, '', '/all-tasks/tasks/' + openTaskId);
+
+        // Запускаем модальное окно с префиксом 'all-tasks'
+        setTimeout(function() {
+            if (typeof window.openTaskViewModal === 'function') {
+                window.openTaskViewModal(openTaskId, { urlPrefix: 'all-tasks' });
+            } else {
+                console.error('Функция openTaskViewModal не найдена на этой странице');
             }
-        });
+        }, 100);
+    }
+});
 
         // При загрузке страницы проверяем, не открыта ли прямая ссылка
         document.addEventListener('DOMContentLoaded', function() {

@@ -575,7 +575,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                                                             >
                                                                 <a
                                                                     href="/team/tasks/{{ $task->id }}"
-                                                                    onclick="openTaskViewModal({{ $task->id }}); return false;"
+                                                                    onclick="window.openTaskViewModal({{ $task->id }}); return false;"
                                                                 >
                                                                     <span
                                                                         class="truncate max-w-[250px]"
@@ -631,7 +631,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                                                 </td>
                                                 <td
                                                     class="px-3 py-4 cursor-pointer whitespace-nowrap"
-                                                    onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})"
+                                                    onclick="if(!event.target.closest('.action-buttons')) window.openTaskViewModal({{ $task->id }})"
                                                 >
                                                     @if ($task->trashed())
                                                         <span
@@ -653,7 +653,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                                                 </td>
                                                 <td
                                                     class="px-3 py-4 cursor-pointer"
-                                                    onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})"
+                                                    onclick="if(!event.target.closest('.action-buttons')) window.openTaskViewModal({{ $task->id }})"
                                                 >
                                                     @if ($task->user)
                                                         <div
@@ -686,13 +686,13 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                                                 </td>
                                                 <td
                                                     class="px-3 py-4 cursor-pointer whitespace-nowrap text-sm text-gray-500"
-                                                    onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})"
+                                                    onclick="if(!event.target.closest('.action-buttons')) window.openTaskViewModal({{ $task->id }})"
                                                 >
                                                     {{ $task->department->name ?? ($task->is_personal ? 'Личная задача' : 'Без отдела') }}
                                                 </td>
                                                 <td
                                                     class="px-3 py-4 cursor-pointer whitespace-nowrap"
-                                                    onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})"
+                                                    onclick="if(!event.target.closest('.action-buttons')) window.openTaskViewModal({{ $task->id }})"
                                                 >
                                                     @php
                                         $prioritySignals = [
@@ -737,7 +737,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                                                 </td>
                                                 <td
                                                     class="px-3 py-4 cursor-pointer whitespace-nowrap"
-                                                    onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})"
+                                                    onclick="if(!event.target.closest('.action-buttons')) window.openTaskViewModal({{ $task->id }})"
                                                 >
                                                     @if ($task->author)
                                                         <div
@@ -753,7 +753,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                                                 </td>
                                                 <td
                                                     class="px-3 py-4 cursor-pointer"
-                                                    onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})"
+                                                    onclick="if(!event.target.closest('.action-buttons')) window.openTaskViewModal({{ $task->id }})"
                                                 >
                                                     @if ($task->deadline && !$task->trashed())
                                                         <div
@@ -895,7 +895,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                                     @forelse ($tasks as $task)
                                         <div
                                             class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm cursor-pointer hover:shadow-md transition @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif"
-                                            onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})"
+                                            onclick="if(!event.target.closest('.action-buttons-mobile')) window.openTaskViewModal({{ $task->id }})"
                                         >
                                             <div
                                                 class="flex justify-between items-start mb-3"
@@ -1328,7 +1328,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                                                     <td class="px-3 py-4">
                                                         <div
                                                             class="flex items-start cursor-pointer"
-                                                            onclick="if(!event.target.closest('.action-buttons')) openTaskViewModal({{ $task->id }})"
+                                                            onclick="if(!event.target.closest('.action-buttons')) window.openTaskViewModal({{ $task->id }})"
                                                         >
                                                             <div class="ml-2">
                                                                 <div
@@ -1647,7 +1647,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                                     @forelse ($tasks as $task)
                                         <div
                                             class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm @if($task->trashed()) border-l-4 border-l-red-400 bg-red-50 @endif"
-                                            onclick="if(!event.target.closest('.action-buttons-mobile')) openTaskViewModal({{ $task->id }})"
+                                            onclick="if(!event.target.closest('.action-buttons-mobile')) window.openTaskViewModal({{ $task->id }})"
                                         >
                                             <div
                                                 class="flex justify-between items-start mb-3"
@@ -2120,7 +2120,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                                                 >
                                                     <a
                                                         href="/team/tasks/{{ $task->id }}"
-                                                        onclick="openTaskViewModal({{ $task->id }}); return false;"
+                                                        onclick="window.openTaskViewModal({{ $task->id }}); return false;"
                                                         class="flex-1 mr-2"
                                                     >
                                                         <h4
@@ -2453,7 +2453,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
                                                 >
                                                     <a
                                                         href="/team/tasks/{{ $task->id }}"
-                                                        onclick="openTaskViewModal({{ $task->id }}); return false;"
+                                                        onclick="window.openTaskViewModal({{ $task->id }}); return false;"
                                                         class="flex-1 mr-2"
                                                     >
                                                         <h4
@@ -3171,7 +3171,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
             if (openTaskId) {
                 window.history.pushState({}, '', '/team/tasks');
                 setTimeout(function() {
-                    if (typeof openTaskViewModal === 'function') openTaskViewModal(openTaskId);
+                    if (typeof openTaskViewModal === 'function') openTaskViewModal(openTaskId,{urlPrefix:'/team/tasks'});
                 }, 100);
             }
         });
@@ -3839,50 +3839,6 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
             }
         }
 
-        // ==================== ФУНКЦИИ ДЛЯ ПРОСМОТРА ЗАДАЧИ ====================
-        async function openTaskViewModal(taskId) {
-            console.log('openTaskViewModal')
-            const modal = document.getElementById('taskViewModal');
-            const content = document.getElementById('taskModalContent');
-
-            if (!modal || !content) {
-                console.error('Модальное окно не найдено');
-                return;
-            }
-
-            window.currentTaskId = taskId;
-            window.taskId = taskId;
-
-            const newUrl = `/team/tasks/${taskId}`;
-            window.history.pushState({
-                taskId: taskId,
-                modalOpen: true
-            }, '', newUrl);
-
-            content.innerHTML = `<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i><p class="text-gray-500 mt-2">Загрузка задачи...</p></div>`;
-            modal.style.backdropFilter = 'blur(10px)';
-            modal.classList.remove('hidden');
-
-            try {
-                const response = await fetch(`/tasks/${taskId}`, {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'text/html'
-                    }
-                });
-
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-                const html = await response.text();
-                content.innerHTML = html;
-            } catch (error) {
-                console.error('Ошибка:', error);
-                content.innerHTML = `<div class="text-center py-8"><i class="fas fa-exclamation-triangle text-3xl text-red-400"></i><p class="text-gray-500 mt-2">Не удалось загрузить задачу</p><p class="text-sm text-gray-400 mt-1">${error.message}</p><button onclick="openTaskViewModal(${taskId})" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"><i class="fas fa-sync-alt mr-2"></i>Повторить</button></div>`;
-            }
-        }
-
-
         window.addEventListener('popstate', function(event) {
             const modal = document.getElementById('taskViewModal');
             if (modal && !modal.classList.contains('hidden')) closeTaskViewModal('/team/tasks');
@@ -3894,6 +3850,7 @@ $viewMode = request()->get('view_mode', session('task_view_mode', 'list')); // '
         });
 
         document.addEventListener('click', function(e) {
+            console.log('testask')
             const modal = document.getElementById('taskViewModal');
             if (e.target === modal) closeTaskViewModal('/team/tasks');
         });

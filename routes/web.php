@@ -319,6 +319,18 @@ Route::post('/invitation/{token}/accept', [InvitationController::class, 'acceptI
 Route::get('/team/tasks/{task}', function ($task) {
     return redirect()->to('/team/tasks?open_task=' . $task);
 })->name('tasks.admin.with-modal');
+
+Route::get('/team/all-tasks/tasks/{task}', function ($task) {
+    return redirect()->to('/team/all-tasks?open_task=' . $task);
+})->name('tasks.team-all.with-modal');
+
+Route::get('/home/tasks/{task}', function ($task) {
+    return redirect()->to('/home?open_task=' . $task);
+})->name('tasks.home.with-modal');
+
+Route::get('/all-tasks/tasks/{task}', function ($task) {
+    return redirect()->to('/all-tasks?open_task=' . $task);
+})->name('tasks.all.with-modal');
 // ВСЕ МАРШРУТЫ ДЛЯ ЗАДАЧ
 Route::group(['prefix' => 'tasks', 'middleware' => ['auth', 'verified', 'trackUserActivity', 'require.company']], function () {
     // Основные CRUD маршруты

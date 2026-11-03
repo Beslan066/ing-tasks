@@ -98,7 +98,12 @@ class HomeController extends Controller
             'done' => $tasksByStatus['done']->count(),
         ];
 
-        return view('welcome', compact('user', 'tasksByStatus', 'stats'));
+         // Достаем ID задачи для авто-открытия из GET-параметра ?open_task=...
+        $openTaskId = $request->get('open_task');
+
+        // Добавляем 'openTaskId' в compact
+        return view('welcome', compact('user', 'tasksByStatus', 'stats', 'openTaskId'));
+        // return view('welcome', compact('user', 'tasksByStatus', 'stats'));
     }
 
     /**
@@ -490,7 +495,7 @@ class HomeController extends Controller
         return view('frontend.no-companies', compact('user', 'activeInvitations'));
     }
 
-    /**
+      /**
      * Страница со всеми задачами пользователя (архив)
      */
     public function allTasks(Request $request)
@@ -514,7 +519,11 @@ class HomeController extends Controller
             'archived' => Task::onlyTrashed()->where('user_id', $user->id)->count(),
         ];
 
-        return view('frontend.tasks.all-tasks', compact('user', 'allTasks', 'stats'));
+        // Получаем ID задачи для авто-открытия из GET-параметра ?open_task=...
+        $openTaskId = $request->get('open_task');
+
+        // Добавили 'openTaskId' в compact
+        return view('frontend.tasks.all-tasks', compact('user', 'allTasks', 'stats', 'openTaskId'));
     }
 
     /**
@@ -639,6 +648,10 @@ class HomeController extends Controller
             'archived' => Task::onlyTrashed()->where('user_id', $user->id)->count(), // если есть мягкое удаление
         ];
 
-        return view('frontend.tasks.all-team-task', compact('user', 'allTasks', 'stats'));
+        // 1. Получаем ID задачи из GET-параметра ?open_task=...
+        $openTaskId = $request->get('open_task');
+
+        // 2. Передаем в view 'frontend.tasks.all-team-task' переменную openTaskId
+        return view('frontend.tasks.all-team-task', compact('user', 'allTasks', 'stats', 'openTaskId'));
     }
 }
