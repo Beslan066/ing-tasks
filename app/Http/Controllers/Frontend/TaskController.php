@@ -869,7 +869,7 @@ private function attachFiles(Task $task, Request $request, $user): void
         'estimated_hours' => 'nullable|numeric|min:0',
         'actual_hours' => 'nullable|numeric|min:0',
         'new_files' => 'nullable|array|max:10',
-        'new_files.*' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,png,jpg,jpeg,gif,zip',
+        'new_files.*' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,png,jpg,jpeg,gif,zip,txt',
     ]);
 
     if ($validator->fails()) {
