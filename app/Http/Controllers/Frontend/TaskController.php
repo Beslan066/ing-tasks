@@ -1290,7 +1290,7 @@ private function attachFiles(Task $task, Request $request, $user): void
             'selected_file_ids'   => 'nullable|array|max:20',
             'selected_file_ids.*' => ['integer', Rule::exists('files', 'id')->where('company_id', $user->company_id)],
             'new_files'   => 'nullable|array|max:10',
-            'new_files.*' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,gif,zip',
+            'new_files.*' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,gif,zip,txt',
         ]);
 
         if ($validator->fails()) {
