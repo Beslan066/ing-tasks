@@ -636,6 +636,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                                             <!-- Выпадающее меню -->
                                             <div
                                                 id="dropdown-{{ $task->id }}"
+                                                data-dropdown
                                                 class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
                                                 <div
                                                     class="py-1">
@@ -752,6 +753,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                                         <!-- Выпадающее меню для мобильной версии -->
                                         <div
                                             id="dropdown-{{ $task->id }}"
+                                            data-dropdown
                                             class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
                                             <div class="py-1">
                                                 <button
@@ -1202,6 +1204,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                                                 <!-- Выпадающее меню -->
                                                 <div
                                                     id="dropdown-{{ $task->id }}"
+                                                    data-dropdown
                                                     class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
                                                     <div
                                                         class="py-1">
@@ -1318,6 +1321,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                                         <!-- Выпадающее меню для мобильной версии -->
                                         <div
                                             id="dropdown-{{ $task->id }}"
+                                            data-dropdown
                                             class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
                                             <div class="py-1">
                                                 <button
