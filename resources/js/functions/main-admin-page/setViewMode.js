@@ -9,26 +9,34 @@ export function setViewMode(mode) {
     const filterForm = document.getElementById('filterForm');
     const filterFormList = document.getElementById('filterFormList');
 
+    const hasBgImage = listBtn.classList.contains('backdrop-blur-sm') || kanbanBtn.classList.contains('backdrop-blur-sm');
+
+
+    const activeClasses = ['bg-emerald-500', 'text-white', 'shadow-sm', 'hover:bg-emerald-600'];
+
+    const inactiveClasses = hasBgImage
+        ? ['bg-white/80', 'backdrop-blur-sm', 'text-gray-800', 'hover:bg-white']
+        : ['bg-white', 'text-gray-700', 'hover:bg-gray-50'];
+
     if (mode === 'list') {
         listContainer.classList.remove('hidden');
         kanbanContainer.classList.add('hidden');
         statisticCard.classList.remove('hidden');
 
-        listBtn.classList.add('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
-        listBtn.classList.remove('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
-        kanbanBtn.classList.remove('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
-        kanbanBtn.classList.add('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
+        listBtn.classList.remove(...inactiveClasses);
+        listBtn.classList.add(...activeClasses);
+        kanbanBtn.classList.remove(...activeClasses);
+        kanbanBtn.classList.add(...inactiveClasses);
     } else {
         listContainer.classList.add('hidden');
         kanbanContainer.classList.remove('hidden');
         statisticCard.classList.add('hidden');
-        kanbanBtn.classList.add('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
-        kanbanBtn.classList.remove('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
-        listBtn.classList.remove('bg-gradient-to-br', 'from-emerald-500', 'to-emerald-600', 'text-white');
-        listBtn.classList.add('bg-white', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
+        kanbanBtn.classList.remove(...inactiveClasses);
+        kanbanBtn.classList.add(...activeClasses);
+        listBtn.classList.remove(...activeClasses);
+        listBtn.classList.add(...inactiveClasses);
     }
 
-    // Используем правильный URL /set-view-mode
     fetch('/set-view-mode', {
         method: 'POST',
         headers: {
@@ -46,12 +54,11 @@ export function setViewMode(mode) {
         })
         .then(data => {
             if (data.success) {
-                // Обновляем URL в адресной строке
                 const url = new URL(window.location.href);
                 url.searchParams.set('view_mode', mode);
                 window.history.pushState({}, '', url);
 
-                // Обновляем скрытые поля в формах фильтров
+
                 if (filterForm) {
                     let viewModeInput = filterForm.querySelector('input[name="view_mode"]');
                     if (!viewModeInput) {
