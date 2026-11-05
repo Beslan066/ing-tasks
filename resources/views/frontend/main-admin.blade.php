@@ -1852,10 +1852,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                     @foreach ($statusKeys as $statusKey)
                     <div
                         class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
-                        data-status="{{ $statusDataValues[$statusKey] }}"
-                        ondragover="dragOver.call(this, event)"
-                        ondragleave="dragLeave.call(this, event)"
-                        ondrop="drop.call(this, event)">
+                        data-status="{{ $statusDataValues[$statusKey] }}">
                         {{-- Заголовок колонки с красным фоном для просроченных --}}
                         <div
                             class="flex justify-between items-center mb-4 border-none rounded-lg p-2 {{ $statusKey === 'просрочена' ? 'bg-red-600' : '' }}"
@@ -1889,13 +1886,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                                 data-deadline="{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') : '' }}"
                                 data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
                                 data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
-                                data-author-id="{{ $task->author_id }}"
-                                ondragstart="
-                                                    dragStart.call(this, event)
-                                                "
-                                ondragend="
-                                                    dragEnd.call(this, event)
-                                                ">
+                                data-author-id="{{ $task->author_id }}">
                                 <div
                                     class="flex justify-between items-start mb-2">
                                     <a
@@ -3304,157 +3295,6 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
         currentTaskId = null;
     }
 
-    // ==================== DRAG AND DROP ДЛЯ КАНБАНА ====================
-    let draggedItem = null;
-    let swiperSlideTimeout = null;
-
-    function dragStart(e) {
-        console.log('dnd start main');
-        draggedItem = this;
-        e.dataTransfer.setData('text/plain', this.dataset.task);
-        this.style.opacity = '0.5';
-        if (window.mySwiper) {
-            window.mySwiper.detachEvents();
-        }
-        if (e.dataTransfer.setDragImage) {
-            e.dataTransfer.setDragImage(this, 0, 0);
-        }
-    }
-
-    function dragEnd(e) {
-        console.log('dnd end main');
-        if (draggedItem) {
-            draggedItem.style.opacity = '';
-            draggedItem = null;
-        }
-        if (window.mySwiper) {
-            window.mySwiper.attachEvents();
-        }
-    }
-
-    function dragOver(e) {
-        console.log('dnd over main');
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-
-        const column = this.closest('.board-column');
-        if (column) {
-            column.classList.add('drag-over-active');
-
-            if (window.mySwiper && typeof window.mySwiper.slideTo === 'function') {
-                const allColumns = Array.from(document.querySelectorAll('.board-column'));
-                const columnIndex = allColumns.indexOf(column);
-                if (columnIndex !== -1 && window.mySwiper.activeIndex !== columnIndex && !swiperSlideTimeout) {
-                    swiperSlideTimeout = setTimeout(() => {
-                        window.mySwiper.slideTo(columnIndex, 300);
-                        swiperSlideTimeout = null;
-                    }, 400);
-                }
-            }
-        }
-    }
-
-    function dragLeave(e) {
-        console.log('dnd leave main');
-        const column = this.closest('.board-column');
-        if (column) {
-            column.classList.remove('drag-over-active');
-        }
-        if (swiperSlideTimeout) {
-            clearTimeout(swiperSlideTimeout);
-            swiperSlideTimeout = null;
-        }
-    }
-
-    function drop(e) {
-        console.log('dnd drop main');
-        e.preventDefault();
-
-        if (swiperSlideTimeout) {
-            clearTimeout(swiperSlideTimeout);
-            swiperSlideTimeout = null;
-            if (window.mySwiper) {
-                window.mySwiper.attachEvents();
-            }
-        }
-
-        const column = this.closest('.board-column');
-        if (column) {
-            column.classList.remove('drag-over-active');
-        }
-
-        if (!draggedItem) return;
-
-        const newStatus = column.dataset.status;
-        const taskId = draggedItem.dataset.task;
-        const currentColumn = draggedItem.closest('.board-column');
-        const currentStatus = currentColumn ? currentColumn.getAttribute('data-status') : null;
-
-        if (currentStatus === newStatus) {
-            draggedItem.style.opacity = '1';
-            draggedItem = null;
-            return;
-        }
-
-        let statusMap = {
-            'new': 'назначена',
-            'in-progress': 'в работе',
-            'review': 'на проверке',
-            'done': 'выполнена'
-        };
-
-        const newStatusValue = statusMap[newStatus];
-        if (!newStatusValue) return;
-
-        updateTaskStatus(taskId, newStatusValue);
-    }
-
-    async function updateTaskStatus(taskId, newStatus) {
-        try {
-            const response = await fetch(`/tasks/${taskId}/status`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    status: newStatus
-                })
-            });
-            const data = await response.json();
-            if (data.success) {
-                // location.reload();
-                console.log('success main.admin.blade.php')
-            } else {
-                showNotification(data.message || 'Ошибка при перемещении задачи', 'error');
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showNotification('Ошибка при перемещении задачи', 'error');
-        }
-    }
-
-    function initDragAndDrop() {
-        const taskCards = document.querySelectorAll('#kanbanViewContainer .task-card');
-        const columns = document.querySelectorAll('#kanbanViewContainer .board-column');
-
-        taskCards.forEach(card => {
-            card.setAttribute('draggable', 'true');
-            card.removeEventListener('dragstart', dragStart);
-            card.removeEventListener('dragend', dragEnd);
-            card.addEventListener('dragstart', dragStart);
-            card.addEventListener('dragend', dragEnd);
-        });
-
-        columns.forEach(column => {
-            column.removeEventListener('dragover', dragOver);
-            column.removeEventListener('dragleave', dragLeave);
-            column.removeEventListener('drop', drop);
-            column.addEventListener('dragover', dragOver);
-            column.addEventListener('dragleave', dragLeave);
-            column.addEventListener('drop', drop);
-        });
-    }
 
     // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
     function displayRejections(rejections) {
@@ -3473,7 +3313,6 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
 
     // ==================== ИНИЦИАЛИЗАЦИЯ ====================
     document.addEventListener('DOMContentLoaded', function() {
-        initDragAndDrop();
 
         // Swiper для мобильных устройств
         if (window.innerWidth <= 500) {

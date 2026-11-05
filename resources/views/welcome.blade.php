@@ -1506,8 +1506,6 @@
                 }
             });
 
-            initDragAndDrop();
-
             const uploadNewFilesInput = document.getElementById("uploadNewFilesInput");
             if (uploadNewFilesInput) {
                 uploadNewFilesInput.addEventListener("change", function (e) {

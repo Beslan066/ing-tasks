@@ -2,7 +2,9 @@
  * Kanban Drag & Drop Module with Swiper support
  */
 
-import { buildTaskMenu } from "../build-task-menu";
+import { showNotification } from "./show-notification";
+import { getCsrfToken } from "./../helpers/getCsrfToken";
+import { buildTaskMenu } from "../components/build-task-menu";
 
 let draggedItem = null;
 let swiperSlideTimeout = null;
@@ -119,7 +121,7 @@ function refreshCardMenu(card, status) {
     menu.innerHTML = buildTaskMenu(card.dataset.task, status, true);
     menu.classList.add('hidden');
 }
-function drop(e) {
+async function drop(e) {
     e.preventDefault();
 
     if (swiperSlideTimeout) {
@@ -128,36 +130,31 @@ function drop(e) {
     }
 
     const column = this.closest('.board-column');
-    if (column) {
-        column.classList.remove('drag-over-active');
-    }
-
+    column?.classList.remove('drag-over-active');
     if (!draggedItem || !column) return;
 
     const card = draggedItem;
-    console.log(card);
     const newStatus = column.dataset.status;
-    const currentColumn = card.closest('.board-column');
-    const currentStatus = currentColumn ? currentColumn.dataset.status : null;
-    if (currentStatus === newStatus) {
+    const newStatusValue = STATUS_MAP[newStatus];
+    const prevColumn = card.closest('.board-column');
+    const prevStatus = prevColumn?.dataset.status;
+
+    if (!newStatusValue || prevStatus === newStatus) {
         finishDrag(card);
         return;
     }
 
-    const targetContainer = column.querySelector('.task-container') || column;
-    targetContainer.prepend(card);
+    const prevParent = card.parentElement;
+    const prevNext = card.nextElementSibling;
 
+    (column.querySelector('.task-container') || column).prepend(card);
     finishDrag(card);
-
-    const taskId = card.dataset.task;
-    const newStatusValue = STATUS_MAP[newStatus];
-if (newStatusValue) {
     refreshCardMenu(card, newStatusValue);
-}
-    if (newStatusValue && typeof window.updateTaskStatus === 'function') {
-        window.updateTaskStatus(taskId, newStatusValue);
-    } else if (newStatusValue && typeof updateTaskStatus === 'function') {
-        updateTaskStatus(taskId, newStatusValue);
+
+    const ok = await updateTaskStatus(card.dataset.task, newStatusValue);
+    if (!ok) {
+        prevParent.insertBefore(card, prevNext);
+        refreshCardMenu(card, STATUS_MAP[prevStatus]);
     }
 }
 
@@ -166,3 +163,28 @@ window.initDragAndDrop = initDragAndDrop;
 document.addEventListener('DOMContentLoaded', () => {
     initDragAndDrop();
 });
+async function updateTaskStatus(taskId, status) {
+    try {
+        const response = await fetch(`/tasks/${taskId}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': getCsrfToken()
+            },
+            body: JSON.stringify({ status })
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+            showNotification(data.message || 'Ошибка при перемещении задачи', 'error');
+            return false;
+        }
+        showNotification('Статус задачи обновлён', 'success');
+        return true;
+    } catch (e) {
+        console.error(e);
+        showNotification('Ошибка при перемещении задачи', 'error');
+        return false;
+    }
+}
+window.updateTaskStatus = updateTaskStatus;

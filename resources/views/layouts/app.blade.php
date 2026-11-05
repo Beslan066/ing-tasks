@@ -816,88 +816,6 @@ media-src https://meet.jit.si https:;
     window.selectedFiles = [];
     window.allFiles = [];
 
-    // (function () {
-    //     // Функция для проверки - открыта ли модалка личной задачи
-    //     function isPersonalTaskModal() {
-    //         const modal = document.getElementById('taskModal');
-    //         const h3 = modal ? modal.querySelector('h3') : null;
-    //         return modal && !modal.classList.contains('hidden') && h3 && h3.textContent === 'Новая личная задача';
-    //     }
-
-    //     // Сохраняем ссылку на оригинальный обработчик
-    //     let originalSubmitHandler = null;
-
-    //     // Ждем загрузки DOM
-    //     document.addEventListener('DOMContentLoaded', function () {
-    //         const form = document.getElementById('taskForm');
-    //         if (!form) return;
-
-    //         // Получаем все обработчики submit (если есть)
-    //         const oldSubmit = form.submit;
-
-    //         // Переопределяем submit
-    //         form.submit = function () {
-    //             if (isPersonalTaskModal()) {
-    //                 // Для личных задач - отправляем через AJAX
-    //                 const formData = new FormData(this);
-    //                 const submitBtn = this.querySelector('button[type="submit"]');
-    //                 const originalText = submitBtn?.innerHTML;
-
-    //                 if (submitBtn) {
-    //                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Создание...';
-    //                     submitBtn.disabled = true;
-    //                 }
-
-    //                 fetch('/tasks/personal/store', {
-    //                     method: 'POST',
-    //                     headers: {
-    //                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-    //                         'Accept': 'application/json'
-    //                     },
-    //                     body: formData
-    //                 })
-    //                     .then(response => response.json())
-    //                     .then(data => {
-    //                         if (data.success) {
-    //                             showNotification('Личная задача успешно создана1', 'success');
-    //                             closeTaskModal();
-    //                             // setTimeout(() => {
-    //                             //     location.reload();
-    //                             // }, 600);
-    //                         } else {
-    //                             showNotification(data.message || 'Ошибка при создании задачи', 'error');
-    //                         }
-    //                     })
-    //                     .catch(error => {
-    //                         console.error('Ошибка:', error);
-    //                         showNotification('Ошибка при создании задачи', 'error');
-    //                     })
-    //                     .finally(() => {
-    //                         if (submitBtn) {
-    //                             submitBtn.innerHTML = originalText;
-    //                             submitBtn.disabled = false;
-    //                         }
-    //                     });
-    //                 return false;
-    //             }
-    //             // Для обычных задач - вызываем оригинальный submit
-    //             return oldSubmit ? oldSubmit.call(this) : HTMLFormElement.prototype.submit.call(this);
-    //         };
-
-    //         // Добавляем свой обработчик на submit
-    //         form.addEventListener('submit', function (e) {
-    //             if (isPersonalTaskModal()) {
-    //                 e.preventDefault();
-    //                 e.stopPropagation();
-    //                 e.stopImmediatePropagation();
-    //                 // Вызываем наш переопределенный submit
-    //                 form.submit();
-    //                 return false;
-    //             }
-    //         }, true); // true - чтобы выполнился первым
-    //     });
-    // })();
-
     // Добавим интерактивности для сайдбара
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.email-dropdown-item').forEach(item => {
@@ -924,7 +842,6 @@ media-src https://meet.jit.si https:;
 
 
         // Инициализация drag and drop после загрузки
-        initTaskDragAndDrop();
         updateTaskCounters();
     });
 
@@ -1882,139 +1799,6 @@ media-src https://meet.jit.si https:;
         };
         return statusMap[status] || status;
     }
-
-    function initTaskDragAndDrop() {
-        const taskCards = document.querySelectorAll('.task-card');
-        taskCards.forEach(task => {
-            task.setAttribute('draggable', 'true');
-            task.removeEventListener('dragstart', handleDragStart);
-            task.removeEventListener('dragend', handleDragEnd);
-            task.addEventListener('dragstart', handleDragStart);
-            task.addEventListener('dragend', handleDragEnd);
-        });
-
-        const columns = document.querySelectorAll('.board-column');
-        columns.forEach(column => {
-            column.removeEventListener('dragover', handleDragOver);
-            column.removeEventListener('dragleave', handleDragLeave);
-            column.removeEventListener('drop', handleDrop);
-            column.addEventListener('dragover', handleDragOver);
-            column.addEventListener('dragleave', handleDragLeave);
-            column.addEventListener('drop', handleDrop);
-        });
-    }
-
-    function handleDragStart(e) {
-        draggedTaskCard = this;
-        const taskId = this.getAttribute('data-task');
-        e.dataTransfer.setData('text/plain', taskId);
-        e.dataTransfer.effectAllowed = 'move';
-        this.style.opacity = '0.5';
-    }
-
-    function handleDragEnd(e) {
-        if (draggedTaskCard) {
-            draggedTaskCard.style.opacity = '1';
-        }
-        draggedTaskCard = null;
-        document.querySelectorAll('.board-column').forEach(column => {
-            column.style.backgroundColor = '';
-        });
-    }
-
-    function handleDragOver(e) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        this.style.backgroundColor = '#e5e7eb';
-    }
-
-    function handleDragLeave(e) {
-        this.style.backgroundColor = '';
-    }
-
-    async function handleDrop(e) {
-        e.preventDefault();
-        this.style.backgroundColor = '';
-
-        if (!draggedTaskCard) return;
-
-        const newStatus = this.getAttribute('data-status');
-        const taskId = draggedTaskCard.getAttribute('data-task');
-        const currentColumn = draggedTaskCard.closest('.board-column');
-        const currentStatus = currentColumn ? currentColumn.getAttribute('data-status') : null;
-
-        if (currentStatus === newStatus) {
-            draggedTaskCard.style.opacity = '1';
-            draggedTaskCard = null;
-            return;
-        }
-
-        const taskCard = draggedTaskCard;
-        const serverStatus = mapStatusForServer(newStatus);
-
-        taskCard.style.opacity = '0.5';
-        taskCard.style.cursor = 'wait';
-
-        try {
-            // ИСПРАВЛЕНО: используем правильный URL из маршрутов
-            const response = await fetch(`/tasks/${taskId}/status`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({status: serverStatus})
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                const taskContainer = this.querySelector('.task-container');
-                if (taskContainer) {
-                    taskContainer.appendChild(taskCard);
-                }
-                taskCard.style.opacity = '1';
-                taskCard.style.cursor = 'move';
-                updateTaskCounters();
-                showNotification('Статус задачи обновлен', 'success');
-            } else {
-                taskCard.style.opacity = '1';
-                taskCard.style.cursor = 'move';
-                showNotification(data.message || 'Ошибка при обновлении статуса', 'error');
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            taskCard.style.opacity = '1';
-            taskCard.style.cursor = 'move';
-            showNotification('Ошибка при обновлении статуса', 'error');
-        } finally {
-            draggedTaskCard = null;
-        }
-    }
-
-    // function updateTaskCounters() {
-    //     const columns = [
-    //         {selector: '[data-status="new"]', counterSelector: '.board-column[data-status="new"] span:first-child'},
-    //         {
-    //             selector: '[data-status="in-progress"]',
-    //             counterSelector: '.board-column[data-status="in-progress"] span:first-child'
-    //         },
-    //         {
-    //             selector: '[data-status="review"]',
-    //             counterSelector: '.board-column[data-status="review"] span:first-child'
-    //         },
-    //         {selector: '[data-status="done"]', counterSelector: '.board-column[data-status="done"] span:first-child'}
-    //     ];
-
-    //     columns.forEach(column => {
-    //         const container = document.querySelector(`.task-container${column.selector}`);
-    //         const counter = document.querySelector(column.counterSelector);
-    //         if (container && counter) {
-    //             counter.textContent = container.querySelectorAll('.task-card').length;
-    //         }
-    //     });
-    // }
         function updateColumnCounters() {
             const columns = document.querySelectorAll('.board-column');
             columns.forEach(column => {
@@ -3189,7 +2973,7 @@ media-src https://meet.jit.si https:;
 
                 // Добавляем новую задачу в колонку без перезагрузки страницы
                 if (data.task&&newTasksCol) {
-                    window.addTaskToCol(newTasksCol,data.task,false)
+                    window.addTaskToCol(newTasksCol,data.task,true)
                     // console.log('debug:',data.task)
                 } else {
                     // Если нет данных задачи в ответе, просто перезагружаем
