@@ -3,13 +3,17 @@
 }
 
 .task-card {
+    position: relative;
     transition: all 0.2s ease-in-out;
 }
 .task-card:hover {
+    z-index: 10;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(44, 46, 44, 0.1);
 }
-
+.task-card:has(.task-menu:not(.hidden)) {
+    z-index: 50;
+}
 .board-column {
     min-height: 600px;
 }

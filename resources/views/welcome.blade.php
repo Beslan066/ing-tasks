@@ -561,7 +561,7 @@
                             <div class="flex justify-between items-start mb-2">
                                 <a
                                     href="/team/tasks/{{ $task->id }}"
-                                    onclick="openTaskViewModal({{ $task->id }}); return false;"
+                                    onclick="window.openTaskViewModal({{ $task->id }}, { urlPrefix: '/home' }); return false;"
                                 >
                                     <h4
                                         class="font-medium cursor-pointer hover:text-blue-600 flex-1"
@@ -788,7 +788,7 @@
                             <div class="flex justify-between items-start mb-2">
                                 <h4
                                     class="font-medium cursor-pointer hover:text-blue-600 flex-1"
-                                    onclick="openTaskViewModal({{ $task->id }})"
+                                    onclick="window.openTaskViewModal({{ $task->id }}, { urlPrefix: '/home' }); return false;"
                                 >
                                     {{ $task->name }}
                                 </h4>
@@ -1001,7 +1001,7 @@
                             <div class="flex justify-between items-start mb-2">
                                 <h4
                                     class="font-medium cursor-pointer hover:text-blue-600 flex-1"
-                                    onclick="openTaskViewModal({{ $task->id }})"
+                                    onclick="window.openTaskViewModal({{ $task->id }}, { urlPrefix: '/home' })"
                                 >
                                     {{ $task->name }}
                                 </h4>
@@ -1211,7 +1211,7 @@
                             <div class="flex justify-between items-start mb-2">
                                 <h4
                                     class="font-medium cursor-pointer hover:text-blue-600 flex-1"
-                                    onclick="openTaskViewModal({{ $task->id }})"
+                                    onclick="window.openTaskViewModal({{ $task->id }}, { urlPrefix: '/home' })"
                                 >
                                     {{ $task->name }}
                                 </h4>
@@ -1438,7 +1438,7 @@
             const modal = document.getElementById("taskViewModal");
 
             if (modal && !modal.classList.contains("hidden")) {
-                closeTaskViewModal("/home");
+                window.closeTaskViewModal("/home");
             }
         });
 
@@ -1446,7 +1446,7 @@
         document.addEventListener("keydown", function (e) {
             const modal = document.getElementById("taskViewModal");
             if (e.key === "Escape" && modal && !modal.classList.contains("hidden")) {
-                closeTaskViewModal("/home");
+                window.closeTaskViewModal("/home");
             }
         });
 
@@ -1454,7 +1454,7 @@
         document.addEventListener("click", function (e) {
             const modal = document.getElementById("taskViewModal");
             if (e.target === modal) {
-                closeTaskViewModal("/home");
+                window.closeTaskViewModal("/home");
             }
         });
 
@@ -1466,17 +1466,17 @@
                 const taskId = match[1];
                 // Открываем модальное окно с задачей
                 setTimeout(function () {
-                    openTaskViewModal(taskId);
+                    window.openTaskViewModal(taskId, {urlPrefix: '/home'});
                 }, 100);
             }
         });
 
         document.addEventListener("click", function (e) {
-            if (e.target.id === "taskViewModal") closeTaskViewModal("/home");
+            if (e.target.id === "taskViewModal") window.closeTaskViewModal("/home");
         });
 
         document.addEventListener("keydown", function (e) {
-            if (e.key === "Escape") closeTaskViewModal("/home");
+            if (e.key === "Escape") window.closeTaskViewModal("/home");
         });
 
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
@@ -1615,12 +1615,38 @@
         });
 
         document.addEventListener("click", function (e) {
-            if (e.target.id === "taskViewModal") closeTaskViewModal("/home");
+            if (e.target.id === "taskViewModal") window.closeTaskViewModal("/home");
         });
 
         document.addEventListener("keydown", function (e) {
-            if (e.key === "Escape") closeTaskViewModal("/home");
+            if (e.key === "Escape") window.closeTaskViewModal("/home");
         });
+
+        // ==================== ОБРАБОТКА URL ДЛЯ ОТКРЫТИЯ МОДАЛКИ ====================
+       document.addEventListener('DOMContentLoaded', function() {
+        console.log('ОБРАБОТКА URL ДЛЯ ОТКРЫТИЯ МОДАЛКИ (HOME)');
+
+    // Blade подставит сюда ID задачи или null
+    const openTaskId = {{ $openTaskId ?? 'null' }};
+
+    if (openTaskId) {
+        // Подменяем URL в строке браузера на красивый путь без query-параметров
+        window.history.pushState({
+            taskId: openTaskId,
+            modalOpen: true,
+            returnUrl: window.location.pathname
+        }, '', '/home/tasks/' + openTaskId);
+
+        // Запускаем модальное окно с правильным префиксом
+        setTimeout(function() {
+            if (typeof window.openTaskViewModal === 'function') {
+                window.openTaskViewModal(openTaskId, { urlPrefix: '/home' });
+            } else {
+                console.error('Функция openTaskViewModal не найдена на этой странице');
+            }
+        }, 100);
+    }
+});
     </script>
 
 @endsection

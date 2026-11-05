@@ -1,49 +1,49 @@
 @php
-    $company = auth()->check() ? auth()->user()->company : null;
-    $storageUsage = $company ? \App\Models\StorageUsage::where('company_id', $company->id)->first() : null;
+$company = auth()->check() ? auth()->user()->company : null;
+$storageUsage = $company ? \App\Models\StorageUsage::where('company_id', $company->id)->first() : null;
 
-    // Если нет данных о хранилище, создаем объект с значениями по умолчанию
-    if (!$storageUsage && $company) {
-        $storageUsage = new \App\Models\StorageUsage();
-        $storageUsage->total_storage_limit = 50 * 1024 * 1024 * 1024; // 50 GB по умолчанию
-        $storageUsage->used_storage = 0;
-        $storageUsage->license_type = $company->license_type ?? 'basic';
-    }
+// Если нет данных о хранилище, создаем объект с значениями по умолчанию
+if (!$storageUsage && $company) {
+$storageUsage = new \App\Models\StorageUsage();
+$storageUsage->total_storage_limit = 50 * 1024 * 1024 * 1024; // 50 GB по умолчанию
+$storageUsage->used_storage = 0;
+$storageUsage->license_type = $company->license_type ?? 'basic';
+}
 
-    $usedStorageFormatted = $storageUsage ? $storageUsage->getFormattedUsedStorage() : '0 B';
-    $totalStorageFormatted = $storageUsage ? $storageUsage->getFormattedTotalStorage() : '50 GB';
-    $usagePercentage = $storageUsage ? $storageUsage->getUsagePercentage() : 0;
-    $licenseType = $storageUsage ? $storageUsage->license_type : ($company->license_type ?? 'basic');
+$usedStorageFormatted = $storageUsage ? $storageUsage->getFormattedUsedStorage() : '0 B';
+$totalStorageFormatted = $storageUsage ? $storageUsage->getFormattedTotalStorage() : '50 GB';
+$usagePercentage = $storageUsage ? $storageUsage->getUsagePercentage() : 0;
+$licenseType = $storageUsage ? $storageUsage->license_type : ($company->license_type ?? 'basic');
 
-    // Определяем иконку и цвет для типа подписки
-    $licenseIcon = match($licenseType) {
-        'premium' => 'fa-crown',
-        'optimal' => 'fa-star',
-        default => 'fa-check-circle'
-    };
+// Определяем иконку и цвет для типа подписки
+$licenseIcon = match($licenseType) {
+'premium' => 'fa-crown',
+'optimal' => 'fa-star',
+default => 'fa-check-circle'
+};
 
-    $licenseColor = match($licenseType) {
-        'premium' => 'text-yellow-500',
-        'optimal' => 'text-blue-500',
-        default => 'text-gray-500'
-    };
+$licenseColor = match($licenseType) {
+'premium' => 'text-yellow-500',
+'optimal' => 'text-blue-500',
+default => 'text-gray-500'
+};
 
-    $licenseText = match($licenseType) {
-        'premium' => 'Премиум',
-        default => 'Базовый'
-    };
+$licenseText = match($licenseType) {
+'premium' => 'Премиум',
+default => 'Базовый'
+};
 @endphp
 
-    <!-- Боковая панель -->
+<!-- Боковая панель -->
 <div id="sidebar-menu"
-     class="sidebar h-full w-full max-w-64 py-2 px-4 fixed {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
+    class="sidebar h-full w-full max-w-64 py-2 px-4 fixed {{ $backgroundEnabled && $backgroundImage ? 'glass' : '' }}">
     <div class="relative h-full w-full sm:flex flex-col max-[638px]:flex overflow-hidden">
 
         <!-- Логотип -->
         <a href="{{route('welcome')}}" class="mb-8 logotype">
             <div class="flex items-center space-x-3 group">
                 <div id="logo-icon"
-                     class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
+                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
                     <img src="{{asset('img/logo.svg')}}">
                 </div>
                 <div class="logotype__text">
@@ -61,7 +61,7 @@
 
                 <div class="space-y-1">
                     <a href="{{route('welcome')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('welcome*') ? 'active' : ''}}">
+                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('welcome*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-check text-primary-500 text-sm"></i>
@@ -70,18 +70,18 @@
                             задачи</span>
                     </a>
                     @if(auth()->user()->isLeader())
-                        <a href="{{route('tasks.admin')}}"
-                           class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:rounded-lg hover:bg-transparent/20 {{request()->routeIs('tasks.admin*') ? 'active' : ''}}">
-                            <div
-                                class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3 flex-shrink-0">
-                                <i class="fas fa-landmark text-purple-500 text-sm"></i>
-                            </div>
-                            <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Моя
+                    <a href="{{route('tasks.admin')}}"
+                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:rounded-lg hover:bg-transparent/20 {{request()->routeIs('tasks.admin*') ? 'active' : ''}}">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3 flex-shrink-0">
+                            <i class="fas fa-landmark text-purple-500 text-sm"></i>
+                        </div>
+                        <span class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Моя
                             компания</span>
-                        </a>
+                    </a>
                     @endif
                     <a href="{{route('departments.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('departments.index*') ? 'active' : ''}}">
+                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('departments.index*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-building text-orange-500 text-sm"></i>
@@ -91,7 +91,7 @@
                     </a>
 
                     <a href="{{route('team.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('team.index*') ? 'active' : ''}}">
+                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('team.index*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-users text-blue-500 text-sm"></i>
@@ -101,7 +101,7 @@
                     </a>
 
                     <a href="{{route('chat.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('chat.index*') ? 'active' : ''}}">
+                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('chat.index*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-comments text-pink-500 text-sm"></i>
@@ -111,7 +111,7 @@
                     </a>
 
                     <a href="{{route('files.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('files.index*') ? 'active' : ''}}">
+                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('files.index*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-hard-drive text-brown-500 text-sm"></i>
@@ -121,7 +121,7 @@
                     </a>
 
                     <a href="{{route('tools.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('tools.index*') ? 'active' : ''}}">
+                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('tools.index*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-tools text-yellow-500 text-sm"></i>
@@ -130,7 +130,7 @@
                             class="font-medium {{ $backgroundEnabled && $backgroundImage ? 'text-white' : '' }}">Инструменты</span>
                     </a>
                     <a href="{{route('frontend.news.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('news.index*') ? 'active' : ''}}">
+                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('news.index*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-newspaper text-green-500 text-sm"></i>
@@ -141,7 +141,7 @@
                     </a>
 
                     <a href="{{route('licence.index')}}"
-                       class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('license.index*') ? 'active' : ''}}">
+                        class="nav-item flex items-center px-4 py-3 text-sidebar-text hover:text-white hover:bg-transparent/20 hover:rounded-lg {{request()->routeIs('license.index*') ? 'active' : ''}}">
                         <div
                             class="w-8 h-8 rounded-lg bg-brown-500/10 flex items-center justify-center mr-3 flex-shrink-0">
                             <i class="fas fa-credit-card text-yellow-500 text-sm"></i>
@@ -155,35 +155,50 @@
             </div>
 
             <!-- Онлайн пользователи -->
-            <div class="mb-4 online-users">
-                <h3
-                    class="text-xs font-semibold text-sidebar-text uppercase text-nowrap whitespace-nowrap tracking-wider mb-3 px-2">
-                    В СЕТИ</h3>
+           @php
+            $users = collect($onlineUsers ?? []);
+            $total = $onlineUsersCount ?? $users->count();
 
-                @if(isset($onlineUsersCount) && $onlineUsersCount > 0)
-                    <div class="flex items-center mb-3 flex-wrap">
-                        <div class="flex -space-x-2 mr-3 ">
-                            @if(isset($onlineUsers) && $onlineUsers->count() > 0)
-                                @foreach($onlineUsers->take(3) as $user)
-                                    <div class="avatar-container">
-                                        <div class="w-8 h-8 rounded-full {{ $user['color'] ?? 'bg-gradient-to-br from-blue-500 to-purple-600' }}  flex items-center justify-center text-white text-xs font-bold shadow-lg"
-                                             title="{{ $user['name'] ?? 'Пользователь' }}">
-                                            {{ $user['initials'] ?? '??' }}
-                                        </div>
-                                        <div class="online-indicator"></div>
+            $maxCircles  = 5; // !! выставляем кколво авотарок
+            $showAvatars = $total > $maxCircles ? $maxCircles - 1 : $total;
+
+            $shown = $users->take($showAvatars);
+            $more  = max(0, $total - $shown->count());
+
+            $moreLabel = $more > 99 ? '99+' : '+' . $more;
+            $moreSize  = strlen($moreLabel) >= 4 ? 'text-[9px]' : (strlen($moreLabel) === 3 ? 'text-[10px]' : 'text-xs');
+        @endphp
+
+            <div class="mb-4 online-users">
+                <h3 class="text-xs font-semibold text-sidebar-text uppercase whitespace-nowrap tracking-wider mb-3 px-2">
+                    В СЕТИ
+                </h3>
+
+                @if ($shown->isNotEmpty())
+                    <div class="flex items-center gap-3 mb-3 min-w-0">
+                        <div class="flex -space-x-3 shrink-0">
+                            @foreach ($shown as $user)
+                                <div class="avatar-container relative" style="z-index: {{ 10 - $loop->index }}">
+                                    <div class="w-8 h-8 rounded-full {{ $user['color'] ?? 'bg-gradient-to-br from-blue-500 to-purple-600' }}
+                                                flex items-center justify-center text-white text-xs font-bold shadow-lg ring-2 ring-sidebar-bg"
+                                        title="{{ $user['name'] ?? 'Пользователь' }}">
+                                        {{ $user['initials'] ?? '??' }}
                                     </div>
-                                @endforeach
-                                @php
-                                    $moreOnline = $onlineUsersCount - min(3, $onlineUsers->count());
-                                @endphp
-                                @if($moreOnline > 0)
-                                    <div class="w-8 h-8 rounded-full bg-sidebar-hover flex items-center justify-center text-sidebar-text text-xs font-bold shadow-lg"
-                                         title="Еще {{ $moreOnline }} онлайн">
-                                        +{{ $moreOnline }}
-                                    </div>
-                                @endif
+                                    <div class="online-indicator"></div>
+                                </div>
+                            @endforeach
+
+                            @if ($more > 0)
+                                <div class="relative w-8 h-8 rounded-full bg-sidebar-hover flex items-center justify-center
+                                            {{ $moreSize }} font-bold text-sidebar-text shadow-lg ring-2 ring-sidebar-bg tracking-tighter"
+                                    style="z-index: 0"
+                                    title="Еще {{ $more }} онлайн">
+                                    {{ $moreLabel }}
+                                </div>
                             @endif
                         </div>
+
+                        <!-- <span class="text-xs text-sidebar-text truncate">{{ $total }} онлайн</span> -->
                     </div>
                 @else
                     <div class="text-center py-2">
@@ -214,7 +229,7 @@
                 <!-- Прогресс бар -->
                 <div class="storage__progress-bar w-full bg-white/10 rounded-full h-1.5 mb-2 overflow-hidden">
                     <div class="progress-bar h-full rounded-full transition-all duration-300"
-                         style="width: {{ min($usagePercentage ?? 0, 100) }}%;
+                        style="width: {{ min($usagePercentage ?? 0, 100) }}%;
                     background: {{ ($usagePercentage ?? 0) > 90 ? '#ef4444' : (($usagePercentage ?? 0) > 70 ? '#f59e0b' : '#22c55e') }}">
                     </div>
                 </div>
@@ -232,37 +247,37 @@
 
                     <!-- Предупреждение о переполнении -->
                     @if(isset($storageUsage) && $storageUsage && $storageUsage->isStorageLimitExceeded())
-                        <div class="mt-2 pt-1 border-t border-red-500/30">
-                            <p class="text-red-400 text-xs flex items-center gap-1">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <span>Лимит хранилища превышен!</span>
-                            </p>
-                        </div>
+                    <div class="mt-2 pt-1 border-t border-red-500/30">
+                        <p class="text-red-400 text-xs flex items-center gap-1">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Лимит хранилища превышен!</span>
+                        </p>
+                    </div>
                     @elseif(isset($usagePercentage) && $usagePercentage > 80)
-                        <div class="mt-2 pt-1 border-t border-yellow-500/30">
-                            <p class="text-yellow-400 text-xs flex items-center gap-1">
-                                <i class="fas fa-clock"></i>
-                                <span>Заканчивается место в хранилище</span>
-                            </p>
-                        </div>
+                    <div class="mt-2 pt-1 border-t border-yellow-500/30">
+                        <p class="text-yellow-400 text-xs flex items-center gap-1">
+                            <i class="fas fa-clock"></i>
+                            <span>Заканчивается место в хранилище</span>
+                        </p>
+                    </div>
                     @endif
                 </div>
             </div>
         </div>
     </div>
-   <button class="sidebar-toggle-btn">
-    <i class="fas fa-chevron-left"></i>
-</button>
+    <button class="sidebar-toggle-btn">
+        <i class="fas fa-chevron-left"></i>
+    </button>
 </div>
 <!-- Оверлей для боковой панели -->
 <div id="sidebar-overlay"
-     class="fixed inset-0 bg-black/50 z-[47] hidden max-[638px]:[&.active]:block transition-opacity duration-300 max-[500px]:bg-black/90">
+    class="fixed inset-0 bg-black/50 z-[47] hidden max-[638px]:[&.active]:block transition-opacity duration-300 max-[500px]:bg-black/90">
 </div>
 
 <!-- sidebar styles & scripts -->
 @once
 
-    @push('scripts')
-        @vite('resources/js/components/sidebar.js')
-    @endpush
+@push('scripts')
+@vite('resources/js/components/sidebar.js')
+@endpush
 @endonce
