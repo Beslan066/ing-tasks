@@ -16,7 +16,7 @@ const STATUS_MAP = {
     'review': 'на проверке',
     'done': 'выполнена'
 };
-
+let isPersonalMode = false;
 function applyDoneStyle(card) {
     card.style.removeProperty('opacity');
     if (card.getAttribute('style') === '') {
@@ -38,7 +38,8 @@ function finishDrag(card = draggedItem) {
 /**
  * Инициализация / Переинициализация Drag and Drop
  */
-export function initDragAndDrop() {
+export function initDragAndDrop(isPersonal) {
+     if (typeof isPersonal === 'boolean') isPersonalMode = isPersonal;
     const taskCards = document.querySelectorAll('.task-card');
     const columns = document.querySelectorAll('.board-column');
 
@@ -114,11 +115,11 @@ function dragLeave(e) {
     }
 }
 function refreshCardMenu(card, status) {
-    console.log('refreshCardMenu',card)
+    console.log('refreshCardMenu',card,isPersonalMode)
     card.dataset.status = status;
     const menu = card.querySelector('.task-menu');
     if (!menu) return;
-    menu.innerHTML = buildTaskMenu(card.dataset.task, status, true);
+    menu.innerHTML = buildTaskMenu(card.dataset.task, status, true,isPersonalMode);
     menu.classList.add('hidden');
 }
 async function drop(e) {
@@ -160,9 +161,7 @@ async function drop(e) {
 
 window.initDragAndDrop = initDragAndDrop;
 
-document.addEventListener('DOMContentLoaded', () => {
-    initDragAndDrop();
-});
+
 async function updateTaskStatus(taskId, status) {
     try {
         const response = await fetch(`/tasks/${taskId}/status`, {

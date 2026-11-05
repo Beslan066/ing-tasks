@@ -34,7 +34,7 @@ export function addTaskToColumn(columnContainer, task, canManage) {
                         <i class="fas fa-ellipsis-v"></i>
                     </button>
                     <div id="taskMenu-${task.id}" class="task-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-50">
-                             ${buildTaskMenu(task.id, task.status, canManage)}
+                             ${buildTaskMenu(task.id, task.status, canManage,true)}
                     </div>
                 </div>
             </div>

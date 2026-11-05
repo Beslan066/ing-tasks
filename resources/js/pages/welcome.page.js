@@ -23,6 +23,10 @@ import {
     approveTask
 } from './../functions/welcome-page/personal-task.functions.js'
 
+document.addEventListener('DOMContentLoaded', () => {
+    window.initDragAndDrop(true);
+    console.log('dsadsadved')
+});
 
 window.closeTaskViewModal = closeTaskViewModal;
 window.closeEditModal=closeEditModal;

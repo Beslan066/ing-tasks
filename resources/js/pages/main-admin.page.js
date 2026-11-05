@@ -19,7 +19,10 @@ window.toggleFiltersDropdown=toggleFiltersDropdown;
 window.toggleTaskMenu=toggleTaskMenu;
 // task
 // window.toggleDropdown=toggleDropdown;
-
+document.addEventListener('DOMContentLoaded', () => {
+    window.initDragAndDrop(false);
+    console.log('dsadsadved')
+});
 // helpers
 Object.assign(window, fileHelpers);
 
