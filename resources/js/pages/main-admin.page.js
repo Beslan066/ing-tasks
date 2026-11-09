@@ -1,6 +1,7 @@
 import * as fileHelpers from './../helpers/helpers.js';
 import '../components/task-create-files.js';
 import '../components/task-edit-files.js';
+import '../functions/dnd-functions.js';
 import {closeTaskViewModal}from '../functions/close-task-view-modal';
 import {setViewMode} from '../functions/main-admin-page/setViewMode'
 import {toggleFiltersDropdown} from '../functions/main-admin-page/toggleFiltersDropdown'
@@ -18,7 +19,10 @@ window.toggleFiltersDropdown=toggleFiltersDropdown;
 window.toggleTaskMenu=toggleTaskMenu;
 // task
 // window.toggleDropdown=toggleDropdown;
-
+document.addEventListener('DOMContentLoaded', () => {
+    window.initDragAndDrop(false);
+    console.log('dsadsadved')
+});
 // helpers
 Object.assign(window, fileHelpers);
 

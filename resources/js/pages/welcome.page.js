@@ -2,11 +2,11 @@ import * as fileHelpers from './../helpers/helpers.js';
 import * as welcomeFilters from './../functions/welcome-page/welcome-filters.js'
 import '../components/task-edit-files';
 import '../components/task-create-files';
-import '../components/welcome-page/welcome-dnd-cols.js'
 
 import { toggleTaskMenu } from '../components/welcome-page/welcome-task-menu.js'
 import '../functions/welcome-page/welcome-task-edit-form';
 import '../functions/welcome-page/create-personal-task';
+import '../functions/dnd-functions.js';
 import { closeTaskViewModal } from '../functions/close-task-view-modal';
 import {closeEditModal} from './../functions/welcome-page/close-edit-modal.js'
 
@@ -23,6 +23,10 @@ import {
     approveTask
 } from './../functions/welcome-page/personal-task.functions.js'
 
+document.addEventListener('DOMContentLoaded', () => {
+    window.initDragAndDrop(true);
+    console.log('dsadsadved')
+});
 
 window.closeTaskViewModal = closeTaskViewModal;
 window.closeEditModal=closeEditModal;
