@@ -1,3 +1,5 @@
+import { showNotification } from "../functions/show-notification";
+
 export function getFileIcon(extension) {
     const ext = (extension || '').toLowerCase();
     if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) return '🖼️';
@@ -57,4 +59,18 @@ export function debounce(func, delay = 300) {
             func.apply(this, args);
         }, delay);
     };
+}
+
+export function copyCurrentUrl(successMessage = "Ссылка скопирована") {
+    const url = window.location.href; // Берет весь текущий URL из адресной строки
+
+    navigator.clipboard.writeText(url)
+        .then(() => {
+            if (typeof showNotification === 'function') {
+                showNotification(successMessage, "success");
+            }
+        })
+        .catch(err => {
+            console.error("Не удалось скопировать ссылку: ", err);
+        });
 }
