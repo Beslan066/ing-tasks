@@ -587,7 +587,7 @@
                                                 @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
                                                     <button
                                                         onclick="openEditModal({{ $task->id }})"
-                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                     >
                                                         <i
                                                             class="fas fa-edit mr-2 text-blue-500"
@@ -599,7 +599,7 @@
                                                 @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
                                                     <button
                                                         onclick="archiveTask({{ $task->id }})"
-                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                     >
                                                         <i
                                                             class="fas fa-archive mr-2 text-yellow-500"
@@ -609,7 +609,7 @@
                                                 @endif
                                                 <button
                                                     onclick="openCreateSubtaskModal({{ $task->id }})"
-                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                    class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                 >
                                                     <i
                                                         class="fas fa-list mr-2 text-green-500"
@@ -618,7 +618,7 @@
                                                 </button>
                                                 <button
                                                     onclick="window.startTask({{ $task->id }})"
-                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                    class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                 >
                                                     <i
                                                         class="fas fa-play mr-2 text-green-500"
@@ -627,7 +627,7 @@
                                                 </button>
                                                 <button
                                                     onclick="window.showRejectModal({{ $task->id }})"
-                                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
+                                                    class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-gray-100 flex items-center"
                                                 >
                                                     <i
                                                         class="fas fa-times-circle mr-2"
@@ -811,7 +811,7 @@
                                                 @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
                                                     <button
                                                         onclick="openEditModal({{ $task->id }})"
-                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                     >
                                                         <i
                                                             class="fas fa-edit mr-2 text-blue-500"
@@ -823,7 +823,7 @@
                                                 @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
                                                     <button
                                                         onclick="archiveTask({{ $task->id }})"
-                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                       class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                     >
                                                         <i
                                                             class="fas fa-archive mr-2 text-yellow-500"
@@ -833,7 +833,7 @@
                                                 @endif
                                                 <button
                                                     onclick="window.sendForReview({{ $task->id }})"
-                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                   class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                 >
                                                     <i
                                                         class="fas fa-check-circle mr-2 text-green-500"
@@ -842,7 +842,7 @@
                                                 </button>
                                                 <button
                                                     onclick="window.showRejectModal({{ $task->id }})"
-                                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
+                                                    class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-gray-100 flex items-center"
                                                 >
                                                     <i
                                                         class="fas fa-times-circle mr-2"
@@ -1025,7 +1025,7 @@
                                                 @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
                                                     <button
                                                         onclick="openEditModal({{ $task->id }})"
-                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                     >
                                                         <i
                                                             class="fas fa-edit mr-2 text-blue-500"
@@ -1037,7 +1037,7 @@
                                                 @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
                                                     <button
                                                         onclick="archiveTask({{ $task->id }})"
-                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                     >
                                                         <i
                                                             class="fas fa-archive mr-2 text-yellow-500"
@@ -1047,7 +1047,7 @@
                                                 @endif
                                                 <button
                                                     onclick="window.approveTask({{ $task->id }})"
-                                                    class="w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-gray-100 flex items-center"
+                                                   class="w-full text-left px-3 py-2 text-xs text-green-500 hover:bg-gray-100 flex items-center"
                                                 >
                                                     <i
                                                         class="fas fa-check-circle mr-2"
@@ -1056,7 +1056,7 @@
                                                 </button>
                                                 <button
                                                     onclick="window.showRejectModal({{ $task->id }})"
-                                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
+                                                    class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-gray-100 flex items-center"
                                                 >
                                                     <i
                                                         class="fas fa-times-circle mr-2"
@@ -1494,8 +1494,9 @@
         document.addEventListener("DOMContentLoaded", function () {
             const searchInput = document.getElementById("taskSearchInput");
             if (searchInput) {
-                searchInput.addEventListener("input", applyFilters);
-                searchInput.addEventListener("keyup", applyFilters);
+                const debouncedApplyFilters = debounce(applyFilters, 300);
+
+                searchInput.addEventListener("input", debouncedApplyFilters);
             }
 
             document.addEventListener("click", function (event) {
