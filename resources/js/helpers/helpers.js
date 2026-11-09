@@ -62,7 +62,7 @@ export function debounce(func, delay = 300) {
 }
 
 export function copyCurrentUrl(successMessage = "Ссылка скопирована") {
-    const url = window.location.href; // Берет весь текущий URL из адресной строки
+    const url = window.location.href;
 
     navigator.clipboard.writeText(url)
         .then(() => {

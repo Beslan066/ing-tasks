@@ -182,11 +182,22 @@ export function applyFilters() {
             if (!matchesFiles) show = false;
         }
 
+        // if (show && searchTerm) {
+        //     const taskName = card.dataset.taskName || '';
+        //     if (!taskName.includes(searchTerm)) show = false;
+        // }
+        // or
         if (show && searchTerm) {
-            const taskName = card.dataset.taskName || '';
-            if (!taskName.includes(searchTerm)) show = false;
-        }
+            const taskName = (card.dataset.taskName || '').toLowerCase();
 
+            const regexStr = searchTerm.split('').map(char => {
+                return char.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            }).join('.*');
+
+            const fuzzyRegex = new RegExp(regexStr);
+
+            if (!fuzzyRegex.test(taskName)) show = false;
+        }
         card.style.display = show ? '' : 'none';
     });
 
