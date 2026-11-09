@@ -1598,10 +1598,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                     @foreach ($statusKeys as $statusKey)
                     <div
                         class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
-                        data-status="{{ $statusDataValues[$statusKey] }}"
-                        ondragover="dragOver.call(this, event)"
-                        ondragleave="dragLeave.call(this, event)"
-                        ondrop="drop.call(this, event)">
+                        data-status="{{ $statusDataValues[$statusKey] }}">
                         <div
                             class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title backdrop-blur-md bg-transparent/20">
                             <h3
@@ -1628,12 +1625,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                                 data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
                                 data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
                                 data-author-id="{{ $task->author_id }}"
-                                ondragstart="
-                                                    dragStart.call(this, event)
-                                                "
-                                ondragend="
-                                                    dragEnd.call(this, event)
-                                                ">
+                                data-can-manage="{{ $task->author_id == auth()->id() || auth()->user()->isLeader() }}">
                                 <div
                                     class="flex justify-between items-start mb-2">
                                     <a

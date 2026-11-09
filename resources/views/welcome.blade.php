@@ -785,6 +785,7 @@
                             data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
                             data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
                             data-author-id="{{ $task->author_id }}"
+                            data-can-manage="{{ $task->author_id == auth()->id() || auth()->user()->isLeader() }}"
                         >
                             <div class="flex justify-between items-start mb-2">
                                 <h4
@@ -998,6 +999,7 @@
                             data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
                             data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
                             data-author-id="{{ $task->author_id }}"
+                            data-can-manage="{{ $task->author_id == auth()->id() || auth()->user()->isLeader() }}"
                         >
                             <div class="flex justify-between items-start mb-2">
                                 <h4
@@ -1208,6 +1210,7 @@
                             data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
                             data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
                             data-author-id="{{ $task->author_id }}"
+                            data-can-manage="{{ $task->author_id == auth()->id() || auth()->user()->isLeader() }}"
                         >
                             <div class="flex justify-between items-start mb-2">
                                 <h4
