@@ -38,3 +38,14 @@ export function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+export function updateColumnCounters() {
+    const columns = document.querySelectorAll('.board-column');
+    columns.forEach(column => {
+        const taskContainer = column.querySelector('.task-container');
+        if (taskContainer) {
+            const visibleTasks = taskContainer.querySelectorAll('.task-card:not([style*="display: none"])').length;
+            const counterSpan = column.querySelector('.stat-count');
+            if (counterSpan) counterSpan.textContent = visibleTasks;
+        }
+    });
+}

@@ -5,6 +5,7 @@
 import { showNotification } from "./show-notification";
 import { getCsrfToken } from "./../helpers/getCsrfToken";
 import { buildTaskMenu } from "../components/build-task-menu";
+import { updateColumnCounters } from "../helpers/helpers";
 
 let draggedItem = null;
 let swiperSlideTimeout = null;
@@ -17,6 +18,7 @@ const STATUS_MAP = {
     'done': 'выполнена'
 };
 let isPersonalMode = false;
+let isLeader = false;
 function applyDoneStyle(card) {
     card.style.removeProperty('opacity');
     if (card.getAttribute('style') === '') {
@@ -38,8 +40,10 @@ function finishDrag(card = draggedItem) {
 /**
  * Инициализация / Переинициализация Drag and Drop
  */
-export function initDragAndDrop(isPersonal) {
+export function initDragAndDrop(isPersonal,isLeaderFlag) {
+    console.log('initbv',isPersonal,isLeaderFlag)
      if (typeof isPersonal === 'boolean') isPersonalMode = isPersonal;
+     if(typeof isLeaderFlag ==='boolean') isLeader = isLeaderFlag;
     const taskCards = document.querySelectorAll('.task-card');
     const columns = document.querySelectorAll('.board-column');
 
@@ -115,11 +119,13 @@ function dragLeave(e) {
     }
 }
 function refreshCardMenu(card, status) {
-    console.log('refreshCardMenu',card,isPersonalMode)
+    // console.log('refreshCardMenu',card,isPersonalMode)
+    // console.log('cad',typeof card.dataset.canManage)
     card.dataset.status = status;
     const menu = card.querySelector('.task-menu');
     if (!menu) return;
-    menu.innerHTML = buildTaskMenu(card.dataset.task, status, true,isPersonalMode);
+    const canManage = card.dataset.canManage === "1" || card.dataset.canManage === "true";
+    menu.innerHTML = buildTaskMenu(card.dataset.task, status, canManage, isPersonalMode, isLeader);
     menu.classList.add('hidden');
 }
 async function drop(e) {
@@ -178,7 +184,8 @@ async function updateTaskStatus(taskId, status) {
             showNotification(data.message || 'Ошибка при перемещении задачи', 'error');
             return false;
         }
-        showNotification('Статус задачи обновлён', 'success');
+        showNotification('Статус задачи обновлён1', 'success');
+        updateColumnCounters()
         return true;
     } catch (e) {
         console.error(e);

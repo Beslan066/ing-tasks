@@ -1886,7 +1886,8 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                                 data-deadline="{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') : '' }}"
                                 data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
                                 data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
-                                data-author-id="{{ $task->author_id }}">
+                                data-author-id="{{ $task->author_id }}"
+                                data-can-manage="{{ $task->author_id == auth()->id() || auth()->user()->isLeader() }}">
                                 <div
                                     class="flex justify-between items-start mb-2">
                                     <a
@@ -3364,7 +3365,13 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
         }
     });
 </script>
-
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const isLeader = @json(auth()->user()?->isLeader() ?? false);
+        window.initDragAndDrop(false, isLeader);
+        console.log('initedDndForMainAdmin');
+    });
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         console.log("test1");

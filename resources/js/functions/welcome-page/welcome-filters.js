@@ -1,3 +1,5 @@
+import { updateColumnCounters } from "../../helpers/helpers";
+
 // Переменные для фильтров
 let activeFilters = {
     priority: [],
@@ -218,17 +220,6 @@ function isThisWeek(date) {
     return date >= startOfWeek && date <= endOfWeek;
 }
 
-function updateColumnCounters() {
-    const columns = document.querySelectorAll('.board-column');
-    columns.forEach(column => {
-        const taskContainer = column.querySelector('.task-container');
-        if (taskContainer) {
-            const visibleTasks = taskContainer.querySelectorAll('.task-card:not([style*="display: none"])').length;
-            const counterSpan = column.querySelector('.stat-count');
-            if (counterSpan) counterSpan.textContent = visibleTasks;
-        }
-    });
-}
 
 
 // async function updateTaskStatus(taskId, newStatus) {
