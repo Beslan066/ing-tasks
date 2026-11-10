@@ -557,6 +557,7 @@
                             data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
                             data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
                             data-author-id="{{ $task->author_id }}"
+                            data-can-manage="{{ $task->author_id == auth()->id() || auth()->user()->isLeader() }}"
                         >
                             <div class="flex justify-between items-start mb-2">
                                 <a
@@ -586,7 +587,7 @@
                                                 @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
                                                     <button
                                                         onclick="openEditModal({{ $task->id }})"
-                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                     >
                                                         <i
                                                             class="fas fa-edit mr-2 text-blue-500"
@@ -598,7 +599,7 @@
                                                 @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
                                                     <button
                                                         onclick="archiveTask({{ $task->id }})"
-                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                     >
                                                         <i
                                                             class="fas fa-archive mr-2 text-yellow-500"
@@ -608,7 +609,7 @@
                                                 @endif
                                                 <button
                                                     onclick="openCreateSubtaskModal({{ $task->id }})"
-                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                    class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                 >
                                                     <i
                                                         class="fas fa-list mr-2 text-green-500"
@@ -617,7 +618,7 @@
                                                 </button>
                                                 <button
                                                     onclick="window.startTask({{ $task->id }})"
-                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                    class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                 >
                                                     <i
                                                         class="fas fa-play mr-2 text-green-500"
@@ -626,7 +627,7 @@
                                                 </button>
                                                 <button
                                                     onclick="window.showRejectModal({{ $task->id }})"
-                                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
+                                                    class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-gray-100 flex items-center"
                                                 >
                                                     <i
                                                         class="fas fa-times-circle mr-2"
@@ -784,6 +785,7 @@
                             data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
                             data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
                             data-author-id="{{ $task->author_id }}"
+                            data-can-manage="{{ $task->author_id == auth()->id() || auth()->user()->isLeader() }}"
                         >
                             <div class="flex justify-between items-start mb-2">
                                 <h4
@@ -809,7 +811,7 @@
                                                 @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
                                                     <button
                                                         onclick="openEditModal({{ $task->id }})"
-                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                     >
                                                         <i
                                                             class="fas fa-edit mr-2 text-blue-500"
@@ -821,7 +823,7 @@
                                                 @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
                                                     <button
                                                         onclick="archiveTask({{ $task->id }})"
-                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                       class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                     >
                                                         <i
                                                             class="fas fa-archive mr-2 text-yellow-500"
@@ -831,7 +833,7 @@
                                                 @endif
                                                 <button
                                                     onclick="window.sendForReview({{ $task->id }})"
-                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                   class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                 >
                                                     <i
                                                         class="fas fa-check-circle mr-2 text-green-500"
@@ -840,7 +842,7 @@
                                                 </button>
                                                 <button
                                                     onclick="window.showRejectModal({{ $task->id }})"
-                                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
+                                                    class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-gray-100 flex items-center"
                                                 >
                                                     <i
                                                         class="fas fa-times-circle mr-2"
@@ -997,6 +999,7 @@
                             data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
                             data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
                             data-author-id="{{ $task->author_id }}"
+                            data-can-manage="{{ $task->author_id == auth()->id() || auth()->user()->isLeader() }}"
                         >
                             <div class="flex justify-between items-start mb-2">
                                 <h4
@@ -1022,7 +1025,7 @@
                                                 @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
                                                     <button
                                                         onclick="openEditModal({{ $task->id }})"
-                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                     >
                                                         <i
                                                             class="fas fa-edit mr-2 text-blue-500"
@@ -1034,7 +1037,7 @@
                                                 @if ($task->author_id == auth()->id() || auth()->user()->isLeader())
                                                     <button
                                                         onclick="archiveTask({{ $task->id }})"
-                                                        class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                                        class="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center"
                                                     >
                                                         <i
                                                             class="fas fa-archive mr-2 text-yellow-500"
@@ -1044,7 +1047,7 @@
                                                 @endif
                                                 <button
                                                     onclick="window.approveTask({{ $task->id }})"
-                                                    class="w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-gray-100 flex items-center"
+                                                   class="w-full text-left px-3 py-2 text-xs text-green-500 hover:bg-gray-100 flex items-center"
                                                 >
                                                     <i
                                                         class="fas fa-check-circle mr-2"
@@ -1053,7 +1056,7 @@
                                                 </button>
                                                 <button
                                                     onclick="window.showRejectModal({{ $task->id }})"
-                                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
+                                                    class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-gray-100 flex items-center"
                                                 >
                                                     <i
                                                         class="fas fa-times-circle mr-2"
@@ -1207,6 +1210,7 @@
                             data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
                             data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
                             data-author-id="{{ $task->author_id }}"
+                            data-can-manage="{{ $task->author_id == auth()->id() || auth()->user()->isLeader() }}"
                         >
                             <div class="flex justify-between items-start mb-2">
                                 <h4
@@ -1302,6 +1306,13 @@
         src="https://cdn.jsdelivr.net/npm/@dragdroptouch/drag-drop-touch@latest/dist/drag-drop-touch.esm.min.js"
         type="module"
     ></script>
+    <script>
+         document.addEventListener('DOMContentLoaded', () => {
+        const isLeader = @json(auth()->user()?->isLeader() ?? false);
+        window.initDragAndDrop(true, isLeader);
+        console.log('initedDndForWelcome');
+    });
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
 
@@ -1483,8 +1494,9 @@
         document.addEventListener("DOMContentLoaded", function () {
             const searchInput = document.getElementById("taskSearchInput");
             if (searchInput) {
-                searchInput.addEventListener("input", applyFilters);
-                searchInput.addEventListener("keyup", applyFilters);
+                const debouncedApplyFilters = debounce(applyFilters, 300);
+
+                searchInput.addEventListener("input", debouncedApplyFilters);
             }
 
             document.addEventListener("click", function (event) {

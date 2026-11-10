@@ -177,85 +177,47 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
 
                     <!-- Статус -->
                     <x-form.input-select
+                        variant="dark"
                         name="status"
                         label="Статус"
                         :required="false"
                         :value="request('status')"
                         :options="collect($filterData['statuses'])->mapWithKeys(fn($status) => [$status => $status])->prepend('Все статусы', '')->toArray()" />
                     <!-- Исполнитель -->
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-white mb-1">Исполнитель</label>
-                        <select
-                            name="user_id"
-                            class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
-                            <option value="">Все исполнители</option>
-                            @foreach ($filterData['users'] as $userItem)
-                            <option
-                                class="text-gray-800"
-                                value="{{ $userItem->id }}"
-                                {{ request('user_id') == $userItem->id ? 'selected' : '' }}>
-                                {{ $userItem->name }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-form.input-select
+                        variant="dark"
+                        name="user_id"
+                        label="Исполнитель"
+                        :required="false"
+                        :value="request('user_id')"
+                        :options="collect($filterData['users'])->pluck('name', 'id')->prepend('Все исполнители', '')->toArray()" />
 
                     <!-- Отдел -->
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-white mb-1">Отдел</label>
-                        <select
-                            name="department_id"
-                            class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
-                            <option value="">Все отделы</option>
-                            @foreach ($filterData['departments'] as $department)
-                            <option
-                                class="text-gray-800"
-                                value="{{ $department->id }}"
-                                {{ request('department_id') == $department->id ? 'selected' : '' }}>
-                                {{ $department->name }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-form.input-select
+                        variant="dark"
+                        name="department_id"
+                        label="Отдел"
+                        :required="false"
+                        :value="request('department_id')"
+                        :options="collect($filterData['departments'])->pluck('name', 'id')->prepend('Все отделы', '')->toArray()" />
 
                     <!-- Приоритет -->
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-white mb-1">Приоритет</label>
-                        <select
-                            name="priority"
-                            class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
-                            <option value="">Все приоритеты</option>
-                            @foreach ($filterData['priorities'] as $priority)
-                            <option
-                                class="text-gray-800"
-                                value="{{ $priority }}"
-                                {{ request('priority') == $priority ? 'selected' : '' }}>
-                                {{ $priority }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-form.input-select
+                        variant="dark"
+                        name="priority"
+                        label="Приоритет"
+                        :required="false"
+                        :value="request('priority')"
+                        :options="collect($filterData['priorities'])->mapWithKeys(fn($priority) => [$priority => $priority])->prepend('Все приоритеты', '')->toArray()" />
 
                     <!-- Категория -->
-                    <div>
-                        <label class="block text-sm text-white mb-1">Категория</label>
-                        <select
-                            name="category_id"
-                            class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
-                            <option value="">Все категории</option>
-                            @foreach ($filterData['categories'] as $category)
-                            <option
-                                class="text-gray-800"
-                                value="{{ $category->id }}"
-                                {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                {{ $category->name }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-form.input-select
+                        variant="dark"
+                        name="category_id"
+                        label="Категория"
+                        :required="false"
+                        :value="request('category_id')"
+                        :options="collect($filterData['categories'])->pluck('name', 'id')->prepend('Все категории', '')->toArray()" />
 
                     <!-- Кнопки фильтра -->
                     <div
@@ -308,7 +270,8 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                     </div>
 
                     <!-- Статус -->
-                    <x-form.input-select
+                  <x-form.input-select
+                        theme="light"
                         name="status"
                         label="Статус"
                         :required="false"
@@ -317,6 +280,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
 
                     <!-- Исполнитель -->
                     <x-form.input-select
+                    theme="dark"
                         name="user_id"
                         label="Исполнитель"
                         :required="false"
@@ -396,7 +360,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
 
                     <x-ui.select
                         id="sortSelect"
-                         variant="light"
+                         variant="glass"
                         aria-label="Сортировка задач"
                         class="w-full sm:w-52"
                         :selected="$sortKey"
@@ -975,7 +939,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                     Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
                 </div>
                 <div class="w-full sm:w-auto">
-                    <x-ui.select
+                     <x-ui.select
                         id="sortSelect"
                          variant="light"
                         aria-label="Сортировка задач"
@@ -1583,7 +1547,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                 <div class="w-full sm:w-auto">
                     <x-ui.select
                         id="sortSelectKanban"
-                         variant="light"
+                         variant="glass"
                         aria-label="Сортировка задач"
                         class="w-full sm:w-52"
                         :selected="$sortKey"
@@ -1598,10 +1562,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                     @foreach ($statusKeys as $statusKey)
                     <div
                         class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
-                        data-status="{{ $statusDataValues[$statusKey] }}"
-                        ondragover="dragOver.call(this, event)"
-                        ondragleave="dragLeave.call(this, event)"
-                        ondrop="drop.call(this, event)">
+                        data-status="{{ $statusDataValues[$statusKey] }}">
                         <div
                             class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title backdrop-blur-md bg-transparent/20">
                             <h3
@@ -1628,12 +1589,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                                 data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
                                 data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
                                 data-author-id="{{ $task->author_id }}"
-                                ondragstart="
-                                                    dragStart.call(this, event)
-                                                "
-                                ondragend="
-                                                    dragEnd.call(this, event)
-                                                ">
+                                data-can-manage="{{ $task->author_id == auth()->id() || auth()->user()->isLeader() }}">
                                 <div
                                     class="flex justify-between items-start mb-2">
                                     <a
@@ -1886,7 +1842,8 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                                 data-deadline="{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') : '' }}"
                                 data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
                                 data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
-                                data-author-id="{{ $task->author_id }}">
+                                data-author-id="{{ $task->author_id }}"
+                                data-can-manage="{{ $task->author_id == auth()->id() || auth()->user()->isLeader() }}">
                                 <div
                                     class="flex justify-between items-start mb-2">
                                     <a
@@ -3364,7 +3321,13 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
         }
     });
 </script>
-
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const isLeader = @json(auth()->user()?->isLeader() ?? false);
+        window.initDragAndDrop(false, isLeader);
+        console.log('initedDndForMainAdmin');
+    });
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         console.log("test1");

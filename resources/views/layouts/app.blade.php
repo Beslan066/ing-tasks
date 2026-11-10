@@ -2086,18 +2086,9 @@ media-src https://meet.jit.si https:;
     });
 
     document.querySelectorAll('.board-column').forEach(column => {
-        column.addEventListener('dragover', function (e) {
-            e.preventDefault();
-            this.style.backgroundColor = '#e5e7eb';
-        });
-
-        column.addEventListener('dragleave', function () {
-            this.style.backgroundColor = '#f3f4f6';
-        });
 
         column.addEventListener('drop', function (e) {
             e.preventDefault();
-            this.style.backgroundColor = '#f3f4f6';
 
             if (draggedTask) {
                 const status = this.getAttribute('data-status');

@@ -6,6 +6,8 @@ import { addTaskToColumn } from "./functions/add-task-to-column";
 import { showNotification } from "./functions/show-notification";
 import { getCsrfToken } from "./helpers/getCsrfToken";
 import { openTaskViewModal } from "./functions/openTaskViewModal";
+import { copyCurrentUrl } from "./helpers/helpers";
+window.copyCurrentUrl=copyCurrentUrl;
 window.Alpine = Alpine;
 window.addTaskToCol = addTaskToColumn;
 window.showNotification = showNotification;

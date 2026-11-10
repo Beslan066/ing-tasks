@@ -114,124 +114,123 @@
         @endif
 
         <!-- Фильтры (скрыты по умолчанию) -->
+        @php
+            $filterStatusOptions = [
+                ''            => 'Все статусы',
+                'назначена'   => 'Новые',
+                'в работе'    => 'В работе',
+                'на проверке' => 'На проверке',
+                'выполнена'   => 'Завершено',
+            ];
+
+            $filterDepartmentOptions = collect($user->company->departments ?? [])
+                ->pluck('name', 'id')
+                ->prepend('Все отделы', '')
+                ->toArray();
+
+            $filterSortOptions = [
+                'created_at_desc' => 'Сортировка: новые сначала',
+                'created_at_asc'  => 'Сортировка: старые сначала',
+                'deadline_asc'    => 'Сортировка: ближайшие',
+                'deadline_desc'   => 'Сортировка: Дедлайн(дальние)',
+                'name_asc'        => 'Названию (А-Я)',
+                'name_desc'       => 'Названию (Я-А)',
+                'status_asc'      => 'Статус',
+                'priority_desc'   => 'Приоритет (высокие сначала)',
+            ];
+        @endphp
+
         @if($backgroundEnabled && $backgroundImage)
             <div id="filtersPanel"
-                 class="backdrop-blur-md bg-transparent/20 rounded-lg shadow mb-6 p-4 hidden transition-all duration-300">
+                class="backdrop-blur-md bg-transparent/20 rounded-lg shadow mb-6 p-4 hidden transition-all duration-300 relative z-20">
                 <div class="flex flex-wrap gap-4">
 
                     <div class="flex-[2] min-w-[250px]">
-                        <label class="block font-medium text-white mb-1">Поиск</label>
+                        <label for="searchTask" class="block text-[13px] font-medium text-white/80 mb-1.5">Поиск</label>
                         <input type="text" id="searchTask" placeholder="Поиск по названию или описанию..."
-                               class="w-full border-none placeholder:text-white rounded-lg px-3 py-2 bg-transparent/20 text-white">
+                            class="w-full px-4 py-2.5 text-sm text-white placeholder:text-white/50 bg-white/10 border border-white/20 hover:border-white/40 rounded-xl focus:bg-white/15 focus:outline-none focus:border-white/40 focus:ring-4 focus:ring-white/10 transition-all duration-200">
                     </div>
 
-                    <div class="flex-1 min-w-[200px]">
-                        <label class="block text-sm font-medium text-white mb-1">Статус</label>
-                        <select id="statusFilter"
-                                class="w-full border-none rounded-lg px-3 py-2 backdrop-blur-md bg-transparent/20 text-white">
-                            <option value="">Все статусы</option>
-                            <option value="назначена">Новые</option>
-                            <option value="в работе">В работе</option>
-                            <option value="на проверке">На проверке</option>
-                            <option value="выполнена">Завершено</option>
-                        </select>
-                    </div>
+                    <x-form.input-select
+                        id="statusFilter"
+                        variant="dark"
+                        label="Статус"
+                        class="flex-1 min-w-[200px]"
+                        :options="$filterStatusOptions" />
 
-                    <div class="flex-1 min-w-[200px]">
-                        <label class="block text-sm font-medium text-white mb-1">Отдел</label>
-                        <select id="departmentFilter"
-                                class="w-full border-none rounded-lg px-3 py-2  backdrop-blur-md bg-transparent/20 text-white">
-                            <option value="">Все отделы</option>
-                            @foreach($user->company->departments ?? [] as $department)
-                                <option class="text-gray-800" value="{{ $department->id }}">{{ $department->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-form.input-select
+                        id="departmentFilter"
+                        variant="dark"
+                        label="Отдел"
+                        class="flex-1 min-w-[200px]"
+                        :options="$filterDepartmentOptions" />
 
                     <div class="flex items-end gap-2">
-                        <button onclick="applyFilters()"
-                                class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition">
-                            <i class="fas fa-search mr-2"></i>Применить
-                        </button>
-                        <button onclick="resetFilters()"
-                                class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">
-                            <i class="fas fa-undo mr-2"></i>Сбросить
-                        </button>
+                          <x-ui.button variant="primary" icon="fas fa-search" onclick="applyFilters()">Применить</x-ui.button>
+                          <x-ui.button variant="outline" icon="fas fa-undo" onclick="resetFilters()">Сбросить</x-ui.button>
                     </div>
                 </div>
-                <div class="mt-2">
+
+                <div class="mt-3">
                     <!-- Сортировка -->
-                    <div class="flex items-center space-x-4 ">
-                        <select id="sortBy" onchange="sortTasks()"
-                                class="border-none rounded-lg px-3 py-2 bg-transparent/20 text-white">
-                            <option class="text-gray-800" value="created_at_desc">Сортировка: новые сначала</option>
-                            <option class="text-gray-800" value="created_at_asc">Сортировка: старые сначала</option>
-                            <option class="text-gray-800" value="deadline_asc">Сортировка: ближайшие</option>
-                            <option class="text-gray-800" value="deadline_desc">Сортировка: Дедлайн(дальние)</option>
-                            <option class="text-gray-800" value="name_asc">Названию (А-Я)</option>
-                            <option class="text-gray-800" value="name_desc">Названию (Я-А)</option>
-                            <option class="text-gray-800" value="status_asc">Статус</option>
-                            <option class="text-gray-800" value="priority_desc">Приоритет (высокие сначала)</option>
-                        </select>
-                    </div>
+                    <x-form.input-select
+                        id="sortBy"
+                        variant="dark"
+                        aria-label="Сортировка задач"
+                        selected="created_at_desc"
+                        class="w-full sm:w-72"
+                        onchange="sortTasks()"
+                        :options="$filterSortOptions" />
                 </div>
             </div>
         @else
-            <div id="filtersPanel" class="bg-white rounded-lg shadow mb-6 p-4 hidden transition-all duration-300">
+            <div id="filtersPanel" class="bg-white rounded-lg shadow mb-6 p-4 hidden transition-all duration-300 relative z-20">
                 <div class="flex flex-wrap gap-4">
-                    <div class="flex-1 min-w-[200px]">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                        <select id="statusFilter" class="w-full border border-gray-300 rounded-lg px-3 py-2">
-                            <option class="text-gray-800" value="">Все статусы</option>
-                            <option class="text-gray-800" value="назначена">Новые</option>
-                            <option class="text-gray-800" value="в работе">В работе</option>
-                            <option class="text-gray-800" value="на проверке">На проверке</option>
-                            <option class="text-gray-800" value="выполнена">Завершено</option>
-                        </select>
-                    </div>
 
-                    <div class="flex-1 min-w-[200px]">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
-                        <select id="departmentFilter" class="w-full border border-gray-300 rounded-lg px-3 py-2">
-                            <option value="">Все отделы</option>
-                            @foreach($user->company->departments ?? [] as $department)
-                                <option class="text-gray-800" value="{{ $department->id }}">{{ $department->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-form.input-select
+                        id="statusFilter"
+                        variant="light"
+                        label="Статус"
+                        class="flex-1 min-w-[200px]"
+                        :options="$filterStatusOptions" />
+
+                    <x-form.input-select
+                        id="departmentFilter"
+                        variant="light"
+                        label="Отдел"
+                        class="flex-1 min-w-[200px]"
+                        :options="$filterDepartmentOptions" />
 
                     <div class="flex-[2] min-w-[250px]">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
+                        <label for="searchTask" class="block text-[13px] font-medium text-slate-600 mb-1.5">Поиск</label>
                         <input type="text" id="searchTask" placeholder="Поиск по названию или описанию..."
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                            class="w-full px-4 py-2.5 text-sm text-slate-700 placeholder:text-slate-400 bg-slate-50/50 border border-slate-200 hover:border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200">
                     </div>
 
                     <div class="flex items-end gap-2">
-                        <button onclick="applyFilters()"
-                                class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition">
+                        <!-- <button onclick="applyFilters()"
+                                class="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 text-sm rounded-xl transition">
                             <i class="fas fa-search mr-2"></i>Применить
-                        </button>
-                        <button onclick="resetFilters()"
-                                class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">
+                        </button> -->
+                        <x-ui.button variant="primary" icon="fas fa-search" onclick="applyFilters()">Применить</x-ui.button>
+                        <!-- <button onclick="resetFilters()"
+                                class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2.5 text-sm rounded-xl transition">
                             <i class="fas fa-undo mr-2"></i>Сбросить
-                        </button>
+                        </button> -->
+                      <x-ui.button variant="outline" icon="fas fa-undo" onclick="resetFilters()">Сбросить</x-ui.button>
                     </div>
                 </div>
-                <div class="mt-2">
+
+                <div class="mt-3">
                     <!-- Сортировка -->
-                    <div class="flex items-center space-x-4 ">
-                        <select id="sortBy" onchange="sortTasks()"
-                                class="border border-gray-300 rounded-lg px-3 py-2">
-                            <option class="text-gray-800" value="created_at_desc">Сортировка: новые сначала</option>
-                            <option class="text-gray-800" value="created_at_asc">Сортировка: старые сначала</option>
-                            <option class="text-gray-800" value="deadline_asc">Сортировка: ближайшие</option>
-                            <option class="text-gray-800" value="deadline_desc">Сортировка: Дедлайн(дальние)</option>
-                            <option class="text-gray-800" value="name_asc">Названию (А-Я)</option>
-                            <option class="text-gray-800" value="name_desc">Названию (Я-А)</option>
-                            <option class="text-gray-800" value="status_asc">Статус</option>
-                            <option class="text-gray-800" value="priority_desc">Приоритет (высокие сначала)</option>
-                        </select>
-                    </div>
+                    <x-form.input-select
+                        id="sortBy"
+                        variant="light"
+                        aria-label="Сортировка задач"
+                        selected="created_at_desc"
+                        class="w-full sm:w-72"
+                        onchange="sortTasks()"
+                        :options="$filterSortOptions" />
                 </div>
             </div>
         @endif

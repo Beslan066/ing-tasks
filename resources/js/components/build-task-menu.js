@@ -1,10 +1,11 @@
 const ITEMS = {
     edit:    { fn: 'openEditModal',          icon: 'fa-edit',         color: 'text-blue-500',   label: 'Редактировать' },
     archive: { fn: 'archiveTask',            icon: 'fa-archive',      color: 'text-yellow-500', label: 'В архив' },
-    subtask: { fn: 'openCreateSubtaskModal', icon: 'fa-list',         color: 'text-green-500',  label: 'Подзадача' },
+    subtask: { fn: 'openCreateSubtaskModal', icon: 'fa-list',         color: 'text-blue-500',   label: 'Подзадача' },
     start:   { fn: 'startTask',              icon: 'fa-play',         color: 'text-green-500',  label: 'Начать' },
-    review:  { fn: 'sendForReview',          icon: 'fa-check-circle', color: 'text-green-500',  label: 'Отправить на проверку' },
-    approve: { fn: 'approveTask',            icon: 'fa-check-circle', color: 'text-blue-500',   label: 'Завершить' },
+    review:  { fn: 'sendForReview',          icon: 'fa-check-circle', color: 'text-green-500',  label: 'На проверку' },
+    approve: { fn: 'approveTask',            icon: 'fa-check-double', color: 'text-green-500',  label: 'Одобрить' },
+    welcomeApprove:{ fn:'approveTask',       icon:'fa-check-circle',  color:'text-green-500',   label:'Завершить'},
     revise:  { fn: 'returnTaskToWork',       icon: 'fa-redo',         color: 'text-orange-500', label: 'На доработку' },
     reject:  { fn: 'showRejectModal',        icon: 'fa-times-circle', color: '',                label: 'Отказаться', text: 'text-red-600' },
 };
@@ -16,25 +17,25 @@ const MENUS = {
             'назначена':   ['subtask', 'start', 'reject'],
             'в работе':    ['review', 'reject'],
             'просрочена':  ['review', 'reject'],
-            'на проверке': ['approve', 'reject'],
+            'на проверке': ['welcomeApprove', 'reject'],
         },
         fallback: ['reject'],
     },
     team: {
         manage: ['edit', 'archive'],
         byStatus: {
-            'назначена':   ['subtask'],
-            'в работе':    ['review', 'reject'],
+            'назначена':   ['subtask','start','reject'],
+            'в работе':    ['subtask','review', 'reject'],
             'просрочена':  ['review', 'reject'],
-            'на проверке': ['approve', 'revise', 'reject'],
+            'на проверке': ['approve','subtask', 'revise', 'reject'],
         },
         fallback: ['reject'],
     },
 };
 
 const menuItem = (action, icon, iconColor, label, textColor = 'text-gray-700') => `
-    <button onclick="${action}" class="w-full text-left px-4 py-2 text-sm ${textColor} hover:bg-gray-100 flex items-center">
-        <i class="fas ${icon} mr-2 ${iconColor}"></i> ${label}
+    <button onclick="${action}" class="w-full text-left px-3 py-2 text-xs ${textColor} hover:bg-gray-100 flex items-center">
+        <i class="fas ${icon} mr-2 ${iconColor} text-xs"></i> ${label}
     </button>`;
 
 const renderItem = (key, taskId) => {
@@ -42,13 +43,28 @@ const renderItem = (key, taskId) => {
     return menuItem(`${fn}(${taskId})`, icon, color, label, text);
 };
 
-export function buildTaskMenu(taskId, status, canManage, isPersonal = false) {
+export function buildTaskMenu(taskId, status, canManage, isPersonal = false, isLeader = false) {
     if (status === 'выполнена') return '';
 
     const menu = MENUS[isPersonal ? 'personal' : 'team'];
+
+    let statusKeys = menu.byStatus[status] ?? menu.fallback;
+
+    if (!isPersonal) {
+        if (!canManage) {
+            statusKeys = statusKeys.filter(key => key !== 'subtask');
+        }
+        if (status === 'на проверке' && !isLeader) {
+            statusKeys = statusKeys.filter(key => key !== 'approve' && key !== 'revise');
+        }
+        if (status === 'просрочена') {
+            statusKeys = statusKeys.filter(key => key !== 'reject');
+        }
+    }
+
     const keys = [
         ...(canManage ? menu.manage : []),
-        ...(menu.byStatus[status] ?? menu.fallback),
+        ...statusKeys
     ];
 
     return `<div class="py-1">${keys.map(key => renderItem(key, taskId)).join('')}</div>`;

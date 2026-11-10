@@ -1,3 +1,5 @@
+import { updateColumnCounters } from "../../helpers/helpers";
+
 // Переменные для фильтров
 let activeFilters = {
     priority: [],
@@ -180,11 +182,22 @@ export function applyFilters() {
             if (!matchesFiles) show = false;
         }
 
+        // if (show && searchTerm) {
+        //     const taskName = card.dataset.taskName || '';
+        //     if (!taskName.includes(searchTerm)) show = false;
+        // }
+        // or
         if (show && searchTerm) {
-            const taskName = card.dataset.taskName || '';
-            if (!taskName.includes(searchTerm)) show = false;
-        }
+            const taskName = (card.dataset.taskName || '').toLowerCase();
 
+            const regexStr = searchTerm.split('').map(char => {
+                return char.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            }).join('.*');
+
+            const fuzzyRegex = new RegExp(regexStr);
+
+            if (!fuzzyRegex.test(taskName)) show = false;
+        }
         card.style.display = show ? '' : 'none';
     });
 
@@ -218,17 +231,6 @@ function isThisWeek(date) {
     return date >= startOfWeek && date <= endOfWeek;
 }
 
-function updateColumnCounters() {
-    const columns = document.querySelectorAll('.board-column');
-    columns.forEach(column => {
-        const taskContainer = column.querySelector('.task-container');
-        if (taskContainer) {
-            const visibleTasks = taskContainer.querySelectorAll('.task-card:not([style*="display: none"])').length;
-            const counterSpan = column.querySelector('.stat-count');
-            if (counterSpan) counterSpan.textContent = visibleTasks;
-        }
-    });
-}
 
 
 // async function updateTaskStatus(taskId, newStatus) {

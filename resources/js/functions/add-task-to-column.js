@@ -12,7 +12,7 @@ export function addTaskToColumn(columnContainer, task, canManage) {
     taskCard.dataset.hasFiles = task.files_count > 0 ? 'true' : 'false';
     taskCard.dataset.taskName = (task.name || '').toLowerCase();
     taskCard.dataset.authorId = task.author_id;
-
+taskCard.dataset.canManage = "1";
     const prioritySignals = {
         'низкий': { level: 1, bg: 'bg-green-50', border: 'border-green-200', filled: 'bg-green-500', empty: 'bg-green-200', text: 'text-green-700' },
         'средний': { level: 2, bg: 'bg-blue-50', border: 'border-blue-200', filled: 'bg-blue-500', empty: 'bg-blue-100', text: 'text-blue-700' },
