@@ -1233,5 +1233,17 @@ console.log('1')
         .transition-all {
             transition: all 0.3s ease;
         }
+        .tab-button {
+            border-color: transparent;
+            color: #6b7280;
+        }
+        .tab-button:hover {
+            color: #374151;
+            border-color: #d1d5db;
+        }
+        .tab-button.active {
+            border-color: #10b981;
+            color: #10b981;
+        }
     </style>
 @endpush
