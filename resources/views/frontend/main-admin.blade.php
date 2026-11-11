@@ -150,7 +150,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
     <!-- Фильтры и поиск (список) -->
     @if ($backgroundEnabled && $backgroundImage)
     <div id="filtersPanel"
-     class="relative z-20 backdrop-blur-md bg-black/20 rounded-lg hidden mb-[20px]">
+     class="relative z-[3] backdrop-blur-md bg-black/20 rounded-lg hidden mb-[20px]">
         <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <form
                 method="GET"
@@ -245,7 +245,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
     </div>
     @else
     <div id="filtersPanel"
-     class="relative z-20 bg-white rounded-lg hidden mb-[20px]">
+     class="relative z-[3] bg-white rounded-lg hidden mb-[20px]">
         <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <form
                 method="GET"
