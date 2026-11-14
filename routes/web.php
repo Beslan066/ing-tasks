@@ -25,13 +25,6 @@ use Illuminate\Support\Facades\Route;
 // Защита паролем
 use App\Http\Controllers\SitePasswordController;
 
-Route::get('/site-password', [SitePasswordController::class, 'show'])
-    ->name('site-password.form');
-
-Route::post('/site-password', [SitePasswordController::class, 'check'])
-    ->name('site-password.check');
-
-
 Route::post('/licence/payment/webhook', [LicenceAndPaymentController::class, 'paymentWebhook'])
     ->name('payment.webhook');
 
