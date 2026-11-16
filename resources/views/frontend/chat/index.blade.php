@@ -80,7 +80,7 @@
         .chat-sidebar {
             transition: all 0.3s ease;
         }
-
+/* fix */
         @media (max-width: 1280px) {
             .chat-sidebar-mobile {
                 position: fixed;
@@ -427,16 +427,16 @@
              x-init="init()"
              x-cloak>
 
-            <div class="chat-overlay"
+            <!-- <div class="chat-overlay"
                  :class="{'open': sidebarOpen}"
-                 @click="sidebarOpen = false"></div>
+                 @click="sidebarOpen = false"></div> -->
 
             <div class="flex h-full flex-col gap-6 xl:flex-row xl:gap-5">
                 <div
-                    class="chat-sidebar chat-sidebar-mobile flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white xl:flex xl:w-1/4 dark:border-gray-800 dark:bg-white/[0.03]"
-                    :class="{'open': sidebarOpen, 'hidden xl:flex': activeChat, 'flex': !activeChat}">
+                    class="chat-sidebar flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white xl:flex xl:w-1/4 dark:border-gray-800 dark:bg-white/[0.03]"
+                    :class="activeChat ? 'hidden xl:flex' : 'flex'">
 
-                    <div class="sticky px-4 pt-4 pb-4 sm:px-5 sm:pt-5 xl:pb-0">
+                 <div class="sticky z-20 px-4 pt-4 pb-4 sm:px-5 sm:pt-5 xl:pb-0">
                         <div class="flex items-start justify-between">
                             <div>
                                 <h3 class="text-theme-xl font-semibold text-gray-800 sm:text-2xl dark:text-white/90">
@@ -616,8 +616,7 @@
 
                 <div
                     class="flex h-full flex-col overflow-hidden rounded-2xl border-none bg-white dark:border-gray-800 dark:bg-white/[0.03] xl:w-3/4 relative"
-                    :class="{'hidden xl:flex': !activeChat, 'flex': activeChat}">
-
+                   :class="activeChat ? 'flex' : 'hidden xl:flex'">
                     <template x-if="activeChat">
                         <div class="flex flex-col h-full">
                             <div
