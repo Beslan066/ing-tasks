@@ -4,26 +4,6 @@
 
 @section('content')
 
-    <!-- ===== HERO ===== -->
-    <section class="relative overflow-hidden">
-        <div class="absolute inset-0 -z-10" style="background: radial-gradient(ellipse at 30% 20%, rgba(16, 185, 129, 0.06) 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);"></div>
-        <div class="container-wide pt-16 pb-10 lg:pt-24 lg:pb-12">
-            <div class="max-w-3xl">
-                <div class="inline-flex items-center gap-2 bg-[#ecfdf5] text-[#10b981] text-xs font-semibold px-4 py-1.5 rounded-full border border-[#a7f3d0]/60 mb-6">
-                    <span class="w-2 h-2 rounded-full" style="background: #10b981;"></span>
-                    Блог и обновления продукта
-                </div>
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 leading-[1.1]">
-                    Новости <span class="gradient-text-primary">компании</span>
-                </h1>
-                <p class="mt-6 text-lg text-gray-500 max-w-xl leading-relaxed">
-                    Релизы, обновления платформы, кейсы клиентов и полезные материалы
-                    о проектном управлении — всё в одном месте.
-                </p>
-            </div>
-        </div>
-    </section>
-
     <!-- ===== СПИСОК НОВОСТЕЙ ===== -->
     <section class="py-16 bg-white">
         <div class="container-wide">

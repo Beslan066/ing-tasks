@@ -236,7 +236,7 @@
             </a>
 
             <nav class="hidden lg:flex items-center gap-8">
-                <a href="/news" class="text-sm font-medium text-gray-600 hover:text-[#10b981] transition">Новости</a>
+                <a href="/posts" class="text-sm font-medium text-gray-600 hover:text-[#10b981] transition">Новости</a>
                 <a href="/requisites" class="text-sm font-medium text-gray-600 hover:text-[#10b981] transition">Реквизиты</a>
                 <a href="/about-us" class="text-sm font-medium text-gray-600 hover:text-[#10b981] transition">О нас</a>
                 <a href="/contacts" class="text-sm font-medium text-gray-600 hover:text-[#10b981] transition">Контакты</a>

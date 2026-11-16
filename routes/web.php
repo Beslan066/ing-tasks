@@ -94,8 +94,8 @@ Route::view('/licence', 'frontend.judical.licence')->name('licence');
     Route::view('/terms', 'frontend.judical.terms')->name('terms');
 
 Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class, 'home'])->name('index');
-Route::get('/news',         fn () => view('pages.news'))->name('news');
-Route::get('/news/{slug}',  fn ($slug) => view('pages.news-show', ['post' => (object)[
+Route::get('/posts',         fn () => view('frontend.news'))->name('news');
+Route::get('/posts/{slug}',  fn ($slug) => view('frontend.news-show', ['post' => (object)[
     // временная заглушка; при подключении БД замените на Post::where('slug', $slug)->firstOrFail()
     'slug' => $slug,
 ]]))->name('news.show');
@@ -141,7 +141,7 @@ Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->g
     Route::post('/support/send', [SupportController::class, 'send'])->name('support.send');
 
     //Индексная страница для новостей на фронте
-    Route::get('/news', [\App\Http\Controllers\Frontend\NewsController::class, 'index'])->name('frontend.news.index');
+    Route::get('/news', [\App\Http\Controllers\Frontend\NewsController::class, 'index'])->middleware('require.company')->name('frontend.news.index');
 
 
     // Админская страница для руководителей и менеджеров
