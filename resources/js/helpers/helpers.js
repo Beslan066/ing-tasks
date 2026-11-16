@@ -1,3 +1,5 @@
+import { showNotification } from "../functions/show-notification";
+
 export function getFileIcon(extension) {
     const ext = (extension || '').toLowerCase();
     if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) return '🖼️';
@@ -37,4 +39,38 @@ export function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+export function updateColumnCounters() {
+    const columns = document.querySelectorAll('.board-column');
+    columns.forEach(column => {
+        const taskContainer = column.querySelector('.task-container');
+        if (taskContainer) {
+            const visibleTasks = taskContainer.querySelectorAll('.task-card:not([style*="display: none"])').length;
+            const counterSpan = column.querySelector('.stat-count');
+            if (counterSpan) counterSpan.textContent = visibleTasks;
+        }
+    });
+}
+export function debounce(func, delay = 300) {
+    let timeoutId;
+    return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}
+
+export function copyCurrentUrl(successMessage = "Ссылка скопирована") {
+    const url = window.location.href;
+
+    navigator.clipboard.writeText(url)
+        .then(() => {
+            if (typeof showNotification === 'function') {
+                showNotification(successMessage, "success");
+            }
+        })
+        .catch(err => {
+            console.error("Не удалось скопировать ссылку: ", err);
+        });
 }

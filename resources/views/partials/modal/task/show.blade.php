@@ -4,7 +4,7 @@
 
         <!-- Кнопки действий -->
         <div class="absolute right-0 top-20 -translate-y-1/2 -mr-14 flex flex-col gap-3 max-[500px]:!hidden">
-            <button onclick="copyTaskLink()"
+            <button onclick="copyCurrentUrl()"
                     class="w-11 h-11 bg-white rounded-full shadow-lg shadow-slate-900/20 border border-slate-200 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all duration-200 hover:scale-110"
                     title="Копировать ссылку">
                 <i class="fas fa-link text-sm"></i>

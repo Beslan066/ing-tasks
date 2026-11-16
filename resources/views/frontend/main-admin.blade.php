@@ -150,7 +150,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
     <!-- Фильтры и поиск (список) -->
     @if ($backgroundEnabled && $backgroundImage)
     <div id="filtersPanel"
-     class="relative z-20 backdrop-blur-md bg-black/20 rounded-lg hidden mb-[20px]">
+     class="relative z-[3] backdrop-blur-md bg-black/20 rounded-lg hidden mb-[20px]">
         <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <form
                 method="GET"
@@ -177,85 +177,47 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
 
                     <!-- Статус -->
                     <x-form.input-select
+                        variant="dark"
                         name="status"
                         label="Статус"
                         :required="false"
                         :value="request('status')"
                         :options="collect($filterData['statuses'])->mapWithKeys(fn($status) => [$status => $status])->prepend('Все статусы', '')->toArray()" />
                     <!-- Исполнитель -->
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-white mb-1">Исполнитель</label>
-                        <select
-                            name="user_id"
-                            class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
-                            <option value="">Все исполнители</option>
-                            @foreach ($filterData['users'] as $userItem)
-                            <option
-                                class="text-gray-800"
-                                value="{{ $userItem->id }}"
-                                {{ request('user_id') == $userItem->id ? 'selected' : '' }}>
-                                {{ $userItem->name }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-form.input-select
+                        variant="dark"
+                        name="user_id"
+                        label="Исполнитель"
+                        :required="false"
+                        :value="request('user_id')"
+                        :options="collect($filterData['users'])->pluck('name', 'id')->prepend('Все исполнители', '')->toArray()" />
 
                     <!-- Отдел -->
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-white mb-1">Отдел</label>
-                        <select
-                            name="department_id"
-                            class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
-                            <option value="">Все отделы</option>
-                            @foreach ($filterData['departments'] as $department)
-                            <option
-                                class="text-gray-800"
-                                value="{{ $department->id }}"
-                                {{ request('department_id') == $department->id ? 'selected' : '' }}>
-                                {{ $department->name }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-form.input-select
+                        variant="dark"
+                        name="department_id"
+                        label="Отдел"
+                        :required="false"
+                        :value="request('department_id')"
+                        :options="collect($filterData['departments'])->pluck('name', 'id')->prepend('Все отделы', '')->toArray()" />
 
                     <!-- Приоритет -->
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-white mb-1">Приоритет</label>
-                        <select
-                            name="priority"
-                            class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
-                            <option value="">Все приоритеты</option>
-                            @foreach ($filterData['priorities'] as $priority)
-                            <option
-                                class="text-gray-800"
-                                value="{{ $priority }}"
-                                {{ request('priority') == $priority ? 'selected' : '' }}>
-                                {{ $priority }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-form.input-select
+                        variant="dark"
+                        name="priority"
+                        label="Приоритет"
+                        :required="false"
+                        :value="request('priority')"
+                        :options="collect($filterData['priorities'])->mapWithKeys(fn($priority) => [$priority => $priority])->prepend('Все приоритеты', '')->toArray()" />
 
                     <!-- Категория -->
-                    <div>
-                        <label class="block text-sm text-white mb-1">Категория</label>
-                        <select
-                            name="category_id"
-                            class="w-full border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none backdrop-blur-md bg-transparent/10">
-                            <option value="">Все категории</option>
-                            @foreach ($filterData['categories'] as $category)
-                            <option
-                                class="text-gray-800"
-                                value="{{ $category->id }}"
-                                {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                {{ $category->name }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-form.input-select
+                        variant="dark"
+                        name="category_id"
+                        label="Категория"
+                        :required="false"
+                        :value="request('category_id')"
+                        :options="collect($filterData['categories'])->pluck('name', 'id')->prepend('Все категории', '')->toArray()" />
 
                     <!-- Кнопки фильтра -->
                     <div
@@ -283,7 +245,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
     </div>
     @else
     <div id="filtersPanel"
-     class="relative z-20 bg-white rounded-lg hidden mb-[20px]">
+     class="relative z-[3] bg-white rounded-lg hidden mb-[20px]">
         <div class="mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <form
                 method="GET"
@@ -308,7 +270,8 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                     </div>
 
                     <!-- Статус -->
-                    <x-form.input-select
+                  <x-form.input-select
+                        theme="light"
                         name="status"
                         label="Статус"
                         :required="false"
@@ -317,6 +280,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
 
                     <!-- Исполнитель -->
                     <x-form.input-select
+                    theme="dark"
                         name="user_id"
                         label="Исполнитель"
                         :required="false"
@@ -396,7 +360,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
 
                     <x-ui.select
                         id="sortSelect"
-                         variant="light"
+                         variant="glass"
                         aria-label="Сортировка задач"
                         class="w-full sm:w-52"
                         :selected="$sortKey"
@@ -975,7 +939,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                     Показано {{ $tasks->count() }} из {{ $tasks->total() }} задач
                 </div>
                 <div class="w-full sm:w-auto">
-                    <x-ui.select
+                     <x-ui.select
                         id="sortSelect"
                          variant="light"
                         aria-label="Сортировка задач"
@@ -1583,7 +1547,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                 <div class="w-full sm:w-auto">
                     <x-ui.select
                         id="sortSelectKanban"
-                         variant="light"
+                         variant="glass"
                         aria-label="Сортировка задач"
                         class="w-full sm:w-52"
                         :selected="$sortKey"
@@ -1598,10 +1562,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                     @foreach ($statusKeys as $statusKey)
                     <div
                         class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
-                        data-status="{{ $statusDataValues[$statusKey] }}"
-                        ondragover="dragOver.call(this, event)"
-                        ondragleave="dragLeave.call(this, event)"
-                        ondrop="drop.call(this, event)">
+                        data-status="{{ $statusDataValues[$statusKey] }}">
                         <div
                             class="flex justify-between items-center mb-4 border-none rounded-lg p-2 canban-col-title backdrop-blur-md bg-transparent/20">
                             <h3
@@ -1628,12 +1589,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                                 data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
                                 data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
                                 data-author-id="{{ $task->author_id }}"
-                                ondragstart="
-                                                    dragStart.call(this, event)
-                                                "
-                                ondragend="
-                                                    dragEnd.call(this, event)
-                                                ">
+                                data-can-manage="{{ $task->author_id == auth()->id() || auth()->user()->isLeader() }}">
                                 <div
                                     class="flex justify-between items-start mb-2">
                                     <a
@@ -1852,10 +1808,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                     @foreach ($statusKeys as $statusKey)
                     <div
                         class="rounded-lg p-3 board-column {{ $backgroundEnabled && $backgroundImage ? 'bg-transparent' : 'bg-gray-50' }}"
-                        data-status="{{ $statusDataValues[$statusKey] }}"
-                        ondragover="dragOver.call(this, event)"
-                        ondragleave="dragLeave.call(this, event)"
-                        ondrop="drop.call(this, event)">
+                        data-status="{{ $statusDataValues[$statusKey] }}">
                         {{-- Заголовок колонки с красным фоном для просроченных --}}
                         <div
                             class="flex justify-between items-center mb-4 border-none rounded-lg p-2 {{ $statusKey === 'просрочена' ? 'bg-red-600' : '' }}"
@@ -1890,12 +1843,7 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
                                 data-has-files="{{ $task->files_count > 0 ? 'true' : 'false' }}"
                                 data-task-name="{{ mb_strtolower($task->name, 'UTF-8') }}"
                                 data-author-id="{{ $task->author_id }}"
-                                ondragstart="
-                                                    dragStart.call(this, event)
-                                                "
-                                ondragend="
-                                                    dragEnd.call(this, event)
-                                                ">
+                                data-can-manage="{{ $task->author_id == auth()->id() || auth()->user()->isLeader() }}">
                                 <div
                                     class="flex justify-between items-start mb-2">
                                     <a
@@ -3304,157 +3252,6 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
         currentTaskId = null;
     }
 
-    // ==================== DRAG AND DROP ДЛЯ КАНБАНА ====================
-    let draggedItem = null;
-    let swiperSlideTimeout = null;
-
-    function dragStart(e) {
-        console.log('dnd start main');
-        draggedItem = this;
-        e.dataTransfer.setData('text/plain', this.dataset.task);
-        this.style.opacity = '0.5';
-        if (window.mySwiper) {
-            window.mySwiper.detachEvents();
-        }
-        if (e.dataTransfer.setDragImage) {
-            e.dataTransfer.setDragImage(this, 0, 0);
-        }
-    }
-
-    function dragEnd(e) {
-        console.log('dnd end main');
-        if (draggedItem) {
-            draggedItem.style.opacity = '';
-            draggedItem = null;
-        }
-        if (window.mySwiper) {
-            window.mySwiper.attachEvents();
-        }
-    }
-
-    function dragOver(e) {
-        console.log('dnd over main');
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-
-        const column = this.closest('.board-column');
-        if (column) {
-            column.classList.add('drag-over-active');
-
-            if (window.mySwiper && typeof window.mySwiper.slideTo === 'function') {
-                const allColumns = Array.from(document.querySelectorAll('.board-column'));
-                const columnIndex = allColumns.indexOf(column);
-                if (columnIndex !== -1 && window.mySwiper.activeIndex !== columnIndex && !swiperSlideTimeout) {
-                    swiperSlideTimeout = setTimeout(() => {
-                        window.mySwiper.slideTo(columnIndex, 300);
-                        swiperSlideTimeout = null;
-                    }, 400);
-                }
-            }
-        }
-    }
-
-    function dragLeave(e) {
-        console.log('dnd leave main');
-        const column = this.closest('.board-column');
-        if (column) {
-            column.classList.remove('drag-over-active');
-        }
-        if (swiperSlideTimeout) {
-            clearTimeout(swiperSlideTimeout);
-            swiperSlideTimeout = null;
-        }
-    }
-
-    function drop(e) {
-        console.log('dnd drop main');
-        e.preventDefault();
-
-        if (swiperSlideTimeout) {
-            clearTimeout(swiperSlideTimeout);
-            swiperSlideTimeout = null;
-            if (window.mySwiper) {
-                window.mySwiper.attachEvents();
-            }
-        }
-
-        const column = this.closest('.board-column');
-        if (column) {
-            column.classList.remove('drag-over-active');
-        }
-
-        if (!draggedItem) return;
-
-        const newStatus = column.dataset.status;
-        const taskId = draggedItem.dataset.task;
-        const currentColumn = draggedItem.closest('.board-column');
-        const currentStatus = currentColumn ? currentColumn.getAttribute('data-status') : null;
-
-        if (currentStatus === newStatus) {
-            draggedItem.style.opacity = '1';
-            draggedItem = null;
-            return;
-        }
-
-        let statusMap = {
-            'new': 'назначена',
-            'in-progress': 'в работе',
-            'review': 'на проверке',
-            'done': 'выполнена'
-        };
-
-        const newStatusValue = statusMap[newStatus];
-        if (!newStatusValue) return;
-
-        updateTaskStatus(taskId, newStatusValue);
-    }
-
-    async function updateTaskStatus(taskId, newStatus) {
-        try {
-            const response = await fetch(`/tasks/${taskId}/status`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    status: newStatus
-                })
-            });
-            const data = await response.json();
-            if (data.success) {
-                // location.reload();
-                console.log('success main.admin.blade.php')
-            } else {
-                showNotification(data.message || 'Ошибка при перемещении задачи', 'error');
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showNotification('Ошибка при перемещении задачи', 'error');
-        }
-    }
-
-    function initDragAndDrop() {
-        const taskCards = document.querySelectorAll('#kanbanViewContainer .task-card');
-        const columns = document.querySelectorAll('#kanbanViewContainer .board-column');
-
-        taskCards.forEach(card => {
-            card.setAttribute('draggable', 'true');
-            card.removeEventListener('dragstart', dragStart);
-            card.removeEventListener('dragend', dragEnd);
-            card.addEventListener('dragstart', dragStart);
-            card.addEventListener('dragend', dragEnd);
-        });
-
-        columns.forEach(column => {
-            column.removeEventListener('dragover', dragOver);
-            column.removeEventListener('dragleave', dragLeave);
-            column.removeEventListener('drop', drop);
-            column.addEventListener('dragover', dragOver);
-            column.addEventListener('dragleave', dragLeave);
-            column.addEventListener('drop', drop);
-        });
-    }
 
     // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
     function displayRejections(rejections) {
@@ -3473,7 +3270,6 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
 
     // ==================== ИНИЦИАЛИЗАЦИЯ ====================
     document.addEventListener('DOMContentLoaded', function() {
-        initDragAndDrop();
 
         // Swiper для мобильных устройств
         if (window.innerWidth <= 500) {
@@ -3525,7 +3321,13 @@ $sortKey = request('sort', 'created_at') . '_' . request('order', 'desc');
         }
     });
 </script>
-
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const isLeader = @json(auth()->user()?->isLeader() ?? false);
+        window.initDragAndDrop(false, isLeader);
+        console.log('initedDndForMainAdmin');
+    });
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         console.log("test1");

@@ -61,9 +61,9 @@
 
         <!-- Фильтры и поиск - Скрытый блок -->
          @if($backgroundEnabled && $backgroundImage)
-        <div id="filtersPanel" class="backdrop-blur-md bg-transparent/10 rounded-xl shadow mb-6 p-4 hidden">
+        <div id="filtersPanel" class="backdrop-blur-md bg-transparent/10 rounded-xl shadow mb-6 p-4 hidden relative z-[3]">
             <div class="flex flex-col md:flex-row md:items-center">
-                <div>
+                <div class="pt-5">
                     <div class="relative">
                         <input type="text"
                                placeholder="Поиск отделов..."
@@ -72,28 +72,43 @@
                         <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                     </div>
                 </div>
-                <div class="ml-4 flex space-x-4 max-[500px]:flex-col max-[500px]:space-y-3 max-[500px]:space-x-0 mt-4 md:mt-0 max-[500px]:w-full max-[765px]:ml-0">
-                    <select class="border-none rounded-lg  px-4 py-2 bg-transparent/20 text-white"
-                            id="filterStatus"
-                            onchange="filterDepartments(this.value)">
-                        <option class="text-gray-800" value="all">Все отделы</option>
-                        <option class="text-gray-800" value="active">Активные</option>
-                        <option class="text-gray-800" value="inactive">Неактивные</option>
-                    </select>
-                    <select class="border-none rounded-lg  px-4 py-2 outline-none bg-transparent/20 text-white"
-                            id="sortBy"
-                            onchange="sortDepartments(this.value)">
-                        <option class="text-gray-800" value="name">Сортировать по названию</option>
-                        <option class="text-gray-800" value="tasks">По количеству задач</option>
-                        <option class="text-gray-800" value="emails">По новым письмам</option>
-                    </select>
+                <div class="ml-4 flex space-x-4 max-[500px]:flex-col max-[500px]:space-y-3 max-[500px]:space-x-0 mt-4 md:mt-0 max-[765px]:ml-0 max-[500px]:w-full">
+                    <!-- Фильтр отделов (Заменен на input-select) -->
+                    <x-form.input-select
+                        variant="dark"
+                        name="filter_status"
+                        id="filterStatus"
+                        label="Отделы"
+                        :required="false"
+                        :value="request('filter_status', 'all')"
+                        :options="[
+                            'all' => 'Все отделы',
+                            'active' => 'Активные',
+                            'inactive' => 'Неактивные'
+                        ]"
+                    />
+
+                    <!-- Сортировка (Заменена на input-select) -->
+                    <x-form.input-select
+                        variant="dark"
+                        name="sort_by"
+                        id="sortBy"
+                        label="Сортировка"
+                        :required="false"
+                        :value="request('sort_by', 'name')"
+                        :options="[
+                            'name' => 'Сортировать по названию',
+                            'tasks' => 'По количеству задач',
+                            'emails' => 'По новым письмам'
+                        ]"
+                    />
                 </div>
             </div>
         </div>
         @else
-        <div id="filtersPanel" class="bg-white rounded-xl shadow border border-gray-100 mb-6 p-4 hidden">
+        <div id="filtersPanel" class="bg-white rounded-xl shadow border border-gray-100 mb-6 p-4 hidden relative z-[3]">
             <div class="flex flex-col md:flex-row md:items-center">
-                <div>
+                <div class="pt-5">
                     <div class="relative">
                         <input type="text"
                                placeholder="Поиск отделов..."
@@ -103,23 +118,38 @@
                     </div>
                 </div>
                 <div class="ml-4 flex space-x-4 max-[500px]:flex-col max-[500px]:space-y-3 max-[500px]:space-x-0 mt-4 md:mt-0 max-[500px]:w-full max-[765px]:ml-0">
-                    <select class="rounded-lg  px-4 py-2 bg-white text-black border-2 border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
-                            id="filterStatus"
-                            onchange="filterDepartments(this.value)">
-                        <option class="text-gray-800" value="all">Все отделы</option>
-                        <option class="text-gray-800" value="active">Активные</option>
-                        <option class="text-gray-800" value="inactive">Неактивные</option>
-                    </select>
-                    <select class="rounded-lg  px-4 py-2 bg-white text-black border-2 border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
-                            id="sortBy"
-                            onchange="sortDepartments(this.value)">
-                        <option class="text-gray-800" value="name">Сортировать по названию</option>
-                        <option class="text-gray-800" value="tasks">По количеству задач</option>
-                        <option class="text-gray-800" value="emails">По новым письмам</option>
-                    </select>
-                </div>
+                    <!-- Фильтр отделов (Заменен на input-select) -->
+                    <x-form.input-select
+                        variant="light"
+                        name="filter_status"
+                        id="filterStatus"
+                        label="Отделы"
+                        :required="false"
+                        :value="request('filter_status', 'all')"
+                        :options="[
+                            'all' => 'Все отделы',
+                            'active' => 'Активные',
+                            'inactive' => 'Неактивные'
+                        ]"
+                    />
+
+                    <!-- Сортировка (Заменена на input-select) -->
+                    <x-form.input-select
+                        variant="light"
+                        name="sort_by"
+                        id="sortBy"
+                        label="Сортировка"
+                        :required="false"
+                        :value="request('sort_by', 'name')"
+                        :options="[
+                            'name' => 'Сортировать по названию',
+                            'tasks' => 'По количеству задач',
+                            'emails' => 'По новым письмам'
+                        ]"
+                    />
             </div>
         </div>
+</div>
         @endif
         <!-- Статистика по отделам -->
         @if($backgroundEnabled && $backgroundImage)
@@ -323,6 +353,25 @@ if (deptSearchInput) {
     });
 }
 
+
+document.addEventListener('DOMContentLoaded', () => {
+    const filterSelect = document.getElementById('filterStatus') || document.querySelector('select[name="filter_status"]');
+    const sortSelect = document.getElementById('sortBy') || document.querySelector('select[name="sort_by"]');
+
+    if (filterSelect) {
+        filterSelect.addEventListener('change', function() {
+            filterDepartments(this.value);
+        });
+    }
+
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            if (typeof sortDepartments === 'function') {
+                sortDepartments(this.value);
+            }
+        });
+    }
+});
 
 function filterDepartments(status) {
     const cards = document.querySelectorAll('.department-card');

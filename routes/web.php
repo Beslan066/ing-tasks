@@ -25,13 +25,6 @@ use Illuminate\Support\Facades\Route;
 // Защита паролем
 use App\Http\Controllers\SitePasswordController;
 
-Route::get('/site-password', [SitePasswordController::class, 'show'])
-    ->name('site-password.form');
-
-Route::post('/site-password', [SitePasswordController::class, 'check'])
-    ->name('site-password.check');
-
-
 Route::post('/licence/payment/webhook', [LicenceAndPaymentController::class, 'paymentWebhook'])
     ->name('payment.webhook');
 
@@ -101,6 +94,14 @@ Route::view('/licence', 'frontend.judical.licence')->name('licence');
     Route::view('/terms', 'frontend.judical.terms')->name('terms');
 
 Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class, 'home'])->name('index');
+Route::get('/posts',         fn () => view('frontend.news'))->name('news');
+Route::get('/posts/{slug}',  fn ($slug) => view('frontend.news-show', ['post' => (object)[
+    // временная заглушка; при подключении БД замените на Post::where('slug', $slug)->firstOrFail()
+    'slug' => $slug,
+]]))->name('news.show');
+Route::get('/contacts',   fn () => view('frontend.contacts'))->name('contacts');
+Route::get('/about-us',   fn () => view('frontend.about'))->name('aboutAs');
+Route::get('/requisites', fn () => view('frontend.requisites'))->name('requisites');
 // Домашняя страница
 Route::middleware(['auth', 'checkUserRole', 'verified', 'trackUserActivity'])->group(function () {
     Route::get('/home', [\App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('welcome');
