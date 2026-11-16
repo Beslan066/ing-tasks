@@ -228,7 +228,7 @@
 <header class="fixed top-0 w-full bg-white/90 backdrop-blur-md border-b border-gray-100/80 z-50">
     <div class="container-wide">
         <div class="flex items-center justify-between h-16">
-            <a href="#" class="flex items-center gap-3 group">
+            <a href="/" class="flex items-center gap-3 group">
                 <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm" style="background: linear-gradient(135deg, #10b981, #059669);">
                     <img src="{{asset('img/logo.svg')}}" alt="">
                 </div>
@@ -236,10 +236,10 @@
             </a>
 
             <nav class="hidden lg:flex items-center gap-8">
-                <a href="#" class="text-sm font-medium text-gray-600 hover:text-[#10b981] transition">Новости</a>
-                <a href="#" class="text-sm font-medium text-gray-600 hover:text-[#10b981] transition">Документы</a>
-                <a href="#" class="text-sm font-medium text-gray-600 hover:text-[#10b981] transition">О нас</a>
-                <a href="#" class="text-sm font-medium text-gray-600 hover:text-[#10b981] transition">Контакты</a>
+                <a href="/news" class="text-sm font-medium text-gray-600 hover:text-[#10b981] transition">Новости</a>
+                <a href="/requisites" class="text-sm font-medium text-gray-600 hover:text-[#10b981] transition">Реквизиты</a>
+                <a href="/about-us" class="text-sm font-medium text-gray-600 hover:text-[#10b981] transition">О нас</a>
+                <a href="/contacts" class="text-sm font-medium text-gray-600 hover:text-[#10b981] transition">Контакты</a>
             </nav>
 
             <div class="flex items-center gap-3">
