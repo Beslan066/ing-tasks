@@ -436,7 +436,7 @@
                     class="chat-sidebar flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white xl:flex xl:w-1/4 dark:border-gray-800 dark:bg-white/[0.03]"
                     :class="activeChat ? 'hidden xl:flex' : 'flex'">
 
-                 <div class="sticky z-20 px-4 pt-4 pb-4 sm:px-5 sm:pt-5 xl:pb-0">
+                 <div class="sticky z-[8] px-4 pt-4 pb-4 sm:px-5 sm:pt-5 xl:pb-0">
                         <div class="flex items-start justify-between">
                             <div>
                                 <h3 class="text-theme-xl font-semibold text-gray-800 sm:text-2xl dark:text-white/90">
@@ -620,7 +620,7 @@
                     <template x-if="activeChat">
                         <div class="flex flex-col h-full">
                             <div
-                                class="sticky flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-800 bg-white dark:bg-gray-900 z-10">
+                                class="sticky flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-800 bg-white dark:bg-gray-900 z-[8]">
                                 <div class="flex items-center gap-3">
                                     <button @click="closeChat()"
                                             class="xl:hidden mr-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
@@ -1651,31 +1651,40 @@
                         });
                 },
 
-                createDepartmentChat(departmentId) {
-                    fetch('/chat/department-chat', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-                            'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: JSON.stringify({department_id: departmentId})
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                this.loadChats();
-                                this.selectChat(data.chat);
-                                this.showDepartmentChats = false;
-                            } else {
-                                alert(data.message || 'Ошибка при создании чата отдела');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error creating department chat:', error);
-                            alert('Ошибка при создании чата отдела');
+                 async createDepartmentChat(departmentId) {
+                    console.log('createDepartmentChat called', departmentId);
+
+                    try {
+                        const res = await fetch('/chat/department-chat', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({ department_id: departmentId })
                         });
+
+                        console.log('status:', res.status);
+
+                        const text = await res.text();
+                        console.log('raw response:', text);
+
+                        const data = JSON.parse(text);
+    console.log(data);
+                        if (data.success) {
+                            this.loadChats();
+                            this.selectChat(data.chat);
+                            this.showDepartmentChats = false;
+                        } else {
+                            alert(data.message || 'Ошибка при создании чата отдела2');
+                        }
+                    } catch (error) {
+                        console.error('Error creating department chat:', error);
+                           console.log('Error creating department chat:', error);
+                        alert('Ошибка при создании чата отдела1');
+                    }
                 },
 
                 createCompanyChat() {
