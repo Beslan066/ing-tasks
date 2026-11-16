@@ -1,80 +1,69 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex justify-between items-center mb-8 w-100">
-        <div class="bg-white rounded-lg w-full p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">Новая компания</h3>
-                <button id="closeModal" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times"></i>
-                </button>
+<div class="bg-white rounded-[24px] w-full max-w-3xl shadow-2xl shadow-slate-900/10 mb-8">
+
+    <!-- Заголовок -->
+    <div class="border-b border-slate-100">
+        <div class="flex justify-between items-center px-8 py-6 max-[500px]:px-5 max-[500px]:py-4">
+            <div>
+                <h3 class="text-[22px] font-semibold text-slate-800 tracking-tight max-[500px]:text-xl">Новая компания</h3>
+                <p class="text-[13px] text-slate-400 mt-0.5 max-[500px]:text-[12px]">Заполните информацию о компании</p>
             </div>
-
-            <form id="companyForm" action="{{route('companies.store')}}" method="post">
-                @csrf
-                @method('post')
-                <div class="mb-4 w-1/2 max-[900px]:w-[70%] max-[768px]:w-[100%]">
-                    <label class="block text-gray-700 text-sm font-medium mb-2">Название</label>
-                    <input type="text"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600"
-                        placeholder="Введите название" name="name">
-                </div>
-
-                @error('name')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
-
-                <div class="mb-4 w-1/2 max-[900px]:w-[70%] max-[768px]:w-[100%]">
-                    <label for="phone-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Номер
-                        телефона</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 start-0 top-0 flex items-center ps-3.5 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 19 18">
-                                <path
-                                    d="M18 13.446a3.02 3.02 0 0 0-.946-1.985l-1.4-1.4a3.054 3.054 0 0 0-4.218 0l-.7.7a.983.983 0 0 1-1.39 0l-2.1-2.1a.983.983 0 0 1 0-1.389l.7-.7a2.98 2.98 0 0 0 0-4.217l-1.4-1.4a2.824 2.824 0 0 0-4.218 0c-3.619 3.619-3 8.229 1.752 12.979C6.785 16.639 9.45 18 11.912 18a7.175 7.175 0 0 0 5.139-2.325A2.9 2.9 0 0 0 18 13.446Z" />
-                            </svg>
-                        </div>
-                        <input type="text" id="phone-input" aria-describedby="helper-text-explanation"
-                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600  block w-full ps-10 p-2.5 0"
-                            placeholder="7(***)***-**-**" required name="phone" />
-                    </div>
-                    <p id="helper-text-explanation" class="mt-2 text-sm text-gray-500 dark:text-gray-400">Введите номер
-                        телефона в указанном формате</p>
-                </div>
-
-                @error('phone')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
-
-                <div class="mb-4 w-1/2 max-[900px]:w-[70%] max-[768px]:w-[100%]">
-                    <label class="block text-gray-700 text-sm font-medium mb-2">Руководитель</label>
-                    <select
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-600 bg-white"
-                        name="user_id">
-                        <option value="{{auth()->user()->id}}">{{auth()->user()->name}}</option>
-                    </select>
-                </div>
-
-                @error('user_id')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
-
-                <div class="flex gap-2 max-[340px]:flex-col-reverse">
-                    <button type="button" id="cancelTask"
-                        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 max-[340px]:py-1">Отмена
-                    </button>
-                    <!-- <button type="submit"
-                        class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 ml-2">Создать
-                        компанию
-                    </button> -->
-                     <button type="submit"
-                    class="flex-1 md:flex-none bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base max-[500px]:basis-1/2 max-[340px]:py-3">
-                <!-- <i class="fas fa-plus"></i> -->
-                <span>Создать компанию</span>
-            </button>
-                </div>
-            </form>
         </div>
     </div>
+
+    <!-- Форма -->
+    <form id="companyForm" action="{{ route('companies.store') }}" method="post"
+          class="px-8 py-6 space-y-7 max-[500px]:px-5 max-[500px]:py-4">
+        @csrf
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+            <x-form.input
+                name="name"
+                label="Название"
+                placeholder="Введите название"
+                :required="true"
+            />
+
+            <x-form.input
+                id="phone-input"
+                name="phone"
+                type="tel"
+                label="Номер телефона"
+                placeholder="7(***)***-**-**"
+                :required="true"
+            />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+            <x-form.input-select
+                name="user_id"
+                label="Руководитель"
+                :required="true"
+                :options="[auth()->id() => auth()->user()->name]"
+                :selected="auth()->id()"
+            />
+        </div>
+
+        <!-- Кнопки действий -->
+        <div class="flex justify-end items-center gap-3 pt-6 border-t border-slate-100 max-[500px]:justify-center max-[500px]:flex-col-reverse max-[500px]:gap-3">
+            <x-ui.button
+                type="button"
+                variant="secondary"
+                onclick="window.location.href='{{ route('companies.index') }}'"
+            >
+                Отмена
+            </x-ui.button>
+
+            <x-ui.button
+                type="submit"
+                variant="primary"
+                icon="fas fa-plus"
+            >
+                Создать компанию
+            </x-ui.button>
+        </div>
+    </form>
+</div>
 @endsection
