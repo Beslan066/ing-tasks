@@ -7,7 +7,6 @@ use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\AdditionalUserPurchase;
 use App\Models\StorageUsage;
-use App\Services\YooKassaApiService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -15,30 +14,27 @@ use Illuminate\Support\Str;
 
 class PaymentService
 {
-    protected $yooKassaApi;
-    protected $testMode;
-
-    // Цены
-    const PREMIUM_MONTHLY_PRICE = 1;
-    const PRICE_PER_USER = 1;
-
-    // Скидки
-    const DISCOUNT_6_MONTHS = 10;
-    const DISCOUNT_12_MONTHS = 15;
+    protected YooKassaApiService $yooKassaApi;
+    protected bool $testMode;
 
     // Лимиты
-    const BASIC_USER_LIMIT = 5;
-    const PREMIUM_BASE_USER_LIMIT = 15;
+    public const BASIC_USER_LIMIT = 5;
+    public const PREMIUM_BASE_USER_LIMIT = 15;
+
+    // Хранилище (в байтах)
+    public const BASIC_STORAGE_LIMIT = 2 * 1073741824;      // 2 ГБ
+    public const PREMIUM_STORAGE_LIMIT = 1073741824000;      // ~1 ТБ (как в исходнике)
 
     public function __construct(YooKassaApiService $yooKassaApi)
     {
         $this->yooKassaApi = $yooKassaApi;
-        $this->testMode = config('payment.test_mode', true);
+        $this->testMode = (bool) config('payment.test_mode', true);
     }
 
-    /**
-     * Создание платежа за премиум подписку
-     */
+    /* =====================================================================
+     |  Создание платежей
+     ===================================================================== */
+
     public function createPremiumPayment(Company $company, string $period, array $metadata = []): array
     {
         $priceData = $this->calculatePremiumPrice($period);
@@ -58,13 +54,11 @@ class PaymentService
                     'type' => 'premium_subscription',
                     'original_price' => $priceData['original'],
                     'discount' => $priceData['discount'],
-                    'discount_percent' => $priceData['discount_percent']
-                ])
+                    'discount_percent' => $priceData['discount_percent'],
+                ]),
             ]);
-
             DB::commit();
 
-            // Создаем платеж в YooKassa
             $paymentData = $this->preparePaymentData($payment, $company, $priceData);
             $yooKassaResponse = $this->yooKassaApi->createPayment($paymentData);
 
@@ -73,34 +67,30 @@ class PaymentService
                 return ['success' => false, 'error' => 'Ошибка создания платежа в YooKassa'];
             }
 
-            // Обновляем платеж с данными от YooKassa
             $payment->update([
                 'provider_payment_id' => $yooKassaResponse['id'],
                 'provider_payment_url' => $yooKassaResponse['confirmation']['confirmation_url'] ?? null,
-                'provider_data' => $yooKassaResponse
+                'provider_data' => $yooKassaResponse,
             ]);
 
             return [
                 'success' => true,
-                'payment' => $payment,  // Это важно!
-                'payment_url' => $yooKassaResponse['confirmation']['confirmation_url'],
-                'amount' => $priceData['total']
+                'payment' => $payment,
+                'payment_url' => $yooKassaResponse['confirmation']['confirmation_url'] ?? null,
+                'amount' => $priceData['total'],
             ];
-
         } catch (\Exception $e) {
-            DB::rollBack();
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
             Log::error('Premium payment creation failed', [
                 'company_id' => $company->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
-
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
 
-    /**
-     * Создание платежа за дополнительных пользователей
-     */
     public function createAdditionalUsersPayment(Company $company, int $userCount, string $period, array $metadata = []): array
     {
         if ($company->license_type !== 'premium') {
@@ -122,13 +112,12 @@ class PaymentService
                 'payment_provider' => 'yookassa',
                 'provider_payment_id' => $this->generatePaymentId(),
                 'metadata' => array_merge($metadata, [
-                    'price_per_user' => self::PRICE_PER_USER,
+                    'price_per_user' => config('payment.price_per_user', 400),
                     'original_price' => $priceData['original'],
                     'discount' => $priceData['discount'],
-                    'discount_percent' => $priceData['discount_percent']
-                ])
+                    'discount_percent' => $priceData['discount_percent'],
+                ]),
             ]);
-
             DB::commit();
 
             $paymentData = $this->prepareAdditionalUsersPaymentData($payment, $company, $userCount, $priceData);
@@ -142,30 +131,31 @@ class PaymentService
             $payment->update([
                 'provider_payment_id' => $yooKassaResponse['id'],
                 'provider_payment_url' => $yooKassaResponse['confirmation']['confirmation_url'] ?? null,
-                'provider_data' => $yooKassaResponse
+                'provider_data' => $yooKassaResponse,
             ]);
 
             return [
                 'success' => true,
                 'payment' => $payment,
-                'payment_url' => $yooKassaResponse['confirmation']['confirmation_url'],
-                'amount' => $priceData['total']
+                'payment_url' => $yooKassaResponse['confirmation']['confirmation_url'] ?? null,
+                'amount' => $priceData['total'],
             ];
-
         } catch (\Exception $e) {
-            DB::rollBack();
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
             Log::error('Additional users payment creation failed', [
                 'company_id' => $company->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
-
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
 
-    /**
-     * Обработка успешного платежа
-     */
+    /* =====================================================================
+     |  Обработка успешных платежей
+     ===================================================================== */
+
     public function handleSuccessfulPayment(Payment $payment, array $providerData): bool
     {
         if ($payment->isCompleted()) {
@@ -188,42 +178,34 @@ class PaymentService
             Log::info('Payment processed successfully', [
                 'payment_id' => $payment->id,
                 'company_id' => $payment->company_id,
-                'amount' => $payment->amount
+                'amount' => $payment->amount,
             ]);
 
             return true;
-
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Payment processing failed', [
                 'payment_id' => $payment->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
-
             return false;
         }
     }
 
-    /**
-     * Активация премиум подписки
-     */
     protected function activateSubscription(Payment $payment): void
     {
         $company = $payment->company;
-        $period = $payment->period;
-        $months = $this->getMonthsFromPeriod($period);
+        $months = $this->getMonthsFromPeriod($payment->period);
 
-        // Деактивируем старые подписки и сохраняем их покупки
+        // 1) Деактивируем старые подписки, сохраняя активные покупки пользователей
+        $activePurchases = collect();
         $oldSubscriptions = Subscription::where('company_id', $company->id)
             ->where('status', 'active')
             ->get();
 
-        // Сохраняем активные покупки пользователей перед деактивацией
-        $activePurchases = collect();
         foreach ($oldSubscriptions as $oldSubscription) {
             $oldSubscription->update(['status' => 'expired']);
 
-            // Получаем активные покупки для старой подписки
             $purchases = AdditionalUserPurchase::where('subscription_id', $oldSubscription->id)
                 ->where('is_active', true)
                 ->where('expires_at', '>', now())
@@ -233,13 +215,12 @@ class PaymentService
                 $activePurchases->push($purchase);
             }
 
-            // Деактивируем покупки пользователей для старой подписки
             AdditionalUserPurchase::where('subscription_id', $oldSubscription->id)
                 ->where('is_active', true)
                 ->update(['is_active' => false]);
         }
 
-        // Создаем новую подписку
+        // 2) Создаём новую подписку
         $subscription = Subscription::create([
             'company_id' => $company->id,
             'type' => 'premium',
@@ -247,55 +228,48 @@ class PaymentService
             'starts_at' => now(),
             'expires_at' => now()->addMonths($months),
             'base_user_slots' => self::PREMIUM_BASE_USER_LIMIT,
-            'storage_limit' => 1073741824000,
+            'storage_limit' => self::PREMIUM_STORAGE_LIMIT,
             'features' => $this->getPremiumFeatures(),
             'payment_method' => 'yookassa',
             'payment_provider_id' => $payment->provider_payment_id,
-            'auto_renew' => false
+            'auto_renew' => false,
         ]);
 
         $payment->update(['subscription_id' => $subscription->id]);
 
-        // ПЕРЕНОСИМ АКТИВНЫЕ ПОКУПКИ НА НОВУЮ ПОДПИСКУ (ЭТОТ КОД НУЖНО ВСТАВИТЬ)
+        // 3) Переносим активные покупки доп. пользователей на новую подписку
         foreach ($activePurchases as $purchase) {
-            // Создаем копию покупки для новой подписки
             AdditionalUserPurchase::create([
                 'company_id' => $company->id,
                 'subscription_id' => $subscription->id,
                 'user_count' => $purchase->user_count,
                 'period' => $purchase->period,
                 'expires_at' => $purchase->expires_at,
-                'is_active' => true
+                'is_active' => true,
             ]);
 
-            // Деактивируем старую (уже деактивирована выше, но для надежности)
             $purchase->update(['is_active' => false]);
 
-            \Log::info('Additional users transferred to new subscription', [
+            Log::info('Additional users transferred to new subscription', [
                 'old_purchase_id' => $purchase->id,
                 'new_subscription_id' => $subscription->id,
-                'user_count' => $purchase->user_count
+                'user_count' => $purchase->user_count,
             ]);
         }
 
-        // Обновляем компанию
+        // 4) Обновляем компанию и хранилище
         $company->update(['license_type' => 'premium']);
-
-        // Обновляем хранилище
         $this->updateStorageLimit($company, $subscription->storage_limit);
 
-        \Log::info('Subscription activated', [
+        Log::info('Subscription activated', [
             'company_id' => $company->id,
             'subscription_id' => $subscription->id,
-            'period' => $period,
+            'period' => $payment->period,
             'months' => $months,
-            'transferred_purchases' => $activePurchases->count()
+            'transferred_purchases' => $activePurchases->count(),
         ]);
     }
 
-    /**
-     * Активация дополнительных пользователей
-     */
     protected function activateAdditionalUsers(Payment $payment): void
     {
         $company = $payment->company;
@@ -315,24 +289,24 @@ class PaymentService
             'user_count' => $payment->user_count,
             'period' => $payment->period,
             'expires_at' => now()->addMonths($months),
-            'is_active' => true
+            'is_active' => true,
         ]);
 
-        // Добавьте логирование
-        \Log::info('Additional users activated', [
+        Log::info('Additional users activated', [
             'subscription_id' => $subscription->id,
             'user_count' => $payment->user_count,
             'expires_at' => now()->addMonths($months),
-            'purchase_id' => $additionalPurchase->id
+            'purchase_id' => $additionalPurchase->id,
         ]);
     }
 
-    /**
-     * Обработка вебхука от YooKassa
-     */
+    /* =====================================================================
+     |  Webhook / истечение подписок
+     ===================================================================== */
+
     public function handleWebhook(array $data): array
     {
-        if (!isset($data['object']) || !isset($data['object']['id'])) {
+        if (!isset($data['object']['id'])) {
             return ['success' => false, 'error' => 'Invalid webhook data'];
         }
 
@@ -343,12 +317,12 @@ class PaymentService
             return ['success' => false, 'error' => 'Payment not found'];
         }
 
-        if ($paymentObject['status'] === 'succeeded' && $paymentObject['paid'] === true) {
+        if (($paymentObject['status'] ?? null) === 'succeeded' && ($paymentObject['paid'] ?? false) === true) {
             $this->handleSuccessfulPayment($payment, $paymentObject);
             return ['success' => true, 'message' => 'Payment processed'];
         }
 
-        if ($paymentObject['status'] === 'canceled') {
+        if (($paymentObject['status'] ?? null) === 'canceled') {
             $payment->markAsFailed('Payment cancelled');
             return ['success' => true, 'message' => 'Payment cancelled'];
         }
@@ -356,9 +330,6 @@ class PaymentService
         return ['success' => true, 'message' => 'Webhook received'];
     }
 
-    /**
-     * Проверка и обработка истекших подписок
-     */
     public function checkExpiredSubscriptions(): int
     {
         $processed = 0;
@@ -379,17 +350,15 @@ class PaymentService
                     ->update(['is_active' => false]);
 
                 $company->update(['license_type' => 'basic']);
-
-                $this->updateStorageLimit($company, 1073741824); // 1GB
+                $this->updateStorageLimit($company, self::BASIC_STORAGE_LIMIT);
 
                 DB::commit();
                 $processed++;
-
             } catch (\Exception $e) {
                 DB::rollBack();
                 Log::error('Failed to process expired subscription', [
                     'subscription_id' => $subscription->id,
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
             }
         }
@@ -397,45 +366,49 @@ class PaymentService
         return $processed;
     }
 
-    /**
-     * Расчет цены премиум подписки
-     */
+    /* =====================================================================
+     |  Расчёт цен
+     ===================================================================== */
+
     public function calculatePremiumPrice(string $period): array
     {
-        $monthlyPrice = self::PREMIUM_MONTHLY_PRICE;
+        $monthlyPrice = (float) config('payment.premium_monthly_price', 1490);
+        $discounts = config('payment.discounts', ['6months' => 10, 'year' => 15]);
+
         $original = $monthlyPrice;
         $discountPercent = 0;
 
         switch ($period) {
             case '6months':
                 $original = $monthlyPrice * 6;
-                $discountPercent = self::DISCOUNT_6_MONTHS;
+                $discountPercent = (float) ($discounts['6months'] ?? 10);
                 $total = $original * (1 - $discountPercent / 100);
                 break;
             case 'year':
                 $original = $monthlyPrice * 12;
-                $discountPercent = self::DISCOUNT_12_MONTHS;
+                $discountPercent = (float) ($discounts['year'] ?? 15);
                 $total = $original * (1 - $discountPercent / 100);
                 break;
             default:
                 $total = $original;
         }
 
+        $monthsCount = $this->getMonthsFromPeriod($period);
+
         return [
-            'original' => $original,
-            'total' => round($total),
-            'discount' => round($original - $total),
+            'original' => round($original, 2),
+            'total' => round($total, 2),
+            'discount' => round($original - $total, 2),
             'discount_percent' => $discountPercent,
-            'price_per_month' => round($total / ($period === 'month' ? 1 : ($period === '6months' ? 6 : 12)))
+            'price_per_month' => round($total / max($monthsCount, 1), 2),
         ];
     }
 
-    /**
-     * Расчет цены за дополнительных пользователей
-     */
     public function calculateUserPrice(int $userCount, string $period): array
     {
-        $pricePerUser = self::PRICE_PER_USER;
+        $pricePerUser = (float) config('payment.price_per_user', 400);
+        $discounts = config('payment.discounts', ['6months' => 10, 'year' => 15]);
+
         $original = $userCount * $pricePerUser;
         $discountPercent = 0;
         $total = $original;
@@ -443,71 +416,86 @@ class PaymentService
         switch ($period) {
             case '6months':
                 $original = $userCount * $pricePerUser * 6;
-                $discountPercent = self::DISCOUNT_6_MONTHS;
+                $discountPercent = (float) ($discounts['6months'] ?? 10);
                 $total = $original * (1 - $discountPercent / 100);
                 break;
             case 'year':
                 $original = $userCount * $pricePerUser * 12;
-                $discountPercent = self::DISCOUNT_12_MONTHS;
+                $discountPercent = (float) ($discounts['year'] ?? 15);
                 $total = $original * (1 - $discountPercent / 100);
                 break;
         }
 
+        $monthsCount = $this->getMonthsFromPeriod($period);
+
         return [
-            'original' => round($original),
-            'total' => round($total),
-            'discount' => round($original - $total),
+            'original' => round($original, 2),
+            'total' => round($total, 2),
+            'discount' => round($original - $total, 2),
             'discount_percent' => $discountPercent,
             'price_per_user' => $pricePerUser,
-            'price_per_month' => round($total / ($period === 'month' ? 1 : ($period === '6months' ? 6 : 12)))
+            'price_per_month' => round($total / max($monthsCount, 1), 2),
         ];
     }
 
-    /**
-     * Подготовка данных для платежа в YooKassa
-     */
+    /* =====================================================================
+     |  Подготовка данных платежа (включая receipt)
+     ===================================================================== */
+
     protected function preparePaymentData(Payment $payment, Company $company, array $priceData): array
     {
         $periodText = $this->getPeriodText($payment->period);
+        $amountValue = number_format((float) $payment->amount, 2, '.', '');
 
         return [
             'amount' => [
-                'value' => (string)$payment->amount,
-                'currency' => 'RUB'
+                'value' => $amountValue,
+                'currency' => 'RUB',
             ],
+            'receipt' => $this->buildReceipt(
+                $company,
+                "Премиум подписка МенеджерПлюс на {$periodText}",
+                $amountValue
+            ),
             'payment_method_data' => [
-                'type' => 'bank_card'
+                'type' => 'bank_card',
             ],
             'confirmation' => [
                 'type' => 'redirect',
-                'return_url' => url(config('payment.yookassa.return_url'))
+                'return_url' => url(config('payment.yookassa.return_url')),
             ],
             'description' => "Премиум подписка МенеджерПлюс на {$periodText}",
             'metadata' => [
                 'payment_id' => $payment->id,
                 'company_id' => $company->id,
                 'payment_type' => 'subscription',
-                'period' => $payment->period
+                'period' => $payment->period,
             ],
-            'capture' => true
+            'capture' => true,
         ];
     }
 
     protected function prepareAdditionalUsersPaymentData(Payment $payment, Company $company, int $userCount, array $priceData): array
     {
         $periodText = $this->getPeriodText($payment->period);
+        $amountValue = number_format((float) $payment->amount, 2, '.', '');
 
         return [
             'amount' => [
-                'value' => (string)$payment->amount,
-                'currency' => 'RUB'
+                'value' => $amountValue,
+                'currency' => 'RUB',
             ],
+            'receipt' => $this->buildReceipt(
+                $company,
+                "Добавление {$userCount} пользователей в МенеджерПлюс на {$periodText}",
+                $amountValue
+            ),
             'payment_method_data' => [
-                'type' => 'bank_card'
+                'type' => 'bank_card',
             ],
             'confirmation' => [
                 'type' => 'redirect',
-                'return_url' => url(config('payment.yookassa.return_url'))
+                'return_url' => url(config('payment.yookassa.return_url')),
             ],
             'description' => "Добавление {$userCount} пользователей в МенеджерПлюс на {$periodText}",
             'metadata' => [
@@ -515,15 +503,47 @@ class PaymentService
                 'company_id' => $company->id,
                 'payment_type' => 'additional_users',
                 'user_count' => $userCount,
-                'period' => $payment->period
+                'period' => $payment->period,
             ],
-            'capture' => true
+            'capture' => true,
         ];
     }
 
     /**
-     * Обновление лимита хранилища
+     * Собирает объект receipt для YooKassa.
+     * Сумма позиции ВСЕГДА равна сумме платежа.
      */
+    protected function buildReceipt(Company $company, string $description, string $amountValue): array
+    {
+        $email = $company->email
+            ?? optional($company->user)->email
+            ?? optional(auth()->user())->email
+            ?? config('payment.receipt_fallback_email', 'noreply@example.com');
+
+        return [
+            'customer' => [
+                'email' => $email,
+            ],
+            'items' => [
+                [
+                    'description' => mb_substr($description, 0, 128),
+                    'quantity' => '1.00',
+                    'amount' => [
+                        'value' => $amountValue,
+                        'currency' => 'RUB',
+                    ],
+                    'vat_code' => (int) config('payment.yookassa.vat_code', 1),
+                    'payment_subject' => (string) config('payment.yookassa.payment_subject', 'service'),
+                    'payment_mode' => (string) config('payment.yookassa.payment_mode', 'full_payment'),
+                ],
+            ],
+        ];
+    }
+
+    /* =====================================================================
+     |  Вспомогательные методы
+     ===================================================================== */
+
     protected function updateStorageLimit(Company $company, int $newLimit): void
     {
         $storageUsage = StorageUsage::firstOrNew(['company_id' => $company->id]);
@@ -550,36 +570,33 @@ class PaymentService
             'automation' => true,
             'calendar' => true,
             'mobile_app' => true,
-            'export_data' => true
+            'export_data' => true,
         ];
     }
 
     protected function getPeriodText(string $period): string
     {
-        return match($period) {
+        return match ($period) {
             'month' => '1 месяц',
             '6months' => '6 месяцев',
             'year' => '12 месяцев',
-            default => $period
+            default => $period,
         };
     }
 
     protected function getMonthsFromPeriod(string $period): int
     {
-        return match($period) {
+        return match ($period) {
             'month' => 1,
             '6months' => 6,
             'year' => 12,
-            default => 1
+            default => 1,
         };
     }
 
-    /**
-     * Принудительная активация подписки через API (для callback)
-     */
     public function activateFromCallback(string $providerPaymentId): array
     {
-        \Log::info('Activating from callback', ['provider_payment_id' => $providerPaymentId]);
+        Log::info('Activating from callback', ['provider_payment_id' => $providerPaymentId]);
 
         $payment = Payment::where('provider_payment_id', $providerPaymentId)->first();
 
@@ -591,10 +608,9 @@ class PaymentService
             return ['success' => true, 'message' => 'Payment already completed'];
         }
 
-        // Проверяем статус через API YooKassa
         $paymentInfo = $this->yooKassaApi->getPayment($providerPaymentId);
 
-        if ($paymentInfo && $paymentInfo['status'] === 'succeeded') {
+        if ($paymentInfo && ($paymentInfo['status'] ?? null) === 'succeeded') {
             $this->handleSuccessfulPayment($payment, $paymentInfo);
             return ['success' => true, 'message' => 'Subscription activated'];
         }

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Log;
 
 class LicenceAndPaymentController extends Controller
 {
-    protected $paymentService;
+    protected PaymentService $paymentService;
 
     public function __construct(PaymentService $paymentService)
     {
@@ -49,20 +49,18 @@ class LicenceAndPaymentController extends Controller
 
             if ($currentPlan === 'premium') {
                 if ($subscription) {
-                    // Используем метод getTotalUserSlots()
                     $maxUsers = $subscription->getTotalUserSlots();
 
-                    // Для отладки
-                    \Log::info('Premium user slots', [
+                    Log::info('Premium user slots', [
                         'subscription_id' => $subscription->id,
                         'base_slots' => $subscription->base_user_slots,
-                        'total_slots' => $maxUsers
+                        'total_slots' => $maxUsers,
                     ]);
                 } else {
-                    $maxUsers = 15;
+                    $maxUsers = PaymentService::PREMIUM_BASE_USER_LIMIT;
                 }
             } else {
-                $maxUsers = 5;
+                $maxUsers = PaymentService::BASIC_USER_LIMIT;
             }
 
             $storageStats = $company->getStorageStats();
@@ -79,7 +77,6 @@ class LicenceAndPaymentController extends Controller
                 ->latest()
                 ->first();
 
-
             return view('frontend.licence_and_payments.index', compact(
                 'company',
                 'subscription',
@@ -93,7 +90,6 @@ class LicenceAndPaymentController extends Controller
                 'features',
                 'pendingPayment'
             ));
-
         } catch (\Exception $e) {
             Log::error('Licence index error: ' . $e->getMessage());
             return back()->with('error', 'Произошла ошибка при загрузке страницы');
@@ -115,7 +111,7 @@ class LicenceAndPaymentController extends Controller
             return $company;
         }
 
-        $company = \App\Models\Company::whereHas('users', function($query) use ($user) {
+        $company = \App\Models\Company::whereHas('users', function ($query) use ($user) {
             $query->where('users.id', $user->id);
         })->first();
 
@@ -131,7 +127,7 @@ class LicenceAndPaymentController extends Controller
     {
         try {
             $request->validate([
-                'period' => 'required|in:month,6months,year'
+                'period' => 'required|in:month,6months,year',
             ]);
 
             $user = Auth::user();
@@ -146,25 +142,23 @@ class LicenceAndPaymentController extends Controller
 
             Log::info('Creating premium payment', [
                 'company_id' => $company->id,
-                'period' => $request->period
+                'period' => $request->period,
             ]);
 
             $result = $this->paymentService->createPremiumPayment($company, $request->period);
 
             if ($result['success']) {
-                // Сохраняем ID платежа в сессию
                 session(['last_payment_id' => $result['payment']->provider_payment_id]);
                 session(['last_payment_db_id' => $result['payment']->id]);
 
                 return response()->json([
                     'success' => true,
                     'payment_url' => $result['payment_url'],
-                    'amount' => $result['amount']
+                    'amount' => $result['amount'],
                 ]);
             }
 
             return response()->json(['error' => $result['error']], 500);
-
         } catch (\Exception $e) {
             Log::error('Premium payment error: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
@@ -176,7 +170,7 @@ class LicenceAndPaymentController extends Controller
         try {
             $request->validate([
                 'user_count' => 'required|integer|min:1|max:100',
-                'period' => 'required|in:month,6months,year'
+                'period' => 'required|in:month,6months,year',
             ]);
 
             $user = Auth::user();
@@ -197,27 +191,27 @@ class LicenceAndPaymentController extends Controller
 
             $result = $this->paymentService->createAdditionalUsersPayment(
                 $company,
-                $request->user_count,
+                (int) $request->user_count,
                 $request->period
             );
 
             if ($result['success']) {
+                session(['last_payment_id' => $result['payment']->provider_payment_id]);
+                session(['last_payment_db_id' => $result['payment']->id]);
+
                 return response()->json([
                     'success' => true,
                     'payment_url' => $result['payment_url'],
-                    'amount' => $result['amount']
+                    'amount' => $result['amount'],
                 ]);
             }
 
             return response()->json(['error' => $result['error']], 500);
-
         } catch (\Exception $e) {
             Log::error('Additional users payment error: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
-    // app/Http/Controllers/Frontend/LicenceAndPaymentController.php
 
     public function paymentCallback(Request $request)
     {
@@ -225,19 +219,16 @@ class LicenceAndPaymentController extends Controller
             'full_url' => $request->fullUrl(),
             'session_payment_id' => session('last_payment_id'),
             'session_payment_db_id' => session('last_payment_db_id'),
-            'all_params' => $request->all()
+            'all_params' => $request->all(),
         ]);
 
-        // Берем ID платежа из сессии
         $paymentDbId = session('last_payment_db_id');
         $paymentId = session('last_payment_id');
 
-        // Очищаем сессию
         session()->forget('last_payment_id');
         session()->forget('last_payment_db_id');
 
         if (!$paymentDbId && !$paymentId) {
-            // Если нет в сессии, ищем последний незавершенный платеж компании
             $user = Auth::user();
             if ($user && $user->company) {
                 $payment = Payment::where('company_id', $user->company->id)
@@ -256,7 +247,6 @@ class LicenceAndPaymentController extends Controller
             return redirect()->route('licence.index')->with('error', 'Платеж не найден. Пожалуйста, обратитесь в поддержку.');
         }
 
-        // Находим платеж
         $payment = Payment::find($paymentDbId);
 
         if (!$payment) {
@@ -266,14 +256,13 @@ class LicenceAndPaymentController extends Controller
         Log::info('Payment found, checking status', [
             'payment_id' => $payment->id,
             'provider_payment_id' => $payment->provider_payment_id,
-            'current_status' => $payment->status
+            'current_status' => $payment->status,
         ]);
 
-        // Проверяем статус через API YooKassa
         $yooKassaApi = app(YooKassaApiService::class);
         $paymentInfo = $yooKassaApi->getPayment($payment->provider_payment_id);
 
-        if ($paymentInfo && $paymentInfo['status'] === 'succeeded') {
+        if ($paymentInfo && ($paymentInfo['status'] ?? null) === 'succeeded') {
             Log::info('Payment succeeded, activating subscription');
             $this->paymentService->handleSuccessfulPayment($payment, $paymentInfo);
             return redirect()->route('licence.index')->with('success', 'Подписка успешно активирована!');
@@ -281,7 +270,7 @@ class LicenceAndPaymentController extends Controller
 
         Log::warning('Payment not succeeded yet', [
             'status' => $paymentInfo['status'] ?? 'unknown',
-            'payment_id' => $payment->id
+            'payment_id' => $payment->id,
         ]);
 
         return redirect()->route('licence.index')->with('warning', 'Платеж обрабатывается. Статус: ' . ($paymentInfo['status'] ?? 'ожидание'));
@@ -289,60 +278,22 @@ class LicenceAndPaymentController extends Controller
 
     public function paymentWebhook(Request $request)
     {
-        \Log::info('Webhook received', ['payload' => $request->all()]);
+        Log::info('Webhook received', ['payload' => $request->all()]);
 
         try {
-            $payload = $request->all();
+            $result = $this->paymentService->handleWebhook($request->all());
 
-            // Проверяем наличие объекта платежа в разных форматах
-            if (isset($payload['object']) && isset($payload['object']['id'])) {
-                // Стандартный формат YooKassa
-                $paymentObject = $payload['object'];
-                $providerPaymentId = $paymentObject['id'];
-                $status = $paymentObject['status'];
-                $paid = $paymentObject['paid'] ?? false;
-            } elseif (isset($payload['id']) && isset($payload['status'])) {
-                // Альтернативный формат (прямой объект платежа)
-                $providerPaymentId = $payload['id'];
-                $status = $payload['status'];
-                $paid = $payload['paid'] ?? false;
-            } else {
-                \Log::warning('Invalid webhook format', ['payload' => $payload]);
-                return response()->json(['error' => 'Invalid data format'], 400);
+            if (!$result['success']) {
+                return response()->json(['error' => $result['error'] ?? 'Unknown error'], 400);
             }
 
-            \Log::info('Processing webhook', [
-                'provider_payment_id' => $providerPaymentId,
-                'status' => $status,
-                'paid' => $paid
-            ]);
-
-            // Ищем платеж в нашей системе
-            $payment = Payment::where('provider_payment_id', $providerPaymentId)->first();
-
-            if (!$payment) {
-                \Log::warning('Payment not found', ['provider_payment_id' => $providerPaymentId]);
-                return response()->json(['error' => 'Payment not found'], 404);
-            }
-
-            // Если платеж успешен, активируем подписку
-            if ($status === 'succeeded' && $paid === true && !$payment->isCompleted()) {
-                \Log::info('Activating subscription from webhook', ['payment_id' => $payment->id]);
-                $this->paymentService->handleSuccessfulPayment($payment, $paymentObject);
-                return response()->json(['status' => 'ok', 'message' => 'Subscription activated'], 200);
-            }
-
-            return response()->json(['status' => 'ok', 'message' => 'Webhook received'], 200);
-
+            return response()->json(['status' => 'ok', 'message' => $result['message'] ?? 'Webhook received'], 200);
         } catch (\Exception $e) {
-            \Log::error('Webhook error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            Log::error('Webhook error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
-    /**
-     * Ручная проверка статуса платежа (для отладки)
-     */
     public function checkPaymentStatus($paymentId)
     {
         $payment = Payment::findOrFail($paymentId);
@@ -350,7 +301,7 @@ class LicenceAndPaymentController extends Controller
         $yooKassaApi = app(YooKassaApiService::class);
         $paymentInfo = $yooKassaApi->getPayment($payment->provider_payment_id);
 
-        if ($paymentInfo && $paymentInfo['status'] === 'succeeded' && !$payment->isCompleted()) {
+        if ($paymentInfo && ($paymentInfo['status'] ?? null) === 'succeeded' && !$payment->isCompleted()) {
             $this->paymentService->handleSuccessfulPayment($payment, $paymentInfo);
             return redirect()->route('licence.index')->with('success', 'Платеж подтвержден!');
         }
@@ -358,9 +309,6 @@ class LicenceAndPaymentController extends Controller
         return redirect()->route('licence.index')->with('info', 'Статус платежа: ' . ($paymentInfo['status'] ?? 'неизвестен'));
     }
 
-    /**
-     * Ручная активация подписки (для отладки)
-     */
     public function manualActivate($paymentId)
     {
         $payment = Payment::findOrFail($paymentId);
@@ -376,14 +324,14 @@ class LicenceAndPaymentController extends Controller
     public function getPaymentInfo(Request $request)
     {
         $period = $request->get('period', 'month');
-        $userCount = $request->get('user_count', 1);
+        $userCount = (int) $request->get('user_count', 1);
 
         $premiumPrice = $this->paymentService->calculatePremiumPrice($period);
         $userPrice = $this->paymentService->calculateUserPrice($userCount, $period);
 
         return response()->json([
             'premium' => $premiumPrice,
-            'users' => $userPrice
+            'users' => $userPrice,
         ]);
     }
 
@@ -396,7 +344,7 @@ class LicenceAndPaymentController extends Controller
             'Управление задачами и проектами',
             'Мессенджер',
             'Расширенная аналитика и отчеты',
-            'СМС-оповещение о задачах'
+            'СМС-оповещение о задачах',
         ];
     }
 
@@ -407,7 +355,7 @@ class LicenceAndPaymentController extends Controller
             'Файловое хранилище до 2 ГБ',
             'Управление задачами',
             'Мессенджер',
-            'Команды и проекты'
+            'Команды и проекты',
         ];
     }
 }
