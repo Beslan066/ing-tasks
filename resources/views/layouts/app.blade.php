@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Временно отключаем CSP для отладки -->
-    {{-- <meta http-equiv="Content-Security-Policy" content="
+    <!-- {{-- <meta http-equiv="Content-Security-Policy" content="
 default-src 'self';
 script-src 'self' 'unsafe-inline' 'unsafe-eval' https://meet.jit.si https://cdnjs.cloudflare.com https://cdn.tailwindcss.com;
 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
@@ -27,7 +27,7 @@ img-src 'self' data: https:;
 connect-src 'self' https://meet.jit.si wss://meet.jit.si;
 frame-src https://meet.jit.si;
 media-src https://meet.jit.si https:;
-"> --}}
+"> --}} -->
 
     <script>
         tailwind.config = {
