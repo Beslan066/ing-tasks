@@ -184,7 +184,7 @@ async function updateTaskStatus(taskId, status) {
             showNotification(data.message || 'Ошибка при перемещении задачи', 'error');
             return false;
         }
-        showNotification('Статус задачи обновлён1', 'success');
+        showNotification('Статус задачи обновлён', 'success');
         updateColumnCounters()
         return true;
     } catch (e) {
