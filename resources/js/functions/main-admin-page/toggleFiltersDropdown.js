@@ -1,7 +1,7 @@
 // ==================== ПЕРЕКЛЮЧЕНИЕ ФИЛЬТРОВ ====================
-export function toggleFiltersDropdown() {
-    const dropdown = document.getElementById("filtersPanel");
-    const chevron = document.getElementById("filterIcon");
+export function toggleFiltersDropdown(dropdownItem="filtersPanel",icon="filterIcon") {
+    const dropdown = document.getElementById(dropdownItem);
+    const chevron = document.getElementById(icon);
 
     if (!dropdown || !chevron) return;
     const isHidden = dropdown.classList.contains("hidden");

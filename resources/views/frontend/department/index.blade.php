@@ -50,11 +50,14 @@
                     </button>
                 @endif
                 @if(auth()->user()->isLeader())
-                        <button onclick="openDepartmentModal()"
-                                class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
-                            <i class="fas fa-plus"></i>
-                            <span>Новый отдел</span>
-                        </button>
+                        <x-ui.button
+                class="flex-1 px-3 py-2 md:px-6 md:py-2 text-[16px]"
+                variant="action"
+                icon="fas fa-plus"
+                 onclick="openDepartmentModal()"
+            >
+                <span>Новый отдел</span>
+            </x-ui.button>
                 @endif
             </div>
         </div>
@@ -278,11 +281,14 @@
     </div>
     <!-- Модальное окно создания отдела -->
     @include('partials.modal.department.create')
+    <!-- Модальное окно редактирования отдела -->
+    @include('partials.modal.department.edit')
  <!-- Модальное окно удаления отдела -->
     @include('partials.modal.department.delete')
 @endsection
 
 @push('scripts')
+ @vite ('resources/js/pages/department.page.js')
     <script>
 
 function openDepartmentModal() {
@@ -447,30 +453,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
-    const filterToggle = document.getElementById('filterToggle');
-    const dropdown = document.getElementById('filtersPanel');
-    const chevron = document.getElementById('filterIcon');
-
-    if (dropdown && chevron && filterToggle) {
-        filterToggle.addEventListener('click', () => {
-            if (dropdown.classList.contains('hidden')) {
-                dropdown.classList.remove('hidden', 'fade-out-x');
-                dropdown.classList.add('fade-in-x');
-                chevron.style.transform = 'rotate(180deg)';
-            } else {
-                dropdown.classList.remove('fade-in-x');
-                dropdown.classList.add('fade-out-x');
-                chevron.style.transform = 'rotate(0deg)';
-
-                setTimeout(() => {
-                    if (dropdown.classList.contains('fade-out-x')) {
-                        dropdown.classList.add('hidden');
-                    }
-                }, 200);
-            }
-        });
-    }
 });
     </script>
 @endpush
@@ -517,36 +499,6 @@ document.addEventListener('DOMContentLoaded', function() {
             border-radius: 50%;
             display: inline-block;
             margin-right: 4px;
-        }
-
-        /* Анимация для панели фильтров */
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        #filtersPanel {
-            animation: slideDown 0.3s ease;
-        }
-
-        /* Стили для кнопки фильтрации */
-        #filterToggle {
-            transition: all 0.2s ease;
-        }
-
-        #filterToggle:active {
-            transform: scale(0.98);
-        }
-
-        /* Стили для иконки */
-        #filterIcon {
-            transition: transform 0.2s ease;
         }
     </style>
 @endpush

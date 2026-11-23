@@ -576,12 +576,6 @@ media-src https://meet.jit.si https:;
 <!-- Модальное окно редактирования категории -->
 @include('partials.modal.category.edit')
 
-<!-- Модальное окно для нового отдела -->
-@include('partials.modal.department.create')
-
-<!-- Модальное окно редактирования отдела -->
-@include('partials.modal.department.edit')
-
 <!-- Модальное окно для нового пользователя -->
 @include('partials.modal.user.create')
 
@@ -1704,6 +1698,8 @@ media-src https://meet.jit.si https:;
         try {
             const response = await fetch(`/departments/${departmentId}/edit`);
             const department = await response.json();
+            console.log(department)
+            console.log(response)
             if (department) {
                 const editIdField = document.getElementById('edit_department_id');
                 if (editIdField) editIdField.value = department.id;

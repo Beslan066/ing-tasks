@@ -56,7 +56,7 @@ import {closeEditModal} from './close-edit-modal'
                 location.reload();
             } else {
                 const firstError = data.errors ? Object.values(data.errors)[0][0] : null;
-                showNotification(firstError || data.message || 'Ошибка при обновлении задачи', 'error');
+                showNotification(firstError || data.message || 'Ошибка при обновлении задачи3', 'error');
             }
         } catch (error) {
             console.error('Ошибка:', error);
