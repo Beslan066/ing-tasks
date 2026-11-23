@@ -915,7 +915,7 @@ public function update(Request $request, Task $task)
 
     $storedPaths = [];
     $shouldNotifyAssignee = false;
-
+    $newDepartmentId=$request->department_id;
     try {
         DB::beginTransaction();
 
