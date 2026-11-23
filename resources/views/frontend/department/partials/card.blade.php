@@ -42,6 +42,7 @@ $company = auth()->check() ? auth()->user()->company : null;
                     </div>
                 </div>
                 <div class="relative card-menu-container">
+                    @if(auth()->check() && auth()->user()->id == $department->supervisor_id)
                     <button
                         class="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100"
                         onclick="toggleDepartmentMenu(this, {{ $department->id }})"
@@ -51,7 +52,7 @@ $company = auth()->check() ? auth()->user()->company : null;
                     <div
                         class="hidden js-dept-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 border border-gray-200"
                     >
-                        @if(auth()->user()->isLeader())
+                        {{-- @if(auth()->user()->isLeader()) --}}
                             <div class="py-1">
                                 <div class="border-t border-gray-100"></div>
 
@@ -71,8 +72,9 @@ $company = auth()->check() ? auth()->user()->company : null;
                                     Удалить отдел
                                 </button>
                             </div>
-                            @endif
+
                     </div>
+                    @endif
                 </div>
             </div>
 
@@ -284,6 +286,7 @@ $company = auth()->check() ? auth()->user()->company : null;
                     </div>
                 </div>
                 <div class="relative card-menu-container">
+                    @if(auth()->check() && auth()->user()->id == $department->supervisor_id)
                     <button
                         class="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100"
                         onclick="toggleDepartmentMenu(this, {{ $department->id }})"
@@ -293,7 +296,7 @@ $company = auth()->check() ? auth()->user()->company : null;
                     <div
                         class="hidden js-dept-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 border border-gray-200"
                     >
-                        @if(auth()->user()->isLeader())
+                        {{-- @if(auth()->user()->isLeader()) --}}
                             <div class="py-1">
                                 <div class="border-t border-gray-100"></div>
 
@@ -313,9 +316,11 @@ $company = auth()->check() ? auth()->user()->company : null;
                                     Удалить отдел
                                 </button>
                             </div>
-                            @endif
+
                     </div>
+                    @endif
                 </div>
+
             </div>
 
             <!-- Статистика отдела -->

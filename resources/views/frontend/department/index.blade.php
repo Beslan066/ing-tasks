@@ -50,11 +50,14 @@
                     </button>
                 @endif
                 @if(auth()->user()->isLeader())
-                        <button onclick="openDepartmentModal()"
-                                class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 hover:from-green-700 hover:to-green-600 transition text-sm md:text-base" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-text-fill-color: white;">
-                            <i class="fas fa-plus"></i>
-                            <span>Новый отдел</span>
-                        </button>
+                        <x-ui.button
+                class="flex-1 px-3 py-2 md:px-6 md:py-2 text-[16px]"
+                variant="action"
+                icon="fas fa-plus"
+                 onclick="openDepartmentModal()"
+            >
+                <span>Новый отдел</span>
+            </x-ui.button>
                 @endif
             </div>
         </div>
@@ -278,6 +281,8 @@
     </div>
     <!-- Модальное окно создания отдела -->
     @include('partials.modal.department.create')
+    <!-- Модальное окно редактирования отдела -->
+    @include('partials.modal.department.edit')
  <!-- Модальное окно удаления отдела -->
     @include('partials.modal.department.delete')
 @endsection
