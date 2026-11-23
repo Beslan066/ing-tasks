@@ -288,6 +288,7 @@
 @endsection
 
 @push('scripts')
+ @vite ('resources/js/pages/department.page.js')
     <script>
 
 function openDepartmentModal() {
@@ -452,30 +453,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
-    const filterToggle = document.getElementById('filterToggle');
-    const dropdown = document.getElementById('filtersPanel');
-    const chevron = document.getElementById('filterIcon');
-
-    if (dropdown && chevron && filterToggle) {
-        filterToggle.addEventListener('click', () => {
-            if (dropdown.classList.contains('hidden')) {
-                dropdown.classList.remove('hidden', 'fade-out-x');
-                dropdown.classList.add('fade-in-x');
-                chevron.style.transform = 'rotate(180deg)';
-            } else {
-                dropdown.classList.remove('fade-in-x');
-                dropdown.classList.add('fade-out-x');
-                chevron.style.transform = 'rotate(0deg)';
-
-                setTimeout(() => {
-                    if (dropdown.classList.contains('fade-out-x')) {
-                        dropdown.classList.add('hidden');
-                    }
-                }, 200);
-            }
-        });
-    }
 });
     </script>
 @endpush
@@ -522,36 +499,6 @@ document.addEventListener('DOMContentLoaded', function() {
             border-radius: 50%;
             display: inline-block;
             margin-right: 4px;
-        }
-
-        /* Анимация для панели фильтров */
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        #filtersPanel {
-            animation: slideDown 0.3s ease;
-        }
-
-        /* Стили для кнопки фильтрации */
-        #filterToggle {
-            transition: all 0.2s ease;
-        }
-
-        #filterToggle:active {
-            transform: scale(0.98);
-        }
-
-        /* Стили для иконки */
-        #filterIcon {
-            transition: transform 0.2s ease;
         }
     </style>
 @endpush

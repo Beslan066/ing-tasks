@@ -13,6 +13,8 @@ export default defineConfig({
                 'resources/js/pages/main-admin.page.js',
                 'resources/js/pages/all-tasks.page.js',
                 'resources/js/pages/all-team-tasks.page.js',
+                'resources/js/pages/team.page.js',
+                'resources/js/pages/department.page.js'
         ],
             refresh: true,
         }),

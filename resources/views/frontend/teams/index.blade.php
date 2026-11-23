@@ -40,14 +40,14 @@
 
             <div class="flex flex-wrap gap-2 w-full md:w-auto">
                 @if($backgroundEnabled && $backgroundImage)
-                    <button id="toggleFilters"
+                    <button  id="filterToggle"
                             class="flex-1 md:flex-none bg-transparent/20 border-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2  transition text-sm md:text-base">
                         <i class="fas fa-filter"></i>
                         <span>Фильтры</span>
                         <i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>
                     </button>
                 @else
-                    <button id="toggleFilters"
+                    <button  id="filterToggle"
                             class="flex-1 md:flex-none bg-white border border-gray-300 text-gray-700 px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2  transition text-sm md:text-base">
                         <i class="fas fa-filter"></i>
                         <span>Фильтры</span>
@@ -65,210 +65,209 @@
             </div>
         </div>
 
-        @if($backgroundEnabled && $backgroundImage)
-            <!-- Скрываемый блок фильтров -->
-            <div id="filtersSection"
-                 class="backdrop-blur-md bg-transparent/20 rounded-lg shadow-sm md:shadow-md mb-4 md:mb-6 transition-all duration-300 overflow-hidden"
-                 style="max-height: 0; opacity: 0;">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 p-2">
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">Поиск</label>
-                        <input type="text" id="searchInput" placeholder="Поиск по имени или email..."
-                               value="{{ request('search') }}"
-                               class="w-full px-3 py-2 border-none rounded-lg placeholder:text-white text-white focus:outline-none bg-transparent/20">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">Отдел</label>
-                        <select id="departmentFilter"
-                                class="w-full px-3 py-2 border-none rounded-lg focus:outline-none  bg-transparent/20 text-white">
-                            <option value="">Все отделы</option>
-                            @foreach($departments as $department)
-                                <option class="text-gray-800" value="{{ $department->id }}"
-                                    {{ request('department') == $department->id ? 'selected' : '' }}>
-                                    {{ $department->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">Роль</label>
-                        <select id="roleFilter"
-                                class="w-full px-3 py-2 border-none rounded-lg focus:outline-none  bg-transparent/20 text-white">
-                            <option value="">Все роли</option>
-                            @foreach($roles as $role)
-                                <option value="{{ $role->id }}" {{ request('role') == $role->id ? 'selected' : '' }}>
-                                    {{ $role->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">Статус</label>
-                        <select id="statusFilter"
-                                class="w-full px-3 py-2 border-none rounded-lg focus:outline-none bg-transparent/20 text-white">
-                            <option value="">Все</option>
-                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Активные
-                            </option>
-                            <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>
-                                Неактивные
-                            </option>
-                        </select>
-                    </div>
-                </div>
+        @if ($backgroundEnabled && $backgroundImage)
+    <!-- Скрываемый блок фильтров (стеклянный) -->
+    <div id="filtersPanel"
+         class="hidden backdrop-blur-md bg-black/20 rounded-lg shadow-sm md:shadow-md mb-4 md:mb-6 transition-all duration-300">
 
-                <!-- Дополнительные фильтры -->
-                <div id="advancedFilters"
-                     class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 p-2 hidden">
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">Дата регистрации от</label>
-                        <input type="date" id="dateFrom"
-                               class="w-full px-3 py-2 border-none rounded-lg focus:outline-none text-white bg-transparent/20">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">Дата регистрации до</label>
-                        <input type="date" id="dateTo"
-                               class="w-full px-3 py-2 border-none rounded-lg focus:outline-none text-white bg-transparent/20">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">Мин. % выполнения</label>
-                        <input type="number" id="completionMin" min="0" max="100" placeholder="0"
-                               class="w-full px-3 py-2 border-none rounded-lg focus:outline-none text-white bg-transparent/20">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">Макс. % выполнения</label>
-                        <input type="number" id="completionMax" min="0" max="100" placeholder="100"
-                               class="w-full px-3 py-2 border-none rounded-lg focus:outline-none text-white bg-transparent/20">
-                    </div>
-                </div>
-
-                <div class="flex flex-col px-2 pb-2 sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
-                    <div
-                        class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto px-2 mb-2">
-                       <button
-                            id="applyFilters"
-                            class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
-                            <i class="fas fa-check"></i>
-                            <span>Применить</span>
-                        </button>
-                        <button id="resetFilters"
-                                class="bg-gray-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-gray-600 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                            <i class="fas fa-redo"></i>
-                            <span>Сбросить</span>
-                        </button>
-                        <button id="toggleAdvancedFilters"
-                                class="bg-gray-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-purple-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                            <i class="fas fa-cog"></i>
-                            <span>Расширенные</span>
-                            <i class="fas fa-chevron-down text-xs ml-1" id="advancedArrow"></i>
-                        </button>
-                    </div>
-                    <div class="text-sm text-white">
-                        Найдено сотрудников: {{ $users->total() }}
-                    </div>
-                </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 p-2">
+            <div>
+                <label for="searchInput" class="block text-sm font-medium text-white mb-1">Поиск</label>
+                <input type="text" id="searchInput"
+                       placeholder="Поиск по имени или email..."
+                       value="{{ request('search') }}"
+                       class="w-full px-3 py-2 border-none rounded-lg text-sm md:text-base text-white placeholder:text-white/60 bg-white/10 focus:outline-none">
             </div>
-        @else
-            <!-- Скрываемый блок фильтров -->
-            <div id="filtersSection"
-                 class="bg-white rounded-lg shadow-sm md:shadow-md mb-4 md:mb-6 transition-all duration-300 overflow-hidden"
-                 style="max-height: 0; opacity: 0;">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 p-2">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
-                        <input type="text" id="searchInput" placeholder="Поиск по имени или email..."
-                               value="{{ request('search') }}"
-                               class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Отдел</label>
-                        <select id="departmentFilter"
-                                class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-transparent text-sm md:text-base">
-                            <option value="">Все отделы</option>
-                            @foreach($departments as $department)
-                                <option value="{{ $department->id }}"
-                                    {{ request('department') == $department->id ? 'selected' : '' }}>
-                                    {{ $department->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Роль</label>
-                        <select id="roleFilter"
-                                class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-transparent text-sm md:text-base">
-                            <option value="">Все роли</option>
-                            @foreach($roles as $role)
-                                <option value="{{ $role->id }}" {{ request('role') == $role->id ? 'selected' : '' }}>
-                                    {{ $role->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                        <select id="statusFilter"
-                                class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 bg-transparent text-sm md:text-base">
-                            <option value="">Все</option>
-                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Активные
-                            </option>
-                            <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>
-                                Неактивные
-                            </option>
-                        </select>
-                    </div>
-                </div>
 
-                <!-- Дополнительные фильтры -->
-                <div id="advancedFilters"
-                     class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-2 md:gap-4 hidden">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Дата регистрации от</label>
-                        <input type="date" id="dateFrom"
-                               class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Дата регистрации до</label>
-                        <input type="date" id="dateTo"
-                               class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Мин. % выполнения</label>
-                        <input type="number" id="completionMin" min="0" max="100" placeholder="0"
-                               class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 text-sm md:text-base">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Макс. % выполнения</label>
-                        <input type="number" id="completionMax" min="0" max="100" placeholder="100"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100 text-sm md:text-base">
-                    </div>
-                </div>
+            <x-form.input-select
+                variant="dark"
+                id="departmentFilter"
+                name="department"
+                label="Отдел"
+                :required="false"
+                :value="request('department')"
+                :options="$departments->pluck('name', 'id')->prepend('Все отделы', '')->toArray()" />
 
-                <div class="flex flex-col px-2 pb-2 sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
-                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
-                        <button
-                            id="applyFilters"
-                            class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
-                            <i class="fas fa-check"></i>
-                            <span>Применить</span>
-                        </button>
-                        <button id="resetFilters"
-                                class="bg-gray-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-gray-600 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                            <i class="fas fa-redo"></i>
-                            <span>Сбросить</span>
-                        </button>
-                        <button id="toggleAdvancedFilters"
-                                class="bg-gray-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-purple-700 transition flex items-center justify-center space-x-2 text-sm md:text-base">
-                            <i class="fas fa-cog"></i>
-                            <span>Расширенные</span>
-                            <i class="fas fa-chevron-down text-xs ml-1" id="advancedArrow"></i>
-                        </button>
-                    </div>
-                    <div class="text-sm text-gray-600">
-                        Найдено сотрудников: {{ $users->total() }}
-                    </div>
-                </div>
+            <x-form.input-select
+                variant="dark"
+                id="roleFilter"
+                name="role"
+                label="Роль"
+                :required="false"
+                :value="request('role')"
+                :options="$roles->pluck('name', 'id')->prepend('Все роли', '')->toArray()" />
+
+            <x-form.input-select
+                variant="dark"
+                id="statusFilter"
+                name="status"
+                label="Статус"
+                :required="false"
+                :value="request('status')"
+                :options="['' => 'Все', 'active' => 'Активные', 'inactive' => 'Неактивные']" />
+        </div>
+
+        <!-- Дополнительные фильтры -->
+        <div id="advancedFilters"
+             class="hidden mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 p-2">
+            <div>
+                <label for="dateFrom" class="block text-sm font-medium text-white mb-1">Дата регистрации от</label>
+                <input type="date" id="dateFrom"
+                       class="w-full px-3 py-2 border-none rounded-lg text-sm md:text-base text-white bg-white/10 focus:outline-none">
             </div>
-        @endif
+            <div>
+                <label for="dateTo" class="block text-sm font-medium text-white mb-1">Дата регистрации до</label>
+                <input type="date" id="dateTo"
+                       class="w-full px-3 py-2 border-none rounded-lg text-sm md:text-base text-white bg-white/10 focus:outline-none">
+            </div>
+            <div>
+                <label for="completionMin" class="block text-sm font-medium text-white mb-1">Мин. % выполнения</label>
+                <input type="number" id="completionMin" min="0" max="100" placeholder="0"
+                       class="w-full px-3 py-2 border-none rounded-lg text-sm md:text-base text-white placeholder:text-white/60 bg-white/10 focus:outline-none">
+            </div>
+            <div>
+                <label for="completionMax" class="block text-sm font-medium text-white mb-1">Макс. % выполнения</label>
+                <input type="number" id="completionMax" min="0" max="100" placeholder="100"
+                       class="w-full px-3 py-2 border-none rounded-lg text-sm md:text-base text-white placeholder:text-white/60 bg-white/10 focus:outline-none">
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-4 px-2 pb-2">
+            <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <x-ui.button
+                type="button"
+                id="applyFilters"
+                variant="primary"
+                class="flex-1 md:flex-none max-[500px]:basis-1/2"
+                icon="fas fa-check">
+                    <span>Применить</span>
+                </x-ui.button>
+
+                <x-ui.button
+                type="button"
+                id="resetFilters"
+                variant="secondary"
+                 icon="fas fa-redo">
+                    <span>Сбросить</span>
+                </x-ui.button>
+
+                <x-ui.button
+                type="button"
+                id="toggleAdvancedFilters"
+                variant="secondary"
+                icon="fas fa-cog">
+                    <span>Расширенные</span>
+                   <i class="fas fa-chevron-down text-xs ml-1 transition-transform duration-300" id="advancedArrow"></i>
+                </x-ui.button>
+            </div>
+
+            <div class="text-sm text-white">
+                Найдено сотрудников: {{ $users->total() }}
+            </div>
+        </div>
+    </div>
+@else
+    <!-- Скрываемый блок фильтров (светлый) -->
+    <div id="filtersPanel"
+         class="hidden bg-white rounded-lg shadow-sm md:shadow-md mb-4 md:mb-6 transition-all duration-300">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 p-2">
+            <div>
+                <label for="searchInput" class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
+                <input type="text" id="searchInput"
+                       placeholder="Поиск по имени или email..."
+                       value="{{ request('search') }}"
+                       class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100">
+            </div>
+
+            <x-form.input-select
+                variant="light"
+                id="departmentFilter"
+                name="department"
+                label="Отдел"
+                :required="false"
+                :value="request('department')"
+                :options="$departments->pluck('name', 'id')->prepend('Все отделы', '')->toArray()" />
+
+            <x-form.input-select
+                variant="light"
+                id="roleFilter"
+                name="role"
+                label="Роль"
+                :required="false"
+                :value="request('role')"
+                :options="$roles->pluck('name', 'id')->prepend('Все роли', '')->toArray()" />
+
+            <x-form.input-select
+                variant="light"
+                id="statusFilter"
+                name="status"
+                label="Статус"
+                :required="false"
+                :value="request('status')"
+                :options="['' => 'Все', 'active' => 'Активные', 'inactive' => 'Неактивные']" />
+        </div>
+
+        <!-- Дополнительные фильтры -->
+        <div id="advancedFilters"
+             class="hidden mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 p-2">
+            <div>
+                <label for="dateFrom" class="block text-sm font-medium text-gray-700 mb-1">Дата регистрации от</label>
+                <input type="date" id="dateFrom"
+                       class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100">
+            </div>
+            <div>
+                <label for="dateTo" class="block text-sm font-medium text-gray-700 mb-1">Дата регистрации до</label>
+                <input type="date" id="dateTo"
+                       class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100">
+            </div>
+            <div>
+                <label for="completionMin" class="block text-sm font-medium text-gray-700 mb-1">Мин. % выполнения</label>
+                <input type="number" id="completionMin" min="0" max="100" placeholder="0"
+                       class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100">
+            </div>
+            <div>
+                <label for="completionMax" class="block text-sm font-medium text-gray-700 mb-1">Макс. % выполнения</label>
+                <input type="number" id="completionMax" min="0" max="100" placeholder="100"
+                       class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-100">
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-4 px-2 pb-2">
+            <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <x-ui.button
+                type="button"
+                id="applyFilters"
+                variant="primary"
+                class="flex-1 md:flex-none max-[500px]:basis-1/2"
+                icon="fas fa-check">
+                    <span>Применить</span>
+                </x-ui.button>
+
+                <x-ui.button
+                type="button"
+                id="resetFilters"
+                variant="secondary"
+                 icon="fas fa-redo">
+                    <span>Сбросить</span>
+                </x-ui.button>
+
+                <x-ui.button
+                type="button"
+                id="toggleAdvancedFilters"
+                variant="secondary"
+                icon="fas fa-cog">
+                    <span>Расширенные</span>
+                   <i class="fas fa-chevron-down text-xs ml-1 transition-transform duration-300" id="advancedArrow"></i>
+                </x-ui.button>
+            </div>
+
+            <div class="text-sm text-gray-600">
+                Найдено сотрудников: {{ $users->total() }}
+            </div>
+        </div>
+    </div>
+@endif
 
         @if($backgroundEnabled && $backgroundImage)
             <!-- Основной контейнер с таблицей -->
@@ -965,6 +964,7 @@
 @endsection
 
 @push('scripts')
+ @vite ('resources/js/pages/team.page.js')
     <script>
         // Глобальные переменные
         let selectedUsersData = new Map();
@@ -1066,52 +1066,19 @@
             // ============================================
             // ФУНКЦИИ ФИЛЬТРОВ
             // ============================================
-            function showFilters() {
-                filtersSection.style.maxHeight = filtersSection.scrollHeight + 'px';
-                filtersSection.style.opacity = '1';
-                filterArrow.className = 'fas fa-chevron-up text-xs ml-1';
-                toggleFiltersBtn.innerHTML = `<i class="fas fa-filter"></i><span>Скрыть фильтры</span><i class="fas fa-chevron-up text-xs ml-1" id="filterArrow"></i>`;
-                filtersVisible = true;
-                localStorage.setItem('teamFiltersVisible', 'true');
-            }
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest('#toggleAdvancedFilters');
+                if (!btn) return;
 
-            function hideFilters() {
-                filtersSection.style.maxHeight = '0';
-                filtersSection.style.opacity = '0';
-                filterArrow.className = 'fas fa-chevron-down text-xs ml-1';
-                toggleFiltersBtn.innerHTML = `<i class="fas fa-filter"></i><span>Фильтры</span><i class="fas fa-chevron-down text-xs ml-1" id="filterArrow"></i>`;
-                filtersVisible = false;
-                localStorage.setItem('teamFiltersVisible', 'false');
-                if (advancedFiltersVisible) hideAdvancedFilters();
-            }
+                const panel = document.getElementById('advancedFilters');
+                const arrow = document.getElementById('advancedArrow');
+                if (!panel) return;
 
-            function showAdvancedFilters() {
-                advancedFilters.classList.remove('hidden');
-                advancedArrow.className = 'fas fa-chevron-up text-xs ml-1';
-                toggleAdvancedFiltersBtn.innerHTML = `<i class="fas fa-cog"></i><span>Скрыть расширенные</span><i class="fas fa-chevron-up text-xs ml-1" id="advancedArrow"></i>`;
-                advancedFiltersVisible = true;
-                localStorage.setItem('teamAdvancedFiltersVisible', 'true');
-                setTimeout(() => {
-                    if (filtersVisible) filtersSection.style.maxHeight = filtersSection.scrollHeight + 'px';
-                }, 10);
-            }
+                const isOpen = !panel.classList.toggle('hidden');
 
-            function hideAdvancedFilters() {
-                advancedFilters.classList.add('hidden');
-                advancedArrow.className = 'fas fa-chevron-down text-xs ml-1';
-                toggleAdvancedFiltersBtn.innerHTML = `<i class="fas fa-cog"></i><span>Расширенные</span><i class="fas fa-chevron-down text-xs ml-1" id="advancedArrow"></i>`;
-                advancedFiltersVisible = false;
-                localStorage.setItem('teamAdvancedFiltersVisible', 'false');
-                setTimeout(() => {
-                    if (filtersVisible) filtersSection.style.maxHeight = filtersSection.scrollHeight + 'px';
-                }, 10);
-            }
-
-            if (filtersVisible) showFilters(); else hideFilters();
-            if (advancedFiltersVisible) showAdvancedFilters(); else hideAdvancedFilters();
-
-            toggleFiltersBtn?.addEventListener('click', () => filtersVisible ? hideFilters() : showFilters());
-            toggleAdvancedFiltersBtn?.addEventListener('click', () => advancedFiltersVisible ? hideAdvancedFilters() : showAdvancedFilters());
+                arrow?.classList.toggle('rotate-180', isOpen);
+                btn.setAttribute('aria-expanded', String(isOpen));
+            });
 
             // ============================================
             // УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ
