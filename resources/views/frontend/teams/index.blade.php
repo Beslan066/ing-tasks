@@ -55,13 +55,17 @@
                     </button>
                 @endif
                 @if(auth()->user()->isLeader())
-                   <button
+                    <x-ui.button
                         id="inviteUserBtn"
-                        class="flex-1 md:flex-none text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center justify-center space-x-2 text-sm md:text-base max-[500px]:basis-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
-                        <i class="fas fa-user-plus"></i>
+                        class="flex-1 px-3 py-2 md:px-6 md:py-2 text-[16px]"
+                        variant="action"
+                        icon="fas fa-user-plus"
+                    >
                         <span>Пригласить</span>
-                    </button>
+                    </x-ui.button>
                 @endif
+
+
             </div>
         </div>
 
@@ -86,7 +90,8 @@
                 label="Отдел"
                 :required="false"
                 :value="request('department')"
-                :options="$departments->pluck('name', 'id')->prepend('Все отделы', '')->toArray()" />
+                :options="$departments->pluck('name', 'id')->prepend('Все отделы', '')->toArray()"
+                :teleport="true" />
 
             <x-form.input-select
                 variant="dark"
@@ -95,7 +100,8 @@
                 label="Роль"
                 :required="false"
                 :value="request('role')"
-                :options="$roles->pluck('name', 'id')->prepend('Все роли', '')->toArray()" />
+                :options="$roles->pluck('name', 'id')->prepend('Все роли', '')->toArray()"
+                :teleport="true" />
 
             <x-form.input-select
                 variant="dark"
@@ -104,7 +110,8 @@
                 label="Статус"
                 :required="false"
                 :value="request('status')"
-                :options="['' => 'Все', 'active' => 'Активные', 'inactive' => 'Неактивные']" />
+                :options="['' => 'Все', 'active' => 'Активные', 'inactive' => 'Неактивные']"
+                :teleport="true" />
         </div>
 
         <!-- Дополнительные фильтры -->

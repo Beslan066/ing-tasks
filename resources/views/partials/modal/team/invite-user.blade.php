@@ -49,6 +49,7 @@
                     label="Роль"
                     placeholder="Выберите роль"
                     :options="collect($roles ?? [])->pluck('name', 'id')->all()"
+                    teleport
                 />
 
                 <x-form.input-select
@@ -57,6 +58,7 @@
                     label="Отдел"
                     placeholder="Выберите отдел"
                     :options="collect($departments ?? [])->pluck('name', 'id')->all()"
+                    teleport
                 />
             </div>
 

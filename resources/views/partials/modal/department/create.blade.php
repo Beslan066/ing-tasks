@@ -50,6 +50,7 @@
                 label="Руководитель"
                 placeholder="Не назначен"
                 :options="collect($assignableUsers ?? [])->pluck('name', 'id')->all()"
+                teleport
             />
 
             <x-form.input-select

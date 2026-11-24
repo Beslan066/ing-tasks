@@ -122,8 +122,11 @@
                         </div>
 
                         {{-- Загрузка --}}
-                        <button type="button" onclick="openUploadModal()"
-                                class="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 px-4 py-3 text-sm font-medium text-white sm:w-auto transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(16,185,129,0.35)] active:translate-y-0 active:shadow-none">
+                        <x-ui.button
+                        class="flex-1 px-3 py-2 md:px-6 md:py-2 text-[16px]"
+                        variant="action"
+                        onclick="openUploadModal()"
+                        >
                             <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" clip-rule="evenodd"
@@ -131,7 +134,7 @@
                                       fill=""></path>
                             </svg>
                             <span>Загрузить файл</span>
-                        </button>
+                        </x-ui.button>
                     </div>
                 </div>
             </div>

@@ -103,6 +103,7 @@
     });
 "
     @select-set="value = String($event.detail)"
+    @select-options="options = $event.detail.map(o => ({ value: String(o.value), label: o.label }))"
     @click.outside="close()"
     @keydown.escape.stop="open && (close(), $refs.button.focus())"
     {{ $attributes->merge(['class' => 'relative']) }}
