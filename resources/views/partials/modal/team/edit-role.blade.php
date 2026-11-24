@@ -41,15 +41,17 @@
 
             <!-- Новая роль (список заполняется из JS) -->
             <div class="space-y-1.5">
-                <label for="roleSelect" class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px] cursor-pointer">
+                <label for="roleSelect-button" class="block text-slate-600 text-[13px] font-medium max-[500px]:text-[12px]">
                     Новая роль
                 </label>
-                <select id="roleSelect" name="role_id"
-                        class="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-200 text-slate-700 text-sm hover:border-slate-300 cursor-pointer">
-                    <option value="">Без роли</option>
-                </select>
+                <x-ui.select
+                    id="roleSelect"
+                    variant="light"
+                    ariaLabel="Новая роль"
+                    class="w-full"
+                    :options="[]"
+                />
             </div>
-
             <!-- Кнопки действий -->
             <div class="flex justify-end items-center gap-3 pt-6 border-t border-slate-100 max-[500px]:justify-center max-[500px]:flex-col-reverse">
                 <x-ui.button type="button" variant="secondary" onclick="closeRoleEditModal()">
@@ -93,10 +95,16 @@
                 }
             }
 
-            function fillRoles(select, roles, currentRoleId) {
-                select.replaceChildren(new Option('Без роли', ''));
-                roles.forEach(role => select.add(new Option(role.name, role.id)));
-                select.value = currentRoleId != null ? String(currentRoleId) : '';
+            function fillRoles(roles, currentRoleId) {
+                const field = $('roleSelect-field');
+
+                const options = [
+                    { value: '', label: 'Без роли' },
+                    ...roles.map(role => ({ value: role.id, label: role.name })),
+                ];
+
+                field.dispatchEvent(new CustomEvent('select-options', { detail: options }));
+                field.dispatchEvent(new CustomEvent('select-set', { detail: currentRoleId ?? '' }));
             }
 
             async function getJson(url) {
@@ -129,7 +137,7 @@
 
                     const user = userData.user;
                     fillUser(user);
-                    fillRoles($('roleSelect'), rolesData.roles, user.role ? user.role.id : null);
+                   fillRoles(rolesData.roles, user.role ? user.role.id : null);
 
                     $('saveRoleBtn').onclick = () => saveUserRole(user.id);
 

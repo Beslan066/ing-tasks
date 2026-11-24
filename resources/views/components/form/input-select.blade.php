@@ -10,6 +10,7 @@
     'emptyText'   => 'Список пуст',
     'variant'     => 'light', // light | dark | glass
     'ariaLabel'   => null,
+    'teleport'    => false,
 ])
 
 @php
@@ -105,12 +106,16 @@
         open: false,
         active: 0,
 
+        teleport: @js((bool) $teleport),
+        pos: { left: 0, width: 0, top: null, bottom: null, maxH: 240 },
+
         get selected() {
             return this.options.find(o => o.value === this.value)
         },
         show() {
             if (!this.options.length) return
             this.active = Math.max(0, this.options.findIndex(o => o.value === this.value))
+            this.place()
             this.open = true
             this.scrollToActive()
         },
@@ -138,6 +143,26 @@
                 this.$refs.list.querySelectorAll('[role=option]')[this.active]?.scrollIntoView({ block: 'nearest' })
             })
         },
+
+        // Позиционирование списка (только в режиме teleport)
+        place() {
+            if (!this.teleport) return
+
+            const r = this.$refs.button.getBoundingClientRect()
+            const gap = 6, margin = 8
+            const below = window.innerHeight - r.bottom - gap - margin
+            const above = r.top - gap - margin
+            const need = Math.min(240, this.options.length * 36 + 14) // ~высота пункта + padding списка
+            const flip = below < need && above > below                // мало места снизу → открыть вверх
+
+            this.pos = {
+                left: r.left,
+                width: r.width,
+                top: flip ? null : r.bottom + gap,
+                bottom: flip ? window.innerHeight - r.top + gap : null,
+                maxH: Math.max(120, Math.min(240, flip ? above : below)),
+            }
+        },
     }"
     x-modelable="value"
     x-init="
@@ -154,7 +179,11 @@
         });
     "
     @select-set="value = String($event.detail)"
-    @click.outside="close()"
+    @click.window="if (open && !$el.contains($event.target) && !$refs.list.contains($event.target)) close()"
+    @if ($teleport)
+        @resize.window="open && place()"
+        @scroll.window.capture="open && place()"
+    @endif
     @keydown.escape="if (open) { $event.stopPropagation(); close(); $refs.button.focus() }"
     {{ $attributes->merge(['class' => 'space-y-1.5']) }}
 >
@@ -207,39 +236,54 @@
             ></i>
         </button>
 
-        <ul
-            id="{{ $id }}-listbox"
-            x-ref="list"
-            x-show="open"
-            style="display: none"
-            x-transition:enter="transition ease-out duration-150"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-100"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
-            role="listbox"
-            tabindex="-1"
-            class="absolute z-30 mt-1.5 w-full max-h-60 overflow-auto py-1.5 border rounded-xl focus:outline-none {{ $t['list'] }}"
-        >
-            <template x-for="(option, index) in options" :key="option.value">
-                <li
-                    role="option"
-                    :id="'{{ $id }}-option-' + index"
-                    :aria-selected="option.value === value"
-                    class="mx-1.5 px-3 py-2 flex items-center justify-between gap-3 rounded-lg text-sm cursor-pointer transition-colors"
-                    :class="[
-                        active === index ? @js($t['optionActive']) : @js($t['optionIdle']),
-                        option.value === value && 'font-medium',
-                    ]"
-                    @click="choose(index)"
-                    @mousemove="if (active !== index) active = index"
-                >
-                    <span class="truncate" x-text="option.label"></span>
-                    <i x-show="option.value === value" class="fas fa-check {{ $t['check'] }} text-[10px] shrink-0"></i>
-                </li>
-            </template>
-        </ul>
+        @if ($teleport)
+        <template x-teleport="body">
+        @endif
+            <ul
+                id="{{ $id }}-listbox"
+                x-ref="list"
+                x-show="open"
+                style="display: none"
+                @if ($teleport)
+                    :style="{
+                        left: pos.left + 'px',
+                        width: pos.width + 'px',
+                        top: pos.top !== null ? pos.top + 'px' : 'auto',
+                        bottom: pos.bottom !== null ? pos.bottom + 'px' : 'auto',
+                        maxHeight: pos.maxH + 'px',
+                    }"
+                @endif
+                x-transition:enter="transition ease-out duration-150"
+                x-transition:enter-start="opacity-0 -translate-y-1"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-100"
+                x-transition:leave-start="opacity-100 translate-y-0"
+                x-transition:leave-end="opacity-0 -translate-y-1"
+                role="listbox"
+                tabindex="-1"
+                class="{{ $teleport ? 'fixed z-[60]' : 'absolute z-30 mt-1.5 w-full' }} max-h-60 overflow-auto py-1.5 border rounded-xl focus:outline-none {{ $t['list'] }}"
+            >
+                <template x-for="(option, index) in options" :key="option.value">
+                    <li
+                        role="option"
+                        :id="'{{ $id }}-option-' + index"
+                        :aria-selected="option.value === value"
+                        class="mx-1.5 px-3 py-2 flex items-center justify-between gap-3 rounded-lg text-sm cursor-pointer transition-colors"
+                        :class="[
+                            active === index ? @js($t['optionActive']) : @js($t['optionIdle']),
+                            option.value === value && 'font-medium',
+                        ]"
+                        @click="choose(index)"
+                        @mousemove="if (active !== index) active = index"
+                    >
+                        <span class="truncate" x-text="option.label"></span>
+                        <i x-show="option.value === value" class="fas fa-check {{ $t['check'] }} text-[10px] shrink-0"></i>
+                    </li>
+                </template>
+            </ul>
+        @if ($teleport)
+        </template>
+        @endif
     </div>
 
     @error($name)
